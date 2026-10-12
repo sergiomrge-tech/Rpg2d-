@@ -36,6 +36,7 @@ var world: World
 var camera: CameraRig
 var hud: Hud
 var grimoire: Grimoire
+var marker: ObjectiveMarker
 var main: Node2D
 var map_name := "village"
 var ci_dir := ""
@@ -100,11 +101,17 @@ func start(m: Node2D) -> void:
 		Companion.spawn(spawn + Vector2.LEFT * 64.0)
 	camera.target = player
 	camera.snap()
+	marker = ObjectiveMarker.new()
+	main.add_child(marker)
 	hud = Hud.new()
 	main.add_child(hud)
 	grimoire = Grimoire.new()
 	hud.add_child(grimoire)
 	grimoire.setup(hud)
+	for k in COMPLETE_FLAGS:
+		if flags.has(k):
+			_announced[k] = true
+	_announced["__init"] = true
 	Sfx.loop("ambience", 0.2)
 	Music.play(map_name)
 	if ci_dir != "":
@@ -138,6 +145,9 @@ func _process(dt: float) -> void:
 		grimoire.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
+	_update_objective()
+	marker.refresh(obj_active and not hud.in_dialogue() and not grimoire.open, obj_pos, obj_kind)
+	_watch_quest_flags()
 	if not player.dead and _travel_cd <= 0.0:
 		var ex := world.exit_at(player.global_position)
 		if not ex.is_empty():
@@ -236,44 +246,145 @@ func quest_progress(id: String) -> int:
 	return int(quests.get(id, 0))
 
 
-## First line = headline, second line (optional) = detail.
-func quest_line() -> String:
+## Objective = [headline, detail, map, kind ("npc" | "boss" | "enemy" | ""), id]
+func _o(head: String, detail: String, map: String = "", kind: String = "", id: String = "") -> Array:
+	return [head, detail, map, kind, id]
+
+
+func objective() -> Array:
 	if not flags.has("guild_joined"):
-		return "◆ Procure a Guilda dos Aventureiros\nao norte da praça"
+		return _o("Procure a Guilda dos Aventureiros", "ao norte da praça", "village", "npc", "receptionist")
 	if not flags.has("q_imps_done"):
 		var n := mini(quest_progress(Story.QUEST_IMPS), Story.QUEST_IMPS_GOAL)
 		if n >= Story.QUEST_IMPS_GOAL:
-			return "◆ Volte à Guilda e fale com Elina"
-		return "◆ Purgar o Bosque dos Chifres\nDiabretes %d/%d" % [n, Story.QUEST_IMPS_GOAL]
+			return _o("Volte à Guilda e fale com Elina", "", "village", "npc", "receptionist")
+		return _o("Purgar o Bosque dos Chifres", "Diabretes %d/%d" % [n, Story.QUEST_IMPS_GOAL], "village", "enemy", "imp")
 	if not flags.has("grakk_dead"):
-		return "◆ Derrote Grakk, Chefe dos Diabretes\nsul do Bosque dos Chifres"
+		return _o("Derrote Grakk, Chefe dos Diabretes", "sul do Bosque dos Chifres", "village", "boss", "grakk")
 	if not flags.has("rank_e"):
-		return "◆ Volte à Guilda e fale com Elina"
+		return _o("Volte à Guilda e fale com Elina", "", "village", "npc", "receptionist")
 	if not flags.has("sylra_joined"):
-		return "◆ Entre no portal ao sul do Bosque\ne encontre o santuário élfico de Velmoor"
+		return _o("Entre no portal ao sul do Bosque", "e encontre o santuário élfico de Velmoor", "velmoor", "npc", "sylra")
 	if not flags.has("dryad_profane_dead"):
-		return "◆ Purifique o bosque sagrado\nderrote a Dríade Profanada (sul de Velmoor)"
+		return _o("Purifique o bosque sagrado", "derrote a Dríade Profanada (sul de Velmoor)", "velmoor", "boss", "dryad_profane")
 	if not flags.has("rank_d"):
-		return "◆ Volte à Guilda de Aurora"
+		return _o("Volte à Guilda de Aurora", "", "village", "npc", "receptionist")
 	if not flags.has("val_started"):
-		return "◆ Viaje a Valemont\nsaída leste de Velmoor — fale com o Mestre da Guilda"
+		return _o("Viaje a Valemont", "saída leste de Velmoor — fale com o Mestre da Guilda", "valemont", "npc", "guildmaster")
 	if not flags.has("assassin_shadow_dead"):
-		return "◆ Cace o Assassino Sombrio\nbeco ao sul de Valemont"
+		return _o("Cace o Assassino Sombrio", "beco ao sul de Valemont", "valemont", "boss", "assassin_shadow")
 	if not flags.has("rank_c"):
-		return "◆ Volte ao Mestre Aldric, na Guilda"
+		return _o("Volte ao Mestre Aldric, na Guilda", "", "valemont", "npc", "guildmaster")
 	for r in Story.regions:
 		if flags.has(r["done"]):
 			continue
 		if not flags.has(r["start"]):
-			return "◆ Viaje a %s\nfale com %s" % [r["title"], Story.name_of(r["npc"])]
+			return _o("Viaje a %s" % r["title"], "fale com %s" % Story.name_of(r["npc"]), r["map"], "npc", r["npc"])
 		if not Story.region_all_dead(r):
-			return "◆ Derrote %s\n%s" % [r["bossName"], r["title"]]
-		return "◆ Volte a %s\n%s" % [Story.name_of(r["npc"]), r["title"]]
+			var next_boss := ""
+			for bid in String(r["boss"]).split(","):
+				if not flags.has(bid + "_dead"):
+					next_boss = bid
+					break
+			return _o("Derrote %s" % r["bossName"], r["title"], r["map"], "boss", next_boss)
+		return _o("Volte a %s" % Story.name_of(r["npc"]), r["title"], r["map"], "npc", r["npc"])
 	if flags.has("game_complete"):
-		return "◆ Aetheria está em paz\nexplore livremente · F5 salva"
+		return _o("Aetheria está em paz", "explore livremente · F5 salva")
 	if not flags.has("lumia_blessed"):
-		return "◆ Entre na Cidadela de Malgrath\nleste das Terras Devastadas — fale com Lumia"
-	return "◆ Derrote Malgrath, o Rei Demônio\nsalão do trono, ao norte da Cidadela"
+		return _o("Entre na Cidadela de Malgrath", "leste das Terras Devastadas — fale com Lumia", "citadel", "npc", "lumia")
+	return _o("Derrote Malgrath, o Rei Demônio", "salão do trono, ao norte da Cidadela", "citadel", "boss", "malgrath")
+
+
+func quest_line() -> String:
+	var o := objective()
+	return o[0] + ("\n" + o[1] if o[1] != "" else "")
+
+
+# ---- objective guidance: world position of the current target (or the exit leading toward its map)
+var obj_active := false
+var obj_pos := Vector2.ZERO
+var obj_kind := ""        # "target" | "exit"
+var obj_dist := 0.0
+var _graph := {}
+
+
+func _exits_of(m: String) -> Array:
+	if not _graph.has(m):
+		var d = Sheets.read_json("Maps/" + m)
+		_graph[m] = d["exits"] if d else []
+	return _graph[m]
+
+
+## First hop (exit dictionary) on the shortest path from `from` to `to`, or {}.
+func _next_hop(from: String, to: String) -> Dictionary:
+	var prev := {from: null}
+	var q := [from]
+	while not q.is_empty():
+		var cur: String = q.pop_front()
+		if cur == to:
+			break
+		for e in _exits_of(cur):
+			if not prev.has(e["to"]):
+				prev[e["to"]] = [cur, e]
+				q.append(e["to"])
+	if not prev.has(to) or to == from:
+		return {}
+	var node: String = to
+	var hop := {}
+	while prev[node] != null:
+		hop = prev[node][1]
+		node = prev[node][0]
+	return hop
+
+
+func _update_objective() -> void:
+	obj_active = false
+	var o := objective()
+	if o[2] == "" or player == null or player.dead:
+		return
+	if o[2] != map_name:
+		var hop := _next_hop(map_name, o[2])
+		if hop.is_empty():
+			return
+		obj_pos = Vector2(float(hop["x"]), float(hop["y"]))
+		obj_kind = "exit"
+		obj_active = true
+	else:
+		var best := INF
+		if o[3] == "npc":
+			for n in world.entities.get_children():
+				if n is Npc and n.id == o[4]:
+					obj_pos = n.global_position
+					best = 0.0
+		else:
+			for e in Enemy.all:
+				if is_instance_valid(e) and not e.dead and e.def["id"] == o[4]:
+					var d := e.global_position.distance_to(player.global_position)
+					if d < best:
+						best = d
+						obj_pos = e.global_position
+		if best == INF:
+			return
+		obj_kind = "target"
+		obj_active = true
+	obj_dist = obj_pos.distance_to(player.global_position)
+
+
+const COMPLETE_FLAGS := {
+	"q_imps_done": "Os diabretes recuaram", "rank_e": "Promovido ao Rank E", "dryad_profane_dead": "A floresta respira de novo",
+	"rank_d": "Promovido ao Rank D", "rank_c": "Promovido ao Rank C", "kharis_done": "Rank B conquistado", "mines_done": "As forjas ardem de novo",
+	"mirewail_done": "Rank A conquistado", "peaks_done": "A nascente descongelou", "castle_done": "O castelo foi libertado",
+	"wastelands_done": "Rank S conquistado",
+}
+var _announced := {}
+
+
+func _watch_quest_flags() -> void:
+	for k in COMPLETE_FLAGS:
+		if flags.has(k) and not _announced.has(k):
+			_announced[k] = true
+			if _announced.has("__init"):
+				hud.quest_complete(COMPLETE_FLAGS[k])
 
 
 # ------------------------------------------------------------------ combat callbacks
@@ -413,6 +524,8 @@ func _ci_shots() -> void:
 		hud.advance()
 		hud.advance()
 		await get_tree().process_frame
+	await _wait(0.3)
+	await shot("02b_quest_update")
 	grimoire.toggle()
 	await _wait(0.5)
 	await shot("03_grimoire")
@@ -436,6 +549,9 @@ func _ci_shots() -> void:
 	player.ci_cast()
 	await _wait(0.35)
 	await shot("06_combat2")
+	hud.quest_complete("Promovido ao Rank E")
+	await _wait(0.7)
+	await shot("07_quest_complete")
 	# a tour of every other map: teleport, wait a beat, shoot
 	for m in MAP_TITLES.keys():
 		if m == "village":

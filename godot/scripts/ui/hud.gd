@@ -18,6 +18,15 @@ var level_text: Label
 var gold_text: Label
 var quest_head: Label
 var quest_sub: Label
+var quest_c: Control
+var quest_glow: TextureRect
+var quest_tag: Label
+var _quest_key := ""
+var _quest_head := ""
+var _quest_t := 99.0
+var compass: Control
+var compass_arrow: Polygon2D
+var compass_label: Label
 var rank_text: Label
 var vignette: TextureRect
 var hp_shown := 1.0
@@ -171,10 +180,35 @@ func _build() -> void:
 
 	# ---- quest tracker (top-right)
 	var q := ctl(root, Vector2(1, 1), Vector2(-250, -90), Vector2(460, 140))
+	quest_c = q
 	img(q, Sheets.ui("smear"), C, Vector2.ZERO, Vector2(520, 200)).modulate = Color(0, 0, 0, 0.42)
+	quest_glow = img(q, Util.soft_circle(), C, Vector2(0, 0), Vector2(620, 220))
+	quest_glow.material = Util.additive()
+	quest_glow.modulate = Color(1, 0.8, 0.35, 0.0)
+	quest_tag = txt(q, "NOVA MISSÃO", Util.font_serif, 22, Color(1, 0.85, 0.4), C, Vector2(0, 92), Vector2(440, 30))
+	quest_tag.modulate.a = 0.0
 	img(q, Sheets.ui("flourish"), C, Vector2(0, 44), Vector2(360, 36))
 	quest_head = txt(q, "", sans, 25, Color(0.98, 0.95, 0.88), C, Vector2(0, 0), Vector2(440, 34))
 	quest_sub = txt(q, "", sans, 21, Color(0.92, 0.86, 0.7), C, Vector2(0, -34), Vector2(440, 30))
+
+	# ---- compass arrow (points to off-screen objective)
+	compass = Control.new()
+	compass.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	compass_arrow = Polygon2D.new()
+	compass_arrow.polygon = PackedVector2Array([Vector2(34, 0), Vector2(-20, -24), Vector2(-8, 0), Vector2(-20, 24)])
+	compass_arrow.color = Color(1, 0.82, 0.3)
+	var outline := Polygon2D.new()
+	outline.polygon = PackedVector2Array([Vector2(44, 0), Vector2(-30, -34), Vector2(-14, 0), Vector2(-30, 34)])
+	outline.color = Color(0.25, 0.12, 0.05)
+	compass.add_child(outline)
+	compass.add_child(compass_arrow)
+	compass_label = Util.label("", 22, Color(1, 0.95, 0.75), Util.font_bold, true)
+	compass_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	compass_label.size = Vector2(160, 30)
+	compass.visible = false
+	root.add_child(compass)
+	root.add_child(compass_label)
+	compass_label.visible = false
 
 	# ---- skill orbs fanned along an arc (bottom-right)
 	var fan := ctl(root, Vector2(1, 0), Vector2(-170, 150), Vector2(10, 10))
@@ -264,6 +298,33 @@ func banner(title: String, sub: String) -> void:
 	banner_sub.text = sub
 	banner_t = 0.0
 	banner_c.visible = true
+
+
+func quest_complete(text: String) -> void:
+	Sfx.play("levelup", 0.5, 1.3)
+	var c := ctl(root, Vector2(0.5, 1), Vector2(0, -330), Vector2(900, 120))
+	var burst := img(c, Util.soft_circle(), Vector2(0.5, 0.5), Vector2.ZERO, Vector2(900, 260))
+	burst.material = Util.additive()
+	burst.modulate = Color(1, 0.8, 0.3, 0.55)
+	img(c, Sheets.ui("flourish"), Vector2(0.5, 0.5), Vector2(0, -34), Vector2(520, 44))
+	txt(c, "MISSÃO CONCLUÍDA", Util.font_serif, 52, Color(1, 0.9, 0.5), Vector2(0.5, 0.5), Vector2(0, 14), Vector2(900, 70))
+	txt(c, text, Util.font_sans, 28, Color(1, 0.96, 0.85), Vector2(0.5, 0.5), Vector2(0, -52), Vector2(900, 36))
+	c.scale = Vector2(0.6, 0.6)
+	c.modulate.a = 0.0
+	var tw := c.create_tween()
+	tw.tween_property(c, "modulate:a", 1.0, 0.25)
+	tw.parallel().tween_property(c, "scale", Vector2(1.08, 1.08), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(c, "scale", Vector2.ONE, 0.15)
+	tw.tween_interval(2.4)
+	tw.tween_property(c, "modulate:a", 0.0, 0.6)
+	tw.tween_callback(c.queue_free)
+
+
+func _quest_changed(headline_changed: bool) -> void:
+	_quest_t = 0.0
+	quest_tag.text = "NOVA MISSÃO" if headline_changed else "PROGRESSO"
+	if headline_changed:
+		Sfx.play("ui", 0.35, 1.5)
 
 
 func hurt_pulse() -> void:
@@ -392,6 +453,24 @@ func _process(delta: float) -> void:
 	var ql := Game.quest_line().split("\n")
 	quest_head.text = ql[0]
 	quest_sub.text = ql[1] if ql.size() > 1 else ""
+	var qk := Game.quest_line()
+	if qk != _quest_key:
+		if _quest_key != "":
+			_quest_changed(ql[0] != _quest_head)
+		_quest_key = qk
+		_quest_head = ql[0]
+	_quest_t += dt
+	var qa := _quest_t
+	# slide-in + pop + glow flash + tag, then a slow breathing glow while an objective is active
+	var slide := clampf(1.0 - qa / 0.45, 0.0, 1.0)
+	quest_c.position.x = (SIZE.x - 250.0 - 230.0) + slide * slide * 90.0
+	var pop := 1.0 + 0.1 * maxf(0.0, 1.0 - qa / 0.35) * sin(qa * 18.0 + 1.5)
+	quest_c.scale = Vector2.ONE * pop
+	quest_c.modulate.a = 1.0 - slide * 0.8
+	quest_glow.modulate.a = maxf(0.0, 0.7 * (1.0 - qa / 1.4)) + 0.05 + 0.04 * sin(now * 2.0)
+	quest_tag.modulate.a = clampf(qa / 0.2, 0.0, 1.0) * clampf((3.0 - qa) / 0.6, 0.0, 1.0)
+	quest_tag.position.y = -37.0 + 20.0 * (1.0 - minf(qa / 0.4, 1.0))
+	_update_compass(now)
 	hurt_amt = maxf(0.0, hurt_amt - dt * 2.2)
 	vignette.modulate = Color(0.05, 0.02, 0.08, 0.5).lerp(Color(0.75, 0.05, 0.05, 0.85), hurt_amt)
 
@@ -502,3 +581,27 @@ func _update_plates(dt: float, _now: float) -> void:
 			if is_instance_valid(plates[k]["c"]):
 				plates[k]["c"].queue_free()
 			plates.erase(k)
+
+
+func _update_compass(now: float) -> void:
+	var show_it: bool = Game.obj_active and not _active and not Game.grimoire.open and Player.I != null
+	if show_it:
+		var sp: Vector2 = get_viewport().get_canvas_transform() * Game.obj_pos
+		var rect := Rect2(110, 110, SIZE.x - 220, SIZE.y - 220)
+		if rect.has_point(sp):
+			show_it = false
+		else:
+			var centre := SIZE / 2.0
+			var dir := (sp - centre).normalized()
+			var k := 1e9
+			if absf(dir.x) > 0.001:
+				k = minf(k, (rect.size.x / 2.0) / absf(dir.x))
+			if absf(dir.y) > 0.001:
+				k = minf(k, (rect.size.y / 2.0) / absf(dir.y))
+			var pos := centre + dir * k
+			compass.position = pos + dir * (sin(now * 5.0) * 6.0)
+			compass.rotation = dir.angle()
+			compass_label.position = pos - Vector2(80, 0) - dir * Vector2(0, 0) + Vector2(0, -50 if dir.y > 0.3 else 36)
+			compass_label.text = "%d m" % roundi(Game.obj_dist / 64.0 * 1.5)
+	compass.visible = show_it
+	compass_label.visible = show_it
