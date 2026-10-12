@@ -65,3 +65,8 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - 🔄 Pranchas de comparação de sprites originais versus remodelados: `docs/asset_catalog/previews/LOTE1_REMODEL_COMPARACAO.png` e `LOTE1_REMODEL_OITO.png`; imagens do pipeline, **não capturas do jogo**.
 - ✅ **Ordem de produção do Lote 2 definida:** `docs/asset_catalog/LOTE2_ORDEM_PRODUCAO.md` (10 insetoides e 5 bosses de anatomias próprias). Nenhum sprite do Lote 2 gerado ainda.
 - ⬜ Inspecionar a fidelidade ao estilo HD cartoon em escala real na Unity; obter aprovação do diretor antes de incorporar os remodelados. VFX únicos, IA, spawns e gameplays dos novos inimigos seguem pendentes.
+
+## Regra permanente — entrega obrigatoriamente jogável (12/10/2026)
+**Exigência do usuário:** parar de entregar arte conceitual ou pranchas avulsas como se fossem conclusão de produção. Para cada novo inimigo, criar os assets **no projeto Unity**, com sprites importados, animações de caminhada, ataque e habilidades em três direções, movimentação/IA, hitbox, VFX, dano e cooldown realmente funcionais. Chefes têm duas habilidades. Validar em runtime Unity antes de declarar pronto. **Detalhes:** [Regra obrigatória de assets jogáveis](asset_catalog/REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md).
+- ⬜ Lote 2 — piloto jogável de `mantis_reaver`, `scarab_brute` e `moth_hexer` com modelagem 2D refinada e rigs próprios; status ainda não implementado.
+- ⬜ Integrar em Unity movimentos, ataques, habilidades e testes reais; só então avançar nas demais 12 criaturas.
