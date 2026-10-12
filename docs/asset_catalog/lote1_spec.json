@@ -3,9 +3,9 @@
   "lot_id": "LOTE_01",
   "game": "Crônicas de Aetheria: A Centelha",
   "engine": "Unity 2022.3 LTS",
-  "visual_guard": "Maintain existing HD cartoon quality, coloured outlines, Cairo palettes, smooth shading, original silhouettes. Preserve previously approved sprites and environments.",
+  "visual_guard": "Maintain existing HD cartoon quality, coloured outlines, Cairo palettes, smooth shading, original silhouettes. Preserve previously approved sprites and environments. Lote 1 remodel: eight independently drawn body plans, not re-skins or weapon-only variations; compare actual before/after sprite frames.",
   "naming": "SpriteAnim.Play uses directional names such as cast_down; 'cast' is skill 1, bosses need NEW skill_2 tracks; left uses mirrored _side.",
-  "note": "All 15 creature atlases generated with 3 directional views for each action, including two ability animations for all 5 bosses. Art awaits visual approval and real Unity playtest; no new gameplay AI/VFX/spawns integrated.",
+  "note": "All 15 creature animation atlases generated. Eight visually repetitive species rebuilt with bespoke anatomies on the feature branch; new assets still need visual approval, actual Unity screenshots, VFX and gameplay integration.",
   "roster": [
     {
       "id": "imp_scout",
@@ -15,8 +15,8 @@
       "region": "Bosque dos Chifres",
       "placement": "candidate_spawn",
       "visual": {
-        "silhouette": "Corpo estreito, asas finas, chifres curtos, adaga curva e olhos âmbar",
-        "rig_family": "imp",
+        "silhouette": "Batedor voador de corpo estreito e cabeça triangular; enormes asas como raias, pernas finíssimas e cauda-ferroada anatômica. Não usa adaga como definidora.",
+        "rig_family": "vesper_bat_ray",
         "frameW": 144,
         "frameH": 144,
         "pivotX": 72,
@@ -110,7 +110,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {
@@ -121,8 +123,8 @@
       "region": "Bosque dos Chifres",
       "placement": "candidate_spawn",
       "visual": {
-        "silhouette": "Pele vinho, dentes proeminentes, sucata no ombro e faca serrilhada",
-        "rig_family": "imp",
+        "silhouette": "Saqueador de dorso corcunda, quatro braços articulados, cabeça de mandíbula ampla e ombros assimétricos, sem asas.",
+        "rig_family": "four_armed_ogre",
         "frameW": 144,
         "frameH": 144,
         "pivotX": 72,
@@ -216,7 +218,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {
@@ -227,8 +231,8 @@
       "region": "Clareiras queimadas",
       "placement": "candidate_spawn",
       "visual": {
-        "silhouette": "Pele de brasa, mãos incandescentes, membranas chamuscadas e cauda em chama",
-        "rig_family": "imp",
+        "silhouette": "Salamandra de brasas rastejante em quatro patas; corpo horizontal, cauda longa e fileira de placas incandescentes, sem asas.",
+        "rig_family": "ember_salamander",
         "frameW": 144,
         "frameH": 144,
         "pivotX": 72,
@@ -322,7 +326,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {
@@ -545,8 +551,8 @@
       "region": "Bosque dos Chifres",
       "placement": "candidate_spawn",
       "visual": {
-        "silhouette": "Garganta e peito expandidos, espinhos cervicais com runas e olhos dourados",
-        "rig_family": "imp",
+        "silhouette": "Sapo infernal de quatro patas, corpo baixo largo, garganta inflável gigante e chifres laterais de ressonância.",
+        "rig_family": "resonant_hell_toad",
         "frameW": 160,
         "frameH": 160,
         "pivotX": 80,
@@ -640,7 +646,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {
@@ -757,8 +765,8 @@
       "region": "Patrulhas demoníacas",
       "placement": "candidate_spawn",
       "visual": {
-        "silhouette": "Lança bifurcada, armadura estreita e chifres reclinados",
-        "rig_family": "humanoid",
+        "silhouette": "Lanceiro naga de cauda serpentina enrolada e chifres em galhadas ramificadas; não possui pernas humanoides.",
+        "rig_family": "serpentine_naga",
         "frameW": 192,
         "frameH": 192,
         "pivotX": 96,
@@ -852,7 +860,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {
@@ -863,8 +873,8 @@
       "region": "Fortificações demoníacas",
       "placement": "candidate_spawn",
       "visual": {
-        "silhouette": "Escudo infernal alto, chifre quebrado, elmo parcial e peito blindado",
-        "rig_family": "humanoid",
+        "silhouette": "Guardião baixo de quatro patas, carapaça dorsal hexagonal integrada ao escudo e cabeça emergindo por uma abertura estreita.",
+        "rig_family": "tortoise_carapace_guard",
         "frameW": 208,
         "frameH": 192,
         "pivotX": 104,
@@ -958,7 +968,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {
@@ -969,8 +981,8 @@
       "region": "Clareiras de execução",
       "placement": "candidate_spawn",
       "visual": {
-        "silhouette": "Machado colossal, máscara de ferro, chifres largos e avental de batalha",
-        "rig_family": "humanoid",
+        "silhouette": "Ceifador ósseo altíssimo com pernas-pilares, quatro braços, costelas expostas e foice fundida ao próprio membro.",
+        "rig_family": "skeletal_stilt_reaper",
         "frameW": 224,
         "frameH": 224,
         "pivotX": 112,
@@ -1064,7 +1076,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {
@@ -1198,8 +1212,8 @@
       "region": "Posto fortificado demoníaco",
       "placement": "optional_not_part_of_story_boss_roster",
       "visual": {
-        "silhouette": "Oni colossal com chifres de metal, marreta de cerco e armadura em brasa",
-        "rig_family": "humanoid_boss",
+        "silhouette": "Chefe bovino de seis patas e grande corcova, chifres recurvos gigantes e crânio alongado; não é Oni humanoide ampliado.",
+        "rig_family": "six_legged_iron_bull",
         "frameW": 256,
         "frameH": 256,
         "pivotX": 128,
@@ -1310,7 +1324,9 @@
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
-        "skill_effects_implemented": false
+        "skill_effects_implemented": false,
+        "remodel_status": "rendered_candidate_requires_visual_approval",
+        "remodel_reason": "prior sprite silhouette was too similar to another creature; rebuilt with separate anatomy"
       }
     },
     {

@@ -1,0 +1,64 @@
+name: Lote 1 - Remodelagem de silhuetas
+on:
+  push:
+    branches: [gpt6-lote1-silhouettes-20261012]
+    paths:
+      - 'tools/art_hd/lote1_remodel.py'
+      - 'tools/art_hd/lote1_creatures.py'
+      - 'tools/art_hd/rework_gallery.py'
+      - '.github/workflows/lote1-silhouettes.yml'
+  workflow_dispatch:
+concurrency:
+  group: lote1-silhouettes-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Includes original feature base for true before-vs-after comparison.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install original Cairo art pipeline
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libcairo2-dev pkg-config python3-dev
+          python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
+      - name: Stage previous sprites for before-and-after comparison
+        run: python tools/art_hd/rework_gallery.py before
+      - name: Render original independent anatomies and animations
+        run: python -u tools/art_hd/build_lote1_art.py
+      - name: Test silhouette differences and create REAL sprite comparisons
+        run: python tools/art_hd/rework_gallery.py after
+      - name: Verify 15 atlas files against animation specifications
+        run: |
+          python tools/art_hd/verify_lote1.py
+          python tools/art_hd/verify_lote1_rendered.py
+      - name: Commit reviewed remodeled sprites to feature branch
+        if: github.ref == 'refs/heads/gpt6-lote1-silhouettes-20261012'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for id in imp_scout imp_raider imp_pyro imp_howler oni_lancer oni_shielder oni_executioner morgash_ironhorn; do
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.png"
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.json"
+            git add "docs/asset_catalog/previews/${id}.png"
+          done
+          git add docs/asset_catalog/previews/LOTE1_DEMONIOS.png
+          git add docs/asset_catalog/previews/LOTE1_CHEFES.png
+          git add docs/asset_catalog/previews/LOTE1_REMODEL_OITO.png
+          git add docs/asset_catalog/previews/LOTE1_REMODEL_COMPARACAO.png
+          if git diff --cached --quiet; then
+            echo 'No sprite changes'
+          else
+            git commit -m 'art: eight distinct anatomy silhouettes with real before-after previews'
+            # Rebase only this independent art commit if documentation was pushed during render.
+            git fetch origin gpt6-lote1-silhouettes-20261012
+            git rebase origin/gpt6-lote1-silhouettes-20261012
+            git push origin HEAD:gpt6-lote1-silhouettes-20261012
+          fi

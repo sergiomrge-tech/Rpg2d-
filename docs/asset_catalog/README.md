@@ -37,3 +37,18 @@ Status: 15 sprite sheets e seus JSONs renderizados; Unity runtime, screenshots r
 - [5 chefes](previews/LOTE1_CHEFES.png)
 
 A geração de 13 criaturas adicionais é feita por `tools/art_hd/build_lote1_art.py` (Python/Cairo), seguindo o mesmo pipeline e mantendo intactos os sprites originais.
+
+## Revisão anatômica do Lote 1
+
+Oito criaturas originalmente consideradas repetitivas receberam **rigs exclusivos desenhados do zero** com os materiais, contornos e sombras Cairo da identidade aprovada. Todos os PNGs e JSONs de animação passaram na validação automatizada; falta o gate visual com animação real na Unity.
+
+- [Visual dos oito novos corpos](previews/LOTE1_REMODEL_OITO.png)
+- [Comparação real antes e depois](previews/LOTE1_REMODEL_COMPARACAO.png)
+- Geração: `tools/art_hd/lote1_remodel.py` e `tools/art_hd/lote1_creatures.py`.
+- Teste: `tools/art_hd/rework_gallery.py` compara com o ref original `gpt6-lote1-all-sprites-20261012`, evitando comparar o sprite novo consigo mesmo.
+- [Lote 2 — ordem de produção dos 10 insetoides e 5 chefes](LOTE2_ORDEM_PRODUCAO.md); **ainda sem sprites**.
+
+**Nota:** os novos corpos substituem apenas versões candidatas na branch de revisão. A direção HD cartoon e os arquivos aprovados da base oficial são mantidos intactos.
+
+## Regra permanente do diretor
+**Não apresentar arte conceitual como entrega.** Toda nova criatura precisa ter assets importados **e funcionar na Unity** com animações, movimentos, ataques e habilidades reais antes de ser declarada pronta. [Leia os critérios completos de aceitação](REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md). As pranchas e PNGs existentes seguem classificados apenas como material de catálogo, nunca como inimigos integrados à jogabilidade.
