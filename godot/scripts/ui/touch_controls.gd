@@ -31,6 +31,7 @@ func setup(h: Hud) -> void:
 			c.visible = false     # keyboard hint is meaningless on a phone
 	hud.gold_icon.position = Vector2(300, 30)
 	hud.gold_text.position = Vector2(356, 28)
+	hud.clock_label.position = Vector2(300, 74)
 	layer = Control.new()
 	layer.size = Hud.SIZE
 	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -52,6 +53,13 @@ func setup(h: Hud) -> void:
 	_add_btn("roll", Vector2(1530, 690), 78, KEY_SPACE, "skill_roll", 1.0)
 	_add_btn("potion", Vector2(1830, 590), 68, KEY_Q, "potion", 1.0)
 	_add_btn("talk", Vector2(1290, 830), 62, KEY_E, "", 1.0)
+	_add_btn("meteor", Vector2(1330, 700), 62, KEY_R, "skill_spark", 1.0)
+	_add_btn("storm", Vector2(1420, 560), 62, KEY_F, "skill_spark", 1.0)
+	for b in _buttons:
+		if b["id"] == "meteor":
+			b["c"].get_child(0).modulate = Color(1.0, 0.55, 0.25)
+		elif b["id"] == "storm":
+			b["c"].get_child(0).modulate = Color(0.55, 0.8, 1.0)
 	_add_btn("book", Vector2(560, 62), 46, KEY_TAB, "", 0.8)
 	_add_btn("menu", Vector2(665, 62), 46, KEY_ESCAPE, "", 0.8)
 	# menu navigation pad (grimoire / options)
@@ -118,16 +126,19 @@ func _process(_dt: float) -> void:
 		_stick_id = -1
 		_stick_idle()
 	var talking := hud.in_dialogue()
+	var mage: bool = Game.player != null and Game.player.gs.class_id == "mage"
 	for b in _buttons:
 		if b["id"] == "talk":
 			b["c"].modulate.a = 1.0 if _near_npc() else 0.35
+		elif b["id"] == "meteor" or b["id"] == "storm":
+			b["c"].visible = mage
 
 
 func _near_npc() -> bool:
 	if Game.player == null:
 		return false
 	for n in Game.world.entities.get_children():
-		if n is Npc and (n.global_position - Game.player.global_position).length() < 2.4 * 64.0:
+		if n is Npc and n.visible and (n.global_position - Game.player.global_position).length() < 2.4 * 64.0:
 			return true
 	return false
 
@@ -141,6 +152,8 @@ func _virtual(p: Vector2) -> Vector2:
 func _button_at(v: Vector2) -> Dictionary:
 	var menu := _menu_open()
 	for b in _buttons:
+		if not b["c"].visible:
+			continue
 		if b["pad"] != menu and not (not b["pad"] and menu and (b["id"] == "menu")):
 			continue
 		if (v - b["center"]).length() <= b["r"] * 1.15:

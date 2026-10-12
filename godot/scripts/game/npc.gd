@@ -9,6 +9,7 @@ var home_facing: int = Util.Face.DOWN
 var think := 0.0
 var stroll := Vector2.ZERO
 var talking := false
+const NIGHT_OFF := ["smith_v", "shopkeeper", "armorer", "librarian", "stable_master", "blacksmith", "villager", "child", "cleric", "noble"]
 
 
 static func spawn(m: Dictionary) -> Npc:
@@ -34,6 +35,14 @@ static func spawn(m: Dictionary) -> Npc:
 
 
 func _physics_process(dt: float) -> void:
+	# daily routine: shopkeepers and townsfolk go indoors at night (the tavern keeper and the guards stay up)
+	var asleep: bool = id in NIGHT_OFF and Game.is_night()
+	if asleep == visible:
+		visible = not asleep
+		collision_layer = 0 if asleep else 8
+	if asleep:
+		velocity = Vector2.ZERO
+		return
 	var p := Player.I
 	var near := p != null and (p.global_position - global_position).length() < 2.6 * T
 	if near or talking:

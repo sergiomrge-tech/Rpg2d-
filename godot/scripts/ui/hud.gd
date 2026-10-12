@@ -18,6 +18,8 @@ var mp_fill: TextureProgressBar
 var hp_text: Label
 var level_text: Label
 var gold_text: Label
+var clock_label: Label
+var side_label: Label
 var quest_head: Label
 var quest_sub: Label
 var quest_c: Control
@@ -37,6 +39,7 @@ var mp_shown := 1.0
 var hurt_amt := 0.0
 
 var orb_cd: Array = []
+var area_orbs: Array = []
 var potion_count: Label
 
 var feeds: Array = []        # {c: Control, t: float}
@@ -182,6 +185,8 @@ func _build() -> void:
 	gold_icon = img(root, Sheets.icon("coin"), Vector2(0, 1), Vector2(58, -52), Vector2(46, 46))
 	gold_text = txt(root, "0", serif, 30, Color(1, 0.88, 0.45), Vector2(0, 1), Vector2(170, -52), Vector2(160, 40), HORIZONTAL_ALIGNMENT_LEFT)
 
+	clock_label = txt(root, "", sans, 22, Color(1, 0.95, 0.75), Vector2(0, 1), Vector2(170, -92), Vector2(220, 30), HORIZONTAL_ALIGNMENT_LEFT)
+
 	# ---- quest tracker (top-right)
 	var q := ctl(root, Vector2(1, 1), Vector2(-250, -90), Vector2(460, 140))
 	quest_c = q
@@ -214,6 +219,8 @@ func _build() -> void:
 	root.add_child(compass_label)
 	compass_label.visible = false
 
+	side_label = txt(root, "", sans, 20, Color(0.82, 0.94, 1.0), Vector2(1, 1), Vector2(-250, -214), Vector2(470, 100), HORIZONTAL_ALIGNMENT_CENTER, true, VERTICAL_ALIGNMENT_TOP)
+
 	# ---- skill orbs fanned along an arc (bottom-right)
 	var fan := ctl(root, Vector2(1, 0), Vector2(-170, 150), Vector2(10, 10))
 	fan_node = fan
@@ -240,6 +247,24 @@ func _build() -> void:
 		txt(o, keys[i], bold, 20, Color(1, 0.95, 0.8), Vector2(0.5, 0), Vector2(0, -6), Vector2(100, 24))
 		if i == 3:
 			potion_count = txt(o, "", serif, 24, Color.WHITE, Vector2(1, 1), Vector2(-14, -14), Vector2(40, 30))
+	# mage-only area-spell orbs (shown for the Mage class)
+	for j in 2:
+		var p2 := Vector2(95, 262) if j == 0 else Vector2(-12, 252)
+		var o2 := img(fan, Sheets.ui("orb"), C, p2, Vector2(96, 96))
+		var ic2 := img(o2, Sheets.icon("skill_spark"), C, Vector2.ZERO, Vector2(54, 54))
+		ic2.modulate = Color(1.0, 0.55, 0.25) if j == 0 else Color(0.55, 0.8, 1.0)
+		var cd2 := TextureProgressBar.new()
+		cd2.fill_mode = TextureProgressBar.FILL_CLOCKWISE
+		cd2.min_value = 0.0
+		cd2.max_value = 1.0
+		cd2.step = 0.0001
+		cd2.texture_progress = Sheets.ui("orb_shade")
+		var nat2 := Vector2(cd2.texture_progress.get_size())
+		ctl(o2, C, Vector2.ZERO, nat2, cd2)
+		cd2.scale = Vector2.ONE * 96.0 * 0.8 / nat2.x
+		cd2.value = 0.0
+		txt(o2, "R" if j == 0 else "F", bold, 20, Color(1, 0.95, 0.8), Vector2(0.5, 0), Vector2(0, -6), Vector2(60, 24))
+		area_orbs.append({"orb": o2, "cd": cd2})
 	txt(root, "WASD mover · Shift correr · E falar · Tab grimório · Esc opções", sans, 20, Color(1, 1, 1, 0.7), Vector2(1, 0), Vector2(-250, 26), Vector2(520, 28))
 
 	# ---- cutscene backdrop
@@ -460,7 +485,18 @@ func _process(delta: float) -> void:
 		orb_cd[1].value = 1.0 - p.mp / 12.0 if p.mp < 12.0 else 0.0
 		# Melee and dodge have no stamina requirement; the orbs stay ready.
 		orb_cd[2].value = 0.0
+		var is_mage := p.gs.class_id == "mage"
+		for i in area_orbs.size():
+			area_orbs[i]["orb"].visible = is_mage
+			var cdv: float = p.meteor_cd if i == 0 else p.storm_cd
+			var cmax := 11.0 if i == 0 else 9.0
+			area_orbs[i]["cd"].value = clampf(cdv / cmax, 0.0, 1.0) if p.mp >= (38.0 if i == 0 else 30.0) else 1.0
 		orb_cd[0].value = 0.0
+	var sl: Array = Game.side_lines()
+	side_label.text = "\n".join(sl.map(func(x): return "◇ " + str(x)))
+	var ph := Game.phase_name()
+	clock_label.text = ph
+	clock_label.modulate = {"Dia": Color(1, 0.95, 0.6), "Entardecer": Color(1, 0.7, 0.45), "Noite": Color(0.65, 0.75, 1.0), "Amanhecer": Color(1, 0.8, 0.7)}.get(ph, Color(0.8, 0.8, 0.85))
 	var ql := Game.quest_line().split("\n")
 	quest_head.text = ql[0]
 	quest_sub.text = ql[1] if ql.size() > 1 else ""

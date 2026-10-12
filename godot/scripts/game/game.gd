@@ -53,6 +53,7 @@ var class_select: ClassSelect
 var in_menu := false
 
 var _time := 0.0
+var clock := 0.0               # world clock in seconds (day length = World.DAY_LENGTH); starts at midday
 var _hit_until := 0
 var _slowmo := false
 var _ts := 1.0
@@ -145,7 +146,7 @@ func start(m: Node2D) -> void:
 		hud.add_child(touch)
 		touch.setup(hud)
 	# Lower environmental hiss: leave room for the new soft-flute soundtrack.
-	Sfx.loop("ambience", 0.12)
+	Sfx.region_ambience(map_name)
 	Music.play(map_name)
 	if ui_smoke:
 		_ui_smoke_test()
@@ -222,6 +223,7 @@ func new_game(class_id: String = "warrior") -> void:
 	SpiritPet.active_pets.clear()
 	flags.clear()
 	quests.clear()
+	clock = 0.0
 	_announced = {"__init": true}
 	_load_map_now("village")
 	world.spawn_actors()
@@ -238,8 +240,27 @@ func new_game(class_id: String = "warrior") -> void:
 	_begin()
 
 
+func is_night() -> bool:
+	return world != null and world.night_amount() > 0.72
+
+
+## Day phase for the HUD: Dia / Entardecer / Noite / Amanhecer (caves and fortresses are always "Interior").
+func phase_name() -> String:
+	if world == null or not world._outdoor:
+		return "Interior"
+	var f := fmod(clock / World.DAY_LENGTH, 1.0)
+	var n := world.night_amount()
+	if n < 0.25:
+		return "Dia"
+	if n > 0.75:
+		return "Noite"
+	return "Entardecer" if f < 0.5 else "Amanhecer"
+
+
 func _process(dt: float) -> void:
 	_time += dt
+	if not get_tree().paused:
+		clock += dt
 	var want := 1.0
 	if Time.get_ticks_msec() < _hit_until:
 		want = 0.05
@@ -331,6 +352,7 @@ func travel(to: String) -> void:
 	world.spawn_actors()
 	camera.snap()
 	_travel_cd = 1.5
+	Sfx.region_ambience(to)
 	if MAP_TITLES.has(to):
 		hud.banner(MAP_TITLES[to][0], MAP_TITLES[to][1])
 	save()
@@ -343,7 +365,7 @@ func interact(p: Player) -> void:
 	var best: Npc = null
 	var bd := 2.2 * 64.0
 	for n in world.entities.get_children():
-		if n is Npc:
+		if n is Npc and n.visible:
 			var d: float = (n.global_position - p.global_position).length()
 			if d < bd:
 				bd = d
@@ -362,6 +384,30 @@ func interact(p: Player) -> void:
 			npc.queue_free()
 			hud.banner("Sylra entrou no grupo", "Arqueira de Velmoor")
 		save())
+
+
+func cache_count() -> int:
+	var n := 0
+	for k in flags:
+		if str(k).begins_with("cache_"):
+			n += 1
+	return n
+
+
+## Short progress lines for the active side quests (HUD, under the main objective).
+func side_lines() -> Array:
+	var out: Array = []
+	if flags.has("sq_horns_on") and not flags.has("sq_horns_done"):
+		out.append("Marta: Chifres %d/3" % mini(state.count("imp_horn"), 3))
+	if flags.has("sq_forge_on") and not flags.has("sq_forge_done"):
+		out.append("Hargrim: Brasas %d/4" % mini(state.count("hell_ember"), 4))
+	if flags.has("sq_herbs_on") and not flags.has("sq_herbs_done"):
+		out.append("Dorna: Insetoides %d/6" % mini(quest_progress("q_insects"), 6))
+	if flags.has("sq_mead_on") and not flags.has("sq_mead_done"):
+		out.append("Levar o hidromel ao Capitão Brandt")
+	if flags.has("sq_relics_on") and not flags.has("sq_relics_done"):
+		out.append("Orrin: Baús %d/3" % mini(cache_count() - quest_progress("q_relic_base"), 3))
+	return out
 
 
 func start_quest(id: String) -> void:
@@ -518,6 +564,8 @@ func _watch_quest_flags() -> void:
 func on_enemy_killed(e: Enemy) -> void:
 	if quests.has(Story.QUEST_IMPS) and e.def["id"] == "imp":
 		quests[Story.QUEST_IMPS] = int(quests[Story.QUEST_IMPS]) + 1
+	if quests.has("q_insects") and String(e.def.get("behavior", "")) != "" and not e.def["boss"]:
+		quests["q_insects"] = int(quests["q_insects"]) + 1
 	if e.def["id"] == "malgrath":
 		flags["malgrath_dead"] = true
 		save()
@@ -812,7 +860,7 @@ func _ui_smoke_test() -> void:
 func save() -> void:
 	if ci_dir != "":
 		return
-	var d := {"state": state.to_dict(), "flags": flags.keys(), "quests": quests, "map": map_name}
+	var d := {"state": state.to_dict(), "flags": flags.keys(), "quests": quests, "map": map_name, "clock": clock}
 	if player:
 		d["px"] = player.global_position.x
 		d["py"] = player.global_position.y
@@ -853,6 +901,7 @@ func _load() -> void:
 	if d.is_empty():
 		return
 	state.from_dict(d["state"])
+	clock = float(d.get("clock", 0.0))
 	for k in d.get("flags", []):
 		flags[k] = true
 	for k in d.get("quests", {}):
@@ -1019,6 +1068,8 @@ func _ci_shots() -> void:
 				camera.snap()
 				await _wait(0.6)
 				await shot("11_valemont_" + spot[0])
+	await _ci_mage()
+	await _ci_life()
 	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")
@@ -1204,3 +1255,107 @@ func _ci_touch() -> void:
 	Input.parse_input_event(b2)
 	player.input_locked = true
 	player.scripted_move = Vector2.ZERO
+
+
+## Mage area spells: casts Meteor Rain and Lightning Storm on a pack of demons and reports the damage dealt.
+func _ci_mage() -> void:
+	_tour_to("village")
+	_travel_cd = 999.0
+	state.class_id = "mage"
+	state.max_mp = 999.0
+	player.mp = 999.0
+	player.anim.setup(HeroClasses.sheet_for("mage"))
+	player.input_locked = false
+	player.invuln = 99.0
+	var pack: Array = []
+	for i in 7:
+		pack.append(Enemy.spawn("imp", Vector2(2496, 3000) + Vector2(randf_range(-150, 150), randf_range(-110, 110)), 8))
+	player.global_position = Vector2(2496, 3000) + Vector2(-4.2 * 64.0, 3.4 * 64.0)
+	player.face(Util.Face.RIGHT)
+	camera.snap()
+	await _wait(0.6)
+	var hp0 := 0.0
+	for e in pack:
+		hp0 += e.hp
+	player._try_area("meteor")
+	await _wait(1.6)
+	await shot("50_mage_meteor_a")
+	await _wait(1.2)
+	await shot("51_mage_meteor_b")
+	await _wait(1.6)
+	var hp1 := 0.0
+	var alive := 0
+	for e in pack:
+		if is_instance_valid(e) and not e.dead:
+			hp1 += e.hp
+			alive += 1
+	print("[ci] meteor rain: pack hp ", roundi(hp0), " -> ", roundi(hp1), " alive ", alive, "/", pack.size())
+	var pack2: Array = []
+	for e in Enemy.all.duplicate():
+		if is_instance_valid(e) and not e.dead:
+			e.queue_free()
+	for i in 7:
+		pack2.append(Enemy.spawn("oni", Vector2(2496, 3000) + Vector2(randf_range(-170, 170), randf_range(-120, 120)), 8))
+	player.mp = 999.0
+	await _wait(0.5)
+	var hp2 := 0.0
+	for e in pack2:
+		hp2 += e.hp
+	player._try_area("storm")
+	await _wait(1.5)
+	await shot("52_mage_storm_a")
+	await _wait(1.0)
+	await shot("53_mage_storm_b")
+	await _wait(2.4)
+	var hp3 := 0.0
+	var alive2 := 0
+	for e in pack2:
+		if is_instance_valid(e) and not e.dead:
+			hp3 += e.hp
+			alive2 += 1
+	print("[ci] lightning storm: pack hp ", roundi(hp2), " -> ", roundi(hp3), " alive ", alive2, "/", pack2.size())
+	for e in Enemy.all.duplicate():
+		if is_instance_valid(e):
+			e.queue_free()
+	state.class_id = "warrior"
+	player.anim.setup(HeroClasses.sheet_for("warrior"))
+	player.input_locked = true
+
+
+## Side quests and the day/night routine.
+func _ci_life() -> void:
+	_tour_to("valemont")
+	_travel_cd = 999.0
+	player.input_locked = false
+	# side quests: offer, then complete by granting the requirements
+	var before := side_lines().size()
+	for who in ["smith_v", "shopkeeper", "librarian", "tavern_keeper", "villager"]:
+		Story.talk(who)
+	print("[ci] side quests active: ", side_lines().size(), " (before ", before, ")")
+	state.add("hell_ember", 4)
+	state.add("imp_horn", 3)
+	quests["q_insects"] = 6
+	for k in ["cache_a", "cache_b", "cache_c"]:
+		flags[k] = true
+	var lines := 0
+	for who in ["smith_v", "shopkeeper", "librarian", "guard_captain", "villager"]:
+		lines += Story.talk(who).size()
+	print("[ci] side quest rewards given, remaining active: ", side_lines().size(), " gold ", state.gold, " spark_tome ", state.count("spark_tome"))
+	# night routine
+	clock = World.DAY_LENGTH * 0.5
+	await _wait(1.5)
+	var hidden := 0
+	var total := 0
+	for n in world.entities.get_children():
+		if n is Npc or n is Citizen:
+			total += 1
+			if not n.visible:
+				hidden += 1
+	print("[ci] night: ", phase_name(), " hidden townsfolk ", hidden, "/", total)
+	player.global_position = Vector2(50, 54) * 64.0
+	camera.snap()
+	await _wait(0.8)
+	await shot("60_valemont_noite")
+	clock = 0.0
+	await _wait(1.0)
+	player.input_locked = true

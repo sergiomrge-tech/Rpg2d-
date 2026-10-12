@@ -91,6 +91,28 @@ func whisper(ch: String, voice: float, vol: float = 0.3) -> void:
 	play("wh_%s_%d" % [clip, _rng.randi() % 3], vol, lerpf(0.82, 1.28, voice) * _rng.randf_range(0.96, 1.05), "Voice")
 
 
+var _amb: AudioStreamPlayer
+const AMB_VOL := {"village": 0.5, "valemont": 0.35, "velmoor": 0.5, "kharis": 0.55, "mines": 0.5, "mirewail": 0.55, "peaks": 0.55, "castle": 0.4, "wastelands": 0.5, "citadel": 0.5}
+
+
+## Cross-fades to the ambience bed of a region.
+func region_ambience(map: String) -> void:
+	if _amb == null:
+		_amb = AudioStreamPlayer.new()
+		_amb.bus = "Sfx"
+		_amb.volume_db = -60.0
+		add_child(_amb)
+	var c := _clip("amb_" + map)
+	if _amb.stream == c and _amb.playing:
+		return
+	var tw := create_tween()
+	tw.tween_property(_amb, "volume_db", -60.0, 0.5)
+	tw.tween_callback(func():
+		_amb.stream = c
+		_amb.play())
+	tw.tween_property(_amb, "volume_db", linear_to_db(float(AMB_VOL.get(map, 0.4)) * 0.45), 1.5)
+
+
 func loop(name: String, vol: float) -> void:
 	var p := AudioStreamPlayer.new()
 	p.stream = _clip(name)
@@ -120,7 +142,7 @@ func _clip(name: String) -> AudioStreamWAV:
 	for i in d.size():
 		bytes.encode_s16(i * 2, clampi(int(d[i] * 32000.0), -32767, 32767))
 	w.data = bytes
-	if name == "ambience" or name == "murmur" or name == "water":
+	if name == "ambience" or name == "murmur" or name == "water" or name.begins_with("amb_"):
 		w.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		w.loop_end = d.size()
 	_clips[name] = w
@@ -276,7 +298,108 @@ func _footstep(n: String) -> PackedFloat32Array:
 	return b
 
 
+## Looping regional ambience ("amb_<map>"): each region gets its own bed of wind, birds, crickets, drips, frogs, embers...
+func _ambience(map: String) -> PackedFloat32Array:
+	var sec := 8.0
+	var b := _buf(sec)
+	var y := 0.0
+	var y2 := 0.0
+	var wind_k := 0.02
+	var wind_gain := 0.5
+	var lfo := 0.25
+	match map:
+		"kharis": wind_k = 0.05; wind_gain = 0.9; lfo = 0.4
+		"peaks": wind_k = 0.035; wind_gain = 1.0; lfo = 0.3
+		"castle", "citadel": wind_k = 0.03; wind_gain = 0.8
+		"mines": wind_k = 0.012; wind_gain = 0.25
+		"wastelands": wind_k = 0.015; wind_gain = 0.45
+	for i in b.size():
+		var t := i / float(RATE)
+		y += (_n() - y) * wind_k
+		y2 += (y - y2) * 0.3
+		var gust := 0.55 + 0.45 * sin(TAU * t * lfo / 2.0 + 1.0) * sin(TAU * t * lfo * 0.37)
+		b[i] = (y - y2 * 0.2) * gust * wind_gain
+	# helper events baked into the loop
+	match map:
+		"village", "valemont":
+			for k in 9:      # birds
+				_chirp(b, _rng.randf() * (sec - 0.6), _rng.randf_range(2400.0, 4200.0), 0.5)
+		"velmoor":
+			for i in b.size():      # crickets
+				var t := i / float(RATE)
+				var pulse := maxf(0.0, sin(TAU * 11.0 * t)) * (0.5 + 0.5 * sin(TAU * t * 0.4))
+				b[i] += sin(TAU * 4300.0 * t) * pulse * 0.05
+			for k in 3:
+				_chirp(b, _rng.randf() * (sec - 0.6), _rng.randf_range(1500.0, 2200.0), 0.3)
+		"mines":
+			for k in 8:     # water drips
+				_drip(b, _rng.randf() * (sec - 0.4))
+		"mirewail":
+			for k in 7:     # frogs
+				_croak(b, _rng.randf() * (sec - 0.8))
+			for k in 4:
+				_drip(b, _rng.randf() * (sec - 0.4))
+		"wastelands":
+			for k in 90:    # embers crackling
+				_pop(b, _rng.randf() * (sec - 0.1))
+		"citadel":
+			for i in b.size():      # demonic drone
+				var t := i / float(RATE)
+				b[i] += (sin(TAU * 55.0 * t) + 0.5 * sin(TAU * 55.7 * t) + 0.3 * sin(TAU * 110.4 * t)) * 0.07
+		"kharis", "peaks", "castle":
+			pass
+	for i in b.size():          # seamless loop
+		var u := float(i) / b.size()
+		b[i] *= minf(1.0, minf(u, 1.0 - u) * 20.0)
+	return b
+
+
+func _chirp(b: PackedFloat32Array, t0: float, f0: float, vol: float) -> void:
+	var s0 := int(t0 * RATE)
+	var n := int(RATE * _rng.randf_range(0.08, 0.22))
+	var up := _rng.randf() < 0.5
+	for i in n:
+		if s0 + i >= b.size():
+			return
+		var u := float(i) / n
+		var f := f0 * (1.0 + (0.35 if up else -0.3) * u + 0.08 * sin(u * 40.0))
+		b[s0 + i] += sin(TAU * f * (i / float(RATE))) * sin(PI * u) * vol * 0.2
+
+
+func _drip(b: PackedFloat32Array, t0: float) -> void:
+	var s0 := int(t0 * RATE)
+	var f := _rng.randf_range(700.0, 1300.0)
+	for i in int(RATE * 0.25):
+		if s0 + i >= b.size():
+			return
+		var t := i / float(RATE)
+		b[s0 + i] += sin(TAU * f * (1.0 + 0.5 * t) * t) * exp(-t * 22.0) * 0.28
+
+
+func _croak(b: PackedFloat32Array, t0: float) -> void:
+	var s0 := int(t0 * RATE)
+	var f := _rng.randf_range(160.0, 260.0)
+	var n := int(RATE * 0.5)
+	for i in n:
+		if s0 + i >= b.size():
+			return
+		var t := i / float(RATE)
+		var u := float(i) / n
+		var gate := maxf(0.0, sin(TAU * 14.0 * t))
+		b[s0 + i] += (fmod(t * f, 1.0) * 2.0 - 1.0) * gate * sin(PI * u) * 0.14
+
+
+func _pop(b: PackedFloat32Array, t0: float) -> void:
+	var s0 := int(t0 * RATE)
+	for i in int(RATE * 0.02):
+		if s0 + i >= b.size():
+			return
+		b[s0 + i] += _n() * exp(-i / (RATE * 0.004)) * _rng.randf_range(0.1, 0.4)
+
+
 func _synth(n: String) -> PackedFloat32Array:
+	if n.begins_with("amb_"):
+		return _ambience(n.substr(4))
 	if n.begins_with("fs_"):
 		return _footstep(n)
 	if n.begins_with("wh_"):

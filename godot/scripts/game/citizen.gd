@@ -11,6 +11,7 @@ var route: Array = []
 var idx := 0
 var wait := 0.0
 var map_key := "valemont"
+var look := ""
 var bark_cd := 0.0
 var stuck_t := 0.0
 var _last := Vector2.ZERO
@@ -22,6 +23,7 @@ static func spawn(w: Dictionary, map: String) -> Citizen:
 	c.collision_layer = 8
 	c.collision_mask = 1
 	c.map_key = map
+	c.look = str(w["look"])
 	for p in w["route"]:
 		c.route.append(Vector2(float(p[0]), float(p[1])))
 	c.build("Sprites/Chars/" + str(w["look"]), 1.2, 0.4, 0.3)
@@ -37,6 +39,14 @@ static func spawn(w: Dictionary, map: String) -> Citizen:
 
 
 func _physics_process(dt: float) -> void:
+	# townsfolk go home at night; the guards keep patrolling
+	var asleep: bool = Game.is_night() and look != "v_guard"
+	if asleep == visible:
+		visible = not asleep
+		collision_layer = 0 if asleep else 8
+	if asleep:
+		velocity = Vector2.ZERO
+		return
 	var p := Player.I
 	bark_cd -= dt
 	var near := p != null and (p.global_position - global_position).length() < 2.0 * T

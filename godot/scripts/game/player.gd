@@ -25,6 +25,8 @@ var sonic := 0.0
 var cast_action := ""
 var special_strike := false
 var special_cd := 0.0
+var meteor_cd := 0.0
+var storm_cd := 0.0
 
 const WALK := 4.0 * T
 const RUN := 6.4 * T
@@ -101,6 +103,8 @@ func _physics_process(dt: float) -> void:
 	hex_slow = maxf(0.0, hex_slow - dt)
 	sonic = maxf(0.0, sonic - dt)
 	special_cd = maxf(0.0, special_cd - dt)
+	meteor_cd = maxf(0.0, meteor_cd - dt)
+	storm_cd = maxf(0.0, storm_cd - dt)
 	if venom > 0.0:
 		venom = maxf(0.0, venom - dt)
 		venom_tick -= dt
@@ -119,6 +123,8 @@ func _physics_process(dt: float) -> void:
 	if _pressed([KEY_K, -MOUSE_BUTTON_RIGHT]): _try_cast()
 	if _pressed([KEY_SPACE]): _try_roll()
 	if _pressed([KEY_Q]): _use_potion()
+	if _pressed([KEY_R]): _try_area("meteor")
+	if _pressed([KEY_F]): _try_area("storm")
 	if _pressed([KEY_E]): Game.interact(self)
 
 	match state:
@@ -265,6 +271,12 @@ func _on_anim_hit(a: String) -> void:
 				if gs.class_id == "mage":
 					Projectile.spark(origin, dir, gs.total_mag() * .74, mini(gs.spark_tier, 3), true)
 					Sfx.play("spark", .5, 1.05)
+			"meteor_rain":
+				if gs.class_id == "mage":
+					AreaSpell.meteor_rain(AreaSpell.pick_center(self, 9.0), gs.total_mag() * (1.0 + 0.2 * (gs.spark_tier - 1)), float(HeroClasses.info(gs.class_id)["crit"]))
+			"lightning_storm":
+				if gs.class_id == "mage":
+					AreaSpell.lightning_storm(AreaSpell.pick_center(self, 9.0), gs.total_mag() * (1.0 + 0.2 * (gs.spark_tier - 1)), float(HeroClasses.info(gs.class_id)["crit"]))
 			"magic_burst":
 				if gs.class_id == "mage":
 					Projectile.spark(origin, dir, gs.total_mag() * (1.55 + .24 * (gs.spark_tier - 1)), mini(gs.spark_tier + 1, 3), true)
@@ -318,7 +330,7 @@ func _begin_cast(action: String, cost: float, cooldown: float = 0.0) -> void:
 	elif move_dir.length_squared() > .01:
 		face(Util.facing_from(move_dir, facing))
 	anim.play("cast", true)
-	if action in ["magic_basic", "magic_burst", "paladin_heal", "pet_summon"]:
+	if action in ["magic_basic", "magic_burst", "paladin_heal", "pet_summon", "meteor_rain", "lightning_storm"]:
 		Fx.magic_circle(pos(), gs.spark_tier if gs.class_id == "mage" else 1)
 		Sfx.play("charge", .38, 1.0)
 
@@ -347,6 +359,30 @@ func _try_cast() -> void:
 			_start_attack(3)  # dual-dagger finisher, no mana and no spell
 		"summoner":
 			_begin_cast("pet_summon", 22.0, 1.6)
+
+
+## Mage-only area spells: R = Chuva de Meteoros, F = Tempestade de Raios.
+func _try_area(which: String) -> void:
+	if gs.class_id != "mage" or state != St.FREE:
+		return
+	if which == "meteor":
+		if meteor_cd > 0.0:
+			Fx.toast("Meteoros recarregando %.0fs" % meteor_cd, Color(1, 0.7, 0.4))
+			return
+		if mp < 38.0:
+			Fx.toast("Mana insuficiente", Color(.5, .75, 1.0))
+			return
+		meteor_cd = 11.0
+		_begin_cast("meteor_rain", 38.0)
+	else:
+		if storm_cd > 0.0:
+			Fx.toast("Tempestade recarregando %.0fs" % storm_cd, Color(0.6, 0.8, 1.0))
+			return
+		if mp < 30.0:
+			Fx.toast("Mana insuficiente", Color(.5, .75, 1.0))
+			return
+		storm_cd = 9.0
+		_begin_cast("lightning_storm", 30.0)
 
 
 func _try_roll() -> void:

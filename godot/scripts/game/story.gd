@@ -39,9 +39,82 @@ func _l(npc: String, text: String) -> Array:
 	return [npc, text]
 
 
+## Side quests handed out by the town services. Returns lines when the NPC offers or completes one, otherwise [].
+func _side_quest_talk(npc: String) -> Array:
+	var g := Game
+	var gs: GameState = g.state
+	match npc:
+		"villager":
+			if not g.flags.has("sq_horns_on"):
+				g.flags["sq_horns_on"] = true
+				return [_l(npc, "Ah, forasteiro! Minha sopa de chifre de diabrete é famosa... mas os caçadores sumiram."),
+					_l(npc, "Traga-me 3 Chifres de Diabrete e eu lhe pago 40 de ouro e uma poção. Combinado?")]
+			if not g.flags.has("sq_horns_done") and gs.count("imp_horn") >= 3:
+				for i in 3:
+					gs.take("imp_horn")
+				gs.gold += 40
+				gs.add("potion", 1)
+				g.flags["sq_horns_done"] = true
+				g.hud.quest_complete("Sopa da Tia Marta")
+				return [_l(npc, "Três chifres lindos! Aqui, 40 de ouro e uma poção. Passe lá em casa quando quiser provar!")]
+		"smith_v":
+			if not g.flags.has("sq_forge_on"):
+				g.flags["sq_forge_on"] = true
+				return [_l(npc, "Humpf. Sou Hargrim, mestre de forja de Valemont. Minha fornalha está fria demais para o aço bom."),
+					_l(npc, "Traga 4 Brasas Infernais e eu forjo um amuleto de brasa só para você. Negócio de anão: palavra e fogo.")]
+			if not g.flags.has("sq_forge_done") and gs.count("hell_ember") >= 4:
+				for i in 4:
+					gs.take("hell_ember")
+				gs.gold += 150
+				gs.add("ember_charm", 1)
+				g.flags["sq_forge_done"] = true
+				g.hud.quest_complete("Brasas para a forja")
+				return [_l(npc, "Brasas das boas! *clang* *clang*... Pronto: um Amuleto de Brasa e 150 de ouro. Equipe no Grimório.")]
+		"shopkeeper":
+			if not g.flags.has("sq_herbs_on"):
+				g.flags["sq_herbs_on"] = true
+				g.start_quest("q_insects")
+				return [_l(npc, "Sou Dorna, a boticária. Os insetos gigantes soltam uma seiva rara que uso nas poções."),
+					_l(npc, "Derrote 6 insetoides (mantídeos, besouros, vespas...) e eu lhe dou éteres, poções e ouro.")]
+			if not g.flags.has("sq_herbs_done") and g.quest_progress("q_insects") >= 6:
+				gs.gold += 120
+				gs.add("ether", 3)
+				gs.add("potion", 3)
+				g.flags["sq_herbs_done"] = true
+				g.hud.quest_complete("Seiva dos insetoides")
+				return [_l(npc, "Que cheiro maravilhoso de seiva fresca! 120 de ouro, 3 éteres e 3 poções. Obrigada, herói!")]
+		"tavern_keeper":
+			if not g.flags.has("sq_mead_on"):
+				g.flags["sq_mead_on"] = true
+				return [_l(npc, "Escute, herói: o Capitão Brandt esqueceu de pagar o hidromel. De novo."),
+					_l(npc, "Leve este barril ao quartel e diga que a casa cobra juros. Ele paga bem... e eu fico em paz.")]
+		"guard_captain":
+			if g.flags.has("sq_mead_on") and not g.flags.has("sq_mead_done"):
+				gs.gold += 100
+				gs.add("potion", 2)
+				g.flags["sq_mead_done"] = true
+				g.hud.quest_complete("Hidromel do Javali Dourado")
+				return [_l(npc, "O barril da Bruna! ...Juros? Essa taverneira me conhece bem demais. Tome 100 de ouro e duas poções pelo transporte.")]
+		"librarian":
+			if not g.flags.has("sq_relics_on"):
+				g.flags["sq_relics_on"] = true
+				g.quests["q_relic_base"] = g.cache_count()
+				return [_l(npc, "Silêncio... as ruínas e acampamentos esconderam relíquias em baús antigos."),
+					_l(npc, "Abra 3 deles e eu lhe entrego um Tomo da Centelha da minha coleção pessoal.")]
+			if not g.flags.has("sq_relics_done") and g.cache_count() - g.quest_progress("q_relic_base") >= 3:
+				gs.add("spark_tome", 1)
+				g.flags["sq_relics_done"] = true
+				g.hud.quest_complete("Relíquias esquecidas")
+				return [_l(npc, "Três relíquias! Magnífico. Tome o Tomo da Centelha: use-o no Grimório (Tab) e sua magia evoluirá.")]
+	return []
+
+
 func talk(npc: String) -> Array:
 	var g := Game
 	var gs: GameState = g.state
+	var sq := _side_quest_talk(npc)
+	if not sq.is_empty():
+		return sq
 	for r in regions:
 		if r["npc"] != npc:
 			continue

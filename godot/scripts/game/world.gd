@@ -191,7 +191,7 @@ func add_entity(n: Node2D, at: Vector2) -> void:
 func night_amount() -> float:
 	if not _outdoor:
 		return 0.0
-	return 0.5 - 0.5 * cos(Game.time() / DAY_LENGTH * TAU)
+	return 0.5 - 0.5 * cos(Game.clock / DAY_LENGTH * TAU)
 
 
 func _process(dt: float) -> void:
