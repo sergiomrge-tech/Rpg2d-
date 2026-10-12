@@ -699,6 +699,10 @@ func _ui_smoke_test() -> void:
 		player.mp = trial.max_mp
 		player.hp = trial.hp_max()
 		player.input_locked = false
+		# Class switches here are test-only. Reset cooldowns that would
+		# never carry across separately created new-game characters.
+		player.special_cd = 0.0
+		player.special_strike = false
 		player._to_free()
 		if trial.class_id != id or trial.to_dict()["class_id"] != id:
 			push_error("[class-smoke] class not applied or saved: " + id)
