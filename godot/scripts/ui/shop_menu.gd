@@ -3,6 +3,8 @@ extends Node
 ## Blacksmith shop drawn on the leather book: stock for the hero's weapon type, armor, charms and forge embers.
 
 const ROWS := 7
+const PRICE_OVERRIDE := {"hell_ember": 90, "potion": 25, "ether": 30, "leather_vest": 90, "iron_mail": 220}
+const TITLES := {"blacksmith": "Ferreiro", "smith_v": "Ferreiro", "shopkeeper": "Boticário", "armorer": "Armaria"}
 
 var open := false
 var hud: Hud
@@ -49,8 +51,17 @@ func setup(h: Hud) -> void:
 func _build_stock() -> void:
 	var gs := Game.state
 	var fam: String = {"sword": "sw", "bow": "bw", "dual_daggers": "dg", "staff": "st"}.get(str(HeroClasses.info(gs.class_id)["weapon"]), "sw")
-	var tiers := [0, 1] if smith == "blacksmith" else [1, 2, 3]
 	stock = []
+	if smith == "shopkeeper":            # apothecary / general store
+		stock = ["potion", "ether", "leather_vest"]
+		return
+	if smith == "armorer":
+		for t in [1, 2, 3]:
+			for f in ["ar", "ch"]:
+				stock.append("%s_%d" % [f, t])
+		stock.append("iron_mail")
+		return
+	var tiers := [0, 1] if smith == "blacksmith" else [1, 2, 3]
 	for t in tiers:
 		for f in [fam, "ar", "ch"]:
 			stock.append("%s_%d" % [f, t])
@@ -131,8 +142,8 @@ func _sell_one(all: bool = false) -> void:
 func price(id: String) -> int:
 	var d: Dictionary = Data.items[id]
 	var v := float(d.get("value", 25))
-	if id == "hell_ember":
-		return 90
+	if PRICE_OVERRIDE.has(id):
+		return int(PRICE_OVERRIDE[id])
 	return roundi(v * (1.0 if int(d.get("slot", 0)) > 0 else 1.2))
 
 
@@ -278,7 +289,7 @@ func _refresh() -> void:
 	elif sel >= top + ROWS:
 		top = sel - ROWS + 1
 	# ---- left page: tabs + list
-	hud.txt(page, "Ferreiro", serif, 40, ink, C, Vector2(-335, 322), Vector2(500, 52), M, false)
+	hud.txt(page, str(TITLES.get(smith, "Loja")), serif, 40, ink, C, Vector2(-335, 322), Vector2(500, 52), M, false)
 	_btn(page, "Comprar", Vector2(-450, 272), Vector2(190, 44), _set_mode.bind(0), Color(0.4, 0.2, 0.08, 0.95) if mode == 0 else Color(0.3, 0.25, 0.2, 0.6))
 	_btn(page, "Vender", Vector2(-240, 272), Vector2(190, 44), _set_mode.bind(1), Color(0.4, 0.2, 0.08, 0.95) if mode == 1 else Color(0.3, 0.25, 0.2, 0.6))
 	if items.is_empty():
@@ -320,7 +331,7 @@ func _refresh() -> void:
 			rp.append("%s %d" % [SkillTree.ATTR_ABBR[ra], int(d["req"][ra])])
 		line += "\nRequer " + " ".join(rp) + ("  ✔" if gs.req_block(id) == "" else "  (faltam atributos)")
 	var det := hud.txt(page, line + ("\n" if line != "" else "") + str(d["desc"]), sans, 22, ink, C, Vector2(335, -30), Vector2(520, 180), M, false, VERTICAL_ALIGNMENT_TOP)
-	det.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.wrap(det, 520.0)
 	if mode == 0:
 		_btn(page, "Comprar  %d" % price(id), Vector2(335, -250), Vector2(300, 64), _buy, Color(0.4, 0.2, 0.08, 0.95))
 		if gs.count(id) > 0:

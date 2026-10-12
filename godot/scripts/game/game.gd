@@ -40,6 +40,7 @@ var grimoire: Grimoire
 var shop: ShopMenu
 var skills: SkillsMenu
 var board: GuildBoard
+var tavern: TavernMenu
 var options: OptionsMenu
 var marker: ObjectiveMarker
 var main: Node2D
@@ -56,6 +57,7 @@ var class_select: ClassSelect
 var in_menu := false
 
 var _time := 0.0
+var _int_npc := {}                # npc id -> interior map (data/interiors.json)
 var daily := {"day": -1, "quests": [], "bonus": false}   # guild daily board (see DailyBoard)
 var clock := 0.0               # world clock in seconds (day length = World.DAY_LENGTH); starts at midday
 var _hit_until := 0
@@ -70,6 +72,9 @@ var _bestiary_idx := 0
 
 
 func _ready() -> void:
+	var f_int := FileAccess.open("res://data/interiors.json", FileAccess.READ)
+	if f_int:
+		_int_npc = JSON.parse_string(f_int.get_as_text())
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var args := OS.get_cmdline_user_args()
 	for i in args.size() - 1:
@@ -147,6 +152,9 @@ func start(m: Node2D) -> void:
 	board = GuildBoard.new()
 	hud.add_child(board)
 	board.setup(hud)
+	tavern = TavernMenu.new()
+	hud.add_child(tavern)
+	tavern.setup(hud)
 	options = OptionsMenu.new()
 	hud.add_child(options)
 	options.setup(hud)
@@ -318,11 +326,11 @@ func _process(dt: float) -> void:
 		return
 	# Modal-first input: never consume Esc/Tab before the open overlay sees it.
 	# These keys used to be stolen from Grimoire/Options during pause.
-	if not in_menu and not grimoire.open and not shop.open and not skills.open and not board.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
+	if not in_menu and not grimoire.open and not shop.open and not skills.open and not board.open and not tavern.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
 		options.toggle()
-	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not board.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
+	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not board.open and not tavern.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
 		grimoire.toggle()
-	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not board.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_P):
+	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not board.open and not tavern.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_P):
 		skills.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
@@ -369,7 +377,19 @@ func _spawn_bestiary() -> void:
 
 
 # ------------------------------------------------------------------ travel
+## Clock-based night (works inside buildings, where the world itself is not "outdoor").
+func clock_night() -> bool:
+	return 0.5 - 0.5 * cos(clock / World.DAY_LENGTH * TAU) > 0.72
+
+
 func travel(to: String) -> void:
+	if to.begins_with("int_") and clock_night():
+		var idata = Sheets.read_json("Maps/" + to)
+		if idata != null and idata.get("closed_at_night", false):
+			Fx.toast("Fechado à noite — volte pela manhã", Color(1, 0.88, 0.55))
+			_travel_cd = 2.0
+			player.global_position += Vector2.DOWN * 1.3 * 64.0
+			return
 	if GATES.has(to) and not flags.has(GATES[to][0]):
 		Fx.toast(GATES[to][1], Color(1, 0.88, 0.55))
 		_travel_cd = 2.0
@@ -393,6 +413,8 @@ func travel(to: String) -> void:
 		if e["to"] == from:
 			var ep := Vector2(float(e["x"]), float(e["y"]))
 			at = ep + (world.bounds.get_center() - ep).normalized() * 2.4 * 64.0
+			if e.has("ax"):
+				at = Vector2(float(e["ax"]), float(e["ay"]))
 	world.add_entity(player, at)
 	if comp:
 		world.add_entity(comp, at + Vector2.LEFT * 64.0)
@@ -402,6 +424,8 @@ func travel(to: String) -> void:
 	Sfx.region_ambience(to)
 	if MAP_TITLES.has(to):
 		hud.banner(MAP_TITLES[to][0], MAP_TITLES[to][1])
+	elif world.data.get("interior", false):
+		hud.banner(str(world.data.get("title", "")), "Interior")
 	save()
 
 
@@ -417,6 +441,19 @@ func interact(p: Player) -> void:
 			if d < bd:
 				bd = d
 				best = n
+	var fur: Furniture = null
+	var fd := 2.1 * 64.0
+	for n in world.entities.get_children():
+		if n is Furniture and n.act != "":
+			var fp := Furniture.footprint(n.kind, n.w) * 64.0
+			var c: Vector2 = n.global_position + Vector2(0, -fp.y * 0.5)
+			var dd := maxf(0.0, absf(c.x - p.global_position.x) - fp.x * 0.5) + absf(c.y - p.global_position.y) * 0.8
+			if dd < fd:
+				fd = dd
+				fur = n
+	if fur != null and (best == null or fd < bd):
+		_furniture_act(fur)
+		return
 	if best == null:
 		return
 	var npc := best
@@ -429,8 +466,12 @@ func interact(p: Player) -> void:
 		p.input_locked = false
 		if (npc.id == "receptionist" or npc.id == "guildmaster") and was_member and not board.open:
 			board.open_board()
-		if (npc.id == "blacksmith" or npc.id == "smith_v") and not shop.open:
+		if npc.id in ["blacksmith", "smith_v", "shopkeeper", "armorer"] and not shop.open:
 			shop.open_for(npc.id)
+		if npc.id in ["tavern_keeper", "inn_aurora"] and not tavern.open:
+			tavern.open_for("inn")
+		if npc.id == "baker" and not tavern.open:
+			tavern.open_for("bakery")
 		if npc.id == "guard_captain" and (flags.has("game_complete") or state.ng_plus > 0) and not Abyss.active:
 			Abyss.start()
 		if npc.id == "sylra" and flags.has("sylra_joined") and Companion.I == null:
@@ -438,6 +479,17 @@ func interact(p: Player) -> void:
 			npc.queue_free()
 			hud.banner("Sylra entrou no grupo", "Arqueira de Velmoor")
 		save())
+
+
+func _furniture_act(fu: Furniture) -> void:
+	match fu.act:
+		"board":
+			if flags.has("guild_joined"):
+				board.open_board()
+			else:
+				Fx.toast("Registre-se na Guilda falando com a recepção", Color(1, 0.88, 0.55))
+		"rooms":
+			tavern.open_for("inn", 0)
 
 
 func cache_count() -> int:
@@ -476,6 +528,8 @@ func quest_progress(id: String) -> int:
 
 ## Objective = [headline, detail, map, kind ("npc" | "boss" | "enemy" | ""), id]
 func _o(head: String, detail: String, map: String = "", kind: String = "", id: String = "") -> Array:
+	if kind == "npc" and _int_npc.has(id):      # that NPC works inside a building
+		map = str(_int_npc[id])
 	return [head, detail, map, kind, id]
 
 
@@ -1089,6 +1143,26 @@ func shot(n: String) -> void:
 
 
 func _ci_shots() -> void:
+	if "-ciBuildings" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		await _ci_buildings()
+		print("[ci] done")
+		get_tree().quit()
+		return
+	if "-ciLock" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		await _ci_lock()
+		print("[ci] done")
+		get_tree().quit()
+		return
+	if "-ciInteriors" in OS.get_cmdline_user_args():
+		state.gold = 2000
+		flags["prologue"] = true
+		flags["guild_joined"] = true
+		await _ci_interiors()
+		print("[ci] done")
+		get_tree().quit()
+		return
 	menu = MainMenu.new()
 	hud.root.add_child(menu)
 	menu.setup(hud, true, true)
@@ -1179,6 +1253,9 @@ func _ci_shots() -> void:
 	await _ci_endgame()
 	await _ci_stats()
 	await _ci_passives()
+	await _ci_interiors()
+	await _ci_lock()
+	await _ci_buildings()
 	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")
@@ -1189,7 +1266,8 @@ func _ci_shots() -> void:
 func _tour_to(m: String) -> void:
 	_load_map_now(m)
 	world.spawn_actors()
-	hud.banner(MAP_TITLES[m][0], MAP_TITLES[m][1])
+	var t: Array = MAP_TITLES.get(m, [str(world.data.get("title", m)), ""])
+	hud.banner(t[0], t[1])
 
 
 func _load_map_now(m: String) -> void:
@@ -1771,3 +1849,169 @@ func _ci_passives() -> void:
 	await shot("80_passiva")
 	skills.toggle()
 	player.input_locked = true
+
+
+## Interiors: every room renders, doors lead in and out, shops close at night, the inn rents rooms and sells food.
+func _ci_interiors() -> void:
+	var names := ["int_guild_aurora", "int_smithy_aurora", "int_tavern_aurora", "int_guild_valemont", "int_tavern_valemont", "int_smithy_valemont",
+		"int_shop_valemont", "int_armory_valemont", "int_stable_valemont", "int_library_valemont", "int_barracks_valemont", "int_bakery_valemont"]
+	for n in names:
+		_tour_to(n)
+		_travel_cd = 999.0
+		player.input_locked = false
+		var npcs: Array = []
+		var furn := 0
+		for e in world.entities.get_children():
+			if e is Npc:
+				npcs.append(e.id)
+			elif e is Furniture:
+				furn += 1
+		print("[ci] interior ", n, " npcs ", npcs, " furniture ", furn)
+		await _wait(0.4)
+		await shot("90_" + n)
+	# doors both ways
+	for outdoor in ["village", "valemont"]:
+		await _ci_doors(outdoor)
+	# shops close at night
+	_tour_to("valemont")
+	player.input_locked = false
+	clock = World.DAY_LENGTH * 0.5
+	_travel_cd = 0.0
+	travel("int_shop_valemont")
+	print("[ci] night shop: map ", map_name, " tavern: ")
+	_travel_cd = 0.0
+	travel("int_tavern_valemont")
+	print("[ci] night tavern: map ", map_name)
+	# inn: rent a room + food
+	state.gold = 3000
+	state.level = 5
+	player.hp = 10.0
+	player.mp = 0.0
+	tavern.open_for("inn")
+	await _wait(0.3)
+	await shot("91_taverna_quartos")
+	tavern._set_tab(1)
+	tavern.sel = 2
+	tavern._refresh()
+	await _wait(0.3)
+	await shot("92_taverna_comida")
+	tavern._eat(2)
+	print("[ci] food buffs: ", state.buffs.keys(), " hp ", player.hp)
+	var c0 := clock
+	tavern._rent(1)
+	await _wait(0.6)
+	await shot("93_dormindo")
+	await _wait(5.5)
+	print("[ci] slept: clock ", c0, " -> ", clock, " hp ", player.hp, "/", state.hp_max(), " mp ", player.mp, " buffs ", state.buffs.keys(), " open ", tavern.open)
+	await _wait(0.5)
+	await shot("94_taverna_apos_dormir")
+	tavern.close()
+	clock = 0.0
+	player.input_locked = true
+
+
+## Target lock: T locks the nearest enemy, cycles, releases; attacks and spells go to the locked enemy even when facing away.
+func _ci_lock() -> void:
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	state.class_id = "warrior"
+	state.level = 12
+	player.anim.setup(HeroClasses.sheet_for("warrior"))
+	for old_e in Enemy.all.duplicate():
+		if is_instance_valid(old_e):
+			old_e.queue_free()
+	await _wait(0.2)
+	player.global_position = Vector2(2496, 3300)
+	camera.snap()
+	var a := Enemy.spawn("imp", player.global_position + Vector2(1.3 * 64, -0.9 * 64), 3)
+	var b := Enemy.spawn("oni", player.global_position + Vector2(-5.0 * 64, 1.0 * 64), 3)
+	var c := Enemy.spawn("imp", player.global_position + Vector2(7.0 * 64, -3.0 * 64), 3)
+	for e in [a, b, c]:
+		e.speed = 0.0
+		e.max_hp = 9999.0
+		e.hp = 9999.0
+	await _wait(0.4)
+	player.lock_cycle()
+	var first := player.lock_target
+	print("[ci] lock 1: nearest ", first == a)
+	player.lock_cycle()
+	print("[ci] lock 2: next ", player.lock_target == b)
+	player.lock_cycle()
+	print("[ci] lock 3: next ", player.lock_target == c)
+	player.lock_cycle()
+	print("[ci] lock 4: released ", player.lock_target == null)
+	player.lock_cycle()
+	await _wait(0.5)
+	await shot("95_trava_de_mira")
+	# melee strike while facing the opposite way: must still hit the locked imp
+	player.face(Util.Face.LEFT)
+	var hp0 := a.hp
+	player._try_attack()
+	await _wait(0.9)
+	print("[ci] lock melee: facing away, hit ", a.hp < hp0, " facing now ", player.facing)
+	# lock the far one and shoot as archer: projectile heads for it
+	player._set_lock(c)
+	state.class_id = "archer"
+	player.anim.setup(HeroClasses.sheet_for("archer"))
+	player.state = Player.St.FREE
+	var hc0 := c.hp
+	player.face(Util.Face.LEFT)
+	player._try_attack()
+	await _wait(1.6)
+	print("[ci] lock arrow: far target hit ", c.hp < hc0)
+	# the target dies: lock moves to the nearest neighbour
+	c.hurt(99999.0, c.global_position + Vector2.RIGHT, 0.0, 999.0)
+	await _wait(0.6)
+	print("[ci] dbg nearest from c: ", Enemy.nearest(c.global_position, 7.0 * 64.0), " dist a-c ", a.global_position.distance_to(c.global_position) / 64.0, " player dead ", player.dead, " all ", Enemy.all.size())
+	print("[ci] lock after kill: ", player.lock_target != null and player.lock_target != c, " c.dead ", c.dead, " lock ", player.lock_target, " a.dead ", a.dead, " b.dead ", b.dead)
+	for e in [a, b, c]:
+		if is_instance_valid(e):
+			e.queue_free()
+	await _wait(0.4)
+	print("[ci] lock cleared when none left: ", player.lock_target == null)
+	state.class_id = "warrior"
+	player.input_locked = true
+
+
+## 2.5D exteriors: front + side wall + roof volume.
+func _ci_buildings() -> void:
+	_tour_to("valemont")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	clock = 0.0
+	for spot in [["tavern", Vector2(4576, 3200)], ["guild", Vector2(3968, 2660)], ["smithy", Vector2(1920, 3690)], ["plaza", Vector2(3300, 3300)]]:
+		player.global_position = spot[1]
+		camera.snap()
+		await _wait(0.5)
+		await shot("96_predio_" + spot[0])
+	_tour_to("village")
+	player.input_locked = false
+	player.global_position = Vector2(2496, 1900)
+	camera.snap()
+	await _wait(0.5)
+	await shot("96_predio_aurora")
+
+
+func _ci_doors(outdoor: String) -> void:
+	if GATES.has(outdoor):
+		flags[GATES[outdoor][0]] = true       # the test walks through the town gate rule
+	_tour_to(outdoor)
+	_travel_cd = 0.0
+	player.input_locked = false
+	for e in world.data["exits"]:
+		if str(e["to"]).begins_with("int_"):
+			var want: String = e["to"]
+			var ax := float(e["ax"])
+			var ay := float(e["ay"])
+			player.global_position = Vector2(float(e["x"]), float(e["y"]))
+			_travel_cd = 0.0
+			await _wait(0.5)
+			var inside := map_name == want
+			var ex: Dictionary = world.data["exits"][0]
+			player.global_position = Vector2(float(ex["x"]), float(ex["y"]))
+			_travel_cd = 0.0
+			await _wait(0.5)
+			print("[ci] door ", outdoor, " -> ", want, ": entered ", inside, " back in ", map_name, " at ", player.global_position.distance_to(Vector2(ax, ay)) < 80.0)

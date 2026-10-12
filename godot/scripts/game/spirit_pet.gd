@@ -46,6 +46,9 @@ static func summon(p: Node2D) -> bool:
 static func command(p: Node2D) -> void:
 	var dir := Util.facing_vec(p.facing)
 	var target := Enemy.nearest(p.pos(), 12.0 * T, dir, .25)
+	var pl := p as Player
+	if pl != null and pl.lock_ok():
+		target = pl.lock_target
 	if target == null:
 		target = Enemy.nearest(p.pos(), 12.0 * T)
 	if target == null:

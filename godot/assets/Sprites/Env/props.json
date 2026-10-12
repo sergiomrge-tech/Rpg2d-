@@ -8,7 +8,8 @@
    "pivotY": 16,
    "colW": 26,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tree_round",
@@ -18,7 +19,8 @@
    "pivotY": 14,
    "colW": 22,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tree_pine",
@@ -28,7 +30,8 @@
    "pivotY": 14,
    "colW": 18,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "bush",
@@ -38,7 +41,8 @@
    "pivotY": 8,
    "colW": 40,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "bush_flower",
@@ -48,7 +52,8 @@
    "pivotY": 8,
    "colW": 40,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "rock_big",
@@ -58,7 +63,8 @@
    "pivotY": 12,
    "colW": 70,
    "colH": 22,
-   "colY": -4
+   "colY": -4,
+   "colX": 0
   },
   {
    "name": "rock_small",
@@ -68,7 +74,8 @@
    "pivotY": 6,
    "colW": 30,
    "colH": 10,
-   "colY": -2
+   "colY": -2,
+   "colX": 0
   },
   {
    "name": "stump",
@@ -78,7 +85,8 @@
    "pivotY": 8,
    "colW": 36,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tuft",
@@ -88,7 +96,8 @@
    "pivotY": 4,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "flowers",
@@ -98,7 +107,8 @@
    "pivotY": 8,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "fence",
@@ -108,7 +118,8 @@
    "pivotY": 10,
    "colW": 64,
    "colH": 8,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "fence_v",
@@ -118,7 +129,8 @@
    "pivotY": 10,
    "colW": 10,
    "colH": 64,
-   "colY": 32
+   "colY": 32,
+   "colX": 0
   },
   {
    "name": "barrel",
@@ -128,7 +140,8 @@
    "pivotY": 6,
    "colW": 36,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "crate",
@@ -138,7 +151,8 @@
    "pivotY": 6,
    "colW": 46,
    "colH": 16,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "well",
@@ -148,7 +162,8 @@
    "pivotY": 18,
    "colW": 80,
    "colH": 30,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "lamp",
@@ -158,7 +173,8 @@
    "pivotY": 8,
    "colW": 12,
    "colH": 8,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "sign",
@@ -168,7 +184,8 @@
    "pivotY": 8,
    "colW": 10,
    "colH": 8,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "quest_board",
@@ -178,7 +195,8 @@
    "pivotY": 12,
    "colW": 100,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "stall",
@@ -188,7 +206,8 @@
    "pivotY": 14,
    "colW": 140,
    "colH": 30,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "bridge",
@@ -198,37 +217,41 @@
    "pivotY": 30,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "house_a",
-   "w": 260,
+   "w": 312,
    "h": 300,
    "pivotX": 130,
    "pivotY": 32,
-   "colW": 210,
+   "colW": 231,
    "colH": 70,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "house_b",
-   "w": 230,
+   "w": 282,
    "h": 280,
    "pivotX": 115,
    "pivotY": 30,
-   "colW": 186,
+   "colW": 207,
    "colH": 62,
-   "colY": 24
+   "colY": 24,
+   "colX": 10
   },
   {
    "name": "guild",
-   "w": 420,
+   "w": 472,
    "h": 400,
    "pivotX": 210,
    "pivotY": 40,
-   "colW": 360,
+   "colW": 381,
    "colH": 90,
-   "colY": 30
+   "colY": 30,
+   "colX": 10
   },
   {
    "name": "tree_twisted",
@@ -238,7 +261,8 @@
    "pivotY": 16,
    "colW": 26,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tree_dead",
@@ -248,7 +272,8 @@
    "pivotY": 14,
    "colW": 20,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "mushrooms",
@@ -258,7 +283,8 @@
    "pivotY": 8,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "roots",
@@ -268,7 +294,8 @@
    "pivotY": 12,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "ruin_pillar",
@@ -278,7 +305,8 @@
    "pivotY": 14,
    "colW": 44,
    "colH": 18,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "ruin_arch",
@@ -288,7 +316,8 @@
    "pivotY": 16,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "portal",
@@ -298,7 +327,8 @@
    "pivotY": 24,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "city_wall",
@@ -308,7 +338,8 @@
    "pivotY": 20,
    "colW": 256,
    "colH": 40,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "city_tower",
@@ -318,7 +349,8 @@
    "pivotY": 20,
    "colW": 100,
    "colH": 50,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "city_gate",
@@ -328,7 +360,8 @@
    "pivotY": 20,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "fountain",
@@ -338,17 +371,19 @@
    "pivotY": 20,
    "colW": 130,
    "colH": 34,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "house_c",
-   "w": 250,
+   "w": 302,
    "h": 310,
    "pivotX": 125,
    "pivotY": 36,
-   "colW": 200,
+   "colW": 221,
    "colH": 66,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "cathedral",
@@ -358,7 +393,8 @@
    "pivotY": 40,
    "colW": 380,
    "colH": 100,
-   "colY": 30
+   "colY": 30,
+   "colX": 0
   },
   {
    "name": "banner_pole",
@@ -368,7 +404,8 @@
    "pivotY": 14,
    "colW": 12,
    "colH": 8,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "cactus",
@@ -378,7 +415,8 @@
    "pivotY": 12,
    "colW": 24,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "palm",
@@ -388,7 +426,8 @@
    "pivotY": 18,
    "colW": 22,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "sandstone",
@@ -398,7 +437,8 @@
    "pivotY": 16,
    "colW": 90,
    "colH": 26,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "skull_pile",
@@ -408,7 +448,8 @@
    "pivotY": 12,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "obelisk",
@@ -418,7 +459,8 @@
    "pivotY": 16,
    "colW": 36,
    "colH": 16,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "adobe_house",
@@ -428,7 +470,8 @@
    "pivotY": 24,
    "colW": 170,
    "colH": 56,
-   "colY": 22
+   "colY": 22,
+   "colX": 0
   },
   {
    "name": "desert_tent",
@@ -438,7 +481,8 @@
    "pivotY": 20,
    "colW": 130,
    "colH": 40,
-   "colY": 10
+   "colY": 10,
+   "colX": 0
   },
   {
    "name": "crystal_blue",
@@ -448,7 +492,8 @@
    "pivotY": 12,
    "colW": 36,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "crystal_red",
@@ -458,7 +503,8 @@
    "pivotY": 12,
    "colW": 36,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "stalagmite",
@@ -468,7 +514,8 @@
    "pivotY": 14,
    "colW": 30,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "mine_cart",
@@ -478,7 +525,8 @@
    "pivotY": 14,
    "colW": 90,
    "colH": 30,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "torch_post",
@@ -488,7 +536,8 @@
    "pivotY": 10,
    "colW": 10,
    "colH": 8,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "mine_entrance",
@@ -498,7 +547,8 @@
    "pivotY": 20,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "anvil",
@@ -508,7 +558,8 @@
    "pivotY": 12,
    "colW": 40,
    "colH": 16,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "swamp_tree",
@@ -518,7 +569,8 @@
    "pivotY": 16,
    "colW": 30,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "reeds",
@@ -528,7 +580,8 @@
    "pivotY": 10,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "bog_light",
@@ -538,7 +591,8 @@
    "pivotY": 12,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "stilt_hut",
@@ -548,7 +602,8 @@
    "pivotY": 24,
    "colW": 150,
    "colH": 44,
-   "colY": 20
+   "colY": 20,
+   "colX": 0
   },
   {
    "name": "cauldron",
@@ -558,7 +613,8 @@
    "pivotY": 14,
    "colW": 50,
    "colH": 18,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "snow_pine",
@@ -568,7 +624,8 @@
    "pivotY": 14,
    "colW": 18,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "ice_crystal",
@@ -578,7 +635,8 @@
    "pivotY": 14,
    "colW": 40,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "snow_rock",
@@ -588,7 +646,8 @@
    "pivotY": 14,
    "colW": 80,
    "colH": 24,
-   "colY": -2
+   "colY": -2,
+   "colX": 0
   },
   {
    "name": "frozen_statue",
@@ -598,7 +657,8 @@
    "pivotY": 14,
    "colW": 40,
    "colH": 16,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "lumia_temple",
@@ -608,7 +668,8 @@
    "pivotY": 26,
    "colW": 300,
    "colH": 80,
-   "colY": 20
+   "colY": 20,
+   "colX": 0
   },
   {
    "name": "ice_spire",
@@ -618,7 +679,8 @@
    "pivotY": 14,
    "colW": 30,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "castle_keep",
@@ -628,7 +690,8 @@
    "pivotY": 40,
    "colW": 440,
    "colH": 100,
-   "colY": 30
+   "colY": 30,
+   "colX": 0
   },
   {
    "name": "brazier",
@@ -638,7 +701,8 @@
    "pivotY": 10,
    "colW": 18,
    "colH": 10,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "obsidian_spire",
@@ -648,7 +712,8 @@
    "pivotY": 16,
    "colW": 30,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "demon_banner",
@@ -658,7 +723,8 @@
    "pivotY": 14,
    "colW": 14,
    "colH": 8,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "hell_gate",
@@ -668,7 +734,8 @@
    "pivotY": 30,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "throne",
@@ -678,127 +745,140 @@
    "pivotY": 30,
    "colW": 120,
    "colH": 36,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tavern",
-   "w": 380,
+   "w": 432,
    "h": 360,
    "pivotX": 190,
    "pivotY": 40,
-   "colW": 240,
+   "colW": 261,
    "colH": 70,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "smithy",
-   "w": 320,
+   "w": 372,
    "h": 330,
    "pivotX": 160,
    "pivotY": 38,
-   "colW": 210,
+   "colW": 231,
    "colH": 70,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "stable",
-   "w": 400,
+   "w": 452,
    "h": 300,
    "pivotX": 200,
    "pivotY": 38,
-   "colW": 280,
+   "colW": 301,
    "colH": 66,
-   "colY": 24
+   "colY": 24,
+   "colX": 10
   },
   {
    "name": "apothecary",
-   "w": 280,
+   "w": 332,
    "h": 330,
    "pivotX": 140,
    "pivotY": 38,
-   "colW": 170,
+   "colW": 191,
    "colH": 64,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "armory",
-   "w": 300,
+   "w": 352,
    "h": 330,
    "pivotX": 150,
    "pivotY": 38,
-   "colW": 190,
+   "colW": 211,
    "colH": 66,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "bakery",
-   "w": 270,
+   "w": 322,
    "h": 320,
    "pivotX": 135,
    "pivotY": 38,
-   "colW": 170,
+   "colW": 191,
    "colH": 64,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "barracks",
-   "w": 400,
+   "w": 452,
    "h": 330,
    "pivotX": 200,
    "pivotY": 38,
-   "colW": 260,
+   "colW": 281,
    "colH": 70,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "library",
-   "w": 260,
+   "w": 312,
    "h": 420,
    "pivotX": 130,
    "pivotY": 40,
-   "colW": 160,
+   "colW": 181,
    "colH": 60,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "house_d",
-   "w": 200,
+   "w": 252,
    "h": 360,
    "pivotX": 100,
    "pivotY": 38,
-   "colW": 124,
+   "colW": 145,
    "colH": 60,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "house_e",
-   "w": 340,
+   "w": 392,
    "h": 300,
    "pivotX": 170,
    "pivotY": 38,
-   "colW": 260,
+   "colW": 281,
    "colH": 66,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "house_f",
-   "w": 260,
+   "w": 312,
    "h": 350,
    "pivotX": 130,
    "pivotY": 38,
-   "colW": 200,
+   "colW": 221,
    "colH": 66,
-   "colY": 26
+   "colY": 26,
+   "colX": 10
   },
   {
    "name": "house_g",
-   "w": 190,
+   "w": 242,
    "h": 230,
    "pivotX": 95,
    "pivotY": 38,
-   "colW": 118,
+   "colW": 139,
    "colH": 56,
-   "colY": 22
+   "colY": 22,
+   "colX": 10
   },
   {
    "name": "hay_bale",
@@ -808,7 +888,8 @@
    "pivotY": 8,
    "colW": 46,
    "colH": 22,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "trough",
@@ -818,7 +899,8 @@
    "pivotY": 12,
    "colW": 90,
    "colH": 20,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "hay_cart",
@@ -828,7 +910,8 @@
    "pivotY": 20,
    "colW": 130,
    "colH": 36,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "planter",
@@ -838,7 +921,8 @@
    "pivotY": 10,
    "colW": 40,
    "colH": 20,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "bench",
@@ -848,7 +932,8 @@
    "pivotY": 10,
    "colW": 90,
    "colH": 18,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "statue_hero",
@@ -858,7 +943,8 @@
    "pivotY": 28,
    "colW": 70,
    "colH": 40,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "stall_blue",
@@ -868,7 +954,8 @@
    "pivotY": 14,
    "colW": 140,
    "colH": 30,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "stall_green",
@@ -878,7 +965,8 @@
    "pivotY": 14,
    "colW": 140,
    "colH": 30,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "lamp_ornate",
@@ -888,7 +976,8 @@
    "pivotY": 10,
    "colW": 14,
    "colH": 10,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tree_birch",
@@ -898,7 +987,8 @@
    "pivotY": 14,
    "colW": 18,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tree_cherry",
@@ -908,7 +998,8 @@
    "pivotY": 16,
    "colW": 22,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tree_willow",
@@ -918,7 +1009,8 @@
    "pivotY": 18,
    "colW": 24,
    "colH": 14,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "hedge",
@@ -928,7 +1020,8 @@
    "pivotY": 12,
    "colW": 130,
    "colH": 16,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "topiary",
@@ -938,7 +1031,8 @@
    "pivotY": 12,
    "colW": 24,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "fern",
@@ -948,7 +1042,8 @@
    "pivotY": 8,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "flower_bed",
@@ -958,7 +1053,8 @@
    "pivotY": 14,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "berry_bush",
@@ -968,7 +1064,8 @@
    "pivotY": 8,
    "colW": 34,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "tall_grass",
@@ -978,7 +1075,8 @@
    "pivotY": 8,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "log",
@@ -988,7 +1086,8 @@
    "pivotY": 12,
    "colW": 100,
    "colH": 16,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "dry_shrub",
@@ -998,7 +1097,8 @@
    "pivotY": 8,
    "colW": 30,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "frost_shrub",
@@ -1008,7 +1108,8 @@
    "pivotY": 8,
    "colW": 30,
    "colH": 12,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   },
   {
    "name": "glow_fern",
@@ -1018,7 +1119,8 @@
    "pivotY": 10,
    "colW": 0,
    "colH": 0,
-   "colY": 0
+   "colY": 0,
+   "colX": 0
   }
  ]
 }

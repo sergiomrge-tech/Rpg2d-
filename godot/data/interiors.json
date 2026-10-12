@@ -1,0 +1,14 @@
+{
+ "receptionist": "int_guild_aurora",
+ "blacksmith": "int_smithy_aurora",
+ "inn_aurora": "int_tavern_aurora",
+ "guildmaster": "int_guild_valemont",
+ "tavern_keeper": "int_tavern_valemont",
+ "smith_v": "int_smithy_valemont",
+ "shopkeeper": "int_shop_valemont",
+ "armorer": "int_armory_valemont",
+ "stable_master": "int_stable_valemont",
+ "librarian": "int_library_valemont",
+ "guard_captain": "int_barracks_valemont",
+ "baker": "int_bakery_valemont"
+}

@@ -91,6 +91,8 @@ func build() -> void:
 	fx_layer.z_index = 100
 	add_child(fx_layer)
 
+	if d.get("interior", false):
+		_build_interior()
 	for j in int(d["chunksY"]):
 		for i in int(d["chunksX"]):
 			var tx := Sheets.tex("Maps/%s/g_%d_%d" % [d["name"], i, j])
@@ -115,12 +117,33 @@ func build() -> void:
 
 	for p in d["props"]:
 		_spawn_prop(p, flat_layer)
-	var am: Array = AMBIENT.get(d["name"], [Color.WHITE, false])
+	var am: Array = AMBIENT.get(d["name"], [Color(1.0, 0.94, 0.84), false] if d.get("interior", false) else [Color.WHITE, false])
 	_base_tint = am[0]
 	_outdoor = am[1]
 	_mod = CanvasModulate.new()
 	_mod.color = _base_tint
 	add_child(_mod)
+
+
+## Interior room: procedural floor/walls plus furniture entities (y-sorted with the hero) and their colliders.
+func _build_interior() -> void:
+	var view := InteriorView.new()
+	view.setup(data)
+	ground.add_child(view)
+	for f in data.get("furniture", []):
+		var fu := Furniture.new()
+		fu.kind = str(f["k"])
+		fu.w = float(f.get("w", 1.0))
+		fu.act = str(f.get("act", ""))
+		fu.deco = str(f.get("deco", ""))
+		fu.seed_v = int(f.get("seed_v", int(float(f["x"]) + float(f["y"]))))
+		if f.has("tint"):
+			fu.tint = Color(str(f["tint"]))
+		fu.position = Vector2(float(f["x"]), float(f["y"]))
+		entities.add_child(fu)
+		if not f.get("nocol", false):
+			var fp := Furniture.footprint(fu.kind, fu.w) * T
+			_box(fu.position + Vector2(0, -fp.y * 0.5), fp)
 
 
 func _box(center: Vector2, size: Vector2) -> void:
@@ -169,7 +192,7 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 			var cw := float(info["colW"])
 			var ch := float(info["colH"])
 			var cy := float(info["colY"])
-			_box(pos + Vector2(0, -(ch * 0.5 - cy)), Vector2(cw, ch))
+			_box(pos + Vector2(float(info.get("colX", 0)), -(ch * 0.5 - cy)), Vector2(cw, ch))
 	if kind.begins_with("tree") or kind.begins_with("bush") or kind in ["tuft", "swamp_tree", "snow_pine", "fern", "glow_fern", "tall_grass", "dry_shrub", "berry_bush", "hedge", "frost_shrub"]:
 		_swaying.append(s)
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):

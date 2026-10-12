@@ -231,9 +231,9 @@ func _refresh() -> void:
 	var sum := "Ataque %d · Magia %d · Defesa %d\nVida %d · Mana %d · Regen. %.1f/s\n" % [roundi(gs.total_atk()), roundi(gs.total_mag()), roundi(gs.total_def()), roundi(gs.hp_max()), roundi(gs.max_mp), gs.mp_regen()]
 	sum += "Esquiva %d%% · Crítico %d%% · Vel. ataque +%d%%" % [roundi(gs.dodge_chance() * 100.0), roundi(gs.crit_chance() * 100.0), roundi((gs.attack_speed() - 1.0) * 100.0)]
 	var sm := hud.txt(page, sum, sans, 16, ink, C, Vector2(-335, -178), Vector2(560, 90), M, false)
-	sm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.wrap(sm, 560.0)
 	var pas := hud.txt(page, "Passiva da classe: " + SkillTree.passive_text(gs.class_id, gs.level), bold, 15, Color(0.3, 0.5, 0.2), C, Vector2(-335, -246), Vector2(560, 44), M, false)
-	pas.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.wrap(pas, 560.0)
 	var cost := gs.respec_cost()
 	_btn(page, "Redefinir tudo · %d ouro" % cost, Vector2(-335, -298), Vector2(360, 46), _reset, Color(0.4, 0.14, 0.1, 0.95) if gs.gold >= cost else Color(0.3, 0.25, 0.2, 0.7), 20)
 
@@ -256,7 +256,7 @@ func _refresh() -> void:
 	var nd := SkillTree.node(gs.class_id, sel_b, sel_t)
 	hud.txt(page, "%s — nível %d" % [nd[0], int(SkillTree.TIER_LEVELS[sel_t])], bold, 24, ink, C, Vector2(335, -178), Vector2(540, 32), M, false)
 	var det := hud.txt(page, SkillTree.node_text(gs.class_id, sel_b, sel_t), sans, 17, ink, C, Vector2(335, -224), Vector2(560, 60), M, false, VERTICAL_ALIGNMENT_TOP)
-	det.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.wrap(det, 560.0)
 	var why := gs.skill_block(sel_b, sel_t)
 	if gs.skill_known(sel_b, sel_t):
 		hud.txt(page, "✔ Aprendida", bold, 24, Color(0.25, 0.5, 0.2), C, Vector2(335, -290), Vector2(300, 40), M, false)

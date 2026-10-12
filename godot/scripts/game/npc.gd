@@ -36,7 +36,7 @@ static func spawn(m: Dictionary) -> Npc:
 
 func _physics_process(dt: float) -> void:
 	# daily routine: shopkeepers and townsfolk go indoors at night (the tavern keeper and the guards stay up)
-	var asleep: bool = id in NIGHT_OFF and Game.is_night()
+	var asleep: bool = id in NIGHT_OFF and Game.is_night() and not Game.world.data.get("interior", false)
 	if asleep == visible:
 		visible = not asleep
 		collision_layer = 0 if asleep else 8

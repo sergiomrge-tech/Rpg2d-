@@ -20,7 +20,7 @@ static func cast(p: Player, which: String) -> void:
 				AreaSpell.lightning_storm(AreaSpell.pick_center(p, 9.0), gs.total_mag() * (1.0 + 0.2 * (tier - 1)), crit)
 		"warrior":
 			if which == "r":
-				gs.add_buff("grito", 10.0, {"atk_pct": 35.0})
+				gs.add_buff("grito", 10.0, {"atk_pct": 35.0}, "Grito de Guerra")
 				_aura(p, col, 10.0)
 				Fx.shockwave(at, 1.4)
 				Sfx.play("boom", 0.4, 1.3)
@@ -37,7 +37,7 @@ static func cast(p: Player, which: String) -> void:
 				Fx.heal(at)
 		"archer":
 			if which == "r":
-				gs.add_buff("foco", 8.0, {"crit": 40.0, "aspd": 30.0})
+				gs.add_buff("foco", 8.0, {"crit": 40.0, "aspd": 30.0}, "Foco Mortal")
 				_aura(p, col, 8.0)
 			else:
 				var origin := at + Vector2.UP * 0.8 * T
@@ -47,7 +47,7 @@ static func cast(p: Player, which: String) -> void:
 				Sfx.play("swing", 0.6, 1.4)
 		"assassin":
 			if which == "r":
-				gs.add_buff("veu", 6.0, {"dodge": 50.0, "mspd": 30.0})
+				gs.add_buff("veu", 6.0, {"dodge": 50.0, "mspd": 30.0}, "Véu das Sombras")
 				_aura(p, col, 6.0)
 				Fx.dust(at, 1.5)
 			else:
@@ -57,7 +57,7 @@ static func cast(p: Player, which: String) -> void:
 						AreaSpell.nova(p.pos(), 2.5 * T, gs.total_atk() * 2.2, crit, 6.0, 50.0, col))
 		"summoner":
 			if which == "r":
-				gs.add_buff("vinculo", 10.0, {"mag_pct": 30.0, "regen": 2.0})
+				gs.add_buff("vinculo", 10.0, {"mag_pct": 30.0, "regen": 2.0}, "Vínculo Espiritual")
 				p.hp = minf(gs.hp_max(), p.hp + gs.hp_max() * 0.25)
 				_aura(p, col, 10.0)
 				Fx.heal(at)

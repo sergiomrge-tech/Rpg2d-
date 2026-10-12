@@ -256,8 +256,8 @@ func req_block(id: String) -> String:
 	return "" if miss.is_empty() else "Requer " + ", ".join(miss)
 
 
-func add_buff(name: String, secs: float, eff: Dictionary) -> void:
-	buffs[name] = {"t": secs, "eff": eff}
+func add_buff(name: String, secs: float, eff: Dictionary, label: String = "") -> void:
+	buffs[name] = {"t": secs, "eff": eff, "label": label}
 
 
 func tick_buffs(dt: float) -> void:

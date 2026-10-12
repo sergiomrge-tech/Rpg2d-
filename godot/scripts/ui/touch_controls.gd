@@ -33,6 +33,8 @@ func setup(h: Hud) -> void:
 	hud.gold_text.position = Vector2(356, 28)
 	hud.clock_label.position = Vector2(300, 74)
 	hud.pts_label.position = Vector2(300, 104)
+	hud.buff_label.position = Vector2(300, 136)
+	hud.buff_label.size = Vector2(420, 120)
 	layer = Control.new()
 	layer.size = Hud.SIZE
 	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -54,6 +56,7 @@ func setup(h: Hud) -> void:
 	_add_btn("roll", Vector2(1530, 690), 78, KEY_SPACE, "skill_roll", 1.0)
 	_add_btn("potion", Vector2(1830, 590), 68, KEY_Q, "potion", 1.0)
 	_add_btn("talk", Vector2(1290, 830), 62, KEY_E, "", 1.0)
+	_add_btn("lock", Vector2(1150, 770), 58, KEY_T, "", 1.0)
 	_add_btn("meteor", Vector2(1330, 700), 62, KEY_R, "skill_spark", 1.0)
 	_add_btn("storm", Vector2(1420, 560), 62, KEY_F, "skill_spark", 1.0)
 	for b in _buttons:
@@ -76,6 +79,7 @@ func setup(h: Hud) -> void:
 	menu_pad.visible = false
 	# letters on the game buttons without an icon
 	_label_for("talk", "E")
+	_label_for("lock", "Alvo")
 	_label_for("book", "Livro")
 	_label_for("skills", "★")
 	_label_for("menu", "Menu")
@@ -110,7 +114,7 @@ func _stick_idle() -> void:
 
 
 func _menu_open() -> bool:
-	return Game.grimoire.open or Game.options.open or Game.shop.open or Game.skills.open
+	return Game.grimoire.open or Game.options.open or Game.shop.open or Game.skills.open or Game.board.open or Game.tavern.open
 
 
 func _process(_dt: float) -> void:
@@ -147,6 +151,8 @@ func _near_npc() -> bool:
 		return false
 	for n in Game.world.entities.get_children():
 		if n is Npc and n.visible and (n.global_position - Game.player.global_position).length() < 2.4 * 64.0:
+			return true
+		if n is Furniture and n.act != "" and (n.global_position - Game.player.global_position).length() < 2.6 * 64.0:
 			return true
 	return false
 

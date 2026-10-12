@@ -6564,13 +6564,6 @@
 ],
 "npcs": [
 {
-"id": "guildmaster",
-"x": 3968,
-"y": 2598.4,
-"look": "v_guildmaster",
-"facing": "down"
-},
-{
 "id": "guard",
 "x": 3020.8,
 "y": 1433.6,
@@ -6597,55 +6590,6 @@
 "y": 3340.8,
 "look": "v_child",
 "facing": "left"
-},
-{
-"id": "shopkeeper",
-"x": 2988.8,
-"y": 3833.6,
-"look": "merchant",
-"facing": "left"
-},
-{
-"id": "tavern_keeper",
-"x": 4473.6,
-"y": 3065.6,
-"look": "villager",
-"facing": "down"
-},
-{
-"id": "smith_v",
-"x": 2022.4,
-"y": 3545.6,
-"look": "r_dwarf",
-"facing": "left"
-},
-{
-"id": "stable_master",
-"x": 1600.0,
-"y": 3897.6,
-"look": "x_veteran",
-"facing": "right"
-},
-{
-"id": "armorer",
-"x": 3712.0,
-"y": 4697.6,
-"look": "x_knight",
-"facing": "down"
-},
-{
-"id": "librarian",
-"x": 1952.0,
-"y": 2457.6,
-"look": "r_monk",
-"facing": "down"
-},
-{
-"id": "guard_captain",
-"x": 4684.8,
-"y": 2649.6,
-"look": "v_guard",
-"facing": "down"
 }
 ],
 "exits": [
@@ -6662,6 +6606,96 @@
 "y": 3200,
 "w": 64,
 "h": 256
+},
+{
+"to": "int_guild_valemont",
+"x": 3968,
+"y": 2409.2,
+"w": 76,
+"h": 56,
+"ax": 3968,
+"ay": 2473.2,
+"kind": "guild"
+},
+{
+"to": "int_tavern_valemont",
+"x": 4576.0,
+"y": 2998.0,
+"w": 76,
+"h": 56,
+"ax": 4576.0,
+"ay": 3062.0,
+"kind": "tavern"
+},
+{
+"to": "int_smithy_valemont",
+"x": 1882.0,
+"y": 3478.0,
+"w": 76,
+"h": 56,
+"ax": 1882.0,
+"ay": 3542.0,
+"kind": "smithy"
+},
+{
+"to": "int_shop_valemont",
+"x": 2848.0,
+"y": 3766.0,
+"w": 76,
+"h": 56,
+"ax": 2848.0,
+"ay": 3830.0,
+"kind": "shop"
+},
+{
+"to": "int_armory_valemont",
+"x": 3712.0,
+"y": 4630.0,
+"w": 76,
+"h": 56,
+"ax": 3712.0,
+"ay": 4694.0,
+"kind": "shop"
+},
+{
+"to": "int_stable_valemont",
+"x": 1728.0,
+"y": 3830.0,
+"w": 76,
+"h": 56,
+"ax": 1728.0,
+"ay": 3894.0,
+"kind": "stable"
+},
+{
+"to": "int_library_valemont",
+"x": 1952.0,
+"y": 2390.0,
+"w": 76,
+"h": 56,
+"ax": 1952.0,
+"ay": 2454.0,
+"kind": "library"
+},
+{
+"to": "int_barracks_valemont",
+"x": 4544.0,
+"y": 2582.0,
+"w": 76,
+"h": 56,
+"ax": 4544.0,
+"ay": 2646.0,
+"kind": "barracks"
+},
+{
+"to": "int_bakery_valemont",
+"x": 4616.0,
+"y": 4182.0,
+"w": 76,
+"h": 56,
+"ax": 4616.0,
+"ay": 4246.0,
+"kind": "bakery"
 }
 ],
 "caches": [],

@@ -222,7 +222,7 @@ func _refresh() -> void:
 	hud.txt(page, "Bônus diário", serif, 40, ink, C, Vector2(335, 318), Vector2(540, 56), M, false)
 	hud.txt(page, "%d / 3" % done, serif, 80, gold if done >= 3 else faint, C, Vector2(335, 205), Vector2(400, 110), M, false)
 	var tx := hud.txt(page, "Cumpra as três missões do quadro e receba um equipamento Raro ou melhor, mais ouro extra.\n\nO quadro troca todo dia — volte amanhã para novas missões.", sans, 20, ink, C, Vector2(335, -45), Vector2(500, 190), M, false, VERTICAL_ALIGNMENT_TOP)
-	tx.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.wrap(tx, 500.0)
 	if Game.daily.get("bonus", false):
 		hud.txt(page, "✔ Bônus recebido hoje", bold, 24, Color(0.25, 0.5, 0.2), C, Vector2(335, -150), Vector2(420, 40), M, false)
 	else:

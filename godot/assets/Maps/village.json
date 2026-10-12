@@ -2416,6 +2416,11 @@
 "y": 1914.5
 },
 {
+"kind": "tavern",
+"x": 2000.0,
+"y": 1960.0
+},
+{
 "kind": "well",
 "x": 2496.0,
 "y": 2009.6
@@ -2564,6 +2569,11 @@
 "kind": "bush_flower",
 "x": 489.2,
 "y": 2198.7
+},
+{
+"kind": "smithy",
+"x": 2992.0,
+"y": 2200.0
 },
 {
 "kind": "flowers",
@@ -6291,20 +6301,6 @@
 ],
 "npcs": [
 {
-"id": "receptionist",
-"x": 2496.0,
-"y": 1664.0,
-"look": "guild_clerk",
-"facing": "down"
-},
-{
-"id": "blacksmith",
-"x": 2944.0,
-"y": 2137.6,
-"look": "merchant",
-"facing": "left"
-},
-{
 "id": "villager",
 "x": 2048.0,
 "y": 2368.0,
@@ -6319,6 +6315,36 @@
 "y": 4825.6,
 "w": 192,
 "h": 64
+},
+{
+"to": "int_guild_aurora",
+"x": 2496.0,
+"y": 1602.8,
+"w": 76,
+"h": 56,
+"ax": 2496.0,
+"ay": 1666.8,
+"kind": "guild"
+},
+{
+"to": "int_smithy_aurora",
+"x": 2954.0,
+"y": 2254.0,
+"w": 76,
+"h": 56,
+"ax": 2954.0,
+"ay": 2318.0,
+"kind": "smithy"
+},
+{
+"to": "int_tavern_aurora",
+"x": 2000.0,
+"y": 2014.0,
+"w": 76,
+"h": 56,
+"ax": 2000.0,
+"ay": 2078.0,
+"kind": "tavern"
 }
 ],
 "caches": [

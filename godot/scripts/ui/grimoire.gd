@@ -225,7 +225,7 @@ func _slot(parent: Control, pos: Vector2, slot: int, label: String) -> void:
 	if id != "":
 		hud.img(parent, Sheets.icon(Data.items[id]["icon"]), C, pos + Vector2(0, 2), Vector2(62, 62))
 		var nm := hud.txt(parent, str(Data.items[id]["name"]) + (" +%d" % gs.enh_level(id) if gs.enh_level(id) > 0 else ""), Util.font_bold, 14, col.lerp(Color(0.27, 0.16, 0.1), 0.5), C, pos + Vector2(0, -60), Vector2(150, 34), HORIZONTAL_ALIGNMENT_CENTER, false)
-		nm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		hud.wrap(nm, 150.0)
 		_row_btn(parent, pos, Vector2(112, 92), _unequip.bind(slot))
 	else:
 		hud.txt(parent, "—", Util.font_serif, 40, Color(0.45, 0.32, 0.2, 0.6), C, pos, Vector2(60, 50), HORIZONTAL_ALIGNMENT_CENTER, false)
@@ -413,9 +413,9 @@ func _refresh() -> void:
 	hud.txt(page, "Habilidades de " + str(class_info["name"]), serif, 29, ink, C, Vector2(-335, -132), Vector2(500, 40), M, false)
 	hud.txt(page, str(class_info["skill"]), bold, 26, ink, C, Vector2(-335, -182), Vector2(485, 40), M, false)
 	var benefit := hud.txt(page, "FORTE: " + str(class_info["strong"]), sans, 22, Color(.25, .42, .22), C, Vector2(-335, -228), Vector2(485, 46), M, false)
-	benefit.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.wrap(benefit, 485.0)
 	var frailty := hud.txt(page, "FRACO: " + str(class_info["weak"]), sans, 22, faint, C, Vector2(-335, -295), Vector2(485, 56), M, false)
-	frailty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.wrap(frailty, 485.0)
 
 	# ---- right page: the bag
 	hud.txt(page, "Bolsa", serif, 44, ink, C, Vector2(335, 300), Vector2(500, 60), M, false)
@@ -473,7 +473,7 @@ func _refresh() -> void:
 				hud.txt(page, "%s %d %s%s" % [kv[1], roundi(nv), arrow, ("%+d" % diff) if diff != 0 else ""], bold, 21, col, C, Vector2(120 + shown * 138, -196), Vector2(136, 26), M, false)
 				shown += 1
 		var desc := hud.txt(page, str(d["desc"]), sans, 19, ink, C, Vector2(335, -243), Vector2(540, 56), M, false, VERTICAL_ALIGNMENT_TOP)
-		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		hud.wrap(desc, 540.0)
 		var act := "Equipar" if int(d["slot"]) > 0 else "Usar"
 		_btn(page, act, Vector2(190, -300), Vector2(230, 56), _act_use, Color(0.32, 0.2, 0.1, 0.95))
 		var price := sell_price(gs.inv_ids[sel])

@@ -20,6 +20,9 @@ var _col := Color.WHITE
 
 ## Densest enemy cluster in range of the hero; falls back to a spot ahead of the hero.
 static func pick_center(p: Node2D, range_tiles: float) -> Vector2:
+	var pl := p as Player
+	if pl != null and pl.lock_ok() and (pl.lock_target.global_position - p.global_position).length() <= range_tiles * T * 1.4:
+		return pl.lock_target.global_position
 	var best := Vector2.ZERO
 	var best_n := 0
 	for e in Enemy.all:

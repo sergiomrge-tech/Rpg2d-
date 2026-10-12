@@ -26,6 +26,9 @@ var cast_action := ""
 var special_strike := false
 var special_cd := 0.0
 var arrow_n := 0
+var lock_target: Enemy = null            # target lock (T): faces, aims and homes the attacks at this enemy
+var _lock_marker: LockMarker = null
+const LOCK_RANGE := 13.0 * 64.0
 var skill_cd := {"r": 0.0, "f": 0.0}
 var skill_cd_max := {"r": 1.0, "f": 1.0}
 
@@ -108,6 +111,7 @@ func _physics_process(dt: float) -> void:
 		skill_cd[k] = maxf(0.0, float(skill_cd[k]) - dt)
 	gs.tick_buffs(dt)
 	gs.hp_frac = hp / maxf(1.0, gs.hp_max())
+	_lock_upkeep()
 	if gs.class_id == "paladin":
 		hp = minf(gs.hp_max(), hp + gs.hp_max() * float(SkillTree.passive_v("paladin", gs.level)[0]) / 100.0 * dt)
 	if venom > 0.0:
@@ -128,6 +132,7 @@ func _physics_process(dt: float) -> void:
 	if _pressed([KEY_K, -MOUSE_BUTTON_RIGHT]): _try_cast()
 	if _pressed([KEY_SPACE]): _try_roll()
 	if _pressed([KEY_Q]): _use_potion()
+	if _pressed([KEY_T]): lock_cycle()
 	if _pressed([KEY_R]): _try_skill("r")
 	if _pressed([KEY_F]): _try_skill("f")
 	if _pressed([KEY_E]): Game.interact(self)
@@ -136,7 +141,7 @@ func _physics_process(dt: float) -> void:
 		St.FREE:
 			if move_dir.length_squared() > 0.01:
 				var can_run := run
-				face(Util.facing_from(move_dir, facing))
+				face(Util.facing_from(move_dir if not lock_ok() else lock_dir(), facing))
 				anim.play("run" if can_run else "walk")
 				var move_factor: float = float(HeroClasses.info(gs.class_id)["move"]) * gs.move_mult()
 				velocity = move_dir * (RUN if can_run else WALK) * move_factor * (0.52 if hex_slow > 0.0 else 1.0) + knock
@@ -148,13 +153,15 @@ func _physics_process(dt: float) -> void:
 						Fx.dust(pos(), 0.5)
 			else:
 				anim.play("idle")
+				if lock_ok():
+					face(Util.facing_from(lock_dir(), facing))
 				velocity = knock
 		St.ATTACK:
 			var n := anim.normalized()
 			var lunge := ((5.5 if combo == 3 else 3.2) * (1.0 - n / 0.45) if n < 0.45 else 0.0) * T
-			if n < 0.2 and move_dir.length_squared() > 0.01:
+			if n < 0.2 and move_dir.length_squared() > 0.01 and not lock_ok():
 				face(Util.facing_from(move_dir, facing))
-			velocity = Util.facing_vec(facing) * lunge + knock
+			velocity = aim_dir() * lunge + knock
 			if buffered_attack and n > 0.58 and combo < 3:
 				buffered_attack = false
 				_start_attack(combo + 1)
@@ -178,6 +185,79 @@ func _to_free() -> void:
 	state = St.FREE
 	state_t = 0.0
 	anim.play("idle", true)
+
+
+# ------------------------------------------------------------------ target lock
+func lock_ok() -> bool:
+	return lock_target != null and is_instance_valid(lock_target) and not lock_target.dead and not dead
+
+
+func lock_dir() -> Vector2:
+	var d := (lock_target.pos() + Vector2.UP * 0.4 * T) - (pos() + Vector2.UP * 0.55 * T)
+	return d.normalized() if d.length() > 4.0 else Util.facing_vec(facing)
+
+
+## Direction of the next strike: toward the locked enemy, otherwise where the hero faces.
+func aim_dir() -> Vector2:
+	return lock_dir() if lock_ok() else Util.facing_vec(facing)
+
+
+func _set_lock(e: Enemy) -> void:
+	if _lock_marker != null and is_instance_valid(_lock_marker):
+		_lock_marker.queue_free()
+	_lock_marker = null
+	lock_target = e
+	if e == null:
+		return
+	_lock_marker = LockMarker.new()
+	var sc := absf(e.anim.scale.y)
+	_lock_marker.radius = clampf(36.0 * sc, 34.0, 120.0)
+	_lock_marker.head = clampf(120.0 * sc, 110.0, 300.0)
+	_lock_marker.boss = bool(e.def["boss"])
+	e.add_child(_lock_marker)
+
+
+## T: lock the nearest enemy; press again to jump to the next one; after the last one the lock is released.
+func lock_cycle() -> void:
+	var c: Array = []
+	for e in Enemy.all:
+		if is_instance_valid(e) and not e.dead and (e.global_position - global_position).length() <= LOCK_RANGE:
+			c.append(e)
+	c.sort_custom(func(a, b): return (a.global_position - global_position).length() < (b.global_position - global_position).length())
+	if c.is_empty():
+		_set_lock(null)
+		Fx.toast("Nenhum alvo por perto", Color(1, 0.8, 0.6))
+		return
+	if not lock_ok():
+		_set_lock(c[0])
+		Sfx.play("ui", 0.4, 1.4)
+		return
+	var i := c.find(lock_target)
+	if i >= 0 and i + 1 < c.size():
+		_set_lock(c[i + 1])
+		Sfx.play("ui", 0.4, 1.6)
+	elif i < 0:
+		_set_lock(c[0])
+	else:
+		_set_lock(null)
+		Sfx.play("ui", 0.3, 0.8)
+
+
+func _lock_upkeep() -> void:
+	if lock_target == null:
+		return
+	if not lock_ok():
+		var gone := lock_target == null or not is_instance_valid(lock_target)
+		var from := global_position if gone else lock_target.global_position
+		_set_lock(null)
+		if not dead:
+			# the target died: jump to the closest living enemy near the fight, otherwise release
+			var nxt := Enemy.nearest(from, 9.0 * T)
+			if nxt != null and (nxt.global_position - global_position).length() <= LOCK_RANGE:
+				_set_lock(nxt)
+		return
+	if (lock_target.global_position - global_position).length() > LOCK_RANGE * 1.3:
+		_set_lock(null)
 
 
 func ci_attack() -> void: _try_attack()
@@ -228,7 +308,9 @@ func _start_attack(n: int) -> void:
 	state_t = 0.0
 	anim.speed = gs.attack_speed()
 	var target := Enemy.nearest(pos(), 2.6 * T)
-	if target != null and move_dir.length_squared() < 0.01:
+	if lock_ok():
+		face(Util.facing_from(lock_dir(), facing))
+	elif target != null and move_dir.length_squared() < 0.01:
 		face(Util.facing_from(target.pos() - pos(), facing))
 	anim.play("attack%d" % n, true)
 	Sfx.play("swing_heavy" if n == 3 else "swing", 0.55, randf_range(0.95, 1.08))
@@ -238,7 +320,7 @@ func _on_anim_hit(a: String) -> void:
 	if a.begins_with("attack"):
 		if not HeroClasses.allows_melee(gs.class_id):
 			return
-		var f := Util.facing_vec(facing)
+		var f := aim_dir()
 		var c := pos() + Vector2.UP * 0.55 * T + f * (1.0 if combo == 3 else 0.85) * T
 		var r := ((1.05 if gs.class_id == "assassin" else 1.55) if combo == 3 else (1.0 if gs.class_id == "assassin" else 1.25)) * T
 		Fx.slash(pos() + Vector2.UP * 0.6 * T, facing, combo)
@@ -279,6 +361,8 @@ func _on_anim_hit(a: String) -> void:
 	elif a == "cast":
 		var dir := Util.facing_vec(facing)
 		var target := Enemy.nearest(pos(), 10.0 * T, dir, .35)
+		if lock_ok():
+			target = lock_target
 		if target != null:
 			dir = ((target.pos() + Vector2.UP * .5 * T) - (pos() + Vector2.UP * .8 * T)).normalized()
 		var origin := pos() + Vector2.UP * .8 * T + dir * .5 * T
@@ -352,7 +436,9 @@ func _begin_cast(action: String, cost: float, cooldown: float = 0.0) -> void:
 	state_t = 0.0
 	anim.speed = gs.attack_speed()
 	var target := Enemy.nearest(pos(), 9.0 * T)
-	if target != null and move_dir.length_squared() < .01:
+	if lock_ok():
+		face(Util.facing_from(lock_dir(), facing))
+	elif target != null and move_dir.length_squared() < .01:
 		face(Util.facing_from(target.pos() - pos(), facing))
 	elif move_dir.length_squared() > .01:
 		face(Util.facing_from(move_dir, facing))

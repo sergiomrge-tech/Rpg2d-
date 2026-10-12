@@ -25,6 +25,7 @@ func set_world(w: World) -> void:
 	limit_top = 0
 	limit_right = int(w.bounds.size.x)
 	limit_bottom = int(w.bounds.size.y)
+	zoom = Vector2.ONE * (1.32 if w.data.get("interior", false) else 1.0)
 
 
 func snap() -> void:
@@ -41,6 +42,9 @@ func _process(dt: float) -> void:
 		vel = (target as CharacterBody2D).velocity
 	_look = _look.lerp((vel * 0.18).limit_length(1.2 * 64.0), clampf(dt * 2.5, 0.0, 1.0))
 	var want := target.global_position + Vector2.UP * 0.8 * 64.0 + _look
+	var pl := target as Player
+	if pl != null and pl.lock_ok():
+		want += ((pl.lock_target.global_position - pl.global_position) * 0.28).limit_length(3.2 * 64.0)
 	global_position = global_position.lerp(want, clampf(dt * 7.0, 0.0, 1.0))
 	_trauma = maxf(0.0, _trauma - _decay * dt)
 	var s := _trauma * _trauma * 22.0

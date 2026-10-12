@@ -1215,11 +1215,60 @@ def throne(ctx):
 
 
 # ------------------------------------------------------------------ render
+# ------------------------------------------------------------------ 2.5D buildings
+# Every building is drawn as a front elevation; this pass extrudes the silhouette back along an oblique depth vector,
+# giving the right wall and the roof a visible, shaded side so the houses read as volumes (front + side + roof).
+BUILDINGS = ['house_a', 'house_b', 'house_c', 'house_d', 'house_e', 'house_f', 'house_g', 'guild', 'tavern', 'smithy', 'stable',
+             'apothecary', 'armory', 'bakery', 'barracks', 'library']
+DEPTH = (36, -22)       # oblique depth vector in final pixels (right, up)
+EXTRA_W = 52            # extra canvas width on the right for the side face
+
+
+def _shift(a, ox, oy):
+    out = np.zeros_like(a)
+    h, w = a.shape[:2]
+    ys0, ys1 = max(0, oy), min(h, h + oy)
+    xs0, xs1 = max(0, ox), min(w, w + ox)
+    out[ys0:ys1, xs0:xs1] = a[ys0 - oy:ys1 - oy, xs0 - ox:xs1 - ox]
+    return out
+
+
+def extrude_building(img):
+    """Sweep a darkened, softened copy of the facade back along the depth vector (nearest step wins), then put the sharp facade on top."""
+    dx, dy = DEPTH[0] * S, DEPTH[1] * S
+    a = img[..., 3]
+    soft = img.copy()
+    for ch in range(3):
+        soft[..., ch] = ndimage.gaussian_filter(img[..., ch] * a, sigma=2.5 * S) / np.maximum(ndimage.gaussian_filter(a, sigma=2.5 * S), 1e-4)
+    soft[..., :3] = np.clip(soft[..., :3], 0, 1)
+    out = np.zeros_like(img)
+    steps = int(max(abs(dx), abs(dy)))
+    for k in range(steps, 0, -2):
+        t = k / steps
+        ox, oy = int(round(dx * t)), int(round(dy * t))
+        layer = _shift(soft, ox, oy)
+        shade = 0.64 - 0.10 * t
+        # lit from above: the upper part of the sweep (roof slope seen from behind) stays brighter
+        layer[..., :3] = layer[..., :3] * shade
+        la = layer[..., 3:4]
+        out[..., :3] = layer[..., :3] * la + out[..., :3] * (1 - la)
+        out[..., 3:4] = la + out[..., 3:4] * (1 - la)
+    # sharp front over the extrusion
+    fa = img[..., 3:4]
+    res = np.empty_like(img)
+    res[..., 3:4] = fa + out[..., 3:4] * (1 - fa)
+    safe = np.maximum(res[..., 3:4], 1e-6)
+    res[..., :3] = (img[..., :3] * fa + out[..., :3] * out[..., 3:4] * (1 - fa)) / safe
+    return res
+
+
 def render_prop(name):
     p = PROPS[name]
     f = Frame(p['w'], p['h'], p['px'], p['py'])
     p['fn'](f.ctx)
     img = f.rgba()
+    if name in BUILDINGS:
+        img = extrude_building(img)
     if p['outline']:
         img = outline_rgba(img, OUTLINE, p['outline'])
     if p['shadow']:
@@ -1251,13 +1300,21 @@ def build_all():
             p = PROPS[name]
             col = p['col']
             meta.append(dict(name=name, w=p['w'], h=p['h'], pivotX=p['px'], pivotY=p['h'] - p['py'],
-                             colW=col[0] if col else 0, colH=col[1] if col else 0, colY=col[2] if col else 0))
+                             colW=(col[0] + (int(DEPTH[0] * 0.6) if name in BUILDINGS else 0)) if col else 0, colH=col[1] if col else 0, colY=col[2] if col else 0,
+                             colX=int(DEPTH[0] * 0.3) if (name in BUILDINGS and col) else 0))
     with open(os.path.join(d, 'props.json'), 'w') as fp:
         json.dump(dict(props=meta), fp, indent=1)
     print('props:', len(meta))
 
 
 import env_town  # noqa: E402,F401  (registers the town props)
+for _n in BUILDINGS:
+    if _n in PROPS and not PROPS[_n].get('_wide'):
+        PROPS[_n]['w'] += EXTRA_W
+        PROPS[_n]['_wide'] = True
+        if PROPS[_n]['shadow']:
+            _cx, _cy, _rx, _ry, _al = PROPS[_n]['shadow']
+            PROPS[_n]['shadow'] = (_cx + DEPTH[0] * 0.5, _cy - 4, _rx + DEPTH[0] * 0.5, _ry + 3, _al)
 import env_veg  # noqa: E402,F401  (registers extra vegetation)
 
 
