@@ -1,0 +1,153 @@
+{
+ "frameW": 192,
+ "frameH": 192,
+ "pivotX": 96,
+ "pivotY": 23,
+ "cols": 21,
+ "anims": [
+  {
+   "name": "idle_down",
+   "start": 0,
+   "count": 8,
+   "fps": 11,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_up",
+   "start": 8,
+   "count": 8,
+   "fps": 11,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_side",
+   "start": 16,
+   "count": 8,
+   "fps": 11,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "move_down",
+   "start": 24,
+   "count": 12,
+   "fps": 14,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "move_up",
+   "start": 36,
+   "count": 12,
+   "fps": 14,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "move_side",
+   "start": 48,
+   "count": 12,
+   "fps": 14,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "attack_down",
+   "start": 60,
+   "count": 12,
+   "fps": 16,
+   "loop": false,
+   "hit": 6
+  },
+  {
+   "name": "attack_up",
+   "start": 72,
+   "count": 12,
+   "fps": 16,
+   "loop": false,
+   "hit": 6
+  },
+  {
+   "name": "attack_side",
+   "start": 84,
+   "count": 12,
+   "fps": 16,
+   "loop": false,
+   "hit": 6
+  },
+  {
+   "name": "cast_down",
+   "start": 96,
+   "count": 14,
+   "fps": 14,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "cast_up",
+   "start": 110,
+   "count": 14,
+   "fps": 14,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "cast_side",
+   "start": 124,
+   "count": 14,
+   "fps": 14,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "hurt_down",
+   "start": 138,
+   "count": 6,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hurt_up",
+   "start": 144,
+   "count": 6,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hurt_side",
+   "start": 150,
+   "count": 6,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "death_down",
+   "start": 156,
+   "count": 12,
+   "fps": 12,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "death_up",
+   "start": 168,
+   "count": 12,
+   "fps": 12,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "death_side",
+   "start": 180,
+   "count": 12,
+   "fps": 12,
+   "loop": false,
+   "hit": -1
+  }
+ ]
+}

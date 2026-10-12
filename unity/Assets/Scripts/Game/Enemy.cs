@@ -22,6 +22,7 @@ namespace Aetheria
         Vector2 wander;
         bool hitDone;
         bool nextIsCast;
+        float skillBurst;
 
         public static Enemy Spawn(string kind, Vector2 pos, int level)
         {
@@ -32,7 +33,7 @@ namespace Aetheria
             e.def = def;
             e.level = level;
             float s = Data.LevelScale(level);
-            e.Build(def.sheet, 0.9f, 0.3f, 0.3f, def.scale + 0.05f * (level - 1));
+            e.Build(def.sheet, 0.9f, 0.3f, def.bodyRadius, def.scale + 0.05f * (level - 1));
             e.rb.mass = 0.6f;
             e.rb.drag = 0;
             e.maxHp = e.hp = Mathf.Round(def.hp * s);
@@ -82,6 +83,7 @@ namespace Aetheria
             stateT += dt;
             castCd -= dt;
             attackCd -= dt;
+            skillBurst = Mathf.Max(0f, skillBurst - dt);
             var p = Player.I;
             Vector2 toP = p != null ? p.Pos - Pos : Vector2.zero;
             float dist = toP.magnitude;
@@ -110,12 +112,26 @@ namespace Aetheria
                     if (!playerOk || dist > def.aggro * 1.8f) { Go(St.Idle); break; }
                     Face(Util.FacingFrom(toP, facing));
                     // casters keep mid range and throw fire, melee when cornered
-                    if (def.caster && castCd <= 0 && dist > 2.6f && dist < 7.5f) { nextIsCast = true; Go(St.Telegraph); break; }
-                    if (dist < 1.55f && attackCd <= 0) { nextIsCast = false; Go(St.Telegraph); break; }
+                    bool insect = def.combatStyle != "imp";
+                    bool canCast = def.caster && castCd <= 0 &&
+                        (def.combatStyle == "mantis" ? dist > 1.9f && dist < def.castReach :
+                         def.combatStyle == "scarab" ? dist < def.castReach :
+                         def.combatStyle == "moth" ? dist > 2f && dist < def.castReach :
+                         dist > 2.6f && dist < 7.5f);
+                    if (canCast) { nextIsCast = true; Go(St.Telegraph); break; }
+                    if (dist < def.attackReach && attackCd <= 0) { nextIsCast = false; Go(St.Telegraph); break; }
                     Vector2 want = toP.normalized;
                     // circle-strafe a little so groups surround the player instead of stacking
                     Vector2 side = new Vector2(-want.y, want.x) * Mathf.Sin(Time.time * 1.3f + GetInstanceID()) * 0.45f;
-                    float sp = dist < 1.3f ? 0 : speed;
+                    if (def.combatStyle == "moth")
+                    {
+                        // Flying occultist maintains its own standoff distance.
+                        if (dist < 3f) want = -want;
+                        else if (dist < 5f) want = Vector2.zero;
+                    }
+                    if (def.combatStyle == "scarab") side *= .15f;
+                    if (def.combatStyle == "mantis") side *= 1.25f;
+                    float sp = dist < 1.3f && def.combatStyle != "moth" ? 0 : speed;
                     Move((want + side).normalized, sp);
                     Separate();
                     break;
@@ -127,11 +143,18 @@ namespace Aetheria
                     // red pulse warns the player; the window is the time to roll
                     float pulse = Mathf.PingPong(stateT * 8f, 1f);
                     Flash(nextIsCast ? new Color(1f, 0.6f, 0.2f) : new Color(1f, 0.15f, 0.15f), 0.55f * pulse);
-                    if (stateT > (nextIsCast ? 0.35f : 0.42f))
+                    float tell = def.combatStyle == "scarab" ? (nextIsCast ? .72f : .55f) :
+                                 def.combatStyle == "moth" ? (nextIsCast ? .66f : .37f) :
+                                 def.combatStyle == "mantis" ? (nextIsCast ? .36f : .26f) :
+                                 (nextIsCast ? .35f : .42f);
+                    if (stateT > tell)
                     {
                         hitDone = false;
-                        if (nextIsCast) { Go(St.Cast); anim.Play("cast", true); castCd = Random.Range(3.2f, 4.6f); }
-                        else { Go(St.Attack); anim.Play("attack", true); attackCd = Random.Range(1.0f, 1.6f); }
+                        if (nextIsCast) { Go(St.Cast); anim.Play("cast", true); castCd = def.combatStyle == "scarab" ? 6f :
+                            def.combatStyle == "moth" ? 4.6f :
+                            def.combatStyle == "mantis" ? 3.8f : Random.Range(3.2f, 4.6f); }
+                        else { Go(St.Attack); anim.Play("attack", true); attackCd = def.combatStyle == "scarab" ? 2.0f :
+                            def.combatStyle == "mantis" ? 1.1f : Random.Range(1.0f, 1.6f); }
                     }
                     break;
                 }
@@ -140,11 +163,13 @@ namespace Aetheria
                     float n = anim.Normalized;
                     // lunge burst right before the hit frame
                     Vector2 f = Util.FacingVec(facing);
-                    rb.velocity = (n > 0.3f && n < 0.6f ? f * 7.5f : Vector2.zero) + knock;
+                    rb.velocity = (n > .3f && n < .6f ? f *
+                        (def.combatStyle == "mantis" ? 9.5f : def.combatStyle == "scarab" ? 4.4f : 7.5f) : Vector2.zero) + knock;
                     break;
                 }
                 case St.Cast:
-                    rb.velocity = knock;
+                    rb.velocity = (def.combatStyle == "mantis" && skillBurst > 0 ?
+                        Util.FacingVec(facing) * 10f : Vector2.zero) + knock;
                     break;
                 case St.Hurt:
                     rb.velocity = knock;
@@ -180,6 +205,20 @@ namespace Aetheria
         {
             var p = Player.I;
             if (p == null || p.dead) return;
+            if (def.combatStyle != "imp")
+            {
+                if (a == "attack" && !hitDone)
+                {
+                    hitDone = true;
+                    InsectCombat.Attack(this, p);
+                }
+                else if (a == "cast")
+                {
+                    if (def.combatStyle == "mantis") skillBurst = .24f;
+                    InsectCombat.Skill(this, p);
+                }
+                return;
+            }
             if (a == "attack" && !hitDone)
             {
                 hitDone = true;

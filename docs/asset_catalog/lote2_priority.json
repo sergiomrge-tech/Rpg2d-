@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game": "Crônicas de Aetheria — A Centelha",
   "lot": "LOTE_02",
-  "status": "ordered_for_production_no_art_generated",
+  "status": "pilot_3_animated_sprites_and_gameplay_hooks_implemented_pending_real_unity_runtime",
   "style_guard": "Official existing HD cartoon Cairo shading and outlines; NEVER lower quality, pixelate, use low-poly, or replace approved graphics. Each insectoid has unique anatomy and pose cycle.",
   "morphology_rules": {
     "max_same_body_archetype": 1,
@@ -111,7 +111,10 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_animated_png_json_3_directions",
+      "gameplay_status": "wired_ai_ability_spawn_pending_unity_runtime",
+      "animation_tracks": 18,
+      "frames": 192
     },
     {
       "id": "scarab_brute",
@@ -141,7 +144,10 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_animated_png_json_3_directions",
+      "gameplay_status": "wired_ai_ability_spawn_pending_unity_runtime",
+      "animation_tracks": 18,
+      "frames": 192
     },
     {
       "id": "moth_hexer",
@@ -171,7 +177,10 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_animated_png_json_3_directions",
+      "gameplay_status": "wired_ai_ability_spawn_pending_unity_runtime",
+      "animation_tracks": 18,
+      "frames": 192
     },
     {
       "id": "termite_burrower",
@@ -201,7 +210,8 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "vespa_lancer",
@@ -231,7 +241,8 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "cicada_screecher",
@@ -261,7 +272,8 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "ant_guard",
@@ -291,7 +303,8 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "roach_plaguebearer",
@@ -321,7 +334,8 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "spike_beetle",
@@ -351,7 +365,8 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "dragonfly_skirmisher",
@@ -381,7 +396,8 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     }
   ],
   "bosses": [
@@ -413,7 +429,8 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "scarab_colossus",
@@ -443,7 +460,8 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "moth_oracle",
@@ -473,7 +491,8 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "queen_vespara",
@@ -503,7 +522,8 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     },
     {
       "id": "brood_tyrant",
@@ -533,7 +553,10 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_implemented"
     }
-  ]
+  ],
+  "pilot_ci_url": "https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38250016285",
+  "pilot_limits": "All 3 combat sprites and 3 abilities physically registered and spawned in current map. Static C# compile passed; Unity editor runtime/screenshots/fidelity not yet tested. Remaining 7 demons and 5 bosses not implemented."
 }
