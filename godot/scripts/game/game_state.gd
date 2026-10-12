@@ -31,7 +31,7 @@ func _gear(key: String) -> float:
 
 func total_atk() -> float: return atk + _gear("atk")
 func total_mag() -> float: return mag + _gear("mag")
-func total_def() -> float: return _gear("defense")
+func total_def() -> float: return float(HeroClasses.info(class_id)["defense"]) + _gear("defense")
 func hp_max() -> float: return max_hp + _gear("hp")
 
 
@@ -72,7 +72,11 @@ func take(id: String) -> bool:
 
 ## Equip a bag item; the previous piece goes back to the bag.
 func equip(id: String) -> bool:
-	if not Data.items.has(id) or int(Data.items[id]["slot"]) == 0 or not take(id):
+	if not Data.items.has(id) or int(Data.items[id]["slot"]) == 0:
+		return false
+	if not HeroClasses.can_equip(class_id, Data.items[id]):
+		return false
+	if not take(id):
 		return false
 	var slot := int(Data.items[id]["slot"])
 	var old := equipped(slot)
