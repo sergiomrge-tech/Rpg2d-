@@ -21,11 +21,9 @@ Para jogar no seu PC: abra a pasta `unity/` no Unity Hub (Unity 2022.3 LTS), abr
 (ou qualquer cena vazia) e aperte Play. O jogo se monta sozinho via código.
 
 
-## Caminho sem instalar nada (ativação manual pelo navegador)
-1. O push de `docs/request-license.txt` roda o workflow **"Unity - pedir arquivo de ativação"** (aba *Actions*).
-2. Abra essa execução, baixe o artefato **o arquivo `.alf` (artefato `unity-activation-file`)** (seção *Artifacts*, no fim da página).
-3. Acesse https://license.unity3d.com/manual , envie o `.alf`, escolha **Unity Personal** e baixe o arquivo **.ulf**.
-4. Em *Settings → Secrets and variables → Actions* crie:
-   - `UNITY_LICENSE` = conteúdo completo do `.ulf`
-   - `UNITY_EMAIL` e `UNITY_PASSWORD` = login da sua conta Unity
-5. Um novo push em `unity/**` dispara o build + screenshots (`ci-shots`).
+## Atenção: a ativação manual (.alf) NÃO funciona mais para Personal
+A página https://license.unity3d.com/manual agora só aceita licenças **serial** (Enterprise/Industry). O caminho atual do GameCI para
+licença **Personal** é o do **Unity Hub num computador** (Windows ou Mac): instalar o Hub, entrar na conta, instalar o Editor 2022.3.45f1,
+ativar a licença Personal e copiar o arquivo `Unity_lic.ulf` (caminhos acima) para o segredo `UNITY_LICENSE`.
+Sem computador, o build na nuvem não é possível com licença Personal; alternativas: usar uma licença paga/serial, ou abrir o projeto
+no Unity de alguém que tenha um PC.
