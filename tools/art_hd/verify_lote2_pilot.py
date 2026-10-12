@@ -70,7 +70,7 @@ def validate():
     for name,x in spawns.items():
         cx=int(x['x']//data['tile']);cy=int(x['y']//data['tile'])
         assert data['blocked'][cy*data['w']+cx]=='0',(name,'blocked spawn')
-    code=' '.join((ROOT/'unity/Assets/Scripts/Game/'+n).read_text(encoding='utf-8') for n in ('Data.cs','Enemy.cs','InsectCombat.cs'))
+    code=' '.join((ROOT/'unity/Assets/Scripts/Game'/n).read_text(encoding='utf-8') for n in ('Data.cs','Enemy.cs','InsectCombat.cs'))
     for name in IDS:assert name in code,name+' missing gameplay'
     for value in ('InsectCombat.Attack(this, p)','InsectCombat.Skill(this, p)','case "mantis"','case "scarab"','case "moth"'):
         assert value in code,'Missing behavior: '+value
