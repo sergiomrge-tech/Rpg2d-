@@ -252,6 +252,45 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
         rim = np.clip(ms - ndimage.grey_erosion(ms, size=(9, 9)), 0, 1)
         img = lerp_c(img, col(G['stone'][1]), rim * 0.55)
 
+    # ---------------- city wall ring (code 'x'): masonry top, shaded south face, soft ground shadow
+    mxr = mask_from(grid, 'x', h, w, seed + 12, blur=5, jitter=0.03)
+    mxk = smoothstep(0.47, 0.53, mxr)
+    if mxk.max() > 0:
+        face_h = 22
+        shifted = np.zeros_like(mxk)
+        shifted[face_h:, :] = mxk[:-face_h, :]
+        face = np.clip(shifted - mxk, 0, 1)
+        shadow = ndimage.gaussian_filter(np.roll(np.roll(mxk, face_h + 12, axis=0), 8, axis=1), 8)
+        img = lerp_c(img, np.array([0.08, 0.07, 0.12], np.float32), np.clip(shadow * 0.5, 0, 1) * (1 - np.maximum(mxk, face)))
+        fy = np.arange(h, dtype=np.float32)[:, None]
+        courses = 0.5 + 0.5 * np.sin(fy * (math.tau / 11.0))
+        face_rgb = np.ones((h, w, 3), np.float32) * np.array([0.47, 0.44, 0.52], np.float32)
+        face_rgb = face_rgb * (0.84 + 0.16 * courses[..., None])
+        img = lerp_c(img, face_rgb, face)
+
+        def blocks(ctx):
+            bw, bh = 46, 26
+            for row in range(h // bh + 2):
+                off = (bw / 2) if row % 2 else 0
+                for k in range(w // bw + 2):
+                    x = k * bw + off
+                    y = row * bh
+                    gy, gx = int(min(max(y, 0), h - 1)), int(min(max(x, 0), w - 1))
+                    if mxk[gy, gx] < 0.05:
+                        continue
+                    tone = rnd.uniform(-0.05, 0.05)
+                    ctx.set_source_rgba(0.36, 0.34, 0.42, 1)
+                    rrect(ctx, x - bw / 2 + 2, y - bh / 2 + 2, bw - 2, bh - 2, 4)
+                    ctx.fill()
+                    ctx.set_source_rgba(0.70 + tone, 0.68 + tone, 0.74 + tone, 1)
+                    rrect(ctx, x - bw / 2 + 1, y - bh / 2 + 1, bw - 3, bh - 4, 4)
+                    ctx.fill()
+        rgb, a = cairo_layer(w, h, blocks)
+        top = over(np.ones((h, w, 3), np.float32) * np.array([0.52, 0.50, 0.58], np.float32), rgb, a)
+        img = lerp_c(img, top, mxk)
+        rimx = np.clip(mxk - ndimage.grey_erosion(mxk, size=(7, 7)), 0, 1)
+        img = lerp_c(img, np.array([0.30, 0.28, 0.36], np.float32), rimx * 0.6)
+
     # ---------------- water
     mw_raw = mask_from(grid, 'wb', h, w, seed + 9, blur=14, jitter=0.12)
     mw = smoothstep(0.48, 0.52, mw_raw)

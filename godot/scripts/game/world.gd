@@ -218,6 +218,13 @@ func spawn_actors() -> void:
 		if n["id"] == "sylra" and Game.flags.has("sylra_joined"):
 			continue
 		Npc.spawn(n)
+	var lvls := 0
+	var cnt := 0
+	for s in data["spawns"]:
+		lvls += int(s["level"])
+		cnt += 1
+	for c in data.get("caches", []):
+		TreasureCache.spawn(c, int(lvls / maxi(cnt, 1)))
 
 
 func respawn_enemies() -> void:

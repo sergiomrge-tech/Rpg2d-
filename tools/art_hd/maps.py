@@ -11,12 +11,14 @@ import random
 import sys
 import numpy as np
 from PIL import Image
+from expand_maps import expand
 from env_ground import bake, T
 from env_objects import PROPS
 from sheet import ROOT
 
 OUT = os.path.join(ROOT, 'godot', 'assets', 'Maps')
 CHUNK = 1024
+EXPAND_FACTOR = {n: 0.21 for n in ['village', 'velmoor', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']}   # ring of new land on each side => ~2x area
 
 
 class Map:
@@ -88,6 +90,9 @@ class Map:
         return True
 
     def scatter(self, kinds, count, area, pad=1, min_d=1.6):
+        if not hasattr(self, 'scatter_log'):
+            self.scatter_log = []
+        self.scatter_log.append((list(kinds), count, tuple(area), pad, min_d))
         x0, y0, x1, y1 = area
         placed = []
         tries = 0
@@ -107,6 +112,9 @@ class Map:
 
     # -------- export
     def export(self):
+        if self.name in EXPAND_FACTOR and not getattr(self, '_expanded', False):
+            f = EXPAND_FACTOR[self.name]
+            expand(self, round(self.gw * f), round(self.gh * f))
         d = os.path.join(OUT, self.name)
         os.makedirs(d, exist_ok=True)
         img = bake(self.grid, self.seed, self.shapes, getattr(self, 'grass', None))
@@ -116,10 +124,11 @@ class Map:
             for i in range(cx):
                 tile = img[j * CHUNK:(j + 1) * CHUNK, i * CHUNK:(i + 1) * CHUNK]
                 Image.fromarray(tile, 'RGB').save(os.path.join(d, f'g_{i}_{j}.png'), optimize=True)
-        blocked = ''.join('1' if c == 'w' else '0' for c in self.grid.flatten())
+        blocked = ''.join('1' if c in 'wx' else '0' for c in self.grid.flatten())
         data = dict(name=self.name, w=self.gw, h=self.gh, tile=T, chunk=CHUNK, chunksX=cx, chunksY=cy,
                     blocked=blocked, playerX=self.player[0], playerY=self.player[1],
-                    props=sorted(self.props, key=lambda p: p['y']), spawns=self.spawns, npcs=self.npcs, exits=self.exits)
+                    props=sorted(self.props, key=lambda p: p['y']), spawns=self.spawns, npcs=self.npcs, exits=self.exits,
+                    caches=getattr(self, 'caches', []))
         with open(os.path.join(OUT, self.name + '.json'), 'w') as fp:
             json.dump(data, fp, indent=0)
         Image.fromarray(img, 'RGB').resize((w // 4, h // 4)).save(os.path.join(ROOT, 'tools', 'art_hd', f'_{self.name}_ground_small.png'))
@@ -256,73 +265,175 @@ def velmoor():
 
 
 def valemont():
-    """Cidade de Valemont (Cap. 3): walled capital - cathedral, Guild HQ, market, noble houses, a dark southern alley."""
-    m = Map('valemont', 72, 64, seed=33)
-    m.path([(36, -1), (36, 62)], 3.4, 's')              # main avenue
-    m.path([(2, 32), (70, 32)], 3.2, 's')               # cross avenue
-    m.path([(18, 14), (18, 50)], 2.4, 's')
-    m.path([(54, 14), (54, 50)], 2.4, 's')
-    m.disk(36, 32, 7.0, 's')                            # central plaza
-    m.disk(36, 15, 5.2, 's')                            # cathedral square
-    m.disk(46, 18, 4.0, 's')                            # guild forecourt
-    m.path([(36, 52), (36, 60)], 2.6, 'd')              # dark alley (dirt)
-    m.disk(36, 57, 4.4, 'd')
-    # walls: north & south runs of 4-tile segments, towers on the corners and along the sides
-    for x in range(4, 70, 4):
-        if abs(x - 36) > 4:
-            m.put('city_wall', x, 2.6)
-        m.put('city_wall', x, 62.4)
-    m.put('city_gate', 36, 3.2)
-    for x, y in [(2, 3), (70, 3), (2, 62), (70, 62)] + [(1.2, v) for v in range(9, 58, 6) if not 28 < v < 37] + [(70.8, v) for v in range(9, 58, 6) if not 28 < v < 37]:
-        m.put('city_tower', x, y)
-    m.reserve(0, 0, 72, 5)
-    m.reserve(0, 60, 72, 64)
-    # landmarks
-    m.put('cathedral', 36, 14.4)
-    m.reserve(27, 4, 45, 15)
-    m.put('guild', 47, 16.6)
-    m.reserve(38, 6, 56, 17)
-    m.put('fountain', 36, 33.6)
-    m.reserve(30, 28, 42, 35)
-    m.put('quest_board', 40.6, 22.6)
-    for x, y in [(30, 22), (42, 22), (30, 26), (42, 26), (29, 38), (43, 38), (36, 8), (36, 48)]:
+    """Cidade de Valemont (Cap. 3): circular walled capital - concentric + radial streets, a river through the west,
+    cathedral and Guild HQ flanking the avenue, central fountain plaza, market, noble quarter, dark south alley."""
+    m = Map('valemont', 100, 100, seed=33)
+    C = (50.0, 50.0)
+    RW = 27.0
+
+    def pol(r, deg):
+        return (C[0] + r * math.cos(math.radians(deg)), C[1] + r * math.sin(math.radians(deg)))
+
+    # ---- river: enters the west wall, bends through the south-west quarter, leaves by the SW water gate
+    river = [(-1, 36), (10, 39), (21, 40.5), (27, 42), (34, 45), (38, 50), (39.5, 56), (37.5, 63), (34.5, 70.7), (30, 78), (26, 90), (22, 101)]
+    # ---- roads outside (dirt) and avenues inside (stone)
+    m.path([(50, -1), (50, 23)], 3.2, 'd')                    # north road to Velmoor
+    m.path([(77, 50), (101, 50)], 3.2, 'd')                   # east road to Kharis
+    m.path([(23, 50), (-1, 52)], 3.0, 'd')                    # west road (farms)
+    m.river(river, 3.2)
+    m.path([(50, 23), (50, 62)], 3.4, 's')                    # north-south avenue
+    m.path([(23, 50), (77, 50)], 3.4, 's')                    # west-east avenue
+    # diagonals + concentric ring roads (skip the river sector)
+    for ang in (-135, -45, 45):
+        m.path([pol(7, ang), pol(24.5, ang)], 2.2, 's')
+    for r in (13.5, 20.5):
+        pts = [pol(r, a) for a in range(-100, 100, 6)] + [pol(r, 100)]
+        m.path(pts, 2.2, 's')
+        pts2 = [pol(r, a) for a in range(206, 262, 6)]
+        if len(pts2) > 1:
+            m.path(pts2, 2.2, 's')
+    m.disk(C[0], C[1], 6.8, 's')                              # central plaza
+    m.disk(38, 38.5, 4.6, 's')                                # cathedral square
+    m.disk(62, 38.5, 4.6, 's')                                # guild forecourt
+    # ---- dark south alley (dirt, dead end under the wall)
+    m.path([(50, 62), (50, 70)], 2.6, 'd')
+    m.disk(50, 72.4, 4.6, 'd')
+    # ---- wall ring: arcs between the gates / river gaps
+    gaps = [(270, 5.4), (0, 5.4), (180, 5.4), (199, 5.8), (127, 5.8)]    # N gate, E gate, W gate, river in, river out
+    iv = sorted(((g - w) % 360, (g + w) % 360) for g, w in gaps)
+    for i, (s0, e0) in enumerate(iv):
+        nxt = iv[(i + 1) % len(iv)][0]
+        a0, a1 = e0, nxt if nxt > e0 else nxt + 360
+        pts = [pol(RW, a) for a in np.linspace(a0, a1, max(3, int((a1 - a0) / 4)))]
+        m.path(pts, 1.9, 'x')
+    # ---- wall furniture: towers, gates, banners
+    for a in range(0, 360, 30):
+        if any(abs((a - g + 180) % 360 - 180) < 9 for g, _ in gaps):
+            continue
+        x, y = pol(RW + 0.2, a)
+        m.put('city_tower', x, y + 0.8)
+    for x, y in [pol(RW, 270), pol(RW, 0), pol(RW, 180)]:
+        m.put('city_gate', x, y + 0.9)
+    for ang in (270, 0, 180):
+        for dd in (-3.6, 3.6):
+            x, y = pol(RW - 1.5, ang)
+            m.put('banner_pole', x + (dd if ang in (270, 90) else 0), y + (dd if ang in (0, 180) else 0) + 0.6)
+    m.reserve(0, 0, 100, 100)                                 # clear; re-open below
+    m.reserved[:, :] = False
+    # ---- landmarks
+    m.put('fountain', 50, 51.2)
+    m.reserve(44, 45, 56, 53)
+    m.put('cathedral', 38, 36.4)
+    m.reserve(30, 26, 47, 37)
+    m.put('guild', 62, 36.8)
+    m.reserve(52, 28, 72, 38)
+    m.put('quest_board', 57.6, 43.2)
+    m.reserve(55, 41.5, 60, 44.2)
+    m.put('bridge', 38.2, 51.4)
+    for y in range(49, 53):
+        for x in range(36, 41):
+            if m.grid[y, x] == 'w':
+                m.grid[y, x] = 'b'
+    for x, y in [(46, 30), (54, 30), (46, 42), (54, 42), (46, 58), (54, 58), (30, 47.6), (70, 47.6), (30, 52.6), (70, 52.6)]:
         m.put('lamp', x, y)
-    for x in (33, 39):
-        for y in (8.5, 21):
-            m.put('banner_pole', x, y)
-    # market stalls (east of plaza) and noble houses
-    for x, y in [(46, 29), (51, 29), (46, 36.6), (51, 36.6)]:
+    for x in (45.4, 54.6):
+        m.put('banner_pole', x, 27.2)
+    # market stalls south-east of the plaza
+    for x, y in [(57, 54.6), (62, 54.6), (57, 60), (62, 60), (67, 57.5)]:
         m.put('stall', x, y)
-    m.reserve(43, 26, 55, 38)
-    for x, y, k in [(10, 12, 'house_c'), (24, 12, 'house_b'), (10, 26, 'house_b'), (24, 26, 'house_c'),
-                    (10, 42, 'house_c'), (24, 42, 'house_b'), (60, 12, 'house_c'), (66, 26, 'house_b'),
-                    (60, 42, 'house_b'), (66, 48, 'house_c'), (47, 47, 'house_c')]:
+    m.reserve(54, 52, 70, 63)
+    # ---- noble quarter (east) with larger houses
+    for x, y, k in [(64, 70, 'house_c'), (71, 62, 'house_c'), (58, 68.5, 'house_b')]:
         m.put(k, x, y)
-        m.reserve(x - 4.5, y - 6, x + 4.5, y + 1)
-    for x, y, k in [(14, 14, 'barrel'), (28, 14, 'crate'), (28, 28, 'barrel'), (14, 44, 'crate'), (62, 14, 'barrel'),
-                    (40, 54, 'crate'), (33, 55, 'barrel'), (39, 58, 'barrel'), (33, 59, 'crate')]:
+        m.reserve(x - 3.2, y - 5.4, x + 3.2, y + 1.0)
+    # ---- parks (two great groves, as in the reference art)
+    for gx, gy in [(34, 44.6), (66, 66.6)]:
+        pass
+    park = [(35.0, 60.5), (61.0, 24.5)]
+    for gx, gy in park:
+        for a in range(0, 360, 40):
+            m.put(m.rnd.choice(['tree_oak', 'tree_round', 'tree_oak']), gx + math.cos(math.radians(a)) * 3.4, gy + math.sin(math.radians(a)) * 2.9)
+        m.put('tree_oak', gx, gy)
+        for k in range(5):
+            m.put('flowers', gx + m.rnd.uniform(-2.5, 2.5), gy + m.rnd.uniform(-2, 2))
+        m.reserve(gx - 5, gy - 5, gx + 5, gy + 4)
+    # ---- residential blocks: houses along the concentric rings (skip roads, plaza, landmarks, river, wall)
+    def road_near(x, y, pad=1):
+        xi, yi = int(x), int(y)
+        for yy in range(yi - pad, yi + pad + 1):
+            for xx in range(xi - pad, xi + pad + 1):
+                if 0 <= xx < m.gw and 0 <= yy < m.gh and m.grid[yy, xx] in 'sdwbx':
+                    return True
+        return False
+    placed = []
+    for r in (9.6, 16.8, 23.0):
+        n = int(2 * math.pi * r / 5.6)
+        for i in range(n):
+            ang = i * 360.0 / n + (r * 7) % 17
+            x, y = pol(r, ang)
+            if not (6 < x < 94 and 6 < y < 94):
+                continue
+            if math.hypot(x - C[0], y - C[1]) > RW - 3.2:
+                continue
+            if 55 < y < 80 and 44 < x < 56:                        # alley
+                continue
+            if any(abs((ang % 360) - a0) < 7 for a0 in (270, 0, 180, 315, 45, 225)) and r < 22:
+                continue                                          # keep radial streets clear
+            if road_near(x, y - 1.0, 2) or road_near(x, y, 2):
+                continue
+            if m.reserved[int(y) - 3:int(y) + 1, int(x) - 2:int(x) + 3].any():
+                continue
+            if any((x - a) ** 2 + (y - b) ** 2 < 4.8 ** 2 for a, b in placed):
+                continue
+            k = m.rnd.choice(['house_a', 'house_b', 'house_c', 'house_a', 'house_b'])
+            m.put(k, x, y)
+            placed.append((x, y))
+            m.reserve(x - 2.4, y - 5.0, x + 2.4, y + 0.8)
+    for x, y, k in [(48.2, 63.6, 'barrel'), (51.8, 63.4, 'crate'), (46.6, 69, 'crate'), (53.6, 68.4, 'barrel'), (47.5, 75, 'crate'), (52.5, 74.6, 'barrel')]:
         m.put(k, x, y)
-    for x in range(4, 68, 3):
-        for y in (4.4, 60.6):
-            if m.free(x, y, 0) and abs(x - 36) > 4:
-                m.put(self_rnd(m, ['bush_flower', 'bush']), x + 0.4, y)
-    m.scatter(['tree_round', 'tree_oak'], 22, (3, 6, 69, 58), pad=1, min_d=3.0)
-    m.scatter(['bush_flower', 'bush', 'flowers', 'tuft'], 90, (3, 6, 69, 58), pad=0, min_d=1.0)
-    m.player = (36 * T, 6.4 * T)
+    # street dressing
+    for a in range(0, 360, 20):
+        for r in (13.5, 20.5):
+            x, y = pol(r, a + 10)
+            if m.grid[int(y), int(x)] == 's' and m.free(x, y, 0) is False and not road_near(x + 1.3, y, 0) is False:
+                pass
+    m.scatter(['bush_flower', 'bush', 'flowers', 'tuft'], 120, (24, 24, 76, 76), pad=0, min_d=1.0)
+    # ---- outside the walls: farmland, hamlets, forests
+    m.rect(8, 8, 20, 14, 't')
+    m.rect(8, 16, 20, 21, 't')
+    m.rect(80, 8, 92, 13, 't')
+    m.rect(72, 82, 90, 88, 't')
+    m.rect(10, 80, 24, 86, 't')
+    for x in range(8, 20):
+        m.put('fence', x + 0.55, 7.5)
+    for hx, hy, ks in [(84, 42, ['house_a', 'house_b']), (88, 58, ['house_b', 'house_a']), (14, 62, ['house_a', 'house_c']), (62, 90, ['house_b', 'house_a'])]:
+        for i, k in enumerate(ks):
+            m.put(k, hx + i * 5.6, hy + (i % 2) * 2.4)
+            m.reserve(hx + i * 5.6 - 3, hy + (i % 2) * 2.4 - 5.4, hx + i * 5.6 + 3, hy + (i % 2) * 2.4 + 1)
+    m.put('sign', 52.4, 8)
+    m.put('sign', 95, 52.4)
+    m.scatter(['tree_oak', 'tree_oak', 'tree_pine', 'tree_round'], 150, (0, 0, 100, 100), pad=1, min_d=2.7)
+    m.scatter(['bush', 'bush_flower', 'rock_small', 'stump', 'rock_big'], 70, (0, 0, 100, 100), pad=0, min_d=1.5)
+    m.scatter(['tuft', 'tuft', 'flowers'], 260, (0, 0, 100, 100), pad=0, min_d=0.8)
+    m.player = (50 * T, 25.2 * T)
     m.npcs = [
-        dict(id='guildmaster', x=47 * T, y=19.8 * T, look='v_guildmaster', facing='down'),
-        dict(id='guard', x=33 * T, y=5.6 * T, look='v_guard', facing='down'),
-        dict(id='noble', x=29.5 * T, y=29.4 * T, look='v_noble', facing='right'),
-        dict(id='cleric', x=36 * T, y=19.2 * T, look='v_cleric', facing='down'),
-        dict(id='child', x=40.5 * T, y=36.4 * T, look='v_child', facing='left'),
-        dict(id='shopkeeper', x=48.5 * T, y=31 * T, look='merchant', facing='left'),
+        dict(id='guildmaster', x=62 * T, y=40.6 * T, look='v_guildmaster', facing='down'),
+        dict(id='guard', x=47.2 * T, y=26.4 * T, look='v_guard', facing='down'),
+        dict(id='noble', x=60.2 * T, y=66.2 * T, look='v_noble', facing='left'),
+        dict(id='cleric', x=38 * T, y=40.4 * T, look='v_cleric', facing='down'),
+        dict(id='child', x=53.8 * T, y=52.2 * T, look='v_child', facing='left'),
+        dict(id='shopkeeper', x=59.6 * T, y=56.6 * T, look='merchant', facing='up'),
     ]
-    for i, (k, x, y, lv) in enumerate([('imp_raider', 31, 54, 7), ('oni_executioner', 41, 55, 8), ('imp_howler', 34, 58.5, 7),
-                                       ('oni_lancer', 40, 59, 8), ('imp_bomber', 32, 52, 7)]):
+    for k, x, y, lv in [('imp_raider', 46, 71, 7), ('oni_executioner', 54, 72, 8), ('imp_howler', 49, 75.5, 7),
+                        ('oni_lancer', 53, 75.2, 8), ('imp_bomber', 45.5, 74, 7)]:
         m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
-    m.spawns.append(dict(kind='assassin_shadow', x=36 * T, y=57.4 * T, level=9))
-    m.exits = [dict(to='velmoor', x=36 * T, y=0.5 * T, w=3 * T, h=T), dict(to='kharis', x=71.6 * T, y=32 * T, w=T, h=4 * T)]
-    m.put('sign', 68.4, 34.6)
+    m.spawns.append(dict(kind='assassin_shadow', x=50 * T, y=73.2 * T, level=9))
+    # wilderness patrols outside the walls
+    for k, x, y, lv in [('imp_raider', 40, 8, 7), ('oni_lancer', 70, 12, 8), ('imp_howler', 90, 30, 7), ('oni_executioner', 92, 74, 8),
+                        ('imp_bomber', 70, 90, 7), ('oni_lancer', 40, 92, 8), ('imp_raider', 8, 70, 7), ('imp_howler', 8, 30, 7)]:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.exits = [dict(to='velmoor', x=50 * T, y=0.5 * T, w=3 * T, h=T), dict(to='kharis', x=99.5 * T, y=50 * T, w=T, h=4 * T)]
+    m._expanded = True      # authored at full size already
     return m
 
 
