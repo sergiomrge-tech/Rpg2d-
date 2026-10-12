@@ -227,6 +227,9 @@ class MothOracle(Boss):
         side=v=='side';up=v=='up';g=p['wingbeat']
         cast=p['spell'];oracle=p['ultimate'];lash=p['swing']
         c.save();c.translate(0,-8+g*2.3)
+        # Broad, layered ocelli stay INSIDE a 384px RGBA boss sprite.
+        # Never silently clip the expensive feathered tips at the atlas edge.
+        c.scale(.82,1.0)
         # Gigantic layered OCELLI rosette (multiple concentric wings).
         for tier in (2,1,0):
             for sign in (-1,1):
