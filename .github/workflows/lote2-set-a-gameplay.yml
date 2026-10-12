@@ -1,0 +1,31 @@
+name: Lote 2 Set A - Unity gameplay C# check
+on:
+  push:
+    branches: [gpt6-lote2-set-a-20261012]
+    paths:
+      - 'unity/Assets/Scripts/**'
+      - 'unity/Assets/Resources/Maps/village.json'
+      - 'tools/art_hd/verify_lote2_set_a_gameplay.py'
+      - '.github/workflows/lote2-set-a-gameplay.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify six real insectoids and unique hit-frame abilities
+        run: python tools/art_hd/verify_lote2_set_a_gameplay.py
+  csharp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Compile C# against UnityEngine reference modules
+        run: bash tools/unity_check.sh
