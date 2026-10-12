@@ -77,6 +77,28 @@ namespace Aetheria
                 xp = 37, poise = 12, caster = true, scale = 0.78f,
                 drops = new[] { ("gold", 1f, 6, 14), ("ether", 0.3f, 1, 1), ("hell_ember", 0.10f, 1, 1) }
             };
+            // Lote 2 Set A: new anatomy families, not reskins or weapon-swaps.
+            Demons["termite_burrower"] = new DemonDef
+            {
+                id = "termite_burrower", name = "Térmita Escavadora", sheet = "Sprites/Demons/termite_burrower",
+                behavior = "termite_burrow", hp = 118, dmg = 20, speed = 2.0f, aggro = 7.5f,
+                xp = 39, poise = 27, scale = 0.84f,
+                drops = new[] { ("gold", 1f, 8, 16), ("potion", 0.10f, 1, 1), ("hell_ember", 0.17f, 1, 1) }
+            };
+            Demons["vespa_lancer"] = new DemonDef
+            {
+                id = "vespa_lancer", name = "Vespa Perfuradora", sheet = "Sprites/Demons/vespa_lancer",
+                behavior = "vespa_sting", hp = 81, dmg = 19, speed = 4.1f, aggro = 9.0f,
+                xp = 42, poise = 12, scale = 0.80f,
+                drops = new[] { ("gold", 1f, 6, 17), ("ether", 0.15f, 1, 1), ("hell_ember", 0.11f, 1, 1) }
+            };
+            Demons["cicada_screecher"] = new DemonDef
+            {
+                id = "cicada_screecher", name = "Cigarra Estridente", sheet = "Sprites/Demons/cicada_screecher",
+                behavior = "cicada_sonic", hp = 105, dmg = 16, speed = 2.9f, aggro = 8.0f,
+                xp = 40, poise = 21, scale = 0.77f,
+                drops = new[] { ("gold", 1f, 7, 16), ("ether", 0.15f, 1, 1), ("hell_ember", 0.12f, 1, 1) }
+            };
         }
 
         static void Add(ItemDef d) => Items[d.id] = d;
