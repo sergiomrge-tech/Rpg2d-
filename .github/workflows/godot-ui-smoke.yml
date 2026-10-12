@@ -1,0 +1,51 @@
+name: Godot UI regressions - book X, cutscenes and flute
+on:
+  push:
+    branches: [gpt6-fix-grimoire-x-20261012]
+    paths:
+      - 'godot/scripts/ui/grimoire.gd'
+      - 'godot/scripts/ui/touch_controls.gd'
+      - 'godot/scripts/game/game.gd'
+      - 'godot/scripts/core/music.gd'
+      - 'tools/test_ui_contract.py'
+      - '.github/workflows/godot-ui-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ui-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check input ownership, prologue controls and flute source contracts
+        run: python tools/test_ui_contract.py
+      - name: Install Godot 4.3 and X virtual screen
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1 libxcursor1 libxinerama1 libxi6 libxrandr2 unzip
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Import resources and check GDScript parser
+        run: |
+          godot --headless --path godot --import > import.log 2>&1
+          tail -n 25 import.log
+      - name: Run real Godot UI logic with synthetic touchscreen events
+        run: |
+          set -o pipefail
+          timeout 110 xvfb-run -a -s '-screen 0 1920x1080x24' godot --path godot --rendering-driver opengl3 -- -uiSmoke -touch 2>&1 | tee ui-smoke.log
+          grep -F '[ui-smoke] PASS all tests' ui-smoke.log
+          ! grep -Eq 'SCRIPT ERROR|Parse Error|ERROR:.*grimoire|\[ui-smoke\].*failed' ui-smoke.log
+      - name: Upload smoke logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-smoke-logs
+          path: |
+            ui-smoke.log
+            import.log
+          if-no-files-found: ignore
