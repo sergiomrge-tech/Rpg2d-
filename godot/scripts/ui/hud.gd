@@ -55,6 +55,9 @@ var dlg_plate: TextureRect
 var lines: Array = []
 var line_idx := 0
 var type_t := 0.0
+var _whisper_n := 0
+var _voice := 0.5
+var _narr := false
 var on_done := Callable()
 var _active := false
 
@@ -394,6 +397,11 @@ func _show_line() -> void:
 	dlg_text.text = ln[1]
 	dlg_text.visible_characters = 0
 	type_t = 0.0
+	_whisper_n = 0
+	_narr = narr
+	_voice = 0.12 if narr else float(hash(str(ln[0])) % 1000) / 1000.0
+	if str(ln[0]) in ["lumia", "receptionist", "sylra", "cleric", "witch", "elowen", "villager", "child"]:
+		_voice = 0.65 + _voice * 0.35      # lighter voices
 	Sfx.play("ui", 0.2, 1.2)
 
 
@@ -508,6 +516,12 @@ func _process(delta: float) -> void:
 		var full: String = lines[line_idx][1]
 		var n := mini(full.length(), int(type_t * 55.0))
 		dlg_text.visible_characters = n
+		# whisper: a breathy syllable on every vowel / hiss as the text is revealed
+		while _whisper_n < n:
+			var ch := full.substr(_whisper_n, 1)
+			if _whisper_n % 2 == 0 or ch in ["s", "x", "z"]:
+				Sfx.whisper(ch, _voice, 0.16 if _narr else 0.28)
+			_whisper_n += 1
 		dlg_hint.modulate.a = (0.6 + 0.4 * sin(now * 5.0)) if n >= full.length() else 0.0
 		var go := false
 		for k in [KEY_E, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE, -MOUSE_BUTTON_LEFT]:

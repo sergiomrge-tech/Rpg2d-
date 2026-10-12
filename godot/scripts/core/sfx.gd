@@ -29,6 +29,20 @@ func play(name: String, vol: float = 0.5, pitch: float = 1.0) -> void:
 	p.play()
 
 
+## One whispered syllable for a typed character. `voice` (0..1) bends pitch/formants per speaker.
+func whisper(ch: String, voice: float, vol: float = 0.3) -> void:
+	var c := ch.to_lower()
+	var clip := ""
+	if c in ["a", "á", "à", "â", "ã"]: clip = "a"
+	elif c in ["e", "é", "ê"]: clip = "e"
+	elif c in ["i", "í"]: clip = "i"
+	elif c in ["o", "ó", "ô", "õ"]: clip = "o"
+	elif c in ["u", "ú"]: clip = "u"
+	elif c in ["s", "x", "z", "f", "ç", "h"]: clip = "s"
+	else: return
+	play("wh_%s_%d" % [clip, _rng.randi() % 3], vol, lerpf(0.82, 1.28, voice) * _rng.randf_range(0.96, 1.05))
+
+
 func loop(name: String, vol: float) -> void:
 	var p := AudioStreamPlayer.new()
 	p.stream = _clip(name)
@@ -84,7 +98,51 @@ func _noise(sec: float, cutoff: float, a: float, dcy: float, gain: float = 1.0) 
 	return b
 
 
+const FORMANTS := {"a": [800.0, 1250.0], "e": [520.0, 1900.0], "i": [310.0, 2300.0], "o": [520.0, 900.0], "u": [330.0, 800.0]}
+
+
+## Breathy whisper syllable: noise pushed through two vowel resonators ("wh_<vowel>_<variant>"), or a soft "wh_s_<n>" hiss.
+func _whisper(n: String) -> PackedFloat32Array:
+	var parts := n.split("_")
+	var v := parts[1]
+	var variant := int(parts[2])
+	var sec := 0.10 + 0.012 * variant
+	var b := _buf(sec)
+	if v == "s":
+		var y := 0.0
+		for i in b.size():
+			var t := i / float(RATE)
+			var x := _n()
+			y = x - y * 0.55          # crude high-pass: bright "sh/s" breath
+			b[i] = y * 0.35 * sin(PI * clampf(t / sec, 0.0, 1.0))
+		return b
+	var f: Array = FORMANTS[v]
+	var shift := 1.0 + 0.06 * (variant - 1)
+	var y1 := [0.0, 0.0]
+	var y2 := [0.0, 0.0]
+	var rr := 0.985
+	for i in b.size():
+		var t := i / float(RATE)
+		var x := _n()
+		var out := 0.0
+		for k in 2:
+			var w := TAU * float(f[k]) * shift / RATE
+			var y: float = x * 0.06 + 2.0 * rr * cos(w) * float(y1[k]) - rr * rr * float(y2[k])
+			y2[k] = y1[k]
+			y1[k] = y
+			out += y * ((0.55 if (v == "i" or v == "u") else 1.0) if k == 0 else 0.8)
+		b[i] = out * sin(PI * clampf(t / sec, 0.0, 1.0)) + x * 0.03
+	var pk := 0.001
+	for q in b:
+		pk = maxf(pk, absf(q))
+	for i in b.size():
+		b[i] = b[i] / pk * 0.7
+	return b
+
+
 func _synth(n: String) -> PackedFloat32Array:
+	if n.begins_with("wh_"):
+		return _whisper(n)
 	match n:
 		"swing", "swing_heavy":
 			var h := n == "swing_heavy"
