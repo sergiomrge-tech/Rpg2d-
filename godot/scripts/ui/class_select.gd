@@ -140,6 +140,21 @@ func close() -> void:
 	get_tree().paused = false
 
 
+func _input(ev: InputEvent) -> void:
+	# Android does not emulate a mouse from touches in this project.
+	# Handle touch directly, in addition to native Button.pressed.
+	if not active or not (ev is InputEventScreenTouch) or not ev.pressed:
+		return
+	for i in cards.size():
+		if cards[i].get_global_rect().has_point(ev.position):
+			_pick(i)
+			get_viewport().set_input_as_handled()
+			return
+	if confirm_button.get_global_rect().has_point(ev.position):
+		_confirm()
+		get_viewport().set_input_as_handled()
+
+
 func _process(_dt: float) -> void:
 	if not active:
 		return
