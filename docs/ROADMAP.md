@@ -19,8 +19,8 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - 🔄 **Texturas do HUD** (medalhão, arcos, orbes, faixa de diálogo, fitas, pílulas, vinheta) — código pronto, falta gerar `Sprites/Ui/*`
 - ⬜ Ícones de itens/habilidades (`Sprites/Ui/icons`)
 - ⬜ Retratos (herói, Elina, Borin, Marta, Lumia)
-- ⬜ Chefe do capítulo: Diabrete-Chefe Grakk
-- ⬜ Oni soldado (2º demônio)
+- 🔄 Chefe do capítulo: Diabrete-Chefe Grakk — sprite HD novo com 18 trilhas de animação e prévia gerados no catálogo; **não foi integrado ao combate** e precisa de gate visual/Unity.
+- 🔄 Oni soldado (2º demônio) — sprite HD novo com clava, armadura e 18 trilhas de animação; **não foi registrado nos spawns** e precisa de gate visual/Unity.
 - ⬜ Menus: inventário/grimório (livro aberto), forja, quadro de missões
 - ⬜ Música e ambiência por região
 
