@@ -1,6 +1,6 @@
 class_name Player
 extends Actor
-## The reincarnated hero. Stamina-gated melee combo, i-frame roll, Spark magic that evolves.
+## The reincarnated hero. Unlimited sprint/weapon combos, i-frame roll, Spark magic that evolves.
 
 enum St { FREE, ATTACK, CAST, ROLL, HURT, DEAD }
 
@@ -8,14 +8,12 @@ static var I: Player
 
 var gs: GameState
 var mp := 0.0
-var st := 0.0
 var input_locked := false
 var scripted_move := Vector2.ZERO
 
 var state: int = St.FREE
 var combo := 0
 var buffered_attack := false
-var st_regen_delay := 0.0
 var state_t := 0.0
 var roll_dir := Vector2.ZERO
 var move_dir := Vector2.ZERO
@@ -28,9 +26,6 @@ var sonic := 0.0
 const WALK := 4.0 * T
 const RUN := 6.4 * T
 const ROLL_SPD := 10.5 * T
-const ATTACK_COST := 14.0
-const ROLL_COST := 24.0
-const RUN_DRAIN := 9.0
 const CAST_COST := 12.0
 
 
@@ -43,7 +38,6 @@ static func spawn(at: Vector2, state_: GameState) -> Player:
 	p.max_hp = state_.hp_max()
 	p.hp = p.max_hp
 	p.mp = state_.max_mp
-	p.st = state_.max_st
 	p.anim.hit.connect(p._on_anim_hit)
 	p.anim.ended.connect(p._on_anim_end)
 	Game.world.add_entity(p, at)
@@ -115,9 +109,6 @@ func _physics_process(dt: float) -> void:
 	move_dir = _read_move()
 	var run := (not input_locked) and (Input.is_physical_key_pressed(KEY_SHIFT) or Game.touch_run)
 
-	st_regen_delay -= dt
-	if st_regen_delay <= 0.0 and state != St.ROLL:
-		st = minf(gs.max_st, st + 38.0 * dt)
 	mp = minf(gs.max_mp, mp + 1.2 * dt)
 
 	if _pressed([KEY_J, -MOUSE_BUTTON_LEFT]): _try_attack()
@@ -129,10 +120,7 @@ func _physics_process(dt: float) -> void:
 	match state:
 		St.FREE:
 			if move_dir.length_squared() > 0.01:
-				var can_run := run and st > 1.0
-				if can_run:
-					st -= RUN_DRAIN * dt
-					st_regen_delay = 0.4
+				var can_run := run
 				face(Util.facing_from(move_dir, facing))
 				anim.play("run" if can_run else "walk")
 				velocity = move_dir * (RUN if can_run else WALK) * (0.52 if hex_slow > 0.0 else 1.0) + knock
@@ -185,21 +173,13 @@ func _try_attack() -> void:
 		return
 	if state != St.FREE:
 		return
-	if st < ATTACK_COST * 0.5:
-		Fx.toast("Sem fôlego!", Color(1, 0.85, 0.4))
-		return
 	_start_attack(1)
 
 
 func _start_attack(n: int) -> void:
-	if st < ATTACK_COST * 0.5:
-		_to_free()
-		return
 	combo = n
 	state = St.ATTACK
 	state_t = 0.0
-	st -= ATTACK_COST * (1.5 if n == 3 else 1.0)
-	st_regen_delay = 0.7
 	var target := Enemy.nearest(pos(), 2.6 * T)
 	if target != null and move_dir.length_squared() < 0.01:
 		face(Util.facing_from(target.pos() - pos(), facing))
@@ -282,11 +262,6 @@ func _try_roll() -> void:
 		return
 	if state == St.ATTACK and anim.normalized() < 0.5:
 		return
-	if st < ROLL_COST * 0.6:
-		Fx.toast("Sem fôlego!", Color(1, 0.85, 0.4))
-		return
-	st -= ROLL_COST
-	st_regen_delay = 0.6
 	roll_dir = move_dir.normalized() if move_dir.length_squared() > 0.01 else Util.facing_vec(facing)
 	face(Util.facing_from(roll_dir, facing))
 	state = St.ROLL
@@ -349,5 +324,4 @@ func revive(at: Vector2) -> void:
 	global_position = at
 	hp = gs.hp_max()
 	mp = gs.max_mp
-	st = gs.max_st
 	_to_free()

@@ -109,7 +109,8 @@ func gain_xp(amount: int) -> bool:
 		level += 1
 		max_hp += 14.0
 		max_mp += 6.0
-		max_st += 4.0
+		# Legacy max_st is retained in save files for backwards compatibility,
+		# but no longer increases or affects movement, attacks or dodge.
 		atk += 2.2
 		mag += 2.6
 		up = true
