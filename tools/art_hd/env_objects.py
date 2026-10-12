@@ -834,6 +834,289 @@ def banner_pole(ctx):
     paint(ctx, lambda c: smooth_poly(c, [(12, -134), (17, -124), (12, -114), (7, -124)], tension=0.1), METAL, sh=0.8, hl=0.6, line=0.7)
 
 
+
+# ------------------------------------------------------------------ Etapa 3 regions
+SAND = Pal('#e8c27c', '#c49858', '#fff0b8', '#5a3a1c')
+SANDSTONE = Pal('#d8a468', '#b07a44', '#f4cc90', '#4a2a10')
+ADOBE = Pal('#e0b078', '#b88a54', '#f8d6a0', '#5a3a1c')
+CACTUS = Pal('#4a9a58', '#2e7640', '#7ac888', '#0e3418')
+BONE = Pal('#f2e8d0', '#cfc0a0', '#ffffff', '#4a3a28')
+CAVE_ROCK = Pal('#6a6478', '#4a4458', '#948eaa', '#1a1624')
+ICE = Pal('#bfe8f8', '#7ab8dc', '#f4fdff', '#1a4a6a')
+SNOW_PINE = Pal('#2e6a5a', '#1e4a40', '#4e9a84', '#0a2820')
+SWAMP_BARK = Pal('#5a4a38', '#3e3226', '#7a6a50', '#1a140c')
+SWAMP_LEAF = Pal('#4a6a3a', '#34502a', '#6c8c52', '#162410')
+
+
+@prop('cactus', 90, 150, 45, 138, col=(24, 12, 0), shadow=(3, 0, 28, 8, 0.3))
+def cactus(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-12, 0), (-13, -80), (-6, -100), (6, -100), (13, -80), (12, 0), (0, 4)], tension=0.4), CACTUS, sh=4, hl=2)
+    for sx, y in ((-1, -44), (1, -60)):
+        paint(ctx, lambda c, sx=sx, y=y: (capsule(c, (sx * 10, y), (sx * 28, y), 6, 5), capsule(c, (sx * 28, y), (sx * 28, y - 28), 5.5, 5)),
+              CACTUS, sh=2, hl=1)
+    for x, y in ((-5, -70), (4, -50), (-4, -30), (5, -86)):
+        stroke(ctx, lambda c, x=x, y=y: (c.move_to(x, y), c.line_to(x + 2, y - 4)), hx('#fff0b8'), 1.2)
+    paint(ctx, lambda c: ellipse(c, 0, -102, 6, 4), Pal('#ff7ab0', '#d04a80', '#ffc0d8', '#5a1230'), sh=1, hl=0.6, line=0.8)
+
+
+@prop('palm', 200, 250, 100, 232, col=(22, 12, 0), shadow=(8, 0, 60, 16, 0.32))
+def palm(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-9, 0), (-5, -60), (6, -120), (22, -168), (30, -166), (14, -116), (6, -58), (10, 0), (0, 3)], tension=0.4),
+          Pal('#a8794a', '#7e5530', '#cc9c6a', '#2e1c0c'), sh=3, hl=1.4)
+    for i in range(0, 7):
+        stroke(ctx, lambda c, i=i: (c.move_to(26, -166), c.curve_to(26 + (i - 3) * 20, -196 + abs(i - 3) * 6, 26 + (i - 3) * 40, -170 + abs(i - 3) * 14, 26 + (i - 3) * 52, -130 + abs(i - 3) * 8)),
+               Pal('#2e7a40', '#1c5a2c', '#58b868', '#0a2a12').line, 9)
+        stroke(ctx, lambda c, i=i: (c.move_to(26, -166), c.curve_to(26 + (i - 3) * 20, -196 + abs(i - 3) * 6, 26 + (i - 3) * 40, -170 + abs(i - 3) * 14, 26 + (i - 3) * 52, -130 + abs(i - 3) * 8)),
+               hx('#4ca85c'), 6.5)
+    for x, y in ((22, -160), (32, -158), (27, -150)):
+        paint(ctx, lambda c, x=x, y=y: ellipse(c, x, y, 5, 5), Pal('#a8794a', '#7e5530', '#cc9c6a', '#2e1c0c'), sh=1, hl=0.6, line=0.8)
+
+
+@prop('sandstone', 140, 120, 70, 104, col=(90, 26, 0), shadow=(4, 0, 58, 14, 0.3))
+def sandstone(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-56, 0), (-54, -30), (-34, -62), (-14, -84), (8, -78), (24, -54), (50, -30), (56, 0), (0, 6)], tension=0.4),
+          SANDSTONE, sh=8, hl=3, deep=12)
+    for y in (-18, -38, -58):
+        stroke(ctx, lambda c, y=y: (c.move_to(-46 + y * -0.4, y), c.curve_to(-10, y - 5, 20, y + 3, 50 + y * 0.3, y - 2)), SANDSTONE.shadow, 1.4, 0.8)
+
+
+@prop('skull_pile', 90, 70, 45, 58, col=None, shadow=(2, 0, 30, 8, 0.25))
+def skull_pile(ctx):
+    for x, y, r in ((-14, -4, 12), (10, -2, 14), (-2, -22, 11)):
+        paint(ctx, lambda c, x=x, y=y, r=r: ellipse(c, x, y - r * 0.4, r, r * 0.9), BONE, sh=2, hl=1.2, line=1)
+        for sx in (-1, 1):
+            flat(ctx, lambda c, x=x, y=y, r=r, sx=sx: ellipse(c, x + sx * r * 0.38, y - r * 0.45, r * 0.22, r * 0.26), hx('#2a1810'))
+        flat(ctx, lambda c, x=x, y=y, r=r: smooth_poly(c, [(x - 1.5, y + r * 0.05), (x + 1.5, y + r * 0.05), (x, y - r * 0.15)], tension=0), hx('#2a1810'))
+    stroke(ctx, lambda c: (c.move_to(-34, 0), c.line_to(30, -6)), BONE.line, 5)
+    stroke(ctx, lambda c: (c.move_to(-34, 0), c.line_to(30, -6)), BONE.base, 3)
+
+
+@prop('obelisk', 80, 220, 40, 204, col=(36, 16, 0), shadow=(4, 0, 30, 9, 0.32))
+def obelisk(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-22, 4), (-18, -14), (18, -14), (22, 4)], tension=0.05), SANDSTONE, sh=2, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-14, -14), (-10, -150), (0, -184), (10, -150), (14, -14)], tension=0.05), SANDSTONE, sh=5, hl=2)
+    for y in range(-30, -140, -18):
+        stroke(ctx, lambda c, y=y: (c.move_to(-6, y), c.line_to(6, y)), SANDSTONE.line, 2)
+        flat(ctx, lambda c, y=y: ellipse(c, 0, y - 6, 3, 3), hx('#ffb340'), 0.9)
+    radial_glow(ctx, 0, -170, 18, hx('#ffb340'), 0.5)
+
+
+@prop('adobe_house', 220, 220, 110, 196, col=(170, 56, 22), shadow=(6, 0, 96, 16, 0.32))
+def adobe_house(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-80, 0), (-80, -100), (-70, -112), (70, -112), (80, -100), (80, 0)], tension=0.15), ADOBE, sh=0, hl=0)
+    flat(ctx, lambda c: smooth_poly(c, [(-80, -100), (80, -100), (80, -84), (-80, -90)], tension=0.1), ADOBE.shadow, 0.9)
+    paint(ctx, lambda c: smooth_poly(c, [(-86, -112), (86, -112), (80, -124), (-80, -124)], tension=0.1), SANDSTONE, sh=2, hl=1)
+    for x in (-56, -26, 4, 34, 64):
+        stroke(ctx, lambda c, x=x: (c.move_to(x, -112), c.line_to(x, -124)), SANDSTONE.line, 1.4)
+    door(ctx, 0, -2, 34, 56, pal=Pal('#3a8a8a', '#276a6a', '#62b4ae', '#0e2a2a'))
+    for x in (-52, 52):
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 12, -38), (x - 12, -70), (x, -78), (x + 12, -70), (x + 12, -38)], tension=0.2), Pal('#2a1a10', '#140a04', '#4a3020', '#0a0402'), sh=1, hl=0)
+    paint(ctx, lambda c: smooth_poly(c, [(-80, -86), (80, -86), (84, -76), (-84, -76)], tension=0.1), CLOTH_R, sh=2, hl=1)
+    for x in (-30, 20):
+        paint(ctx, lambda c, x=x: ellipse(c, x, -108, 9, 6), Pal('#8a5a3a', '#663f27', '#b07d55', '#2a160a'), sh=1, hl=0.6, line=0.8)
+
+
+@prop('desert_tent', 200, 190, 100, 170, col=(130, 40, 10), shadow=(4, 0, 84, 14, 0.3))
+def desert_tent(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-86, 0), (-60, -92), (0, -140), (60, -92), (86, 0), (0, 8)], tension=0.1), Pal('#f4e4c4', '#d4c09a', '#ffffff', '#5a4630'), sh=7, hl=3)
+    for k in range(-2, 3):
+        stroke(ctx, lambda c, k=k: (c.move_to(0, -140), c.line_to(k * 34, 2)), CLOTH_R.base, 6, 0.9)
+    paint(ctx, lambda c: smooth_poly(c, [(-18, 0), (-14, -52), (14, -52), (18, 0)], tension=0.3), Pal('#2a1810', '#140a04', '#4a3020', '#0a0402'), sh=0, hl=0)
+    stroke(ctx, lambda c: (c.move_to(0, -140), c.line_to(0, -170)), hx('#3a2a20'), 2.4)
+    paint(ctx, lambda c: smooth_poly(c, [(1, -170), (26, -164), (1, -156)], tension=0.2), CLOTH_R, sh=1.5, hl=0.8)
+
+
+# ---- Mines
+@prop('crystal_blue', 90, 110, 45, 98, col=(36, 14, 0), shadow=(2, 0, 30, 8, 0.3))
+def crystal_blue(ctx):
+    radial_glow(ctx, 0, -40, 50, hx('#4ab8ff'), 0.55)
+    for x, h, w in ((-16, 56, 11), (14, 74, 13), (-2, 94, 14)):
+        paint(ctx, lambda c, x=x, h=h, w=w: smooth_poly(c, [(x - w, 0), (x - w * 0.7, -h * 0.7), (x, -h), (x + w * 0.7, -h * 0.7), (x + w, 0)], tension=0.05),
+              Pal('#6ac8ff', '#2a88d8', '#c8f0ff', '#0a2a5a'), sh=3, hl=2.5, line=1.2)
+
+
+@prop('crystal_red', 90, 110, 45, 98, col=(36, 14, 0), shadow=(2, 0, 30, 8, 0.3))
+def crystal_red(ctx):
+    radial_glow(ctx, 0, -40, 50, hx('#ff5a3a'), 0.55)
+    for x, h, w in ((-16, 56, 11), (14, 74, 13), (-2, 94, 14)):
+        paint(ctx, lambda c, x=x, h=h, w=w: smooth_poly(c, [(x - w, 0), (x - w * 0.7, -h * 0.7), (x, -h), (x + w * 0.7, -h * 0.7), (x + w, 0)], tension=0.05),
+              Pal('#ff7a5a', '#d02a1a', '#ffd0b8', '#4a0a04'), sh=3, hl=2.5, line=1.2)
+
+
+@prop('stalagmite', 90, 150, 45, 136, col=(30, 14, 0), shadow=(3, 0, 34, 9, 0.35))
+def stalagmite(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-26, 0), (-18, -50), (-8, -112), (0, -124), (8, -108), (18, -50), (26, 0), (0, 6)], tension=0.3), CAVE_ROCK, sh=6, hl=2.5, deep=10)
+    for y in (-34, -62, -88):
+        stroke(ctx, lambda c, y=y: (c.move_to(-12 + y * 0.05, y), c.curve_to(-2, y - 3, 6, y + 2, 12, y - 1)), CAVE_ROCK.shadow, 1.3, 0.8)
+
+
+@prop('mine_cart', 130, 100, 65, 86, col=(90, 30, 0), shadow=(3, 0, 50, 10, 0.3))
+def mine_cart(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-44, -14), (-50, -50), (50, -50), (44, -14), (0, -4)], tension=0.15), Pal('#6a5a4a', '#4a3e32', '#8e7a64', '#1e1810'), sh=4, hl=2)
+    flat(ctx, lambda c: blob(c, [(-22, -52, 14), (0, -58, 16), (22, -52, 13)]), hx('#2a2430'))
+    for x, y in ((-18, -58), (4, -66), (22, -56)):
+        flat(ctx, lambda c, x=x, y=y: smooth_poly(c, [(x - 5, y + 4), (x, y - 5), (x + 5, y + 4)], tension=0), hx('#ffb340'))
+    for x in (-30, 30):
+        paint(ctx, lambda c, x=x: ellipse(c, x, -8, 12, 12), Pal('#4a4a5e', '#2e2e3e', '#6e6e88', '#0e0e16'), sh=1.5, hl=0.8, line=1)
+    stroke(ctx, lambda c: (c.move_to(-70, 4), c.line_to(70, 4)), hx('#3a2e24'), 3)
+
+
+@prop('torch_post', 40, 150, 20, 140, col=(10, 8, 0), shadow=(2, 0, 12, 4, 0.3))
+def torch_post(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-4, 0), (-3, -92), (3, -92), (4, 0)], tension=0.1), WOOD_DK, sh=1.2, hl=0.5)
+    paint(ctx, lambda c: smooth_poly(c, [(-9, -92), (9, -92), (7, -104), (-7, -104)], tension=0.1), Pal('#4a4a5e', '#2e2e3e', '#6e6e88', '#0e0e16'), sh=1, hl=0.6)
+    radial_glow(ctx, 0, -116, 34, hx('#ff9a2a'), 0.55)
+    paint(ctx, lambda c: smooth_poly(c, [(-7, -104), (-10, -118), (0, -134), (10, -118), (7, -104)], tension=0.4), Pal('#ffb340', '#ff6a1a', '#fff0a0', '#5a1404'), sh=1.5, hl=1.5, line=0.8)
+
+
+@prop('mine_entrance', 280, 240, 140, 220, col=None, shadow=(0, 0, 120, 12, 0.3))
+def mine_entrance(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-130, 0), (-130, -90), (-90, -170), (0, -204), (90, -170), (130, -90), (130, 0)], tension=0.3), CAVE_ROCK, sh=10, hl=4, deep=18)
+    paint(ctx, lambda c: smooth_poly(c, [(-56, 0), (-56, -100), (-40, -130), (0, -142), (40, -130), (56, -100), (56, 0)], tension=0.35), Pal('#0a0610', '#06040a', '#1a1424', '#020104'), sh=0, hl=0, line=1.4)
+    for sx in (-1, 1):
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 60, 0), (sx * 60, -118), (sx * 48, -118), (sx * 48, 0)], tension=0.02), WOOD, sh=2, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-66, -112), (66, -112), (62, -124), (-62, -124)], tension=0.05), WOOD_DK, sh=2, hl=1)
+    for x in (-100, 100):
+        radial_glow(ctx, x, -110, 26, hx('#4ab8ff'), 0.5)
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 8, -90), (x, -118), (x + 8, -90)], tension=0.05), Pal('#6ac8ff', '#2a88d8', '#c8f0ff', '#0a2a5a'), sh=1.5, hl=1, line=1)
+
+
+@prop('anvil', 80, 70, 40, 58, col=(40, 16, 0), shadow=(2, 0, 30, 8, 0.3))
+def anvil(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-18, 0), (-12, -18), (12, -18), (18, 0)], tension=0.1), Pal('#4a4a5e', '#2e2e3e', '#6e6e88', '#0e0e16'), sh=2, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-32, -18), (28, -20), (36, -28), (22, -34), (-28, -34), (-34, -28)], tension=0.1), Pal('#6a6a80', '#464658', '#9a9ab4', '#16161e'), sh=3, hl=1.5)
+    radial_glow(ctx, 6, -34, 14, hx('#ff9a2a'), 0.5)
+
+
+# ---- Swamp
+@prop('swamp_tree', 200, 230, 100, 214, col=(30, 14, 0), shadow=(6, 0, 70, 18, 0.35))
+def swamp_tree(ctx):
+    for x, ang in ((-22, -14), (-8, -4), (10, 6), (24, 16)):
+        stroke(ctx, lambda c, x=x, ang=ang: (c.move_to(x * 1.6, 2), c.curve_to(x * 1.2, -20, x * 0.4 + ang, -40, ang * 0.4, -64)), SWAMP_BARK.line, 9)
+        stroke(ctx, lambda c, x=x, ang=ang: (c.move_to(x * 1.6, 2), c.curve_to(x * 1.2, -20, x * 0.4 + ang, -40, ang * 0.4, -64)), SWAMP_BARK.base, 6)
+    paint(ctx, lambda c: smooth_poly(c, [(-14, -50), (-12, -100), (-4, -118), (4, -118), (12, -100), (14, -50)], tension=0.3), SWAMP_BARK, sh=3, hl=1.5)
+    canopy(ctx, -34, -134, 38, 26, SWAMP_LEAF, 51, n=8, top_light=False)
+    canopy(ctx, 36, -130, 36, 26, SWAMP_LEAF, 52, n=8, top_light=False)
+    canopy(ctx, 0, -152, 54, 36, SWAMP_LEAF, 53, n=10, top_light=False)
+    for x in (-30, -12, 8, 28, 44):
+        stroke(ctx, lambda c, x=x: (c.move_to(x, -126), c.curve_to(x + 2, -100, x - 3, -80, x, -56)), hx('#7a9a62'), 2.4, 0.8)
+
+
+@prop('reeds', 90, 90, 45, 80, col=None, outline=0.8)
+def reeds(ctx):
+    for i in range(9):
+        x = -30 + i * 7.5
+        h = 50 + (i * 37 % 26)
+        stroke(ctx, lambda c, x=x, h=h: (c.move_to(x, 0), c.curve_to(x + 3, -h * 0.5, x - 2, -h * 0.8, x + 4, -h)), SWAMP_LEAF.line, 4)
+        stroke(ctx, lambda c, x=x, h=h: (c.move_to(x, 0), c.curve_to(x + 3, -h * 0.5, x - 2, -h * 0.8, x + 4, -h)), SWAMP_LEAF.light, 2)
+        if i % 3 == 0:
+            paint(ctx, lambda c, x=x, h=h: capsule(c, (x + 4, -h), (x + 4, -h - 14), 3.2, 3), Pal('#7a4a2a', '#5a3018', '#a06a40', '#2a1408'), sh=0.8, hl=0.4, line=0.8)
+
+
+@prop('bog_light', 60, 100, 30, 88, col=None, outline=0)
+def bog_light(ctx):
+    radial_glow(ctx, 0, -40, 34, hx('#9aff6a'), 0.55)
+    radial_glow(ctx, 0, -40, 16, hx('#e8ffc0'), 0.8)
+    flat(ctx, lambda c: ellipse(c, 0, -40, 4, 5), hx('#ffffff'), 0.95)
+
+
+@prop('stilt_hut', 220, 260, 110, 236, col=(150, 44, 20), shadow=(6, 0, 90, 18, 0.32))
+def stilt_hut(ctx):
+    for x in (-62, -22, 22, 62):
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 5, 0), (x - 5, -52), (x + 5, -52), (x + 5, 0)], tension=0.02), SWAMP_BARK, sh=1.5, hl=0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-84, -52), (84, -52), (84, -64), (-84, -64)], tension=0.02), WOOD, sh=2, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-68, -64), (-68, -128), (68, -128), (68, -64)], tension=0.02), Pal('#8a6a48', '#664a2c', '#b08a62', '#2a1c0c'), sh=4, hl=1.5)
+    for x in range(-60, 68, 18):
+        stroke(ctx, lambda c, x=x: (c.move_to(x, -66), c.line_to(x, -126)), (0.3, 0.2, 0.1, 1), 1.2, 0.6)
+    paint(ctx, lambda c: smooth_poly(c, [(-18, -64), (-18, -108), (18, -108), (18, -64)], tension=0.2), Pal('#1a0e08', '#0c0604', '#3a2218', '#040202'), sh=0, hl=0)
+    paint(ctx, lambda c: smooth_poly(c, [(36, -92), (36, -112), (58, -112), (58, -92)], tension=0.02), Pal('#9aff6a', '#5ac83a', '#e8ffc0', '#14380a'), sh=2, hl=0, line=1)
+    radial_glow(ctx, 47, -102, 22, hx('#9aff6a'), 0.4)
+    paint(ctx, lambda c: smooth_poly(c, [(-88, -124), (0, -190), (88, -124), (76, -120), (0, -172), (-76, -120)], tension=0.05), Pal('#4a6a3a', '#34502a', '#6c8c52', '#162410'), sh=4, hl=2)
+    paint(ctx, lambda c: smooth_poly(c, [(-14, -52), (14, -52), (14, -2), (-14, -2)], tension=0.02), WOOD_DK, sh=1, hl=0.5)
+
+
+@prop('cauldron', 100, 100, 50, 86, col=(50, 18, 0), shadow=(2, 0, 36, 10, 0.3))
+def cauldron(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-34, -8), (-40, -44), (-28, -58), (28, -58), (40, -44), (34, -8), (0, 0)], tension=0.4), Pal('#3a3a4a', '#22222e', '#5a5a70', '#0a0a10'), sh=4, hl=2)
+    paint(ctx, lambda c: ellipse(c, 0, -58, 28, 9), Pal('#9aff6a', '#5ac83a', '#e8ffc0', '#14380a'), sh=2, hl=1, line=1)
+    radial_glow(ctx, 0, -66, 30, hx('#9aff6a'), 0.5)
+    for x, y, r in ((-8, -72, 4), (8, -78, 3), (0, -88, 3)):
+        flat(ctx, lambda c, x=x, y=y, r=r: ellipse(c, x, y, r, r), hx('#c8ffa0'), 0.8)
+    for x in (-24, 24):
+        stroke(ctx, lambda c, x=x: (c.move_to(x, -4), c.line_to(x * 1.2, 4)), hx('#1a1a22'), 6)
+
+
+# ---- Frozen peaks
+@prop('snow_pine', 150, 250, 75, 236, col=(18, 12, 0), shadow=(5, 0, 46, 15, 0.3))
+def snow_pine(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-8, 0), (-6, -40), (6, -40), (8, 0), (0, 3)], tension=0.3), BARK, sh=2, hl=1)
+    for i, (y, w) in enumerate([(-40, 58), (-80, 48), (-118, 38), (-152, 27), (-180, 15)]):
+        def tier(c, y=y, w=w, i=i):
+            pts = [(-w, y)]
+            for k in range(1, 5):
+                pts.append((-w + 2 * w * k / 5 - w / 5, y + 8))
+                pts.append((-w + 2 * w * k / 5, y + 1))
+            pts += [(w, y), (w * 0.25, y - 52 + i * 3), (0, y - 60 + i * 3), (-w * 0.25, y - 52 + i * 3)]
+            smooth_poly(c, pts, tension=0.25)
+        paint(ctx, tier, SNOW_PINE, sh=w * 0.18, hl=2, line=1.2, deep=w * 0.3)
+        flat(ctx, lambda c, y=y, w=w, i=i: smooth_poly(c, [(-w * 0.8, y - 2), (0, y - 56 + i * 3), (w * 0.8, y - 2), (w * 0.5, y + 4), (0, y - 40 + i * 3), (-w * 0.5, y + 4)], tension=0.2), hx('#f4fbff'), 0.92)
+
+
+@prop('ice_crystal', 100, 130, 50, 116, col=(40, 14, 0), shadow=(2, 0, 34, 9, 0.28))
+def ice_crystal(ctx):
+    radial_glow(ctx, 0, -50, 54, hx('#9ae8ff'), 0.45)
+    for x, h, w in ((-20, 60, 12), (18, 80, 14), (0, 108, 15)):
+        paint(ctx, lambda c, x=x, h=h, w=w: smooth_poly(c, [(x - w, 0), (x - w * 0.7, -h * 0.7), (x, -h), (x + w * 0.7, -h * 0.7), (x + w, 0)], tension=0.05),
+              ICE, sh=3, hl=3, line=1.2)
+        stroke(ctx, lambda c, x=x, h=h, w=w: (c.move_to(x - w * 0.3, -h * 0.15), c.line_to(x - w * 0.2, -h * 0.7)), (1, 1, 1, 1), 1.6, 0.8)
+
+
+@prop('snow_rock', 120, 90, 60, 76, col=(80, 24, -2), shadow=(3, 0, 50, 12, 0.28))
+def snow_rock(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-48, 0), (-46, -20), (-28, -44), (0, -54), (26, -46), (46, -22), (48, 0), (0, 6)], tension=0.4), Pal('#8a96b0', '#5e6a88', '#b8c4dc', '#1e2438'), sh=7, hl=2.5, deep=11)
+    flat(ctx, lambda c: smooth_poly(c, [(-34, -34), (0, -56), (34, -36), (20, -30), (0, -44), (-22, -28)], tension=0.35), hx('#f4fbff'), 0.95)
+
+
+@prop('frozen_statue', 90, 200, 45, 186, col=(40, 16, 0), shadow=(3, 0, 32, 9, 0.3))
+def frozen_statue(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-24, 4), (-20, -16), (20, -16), (24, 4)], tension=0.05), Pal('#a8b4c8', '#7a869c', '#d0daea', '#2a3244'), sh=2, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-14, -16), (-18, -90), (-8, -110), (8, -110), (18, -90), (14, -16)], tension=0.3), Pal('#b8c4d8', '#8a96ac', '#e0eaf8', '#2a3244'), sh=4, hl=2)
+    paint(ctx, lambda c: ellipse(c, 0, -126, 13, 14), Pal('#b8c4d8', '#8a96ac', '#e0eaf8', '#2a3244'), sh=3, hl=1.5, line=1.1)
+    for sx in (-1, 1):
+        stroke(ctx, lambda c, sx=sx: (c.move_to(sx * 14, -96), c.line_to(sx * 34, -80)), Pal('#b8c4d8', '#8a96ac', '#e0eaf8', '#2a3244').line, 8)
+        stroke(ctx, lambda c, sx=sx: (c.move_to(sx * 14, -96), c.line_to(sx * 34, -80)), hx('#b8c4d8'), 5.5)
+    paint(ctx, lambda c: smooth_poly(c, [(-24, -76), (-6, -150), (14, -76)], tension=0.05), ICE, sh=3, hl=2, line=1)
+    radial_glow(ctx, 0, -90, 40, hx('#9ae8ff'), 0.25)
+
+
+@prop('lumia_temple', 380, 330, 190, 304, col=(300, 80, 20), shadow=(8, 0, 170, 24, 0.34))
+def lumia_temple(ctx):
+    stone = Pal('#e8ecf4', '#b0b8cc', '#ffffff', '#3a4258')
+    paint(ctx, lambda c: smooth_poly(c, [(-170, 4), (-170, -20), (170, -20), (170, 4)], tension=0.02), stone, sh=3, hl=1.5)
+    paint(ctx, lambda c: smooth_poly(c, [(-150, -20), (-150, -40), (150, -40), (150, -20)], tension=0.02), stone, sh=3, hl=1.5)
+    for x in (-120, -60, 60, 120):
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 16, -40), (x - 12, -150), (x + 12, -150), (x + 16, -40)], tension=0.05), stone, sh=5, hl=2)
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 22, -150), (x - 22, -162), (x + 22, -162), (x + 22, -150)], tension=0.05), stone, sh=2, hl=1)
+        stroke(ctx, lambda c, x=x: (c.move_to(x - 4, -48), c.line_to(x - 4, -144)), stone.shadow, 1.4, 0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-136, -162), (0, -236), (136, -162)], tension=0.0), stone, sh=6, hl=3)
+    paint(ctx, lambda c: ellipse(c, 0, -190, 20, 20), Pal('#ffd27a', '#e0a040', '#fff4c0', '#5a3a10'), sh=3, hl=2, line=1.4)
+    for k in range(8):
+        a = k / 8 * math.tau
+        stroke(ctx, lambda c, a=a: (c.move_to(0, -190), c.line_to(math.cos(a) * 18, -190 + math.sin(a) * 18)), stone.shadow, 1.4)
+    radial_glow(ctx, 0, -190, 60, hx('#ffd27a'), 0.28)
+    paint(ctx, lambda c: smooth_poly(c, [(-30, -40), (-30, -112), (0, -134), (30, -112), (30, -40)], tension=0.2), Pal('#3a4a7a', '#26325a', '#566aa0', '#0c1226'), sh=0, hl=0, line=1.2)
+    radial_glow(ctx, 0, -80, 44, hx('#9ae8ff'), 0.3)
+    for sx in (-1, 1):
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 160, -40), (sx * 160, -60), (sx * 176, -50)], tension=0.1), ICE, sh=1, hl=0.6, line=0.8)
+
+
+@prop('ice_spire', 90, 220, 45, 206, col=(30, 14, 0), shadow=(3, 0, 34, 9, 0.28))
+def ice_spire(ctx):
+    radial_glow(ctx, 0, -100, 70, hx('#9ae8ff'), 0.3)
+    paint(ctx, lambda c: smooth_poly(c, [(-24, 0), (-14, -80), (-4, -170), (0, -196), (6, -150), (16, -80), (26, 0), (0, 6)], tension=0.1), ICE, sh=5, hl=4, line=1.3)
+    stroke(ctx, lambda c: (c.move_to(-6, -20), c.line_to(-2, -150)), (1, 1, 1, 1), 2, 0.7)
+
+
 # ------------------------------------------------------------------ render
 def render_prop(name):
     p = PROPS[name]

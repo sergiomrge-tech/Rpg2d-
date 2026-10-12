@@ -7,6 +7,11 @@ namespace Aetheria
     public class Enemy : Actor
     {
         public static readonly List<Enemy> All = new List<Enemy>();
+        static readonly Dictionary<string, string> Minions = new Dictionary<string, string>
+        {
+            { "dryad_profane", "spirit_corrupt" }, { "grakk", "imp" }, { "assassin_shadow", "imp_scout" },
+            { "scorpion_demon", "sand_imp" }, { "ember_golem", "mine_imp" }, { "succubus_mirael", "bog_wraith" }, { "ice_demon", "frost_imp" },
+        };
         enum St { Idle, Chase, Telegraph, Attack, Cast, Hurt, Dead, Retreat }
 
         public DemonDef def;
@@ -240,7 +245,7 @@ namespace Aetheria
             if (def.boss && !summoned && hp < maxHp * 0.5f && hp > 0)
             {
                 summoned = true;
-                string minion = def.id == "dryad_profane" ? "spirit_corrupt" : def.id == "grakk" ? "imp" : def.id == "assassin_shadow" ? "imp_scout" : null;
+                string minion = Minions.TryGetValue(def.id, out var mn) ? mn : null;
                 if (minion != null)
                 {
                     Hud.I?.Banner(def.name + " se enfurece", "Reforços demoníacos!");

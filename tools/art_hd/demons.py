@@ -370,3 +370,5 @@ DEMONS = [Imp(), Grakk()]
 def _late():
     from demons_lote1 import LOTE1_IMPS
     DEMONS.extend(LOTE1_IMPS)
+    from demons_region import REGION_IMPS
+    DEMONS.extend(REGION_IMPS)

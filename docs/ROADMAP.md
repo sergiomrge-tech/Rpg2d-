@@ -47,9 +47,15 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Dificuldade/economia: rodada de balanceamento quando o jogo rodar na nuvem
 
 ## Etapa 3 — Capítulos 4–7
-- ⬜ Deserto, Minas, Pântano, Picos Gelados (+ demônios temáticos e chefes)
-- ⬜ Árvores de habilidade completas (níveis III)
+- ✅ **Deserto de Kharis** (Cap. 4): oásis, acampamento nômade, obeliscos, arena do **Demônio Escorpião** · NPC Hasim · Rank B
+- ✅ **Minas de Durnhold** (Cap. 5): cavernas com cristais, forja anã, arena do **Golem de Brasa** · NPC Durnok · Couraça Anã
+- ✅ **Pântano de Mirewail** (Cap. 6): brejo alagado, cabana sobre palafitas da bruxa Morgana, ilha de **Mirael, a Súcubo** · Rank A
+- ✅ **Picos Gelados** (Cap. 7): nevascas, estátuas congeladas, Templo de Lumia (Monge Ilan), arena do **Demônio de Gelo**
+- ✅ 13 novos demônios animados (3 vistas × 6 estados): diabretes das dunas/mineiro/bruxo/gélido, espectros de areia e do brejo, onis nômade/de rocha/de gelo + 4 chefes
+- ✅ Chefes com fase 2 (invocam reforços a 50 %); drops garantidos de equipamento épico/lendário por chefe
+- ✅ Portões de viagem por progresso (Rank/chefe derrotado), título de região, missões de região em tabela (`Story.Regions`)
 - ⬜ Iluminação 2D (dia/noite, tochas, cavernas)
+- ⬜ Árvores de habilidade completas (nível III de espada, escudo de luz, passos)
 
 ## Etapa 4 — Capítulos 8–10 e final
 - ⬜ Castelo sitiado, Terras Devastadas, Cidadela

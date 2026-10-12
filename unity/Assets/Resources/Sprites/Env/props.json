@@ -369,6 +369,256 @@
    "colW": 12,
    "colH": 8,
    "colY": 0
+  },
+  {
+   "name": "cactus",
+   "w": 90,
+   "h": 150,
+   "pivotX": 45,
+   "pivotY": 12,
+   "colW": 24,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "palm",
+   "w": 200,
+   "h": 250,
+   "pivotX": 100,
+   "pivotY": 18,
+   "colW": 22,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "sandstone",
+   "w": 140,
+   "h": 120,
+   "pivotX": 70,
+   "pivotY": 16,
+   "colW": 90,
+   "colH": 26,
+   "colY": 0
+  },
+  {
+   "name": "skull_pile",
+   "w": 90,
+   "h": 70,
+   "pivotX": 45,
+   "pivotY": 12,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "obelisk",
+   "w": 80,
+   "h": 220,
+   "pivotX": 40,
+   "pivotY": 16,
+   "colW": 36,
+   "colH": 16,
+   "colY": 0
+  },
+  {
+   "name": "adobe_house",
+   "w": 220,
+   "h": 220,
+   "pivotX": 110,
+   "pivotY": 24,
+   "colW": 170,
+   "colH": 56,
+   "colY": 22
+  },
+  {
+   "name": "desert_tent",
+   "w": 200,
+   "h": 190,
+   "pivotX": 100,
+   "pivotY": 20,
+   "colW": 130,
+   "colH": 40,
+   "colY": 10
+  },
+  {
+   "name": "crystal_blue",
+   "w": 90,
+   "h": 110,
+   "pivotX": 45,
+   "pivotY": 12,
+   "colW": 36,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "crystal_red",
+   "w": 90,
+   "h": 110,
+   "pivotX": 45,
+   "pivotY": 12,
+   "colW": 36,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "stalagmite",
+   "w": 90,
+   "h": 150,
+   "pivotX": 45,
+   "pivotY": 14,
+   "colW": 30,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "mine_cart",
+   "w": 130,
+   "h": 100,
+   "pivotX": 65,
+   "pivotY": 14,
+   "colW": 90,
+   "colH": 30,
+   "colY": 0
+  },
+  {
+   "name": "torch_post",
+   "w": 40,
+   "h": 150,
+   "pivotX": 20,
+   "pivotY": 10,
+   "colW": 10,
+   "colH": 8,
+   "colY": 0
+  },
+  {
+   "name": "mine_entrance",
+   "w": 280,
+   "h": 240,
+   "pivotX": 140,
+   "pivotY": 20,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "anvil",
+   "w": 80,
+   "h": 70,
+   "pivotX": 40,
+   "pivotY": 12,
+   "colW": 40,
+   "colH": 16,
+   "colY": 0
+  },
+  {
+   "name": "swamp_tree",
+   "w": 200,
+   "h": 230,
+   "pivotX": 100,
+   "pivotY": 16,
+   "colW": 30,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "reeds",
+   "w": 90,
+   "h": 90,
+   "pivotX": 45,
+   "pivotY": 10,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "bog_light",
+   "w": 60,
+   "h": 100,
+   "pivotX": 30,
+   "pivotY": 12,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "stilt_hut",
+   "w": 220,
+   "h": 260,
+   "pivotX": 110,
+   "pivotY": 24,
+   "colW": 150,
+   "colH": 44,
+   "colY": 20
+  },
+  {
+   "name": "cauldron",
+   "w": 100,
+   "h": 100,
+   "pivotX": 50,
+   "pivotY": 14,
+   "colW": 50,
+   "colH": 18,
+   "colY": 0
+  },
+  {
+   "name": "snow_pine",
+   "w": 150,
+   "h": 250,
+   "pivotX": 75,
+   "pivotY": 14,
+   "colW": 18,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "ice_crystal",
+   "w": 100,
+   "h": 130,
+   "pivotX": 50,
+   "pivotY": 14,
+   "colW": 40,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "snow_rock",
+   "w": 120,
+   "h": 90,
+   "pivotX": 60,
+   "pivotY": 14,
+   "colW": 80,
+   "colH": 24,
+   "colY": -2
+  },
+  {
+   "name": "frozen_statue",
+   "w": 90,
+   "h": 200,
+   "pivotX": 45,
+   "pivotY": 14,
+   "colW": 40,
+   "colH": 16,
+   "colY": 0
+  },
+  {
+   "name": "lumia_temple",
+   "w": 380,
+   "h": 330,
+   "pivotX": 190,
+   "pivotY": 26,
+   "colW": 300,
+   "colH": 80,
+   "colY": 20
+  },
+  {
+   "name": "ice_spire",
+   "w": 90,
+   "h": 220,
+   "pivotX": 45,
+   "pivotY": 14,
+   "colW": 30,
+   "colH": 14,
+   "colY": 0
   }
  ]
 }

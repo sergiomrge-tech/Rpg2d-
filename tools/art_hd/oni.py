@@ -322,3 +322,85 @@ def valemont_look(kind):
                     tunic=P('#6a1a2a', '#480e1a', '#963a4a', '#1e0408'), shirt=P('#e8d8b8', '#c8b490', '#fff4d8', '#5a4630'),
                     scarf=P('#f0c860', '#b8862c', '#fff2b0', '#4a300c'), weapon=None)
     raise KeyError(kind)
+
+
+# ---------------------------------------------------------------- Etapa 3 humanoids
+def scimitar(ctx, L, hand, ang, scale=1.0):
+    _xf(ctx, hand, ang, scale)
+    paint(ctx, lambda c: capsule(c, (0, -4), (0, 4), 2.0), SHAFT, sh=0.6, hl=0.3, line=0.7)
+
+    def blade(c):
+        c.move_to(-2.5, 4)
+        c.curve_to(-4, 24, 2, 40, 14, 46)
+        c.curve_to(8, 36, 5, 22, 2.5, 4)
+        c.close_path()
+    paint(ctx, blade, STEEL, sh=1.6, hl=1, line=0.9)
+    paint(ctx, lambda c: smooth_poly(c, [(-7, 2), (7, 2), (6, 6), (-6, 6)], tension=0.1), GOLD, sh=0.6, hl=0.4, line=0.6)
+    ctx.restore()
+
+
+class WitchHat:
+    """Pointed witch hat (Look.hat), picklable."""
+
+    def __call__(self, ctx, view):
+        hat = Pal('#3a2a5a', '#241840', '#5a4488', '#0c0818')
+        paint(ctx, lambda c: smooth_poly(c, [(-26, -12), (-12, -18), (-6, -42), (14, -62), (12, -20), (26, -12), (0, -6)], tension=0.2), hat, sh=2, hl=1.2, line=1.0)
+        paint(ctx, lambda c: smooth_poly(c, [(-13, -17), (13, -19), (13, -13), (-13, -11)], tension=0.1), GOLD, sh=0.8, hl=0.5, line=0.7)
+
+
+def region_oni(kind):
+    L = oni_look()
+    if kind == 'oni_nomad':
+        L.skin = Pal('#d8a060', '#b07a38', '#f8cc90', '#4a2c0c')
+        L.shirt = L.glove = L.skin
+        L.tunic = Pal('#e8d0a0', '#c8aa78', '#fff0cc', '#5a4628')
+        L.belt = Pal('#d6453d', '#a52c33', '#f27a5f', '#5a1418')
+        L.weapon = scimitar
+        L.hat = make_horns(0.9, 2, 0.5)
+    elif kind == 'rock_oni':
+        L.skin = Pal('#7a7488', '#585268', '#a09ab4', '#1a1624')
+        L.shirt = L.glove = L.skin
+        L.tunic = Pal('#4a3e34', '#32281e', '#6e5e4e', '#12100a')
+        L.eye = hx('#4ab8ff')
+        L.weapon = hammer
+        L.hat = make_horns(1.0, 2, 0.1, pal=Pal('#6a6478', '#4a4458', '#948eaa', '#1a1624'), helmet=Pal('#e8c030', '#b08a10', '#fff0a0', '#4a3800'))
+    elif kind == 'ice_oni':
+        L.skin = Pal('#9ac8e8', '#6a98c4', '#cce8ff', '#1a3a5a')
+        L.shirt = L.glove = L.skin
+        L.tunic = Pal('#5a7aa8', '#3e5a84', '#82a2d0', '#10203a')
+        L.eye = hx('#ffffff')
+        L.weapon = spear
+        L.hat = make_horns(1.1, 2, 0.8, pal=Pal('#e8fbff', '#a8d8f4', '#ffffff', '#2a5a7a'), helmet=STEEL)
+    elif kind == 'succubus_mirael':
+        from humanoid import Look
+        L = Look(hair_style='long', hair=Pal('#c8307a', '#8e1a58', '#f06aa8', '#3a0620'), eye=hx('#ffd23f'),
+                 skin=Pal('#a888c8', '#7a5ea0', '#d0b8e8', '#2a1a40'), tunic=Pal('#2a1a3a', '#180e28', '#463268', '#08040e'),
+                 shirt=Pal('#a888c8', '#7a5ea0', '#d0b8e8', '#2a1a40'), glove=Pal('#2a1a3a', '#180e28', '#463268', '#08040e'),
+                 pants=Pal('#2a1a3a', '#180e28', '#463268', '#08040e'), boots=Pal('#2a1a3a', '#180e28', '#463268', '#08040e'),
+                 belt=Pal('#f0c860', '#b8862c', '#fff2b0', '#4a300c'), scarf=Pal('#c8307a', '#8e1a58', '#f06aa8', '#3a0620'),
+                 scarf_on=True, weapon=None)
+        L.hat = make_horns(1.1, 2, 1.0, pal=Pal('#3a1a3a', '#220e22', '#5e3a5e', '#0c040c'))
+    return L
+
+
+def region_npc(kind):
+    from humanoid import Look
+    P = Pal
+    if kind == 'nomad':
+        return Look(hair=P('#3a2a20', '#241810', '#5a4434', '#0c0806'), eye=hx('#6a4a1a'), skin=P('#d8a870', '#b08048', '#f4cc98', '#5a3818'),
+                    tunic=P('#e8d0a0', '#c8aa78', '#fff0cc', '#5a4628'), shirt=P('#e8d0a0', '#c8aa78', '#fff0cc', '#5a4628'),
+                    scarf=P('#2a8aa8', '#1a6480', '#52b4d0', '#08283a'), weapon=None)
+    if kind == 'dwarf':
+        return Look(hair=P('#b8602a', '#8a4214', '#e08a4a', '#3a1804'), eye=hx('#3a7ac8'), tunic=P('#7a3a2a', '#56241a', '#a85c48', '#240c06'),
+                    shirt=P('#d0c8b8', '#a8a090', '#f4efe4', '#4a4438'), pants=P('#4a3e34', '#32281e', '#6e5e4e', '#12100a'),
+                    scarf=P('#e8c030', '#b08a10', '#fff0a0', '#4a3800'), weapon=None)
+    if kind == 'witch':
+        L = Look(hair_style='long', hair=P('#a8a8b8', '#7e7e90', '#d4d4e4', '#2e2e3c'), eye=hx('#9aff6a'), skin=P('#c8d0a8', '#a0a880', '#e8f0cc', '#3a4020'),
+                 tunic=P('#3a6a4a', '#264c34', '#5a9068', '#0c2214'), shirt=P('#c8d0a8', '#a0a880', '#e8f0cc', '#3a4020'),
+                 scarf=P('#7a3a8a', '#56246a', '#a45cb8', '#240a2e'), weapon=None)
+        L.hat = WitchHat()
+        return L
+    if kind == 'monk':
+        return Look(hair=P('#e8e8f0', '#b8b8cc', '#ffffff', '#4a4a5e'), eye=hx('#6a9ae8'), tunic=P('#f4f0e8', '#d0c8b8', '#ffffff', '#6a6050'),
+                    shirt=P('#f4f0e8', '#d0c8b8', '#ffffff', '#6a6050'), scarf=P('#3a6ac8', '#264a98', '#6a92e8', '#0c1a3a'), weapon=None)
+    raise KeyError(kind)

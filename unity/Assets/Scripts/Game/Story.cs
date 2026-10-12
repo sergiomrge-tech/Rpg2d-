@@ -12,6 +12,87 @@ namespace Aetheria
             public Line(string w, string t) { who = w; text = t; }
         }
 
+        public class Region
+        {
+            public string map, title, npc, boss, bossName, intro, start, done, rank;
+            public int gold;
+            public string[] reward;
+            public Line[] hello, back, thanks;
+        }
+
+        /// <summary>Chapter 4–7: each region has a guide NPC, a boss and a rank/gear reward.</summary>
+        public static readonly Region[] Regions =
+        {
+            new Region
+            {
+                map = "kharis", title = "Deserto de Kharis", npc = "nomad", boss = "scorpion_demon", bossName = "o Demônio Escorpião", start = "rq_nomad", done = "kharis_done",
+                rank = "B", gold = 900, reward = new[] { "ether:3", "potion:3" },
+                hello = new[]
+                {
+                    new Line("nomad", "Forasteiro de Valemont? A areia sussurra seu nome. Sou Hasim, guia das caravanas de Kharis."),
+                    new Line("nomad", "Há um Demônio Escorpião no coração das obeliscos, a leste. Ele soterrou duas caravanas e rouba o oásis."),
+                    new Line("nomad", "Ele ataca com as pinças em sequência e bate com a cauda no chão. Role para o lado, nunca para trás."),
+                },
+                back = new[] { new Line("nomad", "O ferrão do deserto ainda vive. Siga a trilha a leste, depois do oásis, até os obeliscos.") },
+                thanks = new[]
+                {
+                    new Line("nomad", "O Escorpião... morto! O oásis voltará a ser nosso. Tome 900 de ouro e minha gratidão."),
+                    new Line("nomad", "A Guilda o promove ao Rank B. O caminho leste leva às Minas de Durnhold — os anões pedem ajuda."),
+                },
+            },
+            new Region
+            {
+                map = "mines", title = "Minas de Durnhold", npc = "dwarf", boss = "ember_golem", bossName = "o Golem de Brasa", start = "rq_dwarf", done = "mines_done",
+                rank = "B", gold = 1500, reward = new[] { "potion:3", "hell_ember:3" },
+                hello = new[]
+                {
+                    new Line("dwarf", "Por Durnhold! Um humano nas minas! Sou Durnok. Os demônios acordaram o Golem de Brasa na grande forja."),
+                    new Line("dwarf", "Ele é puro magma. Bate forte, e a cada golpe a rocha em volta racha. Fique longe dos cristais vermelhos."),
+                    new Line("dwarf", "Se você o derrubar, eu mesmo lhe entrego a couraça que meu avô forjou."),
+                },
+                back = new[] { new Line("dwarf", "A forja fica ao leste, entre os cristais vermelhos. Leve poções, rapaz.") },
+                thanks = new[]
+                {
+                    new Line("dwarf", "O Golem caiu! A forja volta a esquentar para o bem. 1500 de ouro e as brasas que sobraram são suas."),
+                    new Line("dwarf", "O pântano de Mirewail fica depois da saída leste. A bruxa de lá sabe de coisas que nem os anões sabem."),
+                },
+            },
+            new Region
+            {
+                map = "mirewail", title = "Pântano de Mirewail", npc = "witch", boss = "succubus_mirael", bossName = "Mirael, a Súcubo", start = "rq_witch", done = "mirewail_done",
+                rank = "A", gold = 2200, reward = new[] { "ether:4", "potion:4" },
+                hello = new[]
+                {
+                    new Line("witch", "Hehehe... um herói. Morgana, cuidadora do brejo. Cheiro de centelha de deusa em você, criança."),
+                    new Line("witch", "Mirael, uma súcubo a serviço de Malgrath, encantou o pântano. Ela vive na ilha ao sul, cercada de bruma."),
+                    new Line("witch", "Ela lança fogo violeta e chama espectros. Mate os espectros primeiro, ou eles o cercam."),
+                },
+                back = new[] { new Line("witch", "A ilha de Mirael fica ao sul das pontes. Não pise na água escura, criança.") },
+                thanks = new[]
+                {
+                    new Line("witch", "Hehehe! A súcubo caiu. 2200 de ouro, e este conselho: nos Picos Gelados há um templo da sua deusa."),
+                    new Line("witch", "Rank A, pela Guilda. Poucos chegam tão longe. Vá — o último general antes do castelo espera no gelo."),
+                },
+            },
+            new Region
+            {
+                map = "peaks", title = "Picos Gelados", npc = "monk", boss = "ice_demon", bossName = "o Demônio de Gelo", start = "rq_monk", done = "peaks_done",
+                rank = "A", gold = 3000, reward = new[] { "potion:5", "ether:5" },
+                hello = new[]
+                {
+                    new Line("monk", "Que Lumia o guie, Ren. Sou Ilan, guardião deste templo. A deusa fala de você nas orações."),
+                    new Line("monk", "O Demônio de Gelo congelou a nascente sagrada. Ele sopra rajadas em leque e invoca diabretes gélidos."),
+                    new Line("monk", "Ao norte está o castelo de Valemont, tomado por demônios. Mas antes, liberte a nascente."),
+                },
+                back = new[] { new Line("monk", "A nascente congelada fica ao sul do templo, entre os espinhos de gelo.") },
+                thanks = new[]
+                {
+                    new Line("monk", "A nascente corre de novo! Lumia sorri. Aceite 3000 de ouro e nossa bênção."),
+                    new Line("monk", "O Capítulo seguinte o levará ao Castelo tomado. A Guilda o aguarda como Rank A. Que a centelha o guie."),
+                },
+            },
+        };
+
         public const string QuestImps = "q_imps";
         public const int QuestImpsGoal = 5;
 
@@ -24,6 +105,10 @@ namespace Aetheria
                 case "villager": return "Tia Marta";
                 case "lumia": return "Deusa Lumia";
                 case "sylra": return "Sylra";
+                case "nomad": return "Hasim, Guia do Deserto";
+                case "dwarf": return "Durnok, Mestre Minerador";
+                case "witch": return "Bruxa Morgana";
+                case "monk": return "Monge Ilan";
                 case "guildmaster": return "Mestre Aldric";
                 case "guard": return "Guarda do Portão";
                 case "noble": return "Lady Seraphine";
@@ -47,6 +132,21 @@ namespace Aetheria
         public static Line[] Talk(string npc, Game g)
         {
             var gs = g.state;
+            foreach (var r in Regions)
+            {
+                if (r.npc != npc) continue;
+                if (g.flags.Contains(r.done)) return new[] { new Line(npc, "Vá em frente, Ren. A próxima luta é sua.") };
+                if (g.flags.Contains(r.boss + "_dead"))
+                {
+                    g.flags.Add(r.done);
+                    gs.gold += r.gold;
+                    gs.guildRank = r.rank;
+                    foreach (var rw in r.reward) { var kv = rw.Split(':'); gs.Add(kv[0], int.Parse(kv[1])); }
+                    return r.thanks;
+                }
+                if (!g.flags.Contains(r.start)) { g.flags.Add(r.start); return r.hello; }
+                return r.back;
+            }
             switch (npc)
             {
                 case "receptionist":

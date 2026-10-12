@@ -273,7 +273,7 @@ def valemont():
             m.put('city_wall', x, 2.6)
         m.put('city_wall', x, 62.4)
     m.put('city_gate', 36, 3.2)
-    for x, y in [(2, 3), (70, 3), (2, 62), (70, 62)] + [(1.2, v) for v in range(9, 58, 6)] + [(70.8, v) for v in range(9, 58, 6)]:
+    for x, y in [(2, 3), (70, 3), (2, 62), (70, 62)] + [(1.2, v) for v in range(9, 58, 6) if not 28 < v < 37] + [(70.8, v) for v in range(9, 58, 6) if not 28 < v < 37]:
         m.put('city_tower', x, y)
     m.reserve(0, 0, 72, 5)
     m.reserve(0, 60, 72, 64)
@@ -321,7 +321,163 @@ def valemont():
                                        ('oni_lancer', 40, 59, 8), ('imp_bomber', 32, 52, 7)]):
         m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
     m.spawns.append(dict(kind='assassin_shadow', x=36 * T, y=57.4 * T, level=9))
-    m.exits = [dict(to='velmoor', x=36 * T, y=0.5 * T, w=3 * T, h=T)]
+    m.exits = [dict(to='velmoor', x=36 * T, y=0.5 * T, w=3 * T, h=T), dict(to='kharis', x=71.6 * T, y=32 * T, w=T, h=4 * T)]
+    m.put('sign', 68.4, 34.6)
+    return m
+
+
+def _edge_exits(m, back, nxt, y=None):
+    y = y if y is not None else m.gh / 2
+    ex = [dict(to=back, x=0.4 * T, y=y * T, w=T, h=4 * T)]
+    if nxt:
+        ex.append(dict(to=nxt, x=(m.gw - 0.4) * T, y=y * T, w=T, h=4 * T))
+    m.exits = ex
+
+
+def kharis():
+    """Deserto de Kharis (Cap. 4): oasis camp, obelisk ruins, skull fields, scorpion arena."""
+    from env_ground import GRASS_DESERT
+    m = Map('kharis', 64, 56, seed=44)
+    m.grass = GRASS_DESERT
+    m.path([(0, 28), (14, 28), (30, 32), (46, 26), (63, 28)], 2.8)
+    m.path([(30, 32), (30, 48)], 2.0)
+    m.path([(46, 26), (50, 8)], 2.0)
+    m.disk(32, 22, 5.0, 'w')
+    m.disk(32, 22, 6.6, 'w') if False else None
+    m.disk(50, 28, 7.0, 's')           # scorpion arena (sandstone ring floor)
+    m.disk(12, 26, 4.0, 's')           # nomad camp floor
+    for y in range(32, 35):
+        pass
+    for x, y, k in [(8, 22, 'desert_tent'), (16, 22, 'desert_tent'), (9, 31, 'adobe_house'), (17, 32, 'adobe_house'), (23, 20, 'adobe_house')]:
+        m.put(k, x, y)
+        m.reserve(x - 4, y - 5, x + 4, y + 1)
+    for x, y in [(28, 26), (36, 26), (31, 17.5), (33, 17.5), (28, 19), (36, 19)]:
+        m.put('palm', x, y)
+    m.reserve(26, 16, 39, 28)
+    for x, y in [(44, 22), (56, 22), (44, 34), (56, 34), (50, 20), (50, 36)]:
+        m.put('obelisk', x, y)
+    m.reserve(42, 19, 59, 37)
+    m.put('sign', 4, 29.4)
+    m.put('sign', 59, 30)
+    for x, y in [(20, 40), (36, 42), (44, 46), (10, 44), (24, 10), (40, 8), (56, 12), (6, 8)]:
+        m.put('skull_pile', x, y)
+    m.scatter(['cactus', 'cactus', 'sandstone', 'palm'], 40, (0, 0, 64, 56), pad=1, min_d=3.0)
+    m.scatter(['sandstone', 'skull_pile', 'rock_small', 'tuft'], 80, (0, 0, 64, 56), pad=0, min_d=1.5)
+    m.player = (4 * T, 28 * T)
+    m.npcs = [dict(id='nomad', x=12 * T, y=27 * T, look='r_nomad', facing='down')]
+    sp = [('sand_imp', 22, 14, 8), ('sand_imp', 36, 38, 8), ('sand_wraith', 26, 36, 9), ('oni_nomad', 20, 34, 9), ('sand_wraith', 40, 12, 9),
+          ('oni_nomad', 36, 30, 9), ('sand_imp', 10, 46, 9), ('oni_nomad', 54, 10, 10), ('sand_wraith', 46, 42, 10), ('imp_pyro', 24, 50, 9)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='scorpion_demon', x=51 * T, y=28 * T, level=11))
+    _edge_exits(m, 'valemont', 'mines', 28)
+    return m
+
+
+def mines():
+    """Minas de Durnhold (Cap. 5): crystal caverns, dwarven camp, the Ember Golem's forge."""
+    from env_ground import GRASS_MINES
+    m = Map('mines', 60, 56, seed=55)
+    m.grass = GRASS_MINES
+    m.path([(0, 28), (14, 28), (28, 24), (40, 30), (59, 28)], 2.8)
+    m.path([(28, 24), (28, 8)], 2.2)
+    m.path([(40, 30), (38, 46)], 2.2)
+    m.disk(16, 40, 4.6, 'w')
+    m.disk(12, 26, 4.2, 's')
+    m.disk(49, 28, 7.2, 's')           # golem forge floor
+    m.put('mine_entrance', 4.5, 24.4)
+    m.reserve(1, 18, 9, 25)
+    m.put('anvil', 10, 30)
+    m.put('mine_cart', 15, 31)
+    for x, y in [(8, 27), (15, 25), (24, 27), (34, 27), (43, 24), (55, 24), (43, 33), (55, 33)]:
+        m.put('torch_post', x, y)
+    for x, y in [(44, 20), (54, 20), (44, 37), (54, 37)]:
+        m.put('crystal_red', x, y)
+    m.reserve(41, 20, 58, 38)
+    m.put('sign', 4, 30.4)
+    m.put('sign', 55.6, 31)
+    m.scatter(['stalagmite', 'stalagmite', 'rock_big', 'crystal_blue'], 55, (0, 0, 60, 56), pad=1, min_d=2.6)
+    m.scatter(['crystal_blue', 'crystal_red', 'rock_small', 'mine_cart'], 24, (0, 0, 60, 56), pad=0, min_d=2.0)
+    m.scatter(['rock_small', 'tuft'], 70, (0, 0, 60, 56), pad=0, min_d=1.2)
+    m.player = (4 * T, 28 * T)
+    m.npcs = [dict(id='dwarf', x=11 * T, y=29.4 * T, look='r_dwarf', facing='right')]
+    sp = [('mine_imp', 20, 14, 10), ('mine_imp', 34, 10, 10), ('rock_oni', 26, 36, 11), ('mine_imp', 12, 48, 10), ('rock_oni', 38, 44, 11),
+          ('imp_bomber', 46, 12, 11), ('rock_oni', 52, 46, 12), ('mine_imp', 30, 50, 11), ('imp_howler', 20, 22, 11), ('oni_shielder', 36, 18, 12)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='ember_golem', x=49 * T, y=28 * T, level=13))
+    _edge_exits(m, 'kharis', 'mirewail', 28)
+    return m
+
+
+def mirewail():
+    """Pântano de Mirewail (Cap. 6): flooded woods, witch's stilt hut, the succubus Mirael."""
+    from env_ground import GRASS_SWAMP
+    m = Map('mirewail', 60, 56, seed=66)
+    m.grass = GRASS_SWAMP
+    for cx, cy, r in [(14, 12, 5.0), (30, 40, 6.0), (46, 14, 5.2), (10, 42, 4.6), (52, 44, 4.4), (28, 8, 3.6)]:
+        m.disk(cx, cy, r, 'w')
+    m.river([(0, 22), (10, 24), (22, 20), (34, 26), (46, 24), (60, 26)], 3.0)
+    m.path([(0, 30), (12, 31), (24, 32), (36, 30), (48, 32), (59, 30)], 2.8)
+    m.path([(24, 32), (24, 48)], 2.0)
+    m.path([(36, 30), (40, 12)], 2.0)
+    for y in range(28, 34):
+        for x in range(0, 60):
+            if m.grid[y, x] in 'wb' and 29 <= y <= 32:
+                m.grid[y, x] = 'b'
+    m.disk(46, 40, 5.0, 'd')           # Mirael's island
+    m.disk(14, 31, 3.6, 'd')
+    for x in range(0, 60, 6):
+        if any(m.grid[y, min(x, 59)] == 'b' for y in range(28, 34)):
+            m.put('bridge', x + 3, 26.6) if False else None
+    m.put('stilt_hut', 12, 33.5)
+    m.reserve(7, 26, 17, 35)
+    m.put('cauldron', 17.5, 32.5)
+    m.put('sign', 3.4, 32.4)
+    m.put('sign', 56, 32.4)
+    m.scatter(['swamp_tree', 'swamp_tree', 'tree_dead'], 70, (0, 0, 60, 56), pad=1, min_d=2.8)
+    m.scatter(['reeds', 'reeds', 'bog_light', 'mushrooms', 'stump'], 100, (0, 0, 60, 56), pad=0, min_d=1.6)
+    m.scatter(['tuft', 'roots'], 120, (0, 0, 60, 56), pad=0, min_d=1.0)
+    m.player = (4 * T, 31 * T)
+    m.npcs = [dict(id='witch', x=15 * T, y=33 * T, look='r_witch', facing='left')]
+    sp = [('witch_imp', 20, 36, 12), ('bog_wraith', 30, 22, 12), ('bog_wraith', 38, 36, 13), ('witch_imp', 8, 20, 12), ('treant_demon', 26, 12, 13),
+          ('bog_wraith', 50, 22, 13), ('witch_imp', 36, 48, 13), ('treant_demon', 10, 48, 13), ('imp_hexer', 44, 8, 13), ('oni_lancer', 52, 30, 14)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='succubus_mirael', x=46 * T, y=40 * T, level=15))
+    _edge_exits(m, 'mines', 'peaks', 31)
+    return m
+
+
+def peaks():
+    """Picos Gelados (Cap. 7): snowfields, frozen statues, the Temple of Lumia and the Ice Demon."""
+    from env_ground import GRASS_SNOW
+    m = Map('peaks', 60, 56, seed=77)
+    m.grass = GRASS_SNOW
+    m.path([(0, 30), (14, 30), (28, 24), (30, 14)], 2.6)
+    m.path([(28, 24), (30, 44)], 2.4)
+    m.path([(30, 36), (59, 36)], 2.2)
+    m.disk(30, 14, 6.0, 's')           # temple forecourt
+    m.disk(30, 44, 7.0, 's')           # ice demon arena
+    m.disk(44, 22, 3.6, 'w')
+    m.put('lumia_temple', 30, 11.6)
+    m.reserve(20, 4, 41, 12)
+    for x, y in [(23, 16), (37, 16)]:
+        m.put('frozen_statue', x, y)
+    for x, y in [(23, 41), (37, 41), (30, 49), (22, 46), (38, 46), (26, 38), (34, 38)]:
+        m.put('ice_spire', x, y)
+    m.reserve(22, 37, 39, 51)
+    m.put('sign', 4, 32)
+    m.scatter(['snow_pine', 'snow_pine', 'snow_rock', 'ice_crystal'], 80, (0, 0, 60, 56), pad=1, min_d=2.6)
+    m.scatter(['ice_crystal', 'snow_rock', 'tuft'], 70, (0, 0, 60, 56), pad=0, min_d=1.6)
+    m.player = (4 * T, 30 * T)
+    m.npcs = [dict(id='monk', x=30 * T, y=15.4 * T, look='r_monk', facing='down')]
+    sp = [('frost_imp', 14, 20, 14), ('frost_imp', 40, 28, 14), ('ice_oni', 12, 40, 15), ('frost_imp', 48, 12, 14), ('ice_oni', 44, 44, 15),
+          ('frost_imp', 20, 48, 15), ('ice_oni', 50, 36, 15), ('imp_howler', 8, 10, 14), ('oni_shielder', 36, 30, 15), ('frost_imp', 54, 50, 15)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='ice_demon', x=30 * T, y=44 * T, level=17))
+    _edge_exits(m, 'mirewail', None, 30)
     return m
 
 
@@ -331,6 +487,6 @@ def self_rnd(m, items):
 
 if __name__ == '__main__':
     import sys
-    which = sys.argv[1:] or ['village', 'velmoor', 'valemont']
+    which = sys.argv[1:] or ['village', 'velmoor', 'valemont', 'kharis', 'mines', 'mirewail', 'peaks']
     for n in which:
         globals()[n]().export()

@@ -63,6 +63,11 @@ namespace Aetheria
             Gear("leather_vest", "Colete de Couro", "Leve e barato. +5 DEF.", 2, Rarity.Common, def: 5);
             Gear("iron_mail", "Cota de Couro Demoníaco", "Reforçada com couro de oni. +12 DEF.", 2, Rarity.Uncommon, def: 12);
             Gear("elven_robe", "Manto Élfico", "Tecido de Velmoor. +9 DEF, +8 MAG.", 2, Rarity.Rare, def: 9, mag: 8);
+            Gear("sand_blade", "Cimitarra do Escorpião", "Lâmina curva de quitina. +18 ATQ.", 1, Rarity.Epic, atk: 18);
+            Gear("dwarf_plate", "Couraça Anã de Durnhold", "Aço de forja anã. +20 DEF.", 2, Rarity.Epic, def: 20);
+            Gear("swamp_charm", "Coração de Mirael", "Pulsa em tom rosado. +16 MAG, +20 PV.", 3, Rarity.Epic, mag: 16, hp: 20);
+            Gear("frost_blade", "Lâmina do Inverno Eterno", "Congela o ar ao redor. +26 ATQ, +6 MAG.", 1, Rarity.Legendary, atk: 26, mag: 6);
+            Gear("ice_mail", "Manto de Cristal Gélido", "Quase impenetrável. +24 DEF.", 2, Rarity.Legendary, def: 24);
             Gear("luma_charm", "Amuleto de Lumia", "A deusa vigia. +25 PV.", 3, Rarity.Rare, hp: 25);
             Gear("ember_charm", "Brasa Eterna", "Um coração de chama. +10 MAG.", 3, Rarity.Rare, mag: 10);
             Add(new ItemDef { id = "spark_tome", name = "Tomo: Centelha II", desc = "Evolui a Centelha em Lança de Chamas.", icon = "tome", value = 250, rarity = Rarity.Epic });
@@ -111,6 +116,21 @@ namespace Aetheria
             // ---- Etapa 3: Valemont
             D("assassin_shadow", "Assassino Sombrio", "Demons/assassin_shadow", 1450, 40, 3.4f, 9f, 700, 110, 1.45f, false, "Lâmina do Rei Demônio");
 
+            // ---- Etapa 3: Kharis, Durnhold, Mirewail, Picos
+            D("sand_imp", "Diabrete das Dunas", "Demons/sand_imp", 95, 30, 3.1f, 8f, 36, 14, 1.2f, true);
+            D("sand_wraith", "Espectro de Areia", "Demons/sand_wraith", 115, 32, 3.0f, 8.5f, 40, 14, 1.2f, true);
+            D("oni_nomad", "Oni Nômade", "Demons/oni_nomad", 230, 42, 2.7f, 6.5f, 64, 60, 1.3f, false);
+            D("scorpion_demon", "Demônio Escorpião", "Demons/scorpion_demon", 2600, 60, 3.0f, 10f, 900, 220, 1.9f, false, "Ferrão do Deserto de Kharis");
+            D("mine_imp", "Diabrete Minerador", "Demons/mine_imp", 140, 38, 3.0f, 7.5f, 50, 20, 1.2f, false);
+            D("rock_oni", "Oni de Rocha", "Demons/rock_oni", 340, 54, 2.0f, 6f, 90, 130, 1.4f, false);
+            D("ember_golem", "Golem de Brasa", "Demons/ember_golem", 4300, 72, 2.2f, 10f, 1300, 320, 2.0f, true, "Coração da Forja de Durnhold");
+            D("witch_imp", "Diabrete Bruxo", "Demons/witch_imp", 160, 48, 2.8f, 9f, 76, 20, 1.2f, true);
+            D("bog_wraith", "Espectro do Brejo", "Demons/bog_wraith", 185, 50, 3.0f, 9f, 80, 22, 1.2f, true);
+            D("succubus_mirael", "Mirael, a Súcubo", "Demons/succubus_mirael", 5400, 80, 3.2f, 11f, 1700, 300, 1.8f, true, "Rainha do Pântano de Mirewail");
+            D("frost_imp", "Diabrete Gélido", "Demons/frost_imp", 205, 58, 3.1f, 9f, 98, 24, 1.25f, true);
+            D("ice_oni", "Oni de Gelo", "Demons/ice_oni", 480, 68, 2.4f, 6.5f, 130, 170, 1.4f, false);
+            D("ice_demon", "Demônio de Gelo", "Demons/ice_demon", 7600, 95, 2.8f, 11f, 2400, 380, 2.0f, true, "Senhor dos Picos Gelados");
+
             // ---- Assets do GPT, como foram entregues (Bestiario F9)
             D("gpt_ant_guard", "Ant Guard (GPT)", "DemonsGpt/ant_guard", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
             D("gpt_brood_tyrant", "Brood Tyrant (GPT)", "DemonsGpt/brood_tyrant", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");
@@ -156,6 +176,11 @@ namespace Aetheria
             AddDrop("morgash_ironhorn", "sword_tome", 0.6f);
             AddDrop("oni_executioner", "sword_tome", 0.03f);
             AddDrop("assassin_shadow", "sword_tome", 0.5f);
+            AddDrop("scorpion_demon", "sand_blade", 1f);
+            AddDrop("ember_golem", "dwarf_plate", 1f);
+            AddDrop("succubus_mirael", "swamp_charm", 1f);
+            AddDrop("ice_demon", "frost_blade", 1f);
+            AddDrop("ice_demon", "ice_mail", 1f);
         }
 
         static void D(string id, string name, string sheet, float hp, float dmg, float speed, float aggro, float xp, float poise,

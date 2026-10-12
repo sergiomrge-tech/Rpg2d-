@@ -107,22 +107,29 @@ namespace Aetheria
             { "village", new[] { "Vila de Aurora", "Capítulo I — A Centelha" } },
             { "velmoor", new[] { "Floresta de Velmoor", "Capítulo II — Raízes Profanas" } },
             { "valemont", new[] { "Cidade de Valemont", "Capítulo III — Sombras na Capital" } },
+            { "kharis", new[] { "Deserto de Kharis", "Capítulo IV — O Ferrão do Deserto" } },
+            { "mines", new[] { "Minas de Durnhold", "Capítulo V — O Coração da Forja" } },
+            { "mirewail", new[] { "Pântano de Mirewail", "Capítulo VI — A Rainha do Brejo" } },
+            { "peaks", new[] { "Picos Gelados", "Capítulo VII — A Nascente Congelada" } },
+        };
+
+        static readonly System.Collections.Generic.Dictionary<string, (string flag, string msg)> Gates = new System.Collections.Generic.Dictionary<string, (string, string)>
+        {
+            { "velmoor", ("rank_e", "O portal rejeita você. A Guilda exige Rank E.") },
+            { "valemont", ("rank_d", "Os guardas barram você. Valemont exige Rank D.") },
+            { "kharis", ("rank_c", "A caravana recusa: o deserto exige Rank C (derrote o Assassino Sombrio).") },
+            { "mines", ("kharis_done", "O túnel está bloqueado. Ajude Hasim contra o Escorpião primeiro.") },
+            { "mirewail", ("mines_done", "A bruma repele você. Ajude Durnok contra o Golem primeiro.") },
+            { "peaks", ("mirewail_done", "A nevasca é forte demais. Ajude Morgana contra Mirael primeiro.") },
         };
 
         public void Travel(string to)
         {
-            if (to == "valemont" && !flags.Contains("rank_d"))
+            if (Gates.TryGetValue(to, out var gate) && !flags.Contains(gate.flag))
             {
-                Fx.Toast("Os guardas barram você. Valemont exige Rank D.", new Color(1f, 0.85f, 0.5f));
+                Fx.Toast(gate.msg, new Color(1f, 0.88f, 0.55f));
                 travelCd = 2f;
-                player.transform.position += Vector3.left * 1.5f;
-                return;
-            }
-            if (to == "velmoor" && !flags.Contains("rank_e"))
-            {
-                Fx.Toast("O portal rejeita você. A Guilda exige Rank E.", new Color(0.7f, 1f, 0.85f));
-                travelCd = 2f;
-                player.transform.position += Vector3.up * 1.2f;
+                player.transform.position += (Vector3)(Vector2)(Util.MapToWorld(world.data.w * 32, world.data.h * 32) - player.Pos).normalized * 1.6f;
                 return;
             }
             string from = mapName;
@@ -205,7 +212,14 @@ namespace Aetheria
             if (!flags.Contains("val_started")) return "◆ Viaje a Valemont\n<size=22>saída leste de Velmoor — fale com o Mestre da Guilda</size>";
             if (!flags.Contains("assassin_shadow_dead")) return "◆ Cace o Assassino Sombrio\n<size=22>beco ao sul de Valemont</size>";
             if (!flags.Contains("rank_c")) return "◆ Volte ao Mestre Aldric, na Guilda";
-            return "◆ Rank C — o Deserto de Kharis\n<size=20>(Capítulo IV em breve)</size>";
+            foreach (var r in Story.Regions)
+            {
+                if (flags.Contains(r.done)) continue;
+                if (!flags.Contains(r.start)) return $"◆ Viaje a {r.title}\n<size=22>fale com {Story.NameOf(r.npc)}</size>";
+                if (!flags.Contains(r.boss + "_dead")) return $"◆ Derrote {r.bossName}\n<size=22>{r.title}</size>";
+                return $"◆ Volte a {Story.NameOf(r.npc)}\n<size=22>{r.title}</size>";
+            }
+            return "◆ Rank A — Castelo de Valemont tomado\n<size=20>(Capítulo VIII em breve)</size>";
         }
 
         public void OnEnemyKilled(Enemy e)

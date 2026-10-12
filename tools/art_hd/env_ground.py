@@ -114,6 +114,9 @@ def over(base, rgb_pm, a, mask=None):
     return base * (1 - a) + rgb_pm
 
 
+DEF_EXTRA = dict(dirt=('#c19463', '#d8ae78', '#a87a4e', '#9c7046'), dirt_shadow='#5a3e26',
+                 water=('#7fd3e0', '#3f9fc4', '#2f7fae', '#a5e6ee'), shore='#d9c08a', foam='#f2fbff',
+                 stone=('#8d8a96', '#6a6878', 0.78))
 GRASS = dict(dark='#5b9e45', mid='#73b552', light='#8cc85e', warm='#9cc660', blade_l=(0.66, 0.85, 0.42), blade_d=(0.30, 0.55, 0.26),
              flowers=True)
 GRASS_VELMOOR = dict(dark='#2f5a3e', mid='#3e7048', light='#548a52', warm='#6a6a8a', blade_l=(0.42, 0.62, 0.42),
@@ -121,7 +124,8 @@ GRASS_VELMOOR = dict(dark='#2f5a3e', mid='#3e7048', light='#548a52', warm='#6a6a
 
 
 def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
-    G = grass or GRASS
+    G = dict(DEF_EXTRA)
+    G.update(grass or GRASS)
     SHAPES[:] = list(shapes)
     gh, gw = grid.shape
     h, w = gh * T, gw * T
@@ -180,11 +184,11 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
     md = smoothstep(0.46, 0.54, md_raw)
     if md.max() > 0:
         dn = fbm(h, w, seed + 6, (90, 30, 10), (0.55, 0.3, 0.15))
-        dirt = lerp_c(col('#c19463'), col('#d8ae78'), smoothstep(0.3, 0.75, dn))
-        dirt = lerp_c(dirt, col('#a87a4e'), smoothstep(0.6, 0.85, fbm(h, w, seed + 7, (40, 14), (0.7, 0.3))) * 0.6)
+        dirt = lerp_c(col(G['dirt'][0]), col(G['dirt'][1]), smoothstep(0.3, 0.75, dn))
+        dirt = lerp_c(dirt, col(G['dirt'][2]), smoothstep(0.6, 0.85, fbm(h, w, seed + 7, (40, 14), (0.7, 0.3))) * 0.6)
         # darker rim where grass meets dirt (AO), plus lighter worn centre
         rim = smoothstep(0.46, 0.62, md_raw)
-        dirt = lerp_c(col('#9c7046'), dirt, rim)
+        dirt = lerp_c(col(G['dirt'][3]), dirt, rim)
 
         def pebbles(ctx):
             for i in range(int(w * h / 2600)):
@@ -209,13 +213,13 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
         img = lerp_c(img, dirt, md)
         # grass overhang shadow just inside the path edge
         sh = np.clip(ndimage.gaussian_filter(1 - md, 3) - (1 - md), 0, 1)
-        img = lerp_c(img, col('#5a3e26'), sh * 0.5)
+        img = lerp_c(img, col(G['dirt_shadow']), sh * 0.5)
 
     # ---------------- stone plaza
     ms_raw = mask_from(grid, 's', h, w, seed + 8, blur=8, jitter=0.08)
     ms = smoothstep(0.47, 0.53, ms_raw)
     if ms.max() > 0:
-        mortar = col('#8d8a96')
+        mortar = col(G['stone'][0])
         stone_img = np.ones((h, w, 3), np.float32) * mortar
 
         def cobbles(ctx):
@@ -230,7 +234,8 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
                         continue
                     sw, shh = cw / 2 - 2.2, ch / 2 - 2.2
                     tone = rnd.uniform(-0.06, 0.06)
-                    base = (0.78 + tone, 0.76 + tone, 0.82 + tone)
+                    b0 = G['stone'][2]
+                    base = (b0 + tone, b0 - 0.02 + tone, b0 + 0.04 + tone)
                     # bottom-right shadow
                     ctx.set_source_rgba(0.42, 0.40, 0.50, 1)
                     rrect(ctx, x - sw + 1.2, y - shh + 1.6, sw * 2, shh * 2, 5)
@@ -245,7 +250,7 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
         stone_img = over(stone_img, rgb, a)
         img = lerp_c(img, stone_img, ms)
         rim = np.clip(ms - ndimage.grey_erosion(ms, size=(9, 9)), 0, 1)
-        img = lerp_c(img, col('#6a6878'), rim * 0.55)
+        img = lerp_c(img, col(G['stone'][1]), rim * 0.55)
 
     # ---------------- water
     mw_raw = mask_from(grid, 'wb', h, w, seed + 9, blur=14, jitter=0.12)
@@ -254,16 +259,16 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
         dist = ndimage.distance_transform_edt(mw > 0.5).astype(np.float32)
         depth = np.clip(dist / 70, 0, 1)
         wn = fbm(h, w, seed + 11, (120, 40), (0.7, 0.3))
-        water = lerp_c(col('#7fd3e0'), col('#3f9fc4'), smoothstep(0.0, 0.6, depth))
-        water = lerp_c(water, col('#2f7fae'), smoothstep(0.5, 1.0, depth) * 0.8)
-        water = lerp_c(water, col('#a5e6ee'), smoothstep(0.62, 0.8, wn) * 0.25)
+        water = lerp_c(col(G['water'][0]), col(G['water'][1]), smoothstep(0.0, 0.6, depth))
+        water = lerp_c(water, col(G['water'][2]), smoothstep(0.5, 1.0, depth) * 0.8)
+        water = lerp_c(water, col(G['water'][3]), smoothstep(0.62, 0.8, wn) * 0.25)
         # sandy/wet shore band outside the water
         shore = smoothstep(0.30, 0.48, mw_raw) * (1 - mw)
-        img = lerp_c(img, col('#d9c08a'), shore * 0.95)
+        img = lerp_c(img, col(G['shore']), shore * 0.95)
         img = lerp_c(img, water, mw)
         # foam line just inside the edge
         foam = np.clip(1 - np.abs(dist - 5) / 3.5, 0, 1) * (mw > 0.5)
-        img = lerp_c(img, col('#f2fbff'), foam * 0.75)
+        img = lerp_c(img, col(G['foam']), foam * 0.75)
 
         def ripples(ctx):
             for i in range(int(w * h / 9000)):
@@ -289,3 +294,21 @@ def rrect(ctx, x, y, w, h, r):
     ctx.arc(x + r, y + h - r, r, math.pi / 2, math.pi)
     ctx.arc(x + r, y + r, r, math.pi, 1.5 * math.pi)
     ctx.close_path()
+
+
+GRASS_DESERT = dict(dark='#d4a860', mid='#e4be78', light='#f2d896', warm='#e8b878', blade_l=(0.95, 0.82, 0.55), blade_d=(0.78, 0.6, 0.34),
+                    flowers=False, dirt=('#b07c4a', '#c8955e', '#94653a', '#7a5230'), dirt_shadow='#5a3a1e',
+                    water=('#6adcd0', '#2fa8b8', '#1c7a96', '#a8f0ec'), shore='#f0dca0', foam='#ffffff',
+                    stone=('#a89a84', '#7a6e5a', 0.8))
+GRASS_MINES = dict(dark='#3a3446', mid='#4a4458', light='#5e5870', warm='#52465e', blade_l=(0.42, 0.4, 0.52), blade_d=(0.2, 0.18, 0.28),
+                   flowers=False, dirt=('#6a5a4a', '#80705c', '#54463a', '#483c30'), dirt_shadow='#241c16',
+                   water=('#3a8aa8', '#1c5a7a', '#103a58', '#6ac0d8'), shore='#5a5060', foam='#9ad8e8',
+                   stone=('#6a6478', '#4a4458', 0.62))
+GRASS_SWAMP = dict(dark='#2c4a30', mid='#3a5c38', light='#506e40', warm='#5a5a38', blade_l=(0.4, 0.55, 0.3), blade_d=(0.14, 0.28, 0.16),
+                   flowers=False, dirt=('#5a4a30', '#6e5a3a', '#483a24', '#3a2e1c'), dirt_shadow='#201808',
+                   water=('#5a8a58', '#2c5a3e', '#1a3a2e', '#8ab870'), shore='#4a5a30', foam='#a8c880',
+                   stone=('#7a7a68', '#585848', 0.7))
+GRASS_SNOW = dict(dark='#d4e0ee', mid='#e4eef8', light='#f6fbff', warm='#cfdcf0', blade_l=(0.95, 0.98, 1.0), blade_d=(0.7, 0.8, 0.92),
+                  flowers=False, dirt=('#9a8e86', '#b0a49a', '#7e7268', '#6a5e54'), dirt_shadow='#3a3028',
+                  water=('#a8e8f8', '#6ac0e0', '#3a88b8', '#e8fbff'), shore='#f0f8ff', foam='#ffffff',
+                  stone=('#a8b4c8', '#7a869c', 0.84))
