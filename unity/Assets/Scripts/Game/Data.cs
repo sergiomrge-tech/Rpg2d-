@@ -56,8 +56,6 @@ namespace Aetheria
                 drops = new[] { ("gold", 1f, 3, 9), ("imp_horn", 0.45f, 1, 1), ("potion", 0.12f, 1, 1), ("ether", 0.06f, 1, 1),
                                 ("hell_ember", 0.05f, 1, 1), ("spark_tome", 0.012f, 1, 1) }
             };
-        }
-
 
             // Lote 2 pilot: real in-game enemies, loaded from independently animated
             // PNG/JSON Resources sheets. No changes to the approved hero/map art.
@@ -91,6 +89,7 @@ namespace Aetheria
                 drops = new[] { ("gold", 1f, 7, 17), ("ether", .15f, 1, 1),
                                  ("hell_ember", .07f, 1, 1) }
             };
+        }
 
         static void Add(ItemDef d) => Items[d.id] = d;
 
