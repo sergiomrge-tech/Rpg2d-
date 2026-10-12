@@ -74,7 +74,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete aetheria-6-classes-preview --yes --cleanup-tag || true
-          gh release create aetheria-6-classes-preview dist/Aetheria_Seis_Classes_Teste.apk --title "Aetheria — seis classes e Lince Astral (APK TESTE)" --notes "APK Android EXPERIMENTAL do PR #14, commit ${{ github.sha }}. Escolha seis classes, teste arco, adagas, magias, Paladino e Invocador com pet original. Preserva chave debug antiga. Ainda requer avaliação visual no aparelho. Não é publicação da versão principal." --prerelease
+          gh release create aetheria-6-classes-preview dist/Aetheria_Seis_Classes_Teste.apk --target "$GITHUB_SHA" --title "Aetheria — seis classes e Lince Astral (APK TESTE)" --notes "APK Android EXPERIMENTAL do PR #14, commit ${{ github.sha }}. Escolha seis classes, teste arco, adagas, magias, Paladino e Invocador com pet original. Preserva chave debug antiga. Ainda requer avaliação visual no aparelho. Não é publicação da versão principal." --prerelease
       - name: Keep APK export logs for debugging
         if: always()
         uses: actions/upload-artifact@v4
