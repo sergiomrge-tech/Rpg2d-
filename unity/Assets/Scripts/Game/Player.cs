@@ -33,8 +33,8 @@ namespace Aetheria
             p.gs = gs;
             p.Build("Sprites/Chars/hero", 1.25f, 0.42f, 0.32f);
             p.rb.mass = 1;
-            p.maxHp = gs.maxHp;
-            p.hp = gs.maxHp;
+            p.maxHp = gs.HpMax;
+            p.hp = gs.HpMax;
             p.mp = gs.maxMp;
             p.st = gs.maxSt;
             p.anim.OnHit += p.OnAnimHit;
@@ -173,6 +173,8 @@ namespace Aetheria
                 Vector2 c = Pos + Vector2.up * 0.55f + f * (combo == 3 ? 1.0f : 0.85f);
                 float r = combo == 3 ? 1.55f : 1.25f;
                 Fx.Slash(Pos + Vector2.up * 0.6f, facing, combo);
+                if (combo == 3 && gs.swordTier >= 2)
+                    Projectile.Crescent(Pos + Vector2.up * 0.7f + f * 0.9f, f, gs.TotalAtk * 1.1f);
                 if (combo == 3) { Fx.Shockwave(c, 1.2f); CameraRig.Shake(0.22f, 0.25f); }
                 int hits = 0;
                 foreach (var e in Enemy.All.ToArray())
@@ -181,7 +183,7 @@ namespace Aetheria
                     Vector2 d = e.Pos + Vector2.up * 0.4f - c;
                     if (d.magnitude > r + 0.35f) continue;
                     bool crit = Random.value < 0.08f;
-                    float dmg = gs.atk * (combo == 3 ? 1.9f : combo == 2 ? 1.15f : 1f) * Random.Range(0.9f, 1.1f) * (crit ? 1.8f : 1f);
+                    float dmg = gs.TotalAtk * (combo == 3 ? 1.9f : combo == 2 ? 1.15f : 1f) * Random.Range(0.9f, 1.1f) * (crit ? 1.8f : 1f);
                     if (e.Hurt(Mathf.Round(dmg), Pos, combo == 3 ? 9f : 5f, combo == 3 ? 30 : 12, crit)) hits++;
                 }
                 if (hits > 0)
@@ -196,7 +198,7 @@ namespace Aetheria
                 Vector2 dir = Util.FacingVec(facing);
                 var t = Enemy.Nearest(Pos, 9f, dir, 0.45f);
                 if (t != null) dir = ((t.Pos + Vector2.up * 0.5f) - (Pos + Vector2.up * 0.8f)).normalized;
-                Projectile.Spark(Pos + Vector2.up * 0.8f + dir * 0.5f, dir, gs.mag * (1 + 0.35f * (gs.sparkTier - 1)), gs.sparkTier, true);
+                Projectile.Spark(Pos + Vector2.up * 0.8f + dir * 0.5f, dir, gs.TotalMag * (1 + 0.35f * (gs.sparkTier - 1)), gs.sparkTier, true);
                 Sfx.Play("spark", 0.6f, 1f);
             }
         }
@@ -250,9 +252,9 @@ namespace Aetheria
 
         void UsePotion()
         {
-            if (hp >= gs.maxHp) return;
+            if (hp >= gs.HpMax) return;
             if (!gs.Take("potion")) { Fx.Toast("Sem poções", new Color(1f, 0.5f, 0.5f)); return; }
-            hp = Mathf.Min(gs.maxHp, hp + Data.Items["potion"].heal);
+            hp = Mathf.Min(gs.HpMax, hp + Data.Items["potion"].heal);
             Fx.Heal(Pos);
             Sfx.Play("potion", 0.5f, 1f);
         }
@@ -260,6 +262,7 @@ namespace Aetheria
         public override bool Hurt(float dmg, Vector2 from, float knockback, float poiseDmg, bool crit = false)
         {
             if (state == St.Roll && invuln > 0) { Fx.Toast("Esquiva!", new Color(0.7f, 0.95f, 1f)); return false; }
+            dmg = Mathf.Max(1, Mathf.Round(dmg * 100f / (100f + gs.TotalDef * 3f)));
             bool ok = base.Hurt(dmg, from, knockback, poiseDmg, crit);
             if (!ok) return false;
             invuln = 0.6f;
@@ -291,7 +294,7 @@ namespace Aetheria
         {
             dead = false;
             transform.position = at;
-            hp = gs.maxHp;
+            hp = gs.HpMax;
             mp = gs.maxMp;
             st = gs.maxSt;
             ToFree();

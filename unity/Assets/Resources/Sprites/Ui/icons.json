@@ -3,7 +3,7 @@
  "frameH": 96,
  "pivotX": 48,
  "pivotY": 48,
- "cols": 9,
+ "cols": 13,
  "anims": [
   {
    "name": "coin",
@@ -72,6 +72,38 @@
   {
    "name": "skill_roll",
    "start": 8,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "gear_sword",
+   "start": 9,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "gear_armor",
+   "start": 10,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "gear_charm",
+   "start": 11,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "scroll",
+   "start": 12,
    "count": 1,
    "fps": 1,
    "loop": false,

@@ -13,6 +13,15 @@ namespace Aetheria
         public int value;
         public bool consumable;
         public int heal, mana;
+        public int slot;                 // 0 = not gear, 1 weapon, 2 armor, 3 charm
+        public float atk, def, mag, hp;  // gear bonuses
+    }
+
+    public class Recipe
+    {
+        public string result;
+        public int gold;
+        public (string item, int n)[] needs;
     }
 
     public class DemonDef
@@ -43,6 +52,19 @@ namespace Aetheria
             Add(new ItemDef { id = "ether", name = "Éter Azul", desc = "Restaura 30 PM.", icon = "ether", value = 30, consumable = true, mana = 30, rarity = Rarity.Uncommon });
             Add(new ItemDef { id = "imp_horn", name = "Chifre de Diabrete", desc = "Material. A Guilda paga bem.", icon = "horn", value = 12 });
             Add(new ItemDef { id = "hell_ember", name = "Brasa Infernal", desc = "Material raro para forjar armas de fogo.", icon = "ember", value = 60, rarity = Rarity.Rare });
+            Add(new ItemDef { id = "demon_hide", name = "Couro Demoníaco", desc = "Material. Resistente, o ferreiro adora.", icon = "horn", value = 20, rarity = Rarity.Uncommon });
+            Add(new ItemDef { id = "spirit_dust", name = "Pó de Espírito", desc = "Material élfico que brilha no escuro.", icon = "ember", value = 30, rarity = Rarity.Uncommon });
+            Add(new ItemDef { id = "sword_tome", name = "Tomo: Corte Crescente", desc = "O 3º golpe da espada lança uma lâmina de energia.", icon = "scroll", value = 300, rarity = Rarity.Epic });
+            Gear("rusty_sword", "Espada Enferrujada", "A espada com que você acordou.", 1, Rarity.Common, atk: 0);
+            Gear("horn_blade", "Lâmina de Chifre", "Forjada com chifres de diabrete. +6 ATQ.", 1, Rarity.Uncommon, atk: 6);
+            Gear("velmoor_blade", "Espada de Velmoor", "Madeira-de-prata élfica. +10 ATQ, +4 MAG.", 1, Rarity.Rare, atk: 10, mag: 4);
+            Gear("ember_blade", "Lâmina Infernal", "Temperada em brasas do inferno. +14 ATQ.", 1, Rarity.Rare, atk: 14);
+            Gear("oni_cleaver", "Cutelo do General Oni", "Pesado, brutal. +20 ATQ.", 1, Rarity.Epic, atk: 20);
+            Gear("leather_vest", "Colete de Couro", "Leve e barato. +5 DEF.", 2, Rarity.Common, def: 5);
+            Gear("iron_mail", "Cota de Couro Demoníaco", "Reforçada com couro de oni. +12 DEF.", 2, Rarity.Uncommon, def: 12);
+            Gear("elven_robe", "Manto Élfico", "Tecido de Velmoor. +9 DEF, +8 MAG.", 2, Rarity.Rare, def: 9, mag: 8);
+            Gear("luma_charm", "Amuleto de Lumia", "A deusa vigia. +25 PV.", 3, Rarity.Rare, hp: 25);
+            Gear("ember_charm", "Brasa Eterna", "Um coração de chama. +10 MAG.", 3, Rarity.Rare, mag: 10);
             Add(new ItemDef { id = "spark_tome", name = "Tomo: Centelha II", desc = "Evolui a Centelha em Lança de Chamas.", icon = "tome", value = 250, rarity = Rarity.Epic });
 
             Demons["imp"] = new DemonDef
@@ -121,6 +143,19 @@ namespace Aetheria
             D("gpt_thornmaw_alpha", "Thornmaw Alpha (GPT)", "DemonsGpt/thornmaw_alpha", 600, 28, 2.3f, 8f, 200, 90, 1.39f, true, "Asset do GPT");
             D("gpt_velka_flamebeak", "Velka Flamebeak (GPT)", "DemonsGpt/velka_flamebeak", 600, 28, 2.3f, 8f, 200, 90, 1.56f, true, "Asset do GPT");
             D("gpt_vespa_lancer", "Vespa Lancer (GPT)", "DemonsGpt/vespa_lancer", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
+
+            foreach (var k in new List<string>(Demons.Keys))
+            {
+                if (k == "oni" || k.StartsWith("oni_")) AddDrop(k, "demon_hide", 0.4f, 1, 2);
+                if (k == "spirit_corrupt") AddDrop(k, "spirit_dust", 0.5f, 1, 2);
+                if (k == "treant_demon") AddDrop(k, "spirit_dust", 0.7f, 1, 3);
+            }
+            AddDrop("dryad_profane", "velmoor_blade", 1f);
+            AddDrop("dryad_profane", "luma_charm", 0.5f);
+            AddDrop("morgash_ironhorn", "oni_cleaver", 1f);
+            AddDrop("morgash_ironhorn", "sword_tome", 0.6f);
+            AddDrop("oni_executioner", "sword_tome", 0.03f);
+            AddDrop("assassin_shadow", "sword_tome", 0.5f);
         }
 
         static void D(string id, string name, string sheet, float hp, float dmg, float speed, float aggro, float xp, float poise,
@@ -140,6 +175,28 @@ namespace Aetheria
 
         static void Add(ItemDef d) => Items[d.id] = d;
 
+        static void Gear(string id, string name, string desc, int slot, Rarity r, float atk = 0, float def = 0, float mag = 0, float hp = 0)
+        {
+            Add(new ItemDef { id = id, name = name, desc = desc, slot = slot, rarity = r, atk = atk, def = def, mag = mag, hp = hp,
+                              icon = slot == 1 ? "gear_sword" : slot == 2 ? "gear_armor" : "gear_charm", value = 40 + (int)r * 80 });
+        }
+
+        public static void AddDrop(string demon, string item, float chance, int min = 1, int max = 1)
+        {
+            if (!Demons.TryGetValue(demon, out var d)) return;
+            var list = new List<(string, float, int, int)>(d.drops) { (item, chance, min, max) };
+            d.drops = list.ToArray();
+        }
+
+        public static readonly Recipe[] Recipes =
+        {
+            new Recipe { result = "horn_blade", gold = 80, needs = new[] { ("imp_horn", 5) } },
+            new Recipe { result = "iron_mail", gold = 180, needs = new[] { ("demon_hide", 4) } },
+            new Recipe { result = "ember_charm", gold = 120, needs = new[] { ("hell_ember", 3), ("spirit_dust", 1) } },
+            new Recipe { result = "elven_robe", gold = 150, needs = new[] { ("spirit_dust", 4) } },
+            new Recipe { result = "ember_blade", gold = 260, needs = new[] { ("hell_ember", 4), ("imp_horn", 6) } },
+        };
+
         public static float LevelScale(int lv) => Mathf.Pow(1.22f, lv - 1);
         public static int XpToNext(int lv) => Mathf.RoundToInt(90 * Mathf.Pow(1.38f, lv - 1));
     }
@@ -151,10 +208,50 @@ namespace Aetheria
         public int level = 1, xp, gold = 10;
         public float maxHp = 100, maxMp = 50, maxSt = 100;
         public float atk = 11, mag = 14;
-        public int sparkTier = 1;
+        public int sparkTier = 1, swordTier = 1;
+        public string eqWeapon = "rusty_sword", eqArmor = "", eqCharm = "";
         public string guildRank = "F";
         public List<string> invIds = new List<string> { "potion", "potion" };
         public List<int> invCounts = new List<int> { 1, 1 };
+
+        float Gear(System.Func<ItemDef, float> f)
+        {
+            float t = 0;
+            foreach (var id in new[] { eqWeapon, eqArmor, eqCharm })
+                if (!string.IsNullOrEmpty(id) && Data.Items.TryGetValue(id, out var d)) t += f(d);
+            return t;
+        }
+
+        public float TotalAtk => atk + Gear(d => d.atk);
+        public float TotalMag => mag + Gear(d => d.mag);
+        public float TotalDef => Gear(d => d.def);
+        public float HpMax => maxHp + Gear(d => d.hp);
+
+        public string Equipped(int slot) => slot == 1 ? eqWeapon : slot == 2 ? eqArmor : eqCharm;
+
+        /// <summary>Equip a bag item; the previous piece goes back to the bag.</summary>
+        public bool Equip(string id)
+        {
+            if (!Data.Items.TryGetValue(id, out var d) || d.slot == 0 || !Take(id)) return false;
+            string old = Equipped(d.slot);
+            if (d.slot == 1) eqWeapon = id; else if (d.slot == 2) eqArmor = id; else eqCharm = id;
+            if (!string.IsNullOrEmpty(old) && old != "rusty_sword") Add(old, 1);
+            return true;
+        }
+
+        public bool CanCraft(Recipe r)
+        {
+            if (gold < r.gold) return false;
+            foreach (var (item, n) in r.needs) if (Count(item) < n) return false;
+            return true;
+        }
+
+        public void Craft(Recipe r)
+        {
+            gold -= r.gold;
+            foreach (var (item, n) in r.needs) for (int i = 0; i < n; i++) Take(item);
+            Add(r.result, 1);
+        }
 
         public int Count(string id)
         {

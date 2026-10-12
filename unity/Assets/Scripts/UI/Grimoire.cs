@@ -65,11 +65,29 @@ namespace Aetheria
             if (n > 0 && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.E))) { Use(gs.invIds[sel]); Refresh(); }
         }
 
+        static string Name(string id) => string.IsNullOrEmpty(id) ? "—" : Data.Items[id].name;
+
         void Use(string id)
         {
             var p = Player.I;
             var gs = p.gs;
             var d = Data.Items[id];
+            if (id == "sword_tome")
+            {
+                if (gs.swordTier >= 2) { Fx.Toast("O Corte Crescente já foi aprendido", Color.white); return; }
+                gs.Take(id);
+                gs.swordTier = 2;
+                Sfx.Play("levelup", 0.6f, 1.2f);
+                hud.Banner("Corte Crescente", "O 3º golpe lança uma lâmina de energia");
+                return;
+            }
+            if (d.slot > 0)
+            {
+                gs.Equip(id);
+                Sfx.Play("pickup", 0.5f, 0.9f);
+                if (p.hp > gs.HpMax) p.hp = gs.HpMax;
+                return;
+            }
             if (id == "spark_tome")
             {
                 if (gs.sparkTier >= 3) { Fx.Toast("A Centelha já está no máximo", Color.white); return; }
@@ -80,10 +98,10 @@ namespace Aetheria
                 return;
             }
             if (!d.consumable) { Sfx.Play("ui", 0.2f, 0.6f); return; }
-            if (d.heal > 0 && p.hp >= gs.maxHp) return;
+            if (d.heal > 0 && p.hp >= gs.HpMax) return;
             if (d.mana > 0 && p.mp >= gs.maxMp) return;
             gs.Take(id);
-            p.hp = Mathf.Min(gs.maxHp, p.hp + d.heal);
+            p.hp = Mathf.Min(gs.HpMax, p.hp + d.heal);
             p.mp = Mathf.Min(gs.maxMp, p.mp + d.mana);
             Sfx.Play("potion", 0.5f, 1f);
         }
@@ -105,14 +123,17 @@ namespace Aetheria
             hud.Img("fr", page, Hud.Ui("medallion"), c, new Vector2(-500, 120), new Vector2(200, 200));
             var p = Player.I;
             string stats =
-                $"Vida          {Mathf.CeilToInt(p.hp)} / {Mathf.RoundToInt(gs.maxHp)}\n" +
+                $"Vida          {Mathf.CeilToInt(p.hp)} / {Mathf.RoundToInt(gs.HpMax)}\n" +
                 $"Mana          {Mathf.FloorToInt(p.mp)} / {Mathf.RoundToInt(gs.maxMp)}\n" +
                 $"Fôlego        {Mathf.RoundToInt(gs.maxSt)}\n" +
-                $"Ataque        {gs.atk:0}\n" +
-                $"Magia          {gs.mag:0}\n" +
+                $"Ataque        {gs.TotalAtk:0}   Defesa  {gs.TotalDef:0}\n" +
+                $"Magia          {gs.TotalMag:0}\n" +
                 $"Experiência  {gs.xp} / {Data.XpToNext(gs.level)}\n" +
-                $"Ouro            {gs.gold}";
-            hud.Txt("stats", page, stats, bold, 26, ink, c, new Vector2(-280, 100), new Vector2(330, 260), TextAnchor.MiddleLeft, false).lineSpacing = 1.15f;
+                $"Ouro            {gs.gold}\n" +
+                $"Arma: {Name(gs.eqWeapon)}\n" +
+                $"Armadura: {Name(gs.eqArmor)}\n" +
+                $"Amuleto: {Name(gs.eqCharm)}";
+            hud.Txt("stats", page, stats, bold, 22, ink, c, new Vector2(-300, 82), new Vector2(380, 320), TextAnchor.MiddleLeft, false).lineSpacing = 1.1f;
             hud.Img("flo", page, Hud.Ui("flourish"), c, new Vector2(-335, -60), new Vector2(380, 30));
             hud.Txt("skt", page, "Grimório de Magias", serif, 30, ink, c, new Vector2(-335, -100), new Vector2(500, 40), TextAnchor.MiddleCenter, false);
             for (int t = 1; t <= 3; t++)
@@ -150,7 +171,8 @@ namespace Aetheria
             {
                 var d = Data.Items[gs.invIds[sel]];
                 hud.Img("flo2", page, Hud.Ui("flourish"), c, new Vector2(335, -250), new Vector2(380, 30));
-                var desc = hud.Txt("desc", page, d.desc ?? "", sans, 24, ink, c, new Vector2(335, -292), new Vector2(520, 60), TextAnchor.UpperCenter, false);
+                string stat = d.slot > 0 ? "\n" + (d.atk > 0 ? $"ATQ +{d.atk:0}  " : "") + (d.def > 0 ? $"DEF +{d.def:0}  " : "") + (d.mag > 0 ? $"MAG +{d.mag:0}  " : "") + (d.hp > 0 ? $"PV +{d.hp:0}  " : "") + "· Enter: equipar" : "";
+                var desc = hud.Txt("desc", page, (d.desc ?? "") + stat, sans, 22, ink, c, new Vector2(335, -292), new Vector2(520, 60), TextAnchor.UpperCenter, false);
                 desc.horizontalOverflow = HorizontalWrapMode.Wrap;
             }
             hud.Txt("hint", page, "W/S escolher  ·  Enter usar  ·  Tab fechar", sans, 21, faint, c, new Vector2(335, -340), new Vector2(560, 30), TextAnchor.MiddleCenter, false);

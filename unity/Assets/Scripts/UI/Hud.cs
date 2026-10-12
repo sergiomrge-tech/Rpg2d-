@@ -315,7 +315,7 @@ namespace Aetheria
             if (p != null)
             {
                 var gs = p.gs;
-                float hpN = p.hp / gs.maxHp, mpN = p.mp / gs.maxMp, stN = p.st / gs.maxSt;
+                float hpN = p.hp / gs.HpMax, mpN = p.mp / gs.maxMp, stN = p.st / gs.maxSt;
                 hpShown = Mathf.Lerp(hpShown, hpN, dt * 12f);
                 hpTrailShown = hpTrailShown < hpShown ? hpShown : Mathf.MoveTowards(hpTrailShown, hpShown, dt * 0.35f);
                 mpShown = Mathf.Lerp(mpShown, mpN, dt * 10f);
@@ -327,7 +327,7 @@ namespace Aetheria
                 // low hp heartbeat
                 float low = hpN < 0.3f ? (0.5f + 0.5f * Mathf.Sin(Time.time * 8f)) : 0;
                 hpFill.color = Color.Lerp(Color.white, new Color(1f, 0.6f, 0.6f), low);
-                hpText.text = Mathf.CeilToInt(p.hp) + " / " + Mathf.RoundToInt(gs.maxHp);
+                hpText.text = Mathf.CeilToInt(p.hp) + " / " + Mathf.RoundToInt(gs.HpMax);
                 levelText.text = gs.level.ToString();
                 goldText.text = gs.gold.ToString();
                 rankText.text = "Aventureiro · Rank " + gs.guildRank;

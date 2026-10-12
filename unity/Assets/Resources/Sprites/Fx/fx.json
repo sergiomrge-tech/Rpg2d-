@@ -6,8 +6,16 @@
  "cols": 21,
  "anims": [
   {
-   "name": "arrow",
+   "name": "crescent",
    "start": 0,
+   "count": 6,
+   "fps": 18,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "arrow",
+   "start": 6,
    "count": 2,
    "fps": 12,
    "loop": true,
@@ -15,7 +23,7 @@
   },
   {
    "name": "slash",
-   "start": 2,
+   "start": 8,
    "count": 7,
    "fps": 26,
    "loop": false,
@@ -23,7 +31,7 @@
   },
   {
    "name": "slash_heavy",
-   "start": 9,
+   "start": 15,
    "count": 9,
    "fps": 24,
    "loop": false,
@@ -31,7 +39,7 @@
   },
   {
    "name": "claw",
-   "start": 18,
+   "start": 24,
    "count": 6,
    "fps": 22,
    "loop": false,
@@ -39,7 +47,7 @@
   },
   {
    "name": "hit",
-   "start": 24,
+   "start": 30,
    "count": 6,
    "fps": 24,
    "loop": false,
@@ -47,7 +55,7 @@
   },
   {
    "name": "hit_crit",
-   "start": 30,
+   "start": 36,
    "count": 8,
    "fps": 24,
    "loop": false,
@@ -55,7 +63,7 @@
   },
   {
    "name": "hit_spark",
-   "start": 38,
+   "start": 44,
    "count": 7,
    "fps": 22,
    "loop": false,
@@ -63,7 +71,7 @@
   },
   {
    "name": "hit_fire",
-   "start": 45,
+   "start": 51,
    "count": 9,
    "fps": 22,
    "loop": false,
@@ -71,7 +79,7 @@
   },
   {
    "name": "dust",
-   "start": 54,
+   "start": 60,
    "count": 7,
    "fps": 16,
    "loop": false,
@@ -79,7 +87,7 @@
   },
   {
    "name": "shock",
-   "start": 61,
+   "start": 67,
    "count": 8,
    "fps": 22,
    "loop": false,
@@ -87,7 +95,7 @@
   },
   {
    "name": "circle1",
-   "start": 69,
+   "start": 75,
    "count": 12,
    "fps": 20,
    "loop": false,
@@ -95,7 +103,7 @@
   },
   {
    "name": "circle2",
-   "start": 81,
+   "start": 87,
    "count": 12,
    "fps": 20,
    "loop": false,
@@ -103,7 +111,7 @@
   },
   {
    "name": "circle3",
-   "start": 93,
+   "start": 99,
    "count": 12,
    "fps": 20,
    "loop": false,
@@ -111,7 +119,7 @@
   },
   {
    "name": "heal",
-   "start": 105,
+   "start": 111,
    "count": 12,
    "fps": 16,
    "loop": false,
@@ -119,7 +127,7 @@
   },
   {
    "name": "poof",
-   "start": 117,
+   "start": 123,
    "count": 10,
    "fps": 16,
    "loop": false,
@@ -127,7 +135,7 @@
   },
   {
    "name": "alert",
-   "start": 127,
+   "start": 133,
    "count": 10,
    "fps": 14,
    "loop": false,
@@ -135,14 +143,6 @@
   },
   {
    "name": "spark1",
-   "start": 137,
-   "count": 6,
-   "fps": 20,
-   "loop": true,
-   "hit": -1
-  },
-  {
-   "name": "spark2",
    "start": 143,
    "count": 6,
    "fps": 20,
@@ -150,7 +150,7 @@
    "hit": -1
   },
   {
-   "name": "spark3",
+   "name": "spark2",
    "start": 149,
    "count": 6,
    "fps": 20,
@@ -158,8 +158,16 @@
    "hit": -1
   },
   {
-   "name": "fireball",
+   "name": "spark3",
    "start": 155,
+   "count": 6,
+   "fps": 20,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "fireball",
+   "start": 161,
    "count": 6,
    "fps": 18,
    "loop": true,

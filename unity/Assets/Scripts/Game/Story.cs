@@ -104,25 +104,37 @@ namespace Aetheria
                         return new[] { new Line(npc, "Grakk se esconde no sul do bosque, perto do lago. Cuidado com o leque de fogo.") };
                     return new[] { new Line(npc, $"Diabretes abatidos: {g.QuestProgress(QuestImps)}/{QuestImpsGoal}. O bosque fica ao sul da praça.") };
                 case "blacksmith":
-                    if (!g.flags.Contains("sword_horn") && gs.Count("imp_horn") >= 5 && gs.gold >= 80)
+                {
+                    // Forge: crafts the first affordable recipe; otherwise says what the next one needs.
+                    foreach (var r in Data.Recipes)
                     {
-                        g.flags.Add("sword_horn");
-                        for (int i = 0; i < 5; i++) gs.Take("imp_horn");
-                        gs.gold -= 80;
-                        gs.atk += 6;
+                        if (g.flags.Contains("forged_" + r.result)) continue;
+                        if (gs.CanCraft(r))
+                        {
+                            g.flags.Add("forged_" + r.result);
+                            gs.Craft(r);
+                            var it = Data.Items[r.result];
+                            return new[]
+                            {
+                                new Line(npc, "Material e ouro na mesa... Deixa comigo. *clang* *clang* *CLANG*"),
+                                new Line(npc, $"Pronto: {it.name}. Está na sua bolsa — equipe no Grimório (Tab)."),
+                            };
+                        }
+                    }
+                    foreach (var r in Data.Recipes)
+                    {
+                        if (g.flags.Contains("forged_" + r.result)) continue;
+                        string need = $"{r.gold} de ouro";
+                        foreach (var (item, n) in r.needs) need += $", {n}× {Data.Items[item].name} (você tem {gs.Count(item)})";
                         return new[]
                         {
-                            new Line(npc, "Cinco chifres e 80 de ouro... Deixa comigo. *clang* *clang* *CLANG*"),
-                            new Line(npc, "Lâmina de Chifre. Corta demônio como se fosse pão. Seu ataque subiu +6."),
+                            new Line(npc, $"Próxima peça: {Data.Items[r.result].name}."),
+                            new Line(npc, "Preciso de " + need + "."),
+                            new Line(npc, "Demônio fraco, arma fraca. Demônio forte... aí sim."),
                         };
                     }
-                    if (g.flags.Contains("sword_horn"))
-                        return new[] { new Line(npc, "Quer algo melhor? Brasas Infernais. Muitas. E um demônio de verdade pra testar.") };
-                    return new[]
-                    {
-                        new Line(npc, $"Hm. Essa lâmina não corta nem manteiga. Traga 5 Chifres de Diabrete e 80 de ouro (você tem {gs.Count("imp_horn")})."),
-                        new Line(npc, "Com material demoníaco eu forjo coisa de verdade. Demônio fraco, arma fraca. Demônio forte..."),
-                    };
+                    return new[] { new Line(npc, "Já forjei tudo que sei. Os mestres de Valemont e Kharis têm mais segredos.") };
+                }
                 case "sylra":
                     if (!g.flags.Contains("sylra_joined"))
                     {
@@ -153,11 +165,12 @@ namespace Aetheria
                         gs.gold += 600;
                         gs.guildRank = "C";
                         gs.Add("spark_tome", 1);
+                        gs.Add("sword_tome", 1);
                         gs.Add("ether", 3);
                         return new[]
                         {
                             new Line(npc, "A Sombra... caiu. Valemont dorme em paz pela primeira vez em semanas."),
-                            new Line(npc, "Rank C, 600 de ouro e um Tomo que ele carregava. O capuz tinha o selo do Rei Demônio."),
+                            new Line(npc, "Rank C, 600 de ouro e dois Tomos que ele carregava (Centelha e Corte Crescente — use no Grimório). O capuz tinha o selo do Rei Demônio."),
                             new Line(npc, "Malgrath já tem espiões na capital. O deserto de Kharis guarda a próxima pista."),
                         };
                     }
@@ -165,6 +178,13 @@ namespace Aetheria
                         return new[] { new Line(npc, "Kharis fica a leste. Os Capítulos seguintes chegam em breve, Ren.") };
                     return new[] { new Line(npc, "A Sombra ainda está solta. Beco ao sul, atrás da praça.") };
                 case "shopkeeper":
+                    if (!g.flags.Contains("bought_vest") && gs.gold >= 90)
+                    {
+                        g.flags.Add("bought_vest");
+                        gs.gold -= 90;
+                        gs.Add("leather_vest", 1);
+                        return new[] { new Line(npc, "Um Colete de Couro, 90 de ouro: +5 DEF. Equipe no Grimório (Tab). Fale de novo para poções.") };
+                    }
                     if (gs.gold >= 25)
                     {
                         bool eth = gs.Count("potion") >= 5 && gs.gold >= 30;

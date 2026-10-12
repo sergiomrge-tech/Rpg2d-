@@ -244,6 +244,8 @@ def portrait(name, look, bg=('#5aa0d8', '#24406a')):
 
 def icon_draw(ctx, name):
     c = ctx
+    if name.startswith('gear_') or name == 'scroll':
+        return gear_icon(c, name)
     if name == 'coin':
         for dx, dy in ((8, 10), (-6, 4), (2, -6)):
             paint(c, lambda x, dx=dx, dy=dy: ellipse(x, dx, dy, 17, 13), GOLD, sh=3, hl=2, line=1.6)
@@ -326,7 +328,39 @@ def book():
     save(f, 'book')
 
 
-ICONS = ['coin', 'potion', 'ether', 'horn', 'ember', 'tome', 'skill_sword', 'skill_spark', 'skill_roll']
+def gear_icon(c, name):
+    if name == 'gear_sword':
+        c.save()
+        c.rotate(math.radians(-45))
+        paint(c, lambda x: smooth_poly(x, [(-5, 16), (-5, -26), (0, -38), (5, -26), (5, 16)], tension=0.05),
+              Pal('#e8eef8', '#a0aec4', '#ffffff', '#3b4660'), sh=2, hl=1, line=1.4)
+        stroke(c, lambda x: (x.move_to(0, 14), x.line_to(0, -30)), (0.55, 0.62, 0.76, 1), 1.2, 0.8)
+        paint(c, lambda x: smooth_poly(x, [(-14, 14), (14, 14), (12, 20), (-12, 20)], tension=0.1), GOLD, sh=1, hl=1, line=1.2)
+        paint(c, lambda x: capsule(x, (0, 22), (0, 32), 3.4), Pal('#6a4030', '#4a2a1e', '#8a5a40', '#1e0c06'), sh=1, hl=0, line=1)
+        c.restore()
+    elif name == 'gear_armor':
+        paint(c, lambda x: smooth_poly(x, [(-26, -20), (-14, -30), (14, -30), (26, -20), (22, 4), (14, 28), (-14, 28), (-22, 4)], tension=0.3),
+              Pal('#8a98b8', '#5a688a', '#b8c6e0', '#1a2236'), sh=4, hl=2, line=1.5)
+        paint(c, lambda x: smooth_poly(x, [(-8, -30), (8, -30), (0, -16)], tension=0.1), Pal('#d8c8a8', '#a89878', '#fff4d8', '#4a3a24'), sh=1, hl=0.6, line=1)
+        stroke(c, lambda x: (x.move_to(0, -16), x.line_to(0, 26)), (0.3, 0.38, 0.55, 1), 1.6, 0.8)
+        paint(c, lambda x: ellipse(x, 0, 0, 5, 5), GOLD, sh=1, hl=0.8, line=1)
+    elif name == 'gear_charm':
+        stroke(c, lambda x: (x.move_to(-22, -30), x.curve_to(-14, -4, 14, -4, 22, -30)), (0.42, 0.28, 0.16, 1), 3)
+        radial_glow(c, 0, 8, 30, hx('#ff7ab0'), 0.6)
+        paint(c, lambda x: smooth_poly(x, [(0, -6), (14, 8), (0, 28), (-14, 8)], tension=0.2),
+              Pal('#ff5a8a', '#c02a58', '#ffc0d4', '#4a0a1e'), sh=3, hl=2, line=1.4)
+        paint(c, lambda x: ellipse(x, 0, -8, 5, 5), GOLD, sh=1, hl=0.8, line=1)
+    elif name == 'scroll':
+        paint(c, lambda x: smooth_poly(x, [(-22, -26), (22, -30), (24, 26), (-20, 30)], tension=0.1),
+              Pal('#f6ecd4', '#d8c8a8', '#ffffff', '#4a3a28'), sh=3, hl=1.5, line=1.4)
+        paint(c, lambda x: capsule(x, (-26, -28), (-22, 30), 5), Pal('#a06a3a', '#7a4a24', '#c89060', '#2a160a'), sh=1.5, hl=1, line=1.2)
+        paint(c, lambda x: capsule(x, (22, -32), (26, 28), 5), Pal('#a06a3a', '#7a4a24', '#c89060', '#2a160a'), sh=1.5, hl=1, line=1.2)
+        stroke(c, lambda x: (x.move_to(-14, -8), x.curve_to(-4, -20, 8, 10, 16, -10)), (0.3, 0.7, 1, 1), 3.5, 0.9)
+        radial_glow(c, 0, 0, 24, hx('#7fd6ff'), 0.45)
+
+
+ICONS = ['coin', 'potion', 'ether', 'horn', 'ember', 'tome', 'skill_sword', 'skill_spark', 'skill_roll',
+         'gear_sword', 'gear_armor', 'gear_charm', 'scroll']
 
 
 def _icon(ctx, payload):

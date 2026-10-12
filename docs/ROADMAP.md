@@ -41,8 +41,10 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ NPCs de Valemont (mestre da Guilda, guarda, nobre, clériga, criança, lojista) com retratos; compra de poções/éter
 - ✅ Chefe **Assassino Sombrio**: teleporta para as suas costas, invoca batedores a 50% de vida
 - ✅ Missões: Velmoor → Valemont (exige Rank D) → Assassino → Rank C
-- ⬜ Evolução Centelha II + Corte Crescente
-- ⬜ Equipamentos com atributos e forja
+- ✅ Evolução das habilidades: Tomo da Centelha (I→II Lança de Chamas→III Cometa Arcano que atravessa inimigos) e **Tomo do Corte Crescente** (3º golpe lança lâmina de energia)
+- ✅ Equipamentos: 3 slots (arma/armadura/amuleto), 11 peças com ATQ/DEF/MAG/PV, defesa reduz dano (100/(100+3×DEF)), equipar no Grimório
+- ✅ Forja do Borin com 5 receitas (chifres, couro demoníaco, brasas, pó de espírito); drops de chefes (Espada de Velmoor, Cutelo do General Oni)
+- ⬜ Dificuldade/economia: rodada de balanceamento quando o jogo rodar na nuvem
 
 ## Etapa 3 — Capítulos 4–7
 - ⬜ Deserto, Minas, Pântano, Picos Gelados (+ demônios temáticos e chefes)

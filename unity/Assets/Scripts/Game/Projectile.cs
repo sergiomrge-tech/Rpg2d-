@@ -9,6 +9,8 @@ namespace Aetheria
         public bool friendly;
         public int tier;
         public string hitFx = "hit";
+        public bool pierce;
+        readonly System.Collections.Generic.HashSet<Enemy> hitSet = new System.Collections.Generic.HashSet<Enemy>();
         SpriteAnim anim;
         SpriteRenderer glow;
         float trailT;
@@ -43,6 +45,17 @@ namespace Aetheria
             p.tier = tier;
             p.hitFx = tier == 1 ? "hit_spark" : "hit_fire";
             p.radius = 0.4f + 0.1f * tier;
+            p.pierce = tier >= 3;
+            return p;
+        }
+
+        public static Projectile Crescent(Vector2 pos, Vector2 dir, float dmg)
+        {
+            var p = Make("crescent", pos, dir, 11f, dmg, true, 1.25f, new Color(0.5f, 0.85f, 1f));
+            p.hitFx = "hit_spark";
+            p.pierce = true;
+            p.life = 0.75f;
+            p.radius = 0.75f;
             return p;
         }
 
@@ -83,8 +96,10 @@ namespace Aetheria
                     if (e.dead) continue;
                     if ((e.Pos + Vector2.up * 0.6f - p).magnitude < radius + 0.4f)
                     {
+                        if (pierce && !hitSet.Add(e)) continue;
                         bool crit = Random.value < 0.1f;
                         e.Hurt(Mathf.Round(dmg * Random.Range(0.92f, 1.08f) * (crit ? 1.7f : 1f)), p - vel.normalized, 6f, 16, crit);
+                        if (pierce) { Fx.Play(hitFx, e.Pos + Vector2.up * 0.7f, 0, 0.9f, true); continue; }
                         Explode();
                         return;
                     }

@@ -311,7 +311,19 @@ def arrow(ctx, t):
         flat(ctx, lambda c, sy=sy: smooth_poly(c, [(-16, 0), (-22, sy * 6), (-12, 0)], tension=0), hx('#3fc87a'))
 
 
+def crescent(ctx, t):
+    ph = t * math.tau
+    radial_glow(ctx, 0, 0, 52, hx('#7fd6ff'), 0.4)
+    for i in range(5):
+        arc_band(ctx, 40 - i * 4, -52 + i * 3, 52 - i * 3, 34 - i * 5, 38 - i * 5,
+                 [hx('#4ab8ff'), hx('#7fd6ff'), hx('#c8f2ff'), hx('#e8fbff'), hx('#ffffff')][i], 0.5 + i * 0.1)
+    for k in range(6):
+        a = math.radians(-40 + k * 16 + math.sin(ph + k) * 4)
+        stroke(ctx, lambda c, a=a: (c.move_to(math.cos(a) * 28, math.sin(a) * 28), c.line_to(math.cos(a) * 14, math.sin(a) * 14)), hx('#ffffff'), 1.8, 0.8)
+
+
 ANIMS = {
+    'crescent': (6, 18, True, crescent),
     'arrow': (2, 12, True, arrow),
     # name: (frames, fps, loop, fn, additive_alpha_fn?)
     'slash': (7, 26, False, lambda c, t: slash(c, t)),

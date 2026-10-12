@@ -221,8 +221,8 @@ namespace Aetheria
             Fx.Toast("+" + xp + " EXP", new Color(0.75f, 0.95f, 1f), e.Pos + Vector2.up * 2.6f);
             if (state.GainXp(xp))
             {
-                player.maxHp = state.maxHp;
-                player.hp = state.maxHp;
+                player.maxHp = state.HpMax;
+                player.hp = state.HpMax;
                 player.mp = state.maxMp;
                 Fx.Heal(player.Pos);
                 Sfx.Play("levelup", 0.6f, 1f);
