@@ -1,5 +1,7 @@
 # Lote 2 — ordem de produção, demônios insetoides (10 + 5 chefes)
 
+**Checkpoint verificável:** [resumo completo do GitHub, 15 criaturas e gates pendentes](CHECKPOINT_2026-10-12.md).
+
 **Estado em 12/10/2026:** os **10 demônios comuns** deste lote foram criados como PNG + JSON do jogo, possuem animações reais em três direções e foram cadastrados em `Data.Demons`, `Enemy.cs` e `village.json`. O teste C# passou. A aprovação de aparência/movimentação e a execução no Editor Unity ainda estão pendentes. **Os cinco chefes já possuem PNG/JSON, animações e duas skills integradas em C#, mas aguardam teste real Unity e aprovação visual.**
 
 **Direção artística obrigatória:** manter o **HD cartoon do projeto**, com materiais Cairo, sombras suaves, contornos coloridos, animações em três direções e alta legibilidade em jogo. Espécies novas exigem **anatomia própria** e não podem diferir apenas por cor, textura ou arma.
@@ -55,7 +57,7 @@ Detalhes estruturados: [`lote2_priority.json`](lote2_priority.json).
 
 **[Ler a regra de assets jogáveis](REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md) antes de produzir qualquer criatura.** O usuário não aceita **arte conceitual** como entrega. Atlas isolado ou PNG de demonstração também não é criatura concluída. Cada demônio/chefe precisa estar **integrado ao jogo Unity**, com rig/sprites refinados, animações reais, IA de movimentação, ataque e habilidades ativáveis, VFX, hitboxes, eventos de dano, cooldown e testes em cena. Chefes devem ter duas habilidades independentes. Somente após funcionamento comprovado e revisão visual considerar o asset concluído.
 
-**Piloto efetivamente jogável:** priorizar `mantis_reaver`, `scarab_brute`, `moth_hexer`; para cada um, concluir o ciclo asset → importação → movimento → combate → habilidades → testes reais de Unity antes de avançar no lote. As imagens ilustrativas/atlas geradas fora de Unity nas conversas anteriores **não constituem assets funcionais** e não autorizam marcar esses três como implementados.
+**Situação atual do piloto:** `mantis_reaver`, `scarab_brute` e `moth_hexer` possuem PNG/JSON importáveis, definições de IA, spawn e habilidades codificadas em Unity/C#. **Não declarar jogabilidade aprovada**: falta a execução real no Editor, validação visual, hitboxes, animações e FPS. Imagens de prévia dos quadros não devem ser confundidas com screenshots da Unity.
 
 ## Checkpoint dos chefes (12/10/2026)
 - ✅ Cinco rigs de bosses **não derivados por ampliação de mobs**; 21 trilhas direcionais e 201 quadros por chefe, em PNG + JSON reais do projeto.
