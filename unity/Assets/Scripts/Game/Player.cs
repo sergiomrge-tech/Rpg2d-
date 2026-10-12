@@ -12,6 +12,15 @@ namespace Aetheria
         public float mp, st;
         public bool inputLocked;
         public Vector2 scriptedMove;   // used by CI demo / cutscenes
+        float hexSlowLeft;
+
+        // Moth Hexer's curse only slows movement for a short, visible period.
+        public void ApplyHexSlow(float seconds)
+        {
+            if (dead) return;
+            hexSlowLeft = Mathf.Max(hexSlowLeft, seconds);
+            Fx.Toast("Lentidão!", new Color(.81f, .54f, 1f), Pos + Vector2.up * 2.4f);
+        }
 
         St state;
         int combo;
@@ -68,6 +77,7 @@ namespace Aetheria
             if (dead) return;
             float dt = Time.deltaTime;
             stateT += dt;
+            if (hexSlowLeft > 0f) hexSlowLeft = Mathf.Max(0f, hexSlowLeft - dt);
             moveDir = ReadMove();
             bool run = !inputLocked && Input.GetKey(KeyCode.LeftShift);
 
@@ -92,7 +102,8 @@ namespace Aetheria
                         if (canRun) { st -= RunDrain * dt; stRegenDelay = 0.4f; }
                         Face(Util.FacingFrom(moveDir, facing));
                         anim.Play(canRun ? "run" : "walk");
-                        rb.velocity = moveDir * (canRun ? RunSpeed : WalkSpeed) + knock;
+                        float hexFactor = hexSlowLeft > 0f ? .52f : 1f;
+                        rb.velocity = moveDir * (canRun ? RunSpeed : WalkSpeed) * hexFactor + knock;
                         stepT -= dt * (canRun ? 1.5f : 1f);
                         if (stepT <= 0) { stepT = 0.36f; Sfx.Play("step", 0.18f, Random.Range(0.9f, 1.1f)); if (canRun) Fx.Dust(Pos, 0.5f); }
                     }
@@ -294,6 +305,7 @@ namespace Aetheria
             hp = gs.maxHp;
             mp = gs.maxMp;
             st = gs.maxSt;
+            hexSlowLeft = 0f;
             ToFree();
         }
     }
