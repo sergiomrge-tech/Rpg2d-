@@ -204,6 +204,15 @@ func _start_selected_class(class_id: String) -> void:
 func new_game(class_id: String = "warrior") -> void:
 	state.from_dict(GameState.new().to_dict())
 	HeroClasses.apply_new_game(state, class_id)
+	# Player was spawned before the menu, so switch its real sprite atlas
+	# immediately on confirmation (not only when loading a saved game).
+	player.anim.setup(HeroClasses.sheet_for(state.class_id))
+	player.anim.play("idle", true)
+	# New Game must not retain temporary summons from the previous save.
+	for old_pet in SpiritPet.active_pets.duplicate():
+		if is_instance_valid(old_pet):
+			old_pet.queue_free()
+	SpiritPet.active_pets.clear()
 	flags.clear()
 	quests.clear()
 	_announced = {"__init": true}
