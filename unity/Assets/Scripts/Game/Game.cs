@@ -221,6 +221,27 @@ namespace Aetheria
             player.CiCast();
             yield return new WaitForSeconds(0.35f);
             yield return Shot("05_combat2");
+            // Deterministic shots of real Lote 2 creatures in the running Unity world.
+            // No concept art or generated fake screenshots are ever used here.
+            player.invuln = 15f;
+            string[] pilotIds = { "mantis_reaver", "scarab_brute", "moth_hexer" };
+            string[] pilotNames = { "06_mantis_skill", "07_scarab_skill", "08_moth_skill" };
+            for (int i = 0; i < pilotIds.Length; i++)
+            {
+                Enemy insect = Enemy.All.Find(e => !e.dead && e.def.id == pilotIds[i]);
+                if (insect == null)
+                {
+                    Debug.LogWarning("[ci] missing insectoid: " + pilotIds[i]);
+                    continue;
+                }
+                player.transform.position = insect.Pos + Vector2.down * 3.1f;
+                player.rb.velocity = Vector2.zero;
+                CameraRig.I.Snap();
+                insect.CiCastSkill(player.Pos);
+                yield return new WaitForSeconds(0.7f);
+                yield return Shot(pilotNames[i]);
+                yield return new WaitForSeconds(0.4f);
+            }
             Debug.Log("[ci] done");
             yield return new WaitForSeconds(0.5f);
             Application.Quit();
