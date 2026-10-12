@@ -1,6 +1,6 @@
 # Lote 2 — ordem de produção, demônios insetoides (10 + 5 chefes)
 
-**Estado em 12/10/2026:** os **10 demônios comuns** deste lote foram criados como PNG + JSON do jogo, possuem animações reais em três direções e foram cadastrados em `Data.Demons`, `Enemy.cs` e `village.json`. O teste C# passou. A aprovação de aparência/movimentação e a execução no Editor Unity ainda estão pendentes. **Os cinco chefes ainda não foram criados.**
+**Estado em 12/10/2026:** os **10 demônios comuns** deste lote foram criados como PNG + JSON do jogo, possuem animações reais em três direções e foram cadastrados em `Data.Demons`, `Enemy.cs` e `village.json`. O teste C# passou. A aprovação de aparência/movimentação e a execução no Editor Unity ainda estão pendentes. **Os cinco chefes já possuem PNG/JSON, animações e duas skills integradas em C#, mas aguardam teste real Unity e aprovação visual.**
 
 **Direção artística obrigatória:** manter o **HD cartoon do projeto**, com materiais Cairo, sombras suaves, contornos coloridos, animações em três direções e alta legibilidade em jogo. Espécies novas exigem **anatomia própria** e não podem diferir apenas por cor, textura ou arma.
 
@@ -49,10 +49,17 @@
 
 Detalhes estruturados: [`lote2_priority.json`](lote2_priority.json).
 
-**Status atualizado:** ✅ 10/10 demônios comuns — assets renderizados, IA/skills codificados, 18 trilhas de animação por criatura, encontrados no mapa e compilação C# aprovada; ⬜ 5/5 chefes — arte e jogabilidade ainda pendentes. Falta teste real de runtime/visual na Unity.
+**Status atualizado:** ✅ 10/10 demônios comuns — assets renderizados, IA/skills codificados, 18 trilhas de animação por criatura, encontrados no mapa e compilação C# aprovada; ✅ 5/5 chefes — sprites renderizados e integração C# aprovada; runtime Unity e revisão artística pendentes. Falta teste real de runtime/visual na Unity.
 
 ## CRITÉRIO DE ENTREGA OBRIGATÓRIO — definido pelo diretor em 12/10/2026
 
 **[Ler a regra de assets jogáveis](REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md) antes de produzir qualquer criatura.** O usuário não aceita **arte conceitual** como entrega. Atlas isolado ou PNG de demonstração também não é criatura concluída. Cada demônio/chefe precisa estar **integrado ao jogo Unity**, com rig/sprites refinados, animações reais, IA de movimentação, ataque e habilidades ativáveis, VFX, hitboxes, eventos de dano, cooldown e testes em cena. Chefes devem ter duas habilidades independentes. Somente após funcionamento comprovado e revisão visual considerar o asset concluído.
 
 **Piloto efetivamente jogável:** priorizar `mantis_reaver`, `scarab_brute`, `moth_hexer`; para cada um, concluir o ciclo asset → importação → movimento → combate → habilidades → testes reais de Unity antes de avançar no lote. As imagens ilustrativas/atlas geradas fora de Unity nas conversas anteriores **não constituem assets funcionais** e não autorizam marcar esses três como implementados.
+
+## Checkpoint dos chefes (12/10/2026)
+- ✅ Cinco rigs de bosses **não derivados por ampliação de mobs**; 21 trilhas direcionais e 201 quadros por chefe, em PNG + JSON reais do projeto.
+- ✅ Duas habilidades diferentes por chefe, ligadas por hit frame, IA, cooldown, VFX e danos em `InsectBossSkills.cs` e `Enemy.cs`.
+- ✅ Cinco encontros opcionais no mapa e HUD com barra de vida/nomes dos chefes. Os 8 imps da missão inicial seguem inalterados.
+- ✅ GitHub Actions: render/sprite QA aprovado e compilação C# aprovada.
+- ⬜ Gate de execução Unity 2022.3 LTS, teste de animações/colisões/FPS, screenshots reais e **aprovação do acabamento gráfico pelo diretor**.
