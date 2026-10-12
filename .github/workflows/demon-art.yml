@@ -1,0 +1,50 @@
+name: HD demon assets catalog
+
+on:
+  push:
+    branches: [gpt6-demon-catalog-20261012]
+    paths:
+      - 'tools/art_hd/extra_demons.py'
+      - 'tools/art_hd/build_extra_demons.py'
+      - 'tools/art_hd/verify_extra_demons.py'
+      - 'docs/asset_catalog/catalog.json'
+      - '.github/workflows/demon-art.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Cairo and production art dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libcairo2-dev pkg-config python3-dev
+          python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
+      - name: Generate Oni and Grakk sheets with existing production HD renderer
+        run: python tools/art_hd/build_extra_demons.py
+      - name: Validate 3-view animation frames, metadata and catalog
+        run: python tools/art_hd/verify_extra_demons.py
+      - name: Commit generated candidate assets (not integrated into gameplay)
+        if: github.ref == 'refs/heads/gpt6-demon-catalog-20261012'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add unity/Assets/Resources/Sprites/Demons/oni_soldier.png
+          git add unity/Assets/Resources/Sprites/Demons/oni_soldier.json
+          git add unity/Assets/Resources/Sprites/Demons/grakk.png
+          git add unity/Assets/Resources/Sprites/Demons/grakk.json
+          git add docs/asset_catalog/previews/*.png
+          if git diff --cached --quiet; then
+            echo 'Demon assets already up to date.'
+          else
+            git commit -m 'art: generated HD Oni and Grakk candidates with 3-view animations'
+            git push origin HEAD:refs/heads/gpt6-demon-catalog-20261012
+          fi
