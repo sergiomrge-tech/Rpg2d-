@@ -143,12 +143,12 @@ def moth(c,p,m):
     sh,bo,gl=m['shell'],m['bone'],m['glow']
     v,g,a,s=p['view'],p['gait'],p['attack'],p['skill']
     side=v=='side'; back=v=='up'
-    spread=1+.20*p['flap']+.21*s
+    spread=1+.08*p['flap']+.10*s
     # Giant wing-panels are the BODY silhouette; narrow hovering core, not a biped.
     for sx in (-1,1):
-        tip=sx*75*spread
+        tip=sx*64*spread
         poly(c,[(sx*10,-97),(sx*44,-128),(tip,-100),
-                (sx*66,-65),(sx*88*spread,-33),
+                (sx*66,-65),(sx*70*spread,-33),
                 (sx*58,-7),(sx*32,-28),(sx*15,-55)],sh,4.2,2.2)
         poly(c,[(sx*20,-86),(sx*47,-110),(sx*64*spread,-83),
                 (sx*47,-50),(sx*70,-24),(sx*29,-38)],bo,2,.8,.9)
