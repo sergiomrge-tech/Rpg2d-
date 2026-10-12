@@ -141,6 +141,7 @@ class MantisHighReaper(Boss):
 
 class ScarabColossus(Boss):
     name='scarab_colossus'
+    OY=259  # impact shockwaves need room below feet
     def __init__(self):
         self.iron=Pal('#3c4350','#222937','#858b95','#292a35')
         self.bronze=Pal('#9d7965','#644d4d','#dfb898','#403642')
@@ -296,6 +297,7 @@ class MothOracle(Boss):
 
 class QueenVespara(Boss):
     name='queen_vespara'
+    OY=267  # long segmented venom trident must stay inside frame
     def __init__(self):
         self.black=Pal('#252939','#181b28','#626e7a','#171724')
         self.gold=Pal('#c49861','#856341','#ffdaa1','#563e37')
