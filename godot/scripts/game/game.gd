@@ -562,8 +562,12 @@ func _ui_smoke_test() -> void:
 	var ev := InputEventScreenTouch.new()
 	ev.index = 23
 	ev.pressed = true
-	ev.position = grimoire.close_button.get_global_rect().get_center()
-	print("[ui-smoke] dispatch X touch at ", ev.position, " for rect ", grimoire.close_button.get_global_rect())
+	# parse_input_event expects device/window pixels; Godot scales to the
+	# logical 1920x1080 canvas before delivering InputEventScreenTouch.
+	# Passing global_rect directly here double-scaled the synthetic tap.
+	var logical_pos := grimoire.close_button.get_global_rect().get_center()
+	ev.position = logical_pos * (Vector2(get_window().size) / Hud.SIZE)
+	print("[ui-smoke] dispatch X device touch at ", ev.position, " for canvas rect ", grimoire.close_button.get_global_rect())
 	Input.parse_input_event(ev)
 	await _wait(0.10)
 	print("[ui-smoke] after tap open=", grimoire.open, " paused=", get_tree().paused, " locked=", player.input_locked)
