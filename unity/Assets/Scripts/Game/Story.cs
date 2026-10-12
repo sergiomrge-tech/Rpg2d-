@@ -85,9 +85,23 @@ namespace Aetheria
                         return new[] { new Line(npc, "Grakk se esconde no sul do bosque, perto do lago. Cuidado com o leque de fogo.") };
                     return new[] { new Line(npc, $"Diabretes abatidos: {g.QuestProgress(QuestImps)}/{QuestImpsGoal}. O bosque fica ao sul da praça.") };
                 case "blacksmith":
+                    if (!g.flags.Contains("sword_horn") && gs.Count("imp_horn") >= 5 && gs.gold >= 80)
+                    {
+                        g.flags.Add("sword_horn");
+                        for (int i = 0; i < 5; i++) gs.Take("imp_horn");
+                        gs.gold -= 80;
+                        gs.atk += 6;
+                        return new[]
+                        {
+                            new Line(npc, "Cinco chifres e 80 de ouro... Deixa comigo. *clang* *clang* *CLANG*"),
+                            new Line(npc, "Lâmina de Chifre. Corta demônio como se fosse pão. Seu ataque subiu +6."),
+                        };
+                    }
+                    if (g.flags.Contains("sword_horn"))
+                        return new[] { new Line(npc, "Quer algo melhor? Brasas Infernais. Muitas. E um demônio de verdade pra testar.") };
                     return new[]
                     {
-                        new Line(npc, "Hm. Essa lâmina não corta nem manteiga. Traga Chifres de Diabrete e Brasas Infernais."),
+                        new Line(npc, $"Hm. Essa lâmina não corta nem manteiga. Traga 5 Chifres de Diabrete e 80 de ouro (você tem {gs.Count("imp_horn")})."),
                         new Line(npc, "Com material demoníaco eu forjo coisa de verdade. Demônio fraco, arma fraca. Demônio forte..."),
                     };
                 case "villager":

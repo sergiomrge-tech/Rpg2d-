@@ -296,6 +296,36 @@ def icon_draw(ctx, name):
               sh=1, hl=0.5, line=1)
 
 
+def book():
+    f = canvas(1400, 860)
+    c = f.ctx
+    leather = Pal('#6a2a24', '#4a1a16', '#8e443a', '#1e0806')
+    paint(c, lambda x: smooth_poly(x, [(-690, -400), (-10, -380), (10, -380), (690, -400), (680, 410), (10, 390), (-10, 390),
+                                       (-680, 410)], tension=0.05), leather, sh=8, hl=3, line=2.4)
+    for sx in (-1, 1):
+        for cx, cy in ((sx * 650, -362), (sx * 650, 372)):
+            paint(c, lambda x, cx=cx, cy=cy: smooth_poly(x, [(cx - 30, cy), (cx, cy - 30), (cx + 30, cy), (cx, cy + 30)], tension=0.1),
+                  GOLD, sh=2, hl=1.5, line=1.4)
+    page = Pal('#f6ead0', '#e2cfa6', '#fffaee', '#7a5a34')
+    for sx in (-1, 1):
+        def pg(x, sx=sx):
+            x.move_to(sx * 14, -360)
+            x.curve_to(sx * 200, -385, sx * 450, -385, sx * 655, -365)
+            x.line_to(sx * 645, 375)
+            x.curve_to(sx * 450, 355, sx * 200, 355, sx * 14, 372)
+            x.close_path()
+        paint(c, pg, page, sh=0, hl=0, line=1.2)
+        g = cairo.LinearGradient(0, 0, sx * 120, 0)
+        g.add_color_stop_rgba(0, 0.45, 0.32, 0.18, 0.45)
+        g.add_color_stop_rgba(1, 0.45, 0.32, 0.18, 0)
+        c.save(); pg(c); c.clip(); c.set_source(g); c.paint(); c.restore()
+        # ornamental frame lines on page
+        stroke(c, lambda x, sx=sx: x.rectangle(min(sx * 60, sx * 610), -320, 550, 650), hx('#b8945a'), 1.4, 0.7)
+    for sx in (-1, 1):
+        stroke(c, lambda x, sx=sx: (x.move_to(sx * 335 - 120, -262), x.line_to(sx * 335 + 120, -262)), hx('#b8945a'), 1.6, 0.8)
+    save(f, 'book')
+
+
 ICONS = ['coin', 'potion', 'ether', 'horn', 'ember', 'tome', 'skill_sword', 'skill_spark', 'skill_roll']
 
 
@@ -331,5 +361,6 @@ if __name__ == '__main__':
     lumia = Look(hair_style='long', hair=Pal('#fff0c8', '#e0c890', '#ffffff', '#8a6a30'), eye=hx('#f0b030'),
                  tunic=Pal('#f4f0ff', '#c8c0e8', '#ffffff', '#4a4070'), scarf_on=False)
     portrait('portrait_lumia', lumia, ('#fff6d0', '#c8a0f0'))
+    book()
     build_icons()
     print('ui done')

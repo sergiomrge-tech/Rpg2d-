@@ -21,6 +21,7 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e carregad
 | Rolar (invencível) | Espaço |
 | Poção | Q |
 | Falar | E |
+| Grimório (bolsa, magias) | Tab |
 | Salvar | F5 |
 
 ## Estrutura

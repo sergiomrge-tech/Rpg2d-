@@ -49,6 +49,7 @@ namespace Aetheria
             cam.target = player.transform;
             cam.Snap();
             hud = Hud.Create();
+            Grimoire.Create(hud);
             Sfx.Loop("ambience", 0.25f);
             if (ciDir != null) { StartCoroutine(CiShots()); return; }
             if (!flags.Contains("prologue"))
@@ -72,6 +73,8 @@ namespace Aetheria
                 hitStop -= Time.unscaledDeltaTime;
                 Time.timeScale = hitStop > 0 ? 0.05f : 1f;
             }
+            if (Input.GetKeyDown(KeyCode.Tab) && Grimoire.I != null && !Grimoire.I.open && !hud.InDialogue && player != null && !player.dead && !player.inputLocked)
+                Grimoire.I.Toggle();
             if (Input.GetKeyDown(KeyCode.F5)) { Save(); Fx.Toast("Jogo salvo", Color.white); }
         }
 

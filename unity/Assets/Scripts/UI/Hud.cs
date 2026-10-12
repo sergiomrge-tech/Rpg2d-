@@ -11,7 +11,7 @@ namespace Aetheria
     {
         public static Hud I;
         public Canvas canvas;
-        RectTransform root;
+        public RectTransform root;
         public static Font Serif, Sans, SansBold;
 
         Image hpFill, hpTrail, mpFill, stFill;
@@ -59,9 +59,9 @@ namespace Aetheria
             return h;
         }
 
-        static Sprite Ui(string n) => Sheets.Single("Sprites/Ui/" + n);
+        public static Sprite Ui(string n) => Sheets.Single("Sprites/Ui/" + n);
 
-        RectTransform Rect(string name, Transform parent, Vector2 anchor, Vector2 pos, Vector2 size)
+        public RectTransform Rect(string name, Transform parent, Vector2 anchor, Vector2 pos, Vector2 size)
         {
             var go = new GameObject(name, typeof(RectTransform));
             var rt = go.GetComponent<RectTransform>();
@@ -73,7 +73,7 @@ namespace Aetheria
             return rt;
         }
 
-        Image Img(string name, Transform parent, Sprite sp, Vector2 anchor, Vector2 pos, Vector2 size)
+        public Image Img(string name, Transform parent, Sprite sp, Vector2 anchor, Vector2 pos, Vector2 size)
         {
             var rt = Rect(name, parent, anchor, pos, size);
             var im = rt.gameObject.AddComponent<Image>();
@@ -82,7 +82,7 @@ namespace Aetheria
             return im;
         }
 
-        Text Txt(string name, Transform parent, string s, Font f, int size, Color c, Vector2 anchor, Vector2 pos, Vector2 box,
+        public Text Txt(string name, Transform parent, string s, Font f, int size, Color c, Vector2 anchor, Vector2 pos, Vector2 box,
                  TextAnchor align = TextAnchor.MiddleCenter, bool outline = true)
         {
             var rt = Rect(name, parent, anchor, pos, box);
