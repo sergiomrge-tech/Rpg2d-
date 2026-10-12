@@ -1,0 +1,81 @@
+{
+ "frameW": 96,
+ "frameH": 96,
+ "pivotX": 48,
+ "pivotY": 48,
+ "cols": 9,
+ "anims": [
+  {
+   "name": "coin",
+   "start": 0,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "potion",
+   "start": 1,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "ether",
+   "start": 2,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "horn",
+   "start": 3,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "ember",
+   "start": 4,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "tome",
+   "start": 5,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "skill_sword",
+   "start": 6,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "skill_spark",
+   "start": 7,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "skill_roll",
+   "start": 8,
+   "count": 1,
+   "fps": 1,
+   "loop": false,
+   "hit": -1
+  }
+ ]
+}

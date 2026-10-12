@@ -16,9 +16,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Vila de Aurora + Bosque dos Chifres (chão pintado, rio, ponte, praça, 23 tipos de objeto, vento nas árvores)
 - ✅ FX: cortes, garras, impactos, explosões, círculos mágicos, Centelha I/II/III, fumaça demoníaca
 - ✅ Combate (stamina, combo, rolar, postura, telegrafia, hit-stop), loot, XP/nível, missão, prólogo, save
-- 🔄 **Texturas do HUD** (medalhão, arcos, orbes, faixa de diálogo, fitas, pílulas, vinheta) — código pronto, falta gerar `Sprites/Ui/*`
-- ⬜ Ícones de itens/habilidades (`Sprites/Ui/icons`)
-- ⬜ Retratos (herói, Elina, Borin, Marta, Lumia)
+- ✅ Texturas do HUD (medalhão, arcos PV/PM/stamina, orbes, faixa de diálogo, fita de nome, pílulas, vinheta) — `tools/art_hd/ui.py`
+- ✅ Ícones de itens/habilidades (`Sprites/Ui/icons`)
+- ✅ Retratos (herói, Elina, Borin, Marta, Lumia)
 - ⬜ Chefe do capítulo: Diabrete-Chefe Grakk
 - ⬜ Oni soldado (2º demônio)
 - ⬜ Menus: inventário/grimório (livro aberto), forja, quadro de missões
@@ -47,6 +47,5 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Builds Windows/Mac, página do jogo
 
 ## Próximo passo imediato
-1. Gerar texturas do HUD + ícones + retratos (`tools/art_hd/ui.py`).
-2. Assim que a licença estiver nos segredos: rodar o CI, ver screenshots e corrigir.
-3. Chefe Grakk + Oni soldado para fechar o Capítulo 1.
+1. Assim que a licença estiver nos segredos: rodar o CI, ver screenshots e corrigir.
+2. Chefe Grakk + Oni soldado para fechar o Capítulo 1.
