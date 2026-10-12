@@ -6,6 +6,12 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e importad
 > **Estado atual:** campanha completa dos Capítulos 1 a 10 (da Vila de Aurora até Malgrath, o Rei Demônio), com final e créditos. Rodando de ponta a ponta no Godot (screenshots de todas as regiões gerados em CI).
 > Planejamento completo: [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md) · Etapas e tarefas: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
+> **Expansão em revisão (não na versão principal):** seis classes jogáveis com sprites HD próprios, retratos extraídos dos atlas e familiar original **Lince Astral**, com animações reais. [Ver produção e limites de validação](docs/CLASS_ART_IMPLEMENTATION.md) · [classes, atributos, armas e fraquezas](docs/CLASS_SYSTEM.md). [Prévias de sprites de verdade](docs/asset_catalog/previews/classes/) — não são prints do jogo.
+
+> **APK experimental Android já disponível:** [Baixar Aetheria — seis classes e Lince Astral (.apk)](https://github.com/sergiomrge-tech/Rpg2d-/releases/download/aetheria-6-classes-preview/Aetheria_Seis_Classes_Teste.apk) · [Página da versão de teste](https://github.com/sergiomrge-tech/Rpg2d-/releases/tag/aetheria-6-classes-preview). Build Godot 4.3 / GitHub Actions [#38293183086](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38293183086) **aprovado**, gerado do commit `cb089d56cfd49e277f9341af7a931bbc5dd31dbe`. Arquivo de aproximadamente **518 MB**, assinado com a chave de teste já usada no projeto. **Ainda não foi instalado/testado em aparelho real e não altera a publicação principal `apk-latest`.**
+
+> **Imagens autênticas do jogo:** [14 capturas reais do Godot — menu, seis classes, habilidades e pet](docs/asset_catalog/captures/classes/) · [workflow aprovado #38292498437](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38292498437). Os retratos dos cartões e as prévias em `previews/classes` são quadros extraídos dos sprites, não capturas de gameplay.
+
 ![Vila de Aurora](docs/previews/godot_vila.png)
 ![Combate](docs/previews/godot_combate.png)
 
@@ -14,11 +20,14 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e importad
 - **Sandbox/CI:** `tools/run.sh 90 -ciShots /tmp/shots` importa, roda sob Xvfb e salva screenshots. O workflow `.github/workflows/godot.yml` faz o mesmo a cada push e publica na branch `ci-shots`.
 
 ## Controles
+
+**Novo Jogo:** selecione Guerreiro, Mago, Arqueiro, Paladino, Assassino ou Invocador. Os botões **J** e **K** executam a ação/skill específica da classe; Guerreiro não usa magia, Arqueiro somente arco, Mago somente feitiços, Assassino duas adagas e Invocador somente pets. Não há gasto de fôlego.
+
 | Ação | Tecla |
 |---|---|
 | Mover / correr | WASD ou setas / Shift |
-| Combo de espada (×3) | J ou clique esquerdo |
-| Magia Centelha | K ou clique direito |
+| Ataque exclusivo da classe (espada, magia, flecha, adagas ou comando ao pet) | J ou clique esquerdo |
+| Habilidade exclusiva (espada, magia, rajada, cura, adagas ou invocação) | K ou clique direito |
 | Rolar (invencível) | Espaço |
 | Poção | Q |
 | Falar | E |

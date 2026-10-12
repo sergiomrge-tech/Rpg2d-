@@ -1,6 +1,6 @@
 # Sistema de Classes — Crônicas de Aetheria
 
-**Status:** protótipo funcional em código GDScript, seleção entre **Novo Jogo** e o prólogo. As regras de combate estão programadas, mas a aprovação final depende de execução, equilíbrio e visual dos equipamentos reais no Godot/Android.
+**Status em 12/10/2026:** sistema das seis classes implementado e validado em Godot 4.3 via CI, com assets HD animados originais e prerelease APK de teste compilada. A aprovação final ainda depende de teste visual e jogabilidade em aparelho Android. [Arte real e validação](CLASS_ART_IMPLEMENTATION.md) · [APK de teste](https://github.com/sergiomrge-tech/Rpg2d-/releases/tag/aetheria-6-classes-preview).
 
 ## Seis classes, com vantagens e fraquezas obrigatórias
 
@@ -41,14 +41,14 @@ Os valores são parâmetros iniciais de **balanceamento**, sujeitos a ajustes ap
 
 ### Invocador: pets efetivos no mundo
 
-`SpiritPet` é uma unidade aliada separada do jogador. Ela segue Ren, seleciona inimigos, anima `idle/move/cast` e dispara projéteis **no quadro de conjuração**, sem atribuir o ataque ao herói. Sua arte usa temporariamente a folha HD existente de um espírito (`bog_wraith`) com cor etérea; uma **arte final exclusiva do pet permanece pendente**. Não representar essa reutilização provisória como modelagem inédita aprovada.
+`SpiritPet` é uma unidade aliada separada do jogador. Ela segue Ren, seleciona inimigos, anima `idle/move/cast` e dispara projéteis **no quadro de conjuração**, sem atribuir o ataque ao herói. A arte provisória `bog_wraith` foi **substituída** pelo **Lince Astral**, personagem 2D quadrúpede de rig original com **240 quadros, 18 trilhas animadas** em `godot/assets/Sprites/Pets/astral_lynx.png/.json`. O familiar usa animações de movimento e conjuração com hit frame. Essa modelagem está disponível na branch de arte, mas ainda aguarda aprovação visual e testes Android. [Detalhes dos assets](CLASS_ART_IMPLEMENTATION.md).
 
 ### Gates ainda obrigatórios
 
-1. Compilar e executar a branch `gpt6-class-selection-20261012` no **Godot 4.3+** com testes de seleção por toque e teclado.
-2. Verificar visualmente cada classe e seu equipamento em animações reais. **Sprites de Ren para arco, duas adagas e ausência de espada nos conjuradores ainda precisam de tratamento visual específico** antes de considerar a entrega artística final.
+1. ✅ **Godot 4.3**: compilação/import e smoke test de sprites reais, seleção por toque, combate e familiar aprovados em [CI #38292474839](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38292474839). **Pendente:** testar instalação e comandos em dispositivo Android real.
+2. ✅ Seis atlases HD já estão integrados **ao projeto Godot** (não à Unity): arco, duas adagas, magias sem espada, guerreiro, paladino, invocador e 6 retratos. ✅ [14 screenshots reais do motor](asset_catalog/captures/classes/) já produzidos; **pendente** a aprovação artística e inspeção no aparelho.
 3. Confirmar IA, duração, quantidade e alvo dos pets em combate; equilibrar dano, proteção e mobilidade.
 4. Garantir que não exista regressão no Grimório (X), nas cutscenes, na música de flauta ou na remoção do fôlego.
-5. Gerar APK somente após a validação. O PR permanece isolado da branch principal até aprovação.
+5. ✅ APK de teste gerado em [CI #38293183086](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38293183086) e disponível na [prerelease](https://github.com/sergiomrge-tech/Rpg2d-/releases/tag/aetheria-6-classes-preview). **Pendente:** testar APK no celular, aprovar arte e balanceamento; PR permanece isolado da branch principal.
 
 **Regra permanente:** classe não pode ser apenas cor, nome, conceito ou ícone. Restrições, ataque, equipamento, status e animação devem funcionar no jogo; screenshots somente se forem capturas reais do motor Godot.

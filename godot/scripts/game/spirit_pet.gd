@@ -1,8 +1,8 @@
 class_name SpiritPet
 extends Node2D
 ## Real AI ally for the Summoner: follows Ren and attacks enemies automatically.
-## Uses approved HD bog-wraith directional sprites as TEMPORARY spectral familiar.
-## A bespoke summon sprite remains an art gate. Attacks occur on real cast keyframes.
+## Original Astral Lynx: independently drawn HD cartoon quadruped rig.
+## Movement and spell-hit animations use real in-game directional sprite frames.
 
 const T := 64.0
 const MAX_ACTIVE := 2
@@ -60,9 +60,9 @@ static func command(p: Node2D) -> void:
 func _ready() -> void:
 	set_process(true)
 	visual = Anim.new()
-	visual.setup("Sprites/Demons/bog_wraith")
+	visual.setup("Sprites/Pets/astral_lynx")
 	visual.scale = Vector2.ONE * .90
-	visual.modulate = Color(.58, .96, .90, .86)
+	visual.modulate = Color.WHITE  # preserve refined paint/shading of original pet art
 	add_child(visual)
 	visual.hit.connect(_on_visual_hit)
 	visual.ended.connect(_on_visual_end)

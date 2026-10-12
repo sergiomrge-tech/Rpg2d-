@@ -1,0 +1,60 @@
+name: Godot Class Hero & Familiar Production Sprite Rendering
+on:
+  push:
+    branches: [gpt6-class-art-in-game-20261012]
+    paths:
+      - 'tools/art_hd/class_hero_rigs.py'
+      - 'tools/art_hd/build_class_heroes.py'
+      - 'tools/art_hd/astral_lynx.py'
+      - 'tools/art_hd/build_astral_lynx.py'
+      - 'tools/art_hd/verify_class_art.py'
+      - '.github/workflows/class-art-render.yml'
+  workflow_dispatch:
+concurrency:
+  group: class-art-render-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install approved original HD Cairo/Pillow render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libcairo2-dev pkg-config python3-dev
+          python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
+      - name: Render six distinct HERO CLASS animated atlases and menu portraits
+        run: python -u tools/art_hd/build_class_heroes.py
+      - name: Render bespoke astral lynx familiar with three-view animation
+        run: python -u tools/art_hd/build_astral_lynx.py
+      - name: Validate actual PNG alpha, independent silhouettes, nonstatic frames, metadata and routes
+        run: python tools/art_hd/verify_class_art.py
+      - name: Commit produced production sprites to Godot project (not original hero)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for id in warrior mage archer paladin assassin summoner; do
+            git add "godot/assets/Sprites/Chars/hero_${id}.png"
+            git add "godot/assets/Sprites/Chars/hero_${id}.json"
+            git add "godot/assets/Sprites/Ui/ClassPortraits/${id}.png"
+            git add "docs/asset_catalog/previews/classes/${id}.png"
+          done
+          git add godot/assets/Sprites/Pets/astral_lynx.png
+          git add godot/assets/Sprites/Pets/astral_lynx.json
+          git add docs/asset_catalog/previews/classes/pet_astral_lynx.png
+          if git diff --cached --quiet; then
+            echo 'Already current'
+          else
+            git commit -m 'art: six real HD class hero rigs plus original animated astral lynx'
+            git fetch origin gpt6-class-art-in-game-20261012
+            git rebase origin/gpt6-class-art-in-game-20261012
+            git push origin HEAD:gpt6-class-art-in-game-20261012
+          fi
