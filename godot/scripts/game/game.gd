@@ -699,6 +699,24 @@ func _ui_smoke_test() -> void:
 		player.mp = trial.max_mp
 		player.hp = trial.hp_max()
 		player.input_locked = false
+		# Switch the REAL production sprite rig as the class changes.
+		# Every clip must exist, with a non-empty texture in all three views.
+		player.anim.setup(HeroClasses.sheet_for(id))
+		player.anim.play("idle", true)
+		if player.anim.sheet == null or player.anim.texture == null:
+			push_error("[class-smoke] in-game class sprite failed to load: " + id)
+			get_tree().quit(1)
+			return
+		for facing_dir in [Util.Face.DOWN, Util.Face.UP, Util.Face.RIGHT]:
+			player.anim.set_facing(facing_dir)
+			for track in ["idle", "walk", "run", "attack1", "cast", "roll", "hurt", "death"]:
+				player.anim.play(track, true)
+				if player.anim.texture == null or player.anim.current == "":
+					push_error("[class-smoke] missing directional frame: " + id + " / " + track)
+					get_tree().quit(1)
+					return
+		player.anim.set_facing(Util.Face.DOWN)
+		player.anim.play("idle", true)
 		# Class switches here are test-only. Reset cooldowns that would
 		# never carry across separately created new-game characters.
 		player.special_cd = 0.0
@@ -734,6 +752,20 @@ func _ui_smoke_test() -> void:
 				push_error("[class-smoke] summoner skill did not create a real AI pet")
 				get_tree().quit(1)
 				return
+			var real_pet := SpiritPet.active_pets.back()
+			if real_pet == null or real_pet.visual == null or real_pet.visual.sheet == null or real_pet.visual.texture == null:
+				push_error("[class-smoke] bespoke animated pet asset not loaded")
+				get_tree().quit(1)
+				return
+			for view in [Util.Face.DOWN, Util.Face.UP, Util.Face.RIGHT]:
+				real_pet.visual.set_facing(view)
+				real_pet.visual.play("cast", true)
+				if real_pet.visual.texture == null:
+					push_error("[class-smoke] pet spell frame missing direction")
+					get_tree().quit(1)
+					return
+			real_pet.visual.set_facing(Util.Face.DOWN)
+			real_pet.visual.play("idle", true)
 			player._to_free()
 			player._try_attack()
 			if player.state != Player.St.CAST:
