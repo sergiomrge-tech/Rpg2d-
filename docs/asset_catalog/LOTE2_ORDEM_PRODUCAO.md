@@ -50,3 +50,9 @@
 Detalhes estruturados: [`lote2_priority.json`](lote2_priority.json).
 
 **Status:** fila de produção definida, **sprites do Lote 2 ainda não foram criados**. A prioridade é resolver primeiro a repetição do Lote 1.
+
+## CRITÉRIO DE ENTREGA OBRIGATÓRIO — definido pelo diretor em 12/10/2026
+
+**[Ler a regra de assets jogáveis](REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md) antes de produzir qualquer criatura.** O usuário não aceita **arte conceitual** como entrega. Atlas isolado ou PNG de demonstração também não é criatura concluída. Cada demônio/chefe precisa estar **integrado ao jogo Unity**, com rig/sprites refinados, animações reais, IA de movimentação, ataque e habilidades ativáveis, VFX, hitboxes, eventos de dano, cooldown e testes em cena. Chefes devem ter duas habilidades independentes. Somente após funcionamento comprovado e revisão visual considerar o asset concluído.
+
+**Piloto efetivamente jogável:** priorizar `mantis_reaver`, `scarab_brute`, `moth_hexer`; para cada um, concluir o ciclo asset → importação → movimento → combate → habilidades → testes reais de Unity antes de avançar no lote. As imagens ilustrativas/atlas geradas fora de Unity nas conversas anteriores **não constituem assets funcionais** e não autorizam marcar esses três como implementados.
