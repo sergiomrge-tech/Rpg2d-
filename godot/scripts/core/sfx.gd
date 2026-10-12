@@ -100,6 +100,11 @@ func loop(name: String, vol: float) -> void:
 	p.play()
 
 
+## Public accessor (cached synth clip) for positional players.
+func clip(name: String) -> AudioStreamWAV:
+	return _clip(name)
+
+
 func _clip(name: String) -> AudioStreamWAV:
 	if _clips.has(name):
 		return _clips[name]
@@ -115,7 +120,7 @@ func _clip(name: String) -> AudioStreamWAV:
 	for i in d.size():
 		bytes.encode_s16(i * 2, clampi(int(d[i] * 32000.0), -32767, 32767))
 	w.data = bytes
-	if name == "ambience":
+	if name == "ambience" or name == "murmur" or name == "water":
 		w.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		w.loop_end = d.size()
 	_clips[name] = w
@@ -278,6 +283,54 @@ func _synth(n: String) -> PackedFloat32Array:
 		return _whisper(n)
 	if n == "boss_roar" or n == "boss_hiss":
 		return _boss_voice(n == "boss_hiss")
+	if n == "clang":
+		var b := _buf(0.55)
+		for i in b.size():
+			var t := i / float(RATE)
+			var env := exp(-t * 9.0)
+			b[i] = (sin(TAU * 1180.0 * t) * 0.5 + sin(TAU * 1760.0 * t) * 0.35 + sin(TAU * 2410.0 * t) * 0.2) * env * 0.6 + _n() * exp(-t * 90.0) * 0.8
+		return b
+	if n == "murmur":      # looping crowd chatter: overlapping soft syllables
+		var sec := 4.0
+		var b := _buf(sec)
+		for v in 7:
+			var f1 := _rng.randf_range(300.0, 800.0)
+			var f2 := _rng.randf_range(900.0, 2200.0)
+			var t0 := _rng.randf() * sec
+			var ph := _rng.randf() * 5.0
+			var y1 := [0.0, 0.0]
+			var y2 := [0.0, 0.0]
+			for i in b.size():
+				var t := i / float(RATE)
+				var syl := maxf(0.0, sin((t + ph) * _rng.randf_range(4.0, 7.0) + v)) * 0.5
+				var x := _n()
+				var out := 0.0
+				for k in 2:
+					var w := TAU * (f1 if k == 0 else f2) / RATE
+					var y: float = x * 0.04 + 2.0 * 0.97 * cos(w) * float(y1[k]) - 0.97 * 0.97 * float(y2[k])
+					y2[k] = y1[k]
+					y1[k] = y
+					out += y
+				b[i] += out * syl * 0.18
+		# fade the ends so the loop is seamless
+		for i in b.size():
+			var u := float(i) / b.size()
+			b[i] *= minf(1.0, minf(u, 1.0 - u) * 24.0)
+		return b
+	if n == "water":
+		var sec2 := 2.0
+		var b2 := _buf(sec2)
+		var y := 0.0
+		var y2 := 0.0
+		for i in b2.size():
+			var t := i / float(RATE)
+			y += (_n() - y) * 0.18
+			y2 += (y - y2) * 0.35
+			b2[i] = (y - y2) * (0.7 + 0.3 * sin(t * TAU * 3.0)) * 1.4
+		for i in b2.size():
+			var u := float(i) / b2.size()
+			b2[i] *= minf(1.0, minf(u, 1.0 - u) * 30.0)
+		return b2
 	match n:
 		"swing", "swing_heavy":
 			var h := n == "swing_heavy"

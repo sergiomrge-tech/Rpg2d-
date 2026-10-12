@@ -174,6 +174,7 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 		_swaying.append(s)
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
 		_tall.append({"n": s, "w": float(info.get("w", 200)), "h": float(info.get("h", 200)), "px": float(info.get("pivotX", 100))})
+	_ambient_for(kind, pos, info)
 	if LIGHTS.has(kind):
 		var L: Array = LIGHTS[kind]
 		var g := Util.glow(s, L[0], L[1], L[2])
@@ -232,6 +233,8 @@ func spawn_actors() -> void:
 		if n["id"] == "sylra" and Game.flags.has("sylra_joined"):
 			continue
 		Npc.spawn(n)
+	for wk in data.get("walkers", []):
+		Citizen.spawn(wk, str(data["name"]))
 	var lvls := 0
 	var cnt := 0
 	for s in data["spawns"]:
@@ -265,3 +268,28 @@ func _fade_tall(dt: float) -> void:
 		var target := 0.42 if behind else 1.0
 		if absf(n.modulate.a - target) > 0.01:
 			n.modulate.a = move_toward(n.modulate.a, target, dt * 4.0)
+
+
+var _emit_spots: Array = []     # [kind, Vector2] to avoid stacking identical emitters on neighbouring props
+
+
+func _ambient_for(kind: String, pos: Vector2, info: Dictionary) -> void:
+	var h := float(info.get("h", 100.0))
+	var spec := ""
+	var off := Vector2.ZERO
+	match kind:
+		"smithy": spec = "forge"; off = Vector2(40, -20)
+		"tavern": spec = "crowd"; off = Vector2(0, -60)
+		"fountain": spec = "water"; off = Vector2(0, -30)
+		"stall", "stall_blue", "stall_green": spec = "market"; off = Vector2(0, -40)
+		"bakery", "apothecary", "house_a", "house_b", "house_c", "house_e", "house_f":
+			if randf() < 0.3 or kind == "bakery":
+				spec = "smoke"; off = Vector2(0, -h * 0.86)
+	if spec == "":
+		return
+	if spec == "market" or spec == "smoke":
+		for s in _emit_spots:
+			if s[0] == spec and spec == "market" and (s[1] as Vector2).distance_to(pos) < 9.0 * T:
+				return
+	_emit_spots.append([spec, pos])
+	AmbientEmitter.spawn(spec, pos + off, entities)

@@ -1001,6 +1001,19 @@ func _ci_shots() -> void:
 		await _wait(1.0)
 		await shot("10_" + m)
 		if m == "valemont":
+			var cits: Array = []
+			var ems := 0
+			for n in world.entities.get_children():
+				if n is Citizen:
+					cits.append([n, n.global_position])
+				elif n is AmbientEmitter:
+					ems += 1
+			await _wait(3.0)
+			var moved := 0
+			for c in cits:
+				if is_instance_valid(c[0]) and (c[0].global_position - c[1]).length() > 20.0:
+					moved += 1
+			print("[ci] citizens moved ", moved, "/", cits.size(), " emitters ", ems)
 			for spot in [["plaza", Vector2(50, 54)], ["taverna", Vector2(68, 51)], ["ferraria", Vector2(33, 52)], ["catedral", Vector2(38, 43)], ["estabulo", Vector2(30, 61)]]:
 				player.global_position = spot[1] * 64.0
 				camera.snap()

@@ -13,12 +13,14 @@ import numpy as np
 from PIL import Image
 from expand_maps import expand
 import vegetation
+import town_life
 from env_ground import bake, T
 from env_objects import PROPS
 from sheet import ROOT
 
 OUT = os.path.join(ROOT, 'godot', 'assets', 'Maps')
 CHUNK = 1024
+TOWN_WALKERS = {'valemont': 16, 'village': 5}
 JSON_ONLY = '--json-only' in sys.argv
 EXPAND_FACTOR = {n: 0.21 for n in ['village', 'velmoor', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']}   # ring of new land on each side => ~2x area
 
@@ -118,6 +120,8 @@ class Map:
             f = EXPAND_FACTOR[self.name]
             expand(self, round(self.gw * f), round(self.gh * f))
         vegetation.add(self)
+        if self.name in TOWN_WALKERS:
+            town_life.add_walkers(self, TOWN_WALKERS[self.name])
         d = os.path.join(OUT, self.name)
         os.makedirs(d, exist_ok=True)
         if JSON_ONLY:      # keep the already-baked ground; only rewrite the map JSON (props, spawns, ...)
@@ -136,7 +140,7 @@ class Map:
         data = dict(name=self.name, w=self.gw, h=self.gh, tile=T, chunk=CHUNK, chunksX=cx, chunksY=cy,
                     blocked=blocked, playerX=self.player[0], playerY=self.player[1],
                     props=sorted(self.props, key=lambda p: p['y']), spawns=self.spawns, npcs=self.npcs, exits=self.exits,
-                    caches=getattr(self, 'caches', []))
+                    caches=getattr(self, 'caches', []), walkers=getattr(self, 'walkers', []))
         with open(os.path.join(OUT, self.name + '.json'), 'w') as fp:
             json.dump(data, fp, indent=0)
         if img is not None:
