@@ -63,6 +63,14 @@ func close() -> void:
 	get_tree().paused = false
 
 
+func reopen() -> void:
+	active = true
+	root.visible = true
+	Game.in_menu = true
+	get_tree().paused = true
+	_refresh()
+
+
 func _activate() -> void:
 	Sfx.play("ui", 0.4, 1.0)
 	match items[sel]["id"]:
