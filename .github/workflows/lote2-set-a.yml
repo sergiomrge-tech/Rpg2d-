@@ -1,0 +1,52 @@
+name: Lote 2 Set A - HD Insectoid Animations
+on:
+  push:
+    branches: [gpt6-lote2-set-a-20261012]
+    paths:
+      - 'tools/art_hd/lote2_expansion.py'
+      - 'tools/art_hd/build_lote2_set_a.py'
+      - 'tools/art_hd/verify_lote2_set_a.py'
+      - '.github/workflows/lote2-set-a.yml'
+  workflow_dispatch:
+concurrency:
+  group: set-a-insectoids-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install production Cairo painter
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libcairo2-dev pkg-config python3-dev
+          python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
+      - name: Render three production sprites and all directional animations
+        run: python -u tools/art_hd/build_lote2_set_a.py
+      - name: Validate actually animated frames and all three distinct views
+        run: python tools/art_hd/verify_lote2_set_a.py
+      - name: Commit real art to Unity Resources
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for id in termite_burrower vespa_lancer cicada_screecher; do
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.png"
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.json"
+            git add "docs/asset_catalog/previews/lote2/${id}.png"
+          done
+          if git diff --cached --quiet; then
+            echo 'No art changes'
+          else
+            git commit -m 'art: add termite, vespa and cicada animated Unity sprites'
+            git fetch origin gpt6-lote2-set-a-20261012
+            git rebase origin/gpt6-lote2-set-a-20261012
+            git push origin HEAD:gpt6-lote2-set-a-20261012
+          fi
