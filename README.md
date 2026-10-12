@@ -6,6 +6,17 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e carregad
 > **Estado atual:** Capítulo 1 (Vila de Aurora + Bosque dos Chifres) com combate, IA demoníaca, loot, missão da Guilda e prólogo.
 > Planejamento completo: [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md) · Etapas e tarefas: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
+> **Checkpoint do GitHub (12/10/2026):** [Lote 1, Lote 2, 15 inimigos insetoides, CI, PRs e gates de validação](docs/asset_catalog/CHECKPOINT_2026-10-12.md). **Esta branch é experimental**: as 10 espécies e 5 chefes do Lote 2 têm PNG/JSON de animação e sistemas de combate conectados em C#, mas **a execução do jogo na Unity ainda não foi validada**. Não afirmar que os PRs draft foram incorporados à `main`.
+
+### Desenvolvimento de criaturas — referência obrigatória
+
+- [Padrão definitivo: assets in-game, não arte conceitual](docs/asset_catalog/REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md).
+- [15 criaturas do Lote 2, anatomias distintas e ordem de produção](docs/asset_catalog/LOTE2_ORDEM_PRODUCAO.md).
+- [Prévias de **quadros reais dos sprites**](docs/asset_catalog/previews/lote2/) — não são screenshots da Unity.
+- [PR #10: cinco chefes, 105 animações direcionais, skills C#](https://github.com/sergiomrge-tech/Rpg2d-/pull/10).
+
+**Status de QA:** render e checagens de código aprovados no GitHub Actions; conferir imagens e animações rodando no Editor Unity 2022.3 LTS antes de qualquer merge ou release.
+
 ![Vila de Aurora](docs/previews/vila.png)
 
 ## Jogar
@@ -30,7 +41,7 @@ unity/Assets/Scripts/Game   Game, World, Player, Enemy, Npc, Projectile, Loot, F
 unity/Assets/Scripts/UI     Hud (arcos, orbes, diálogo cinematográfico, banners, números de dano)
 unity/Assets/Editor         BuildScript (build headless) + importação de texturas
 unity/Assets/Resources      Sprites/, Maps/, Fonts/, Shaders/  (gerados por tools/art_hd)
-tools/art_hd                pipeline de arte: core, humanoid, anims, demons, fx, env_objects, env_ground, maps
+tools/art_hd                pipeline HD original + lotes de insetoides, chefes, testes de atlas e animações
 tools/unity_check.sh        checagem de compilação C# sem Unity
 prototypes/                 versões antigas (web e Godot), arquivadas
 ```
