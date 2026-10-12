@@ -46,6 +46,13 @@ class Boss(Insect):
         return p
     def draw(self,c,view,p):
         c.save()
+        # Natural breathing/sway across ALL boss rigs; no frozen idle frames.
+        # Cosine keeps first and middle poses different, even for a heavy
+        # immobile-colossus silhouette with otherwise identical armour plates.
+        breath=math.cos(TAU*p['t'])
+        if p['mode'] in ('idle','move'):
+            c.translate(0,breath*2.0)
+            c.scale(1.0+breath*.012,1.0+breath*.008)
         # Boss anatomy is drawn and shaded separately from enemy rigs.
         c.scale(1.13,1.13)
         super().draw(c,view,p)
