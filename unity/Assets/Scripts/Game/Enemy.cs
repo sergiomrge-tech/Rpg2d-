@@ -33,7 +33,9 @@ namespace Aetheria
             e.def = def;
             e.level = level;
             float s = Data.LevelScale(level);
-            e.Build(def.sheet, 0.9f, 0.3f, def.behavior == "scarab_shockwave" ? 0.56f : 0.3f, def.scale + 0.05f * (level - 1));
+            e.Build(def.sheet, 0.9f, 0.3f, def.behavior == "scarab_shockwave" ? 0.56f :
+                def.behavior == "termite_burrow" ? 0.46f : def.behavior == "cicada_sonic" ? .38f : 0.3f,
+                def.scale + 0.05f * (level - 1));
             e.rb.mass = 0.6f;
             e.rb.drag = 0;
             e.maxHp = e.hp = Mathf.Round(def.hp * s);
@@ -127,9 +129,15 @@ namespace Aetheria
                     bool mantis = def.behavior == "mantis_dash";
                     bool scarab = def.behavior == "scarab_shockwave";
                     bool moth = def.behavior == "moth_hex";
+                    bool termite = def.behavior == "termite_burrow";
+                    bool vespa = def.behavior == "vespa_sting";
+                    bool cicada = def.behavior == "cicada_sonic";
                     if (castCd <= 0 && ((mantis && dist > 1.9f && dist < 5.3f) ||
                                         (scarab && dist < 3.2f) ||
                                         (moth && dist > 2.2f && dist < 9f) ||
+                                        (termite && dist > 1.5f && dist < 5.1f) ||
+                                        (vespa && dist > 2.1f && dist < 6.4f) ||
+                                        (cicada && dist < 3.8f) ||
                                         (def.caster && !moth && dist > 2.6f && dist < 7.5f)))
                     {
                         nextIsCast = true; skillDirection = toP.sqrMagnitude > 0.01f ? toP.normalized : Util.FacingVec(facing);
@@ -141,15 +149,17 @@ namespace Aetheria
                     }
                     Vector2 want = toP.normalized;
                     Vector2 side = new Vector2(-want.y, want.x) * Mathf.Sin(Time.time * 1.3f + GetInstanceID()) * 0.45f;
-                    if (moth)
+                    if (moth || cicada)
                     {
-                        // Floating caster keeps a 4-6-unit standoff; does not behave like a melee imp.
-                        Vector2 kite = dist < 4f ? -want : dist > 6.5f ? want : side.normalized;
+                        // Cicada circles near to build a sonic pulse; moth maintains longer casting range.
+                        float tooNear = cicada ? 2.0f : 4.0f;
+                        float tooFar = cicada ? 3.2f : 6.5f;
+                        Vector2 kite = dist < tooNear ? -want : dist > tooFar ? want : side.normalized;
                         Move(kite, speed);
                     }
                     else
                     {
-                        float sp = dist < (scarab ? 1.7f : 1.3f) ? 0 : speed;
+                        float sp = dist < (scarab ? 1.7f : termite ? 1.0f : 1.3f) ? 0 : speed;
                         Move((want + side * (mantis ? .8f : .45f)).normalized, sp);
                     }
                     Separate();
@@ -163,7 +173,11 @@ namespace Aetheria
                     float pulse = Mathf.PingPong(stateT * 8f, 1f);
                     Flash(nextIsCast ? new Color(1f, 0.6f, 0.2f) : new Color(1f, 0.15f, 0.15f), 0.55f * pulse);
                     float tell = nextIsCast
-                        ? (def.behavior == "scarab_shockwave" ? 0.72f : def.behavior == "moth_hex" ? 0.65f : 0.46f)
+                        ? (def.behavior == "scarab_shockwave" ? 0.72f :
+                           def.behavior == "termite_burrow" ? .78f :
+                           def.behavior == "cicada_sonic" ? .72f :
+                           def.behavior == "moth_hex" ? .65f :
+                           def.behavior == "vespa_sting" ? .35f : .46f)
                         : (def.behavior == "scarab_shockwave" ? 0.52f : 0.42f);
                     if (stateT > tell)
                     {
@@ -172,6 +186,9 @@ namespace Aetheria
                         {
                             Go(St.Cast); anim.Play("cast", true);
                             castCd = def.behavior == "scarab_shockwave" ? 6.2f :
+                                     def.behavior == "termite_burrow" ? 5.1f :
+                                     def.behavior == "cicada_sonic" ? 6.0f :
+                                     def.behavior == "vespa_sting" ? 4.0f :
                                      def.behavior == "mantis_dash" ? 4.2f : Random.Range(3.6f, 5.4f);
                         }
                         else { Go(St.Attack); anim.Play("attack", true); attackCd = Random.Range(1.0f, 1.6f); }
@@ -183,7 +200,10 @@ namespace Aetheria
                     float n = anim.Normalized;
                     // lunge burst right before the hit frame
                     Vector2 f = Util.FacingVec(facing);
-                    float burst = def.behavior == "scarab_shockwave" ? 3.5f : def.behavior == "mantis_dash" ? 9f : 5f;
+                    float burst = def.behavior == "scarab_shockwave" ? 3.5f :
+                                  def.behavior == "termite_burrow" ? 4f :
+                                  def.behavior == "vespa_sting" ? 8.0f :
+                                  def.behavior == "mantis_dash" ? 9f : 5f;
                     rb.velocity = (n > 0.3f && n < 0.6f ? f * burst : Vector2.zero) + knock;
                     break;
                 }
@@ -193,6 +213,13 @@ namespace Aetheria
                     {
                         float n = anim.Normalized;
                         rb.velocity = (n > 0.18f && n < 0.65f ? skillDirection * 10.5f : Vector2.zero) + knock;
+                    }
+                    else if (def.behavior == "termite_burrow" || def.behavior == "vespa_sting")
+                    {
+                        float n = anim.Normalized;
+                        float burst = def.behavior == "vespa_sting" ? 12.5f : 6.0f;
+                        float start = def.behavior == "vespa_sting" ? .20f : .29f;
+                        rb.velocity = (n > start && n < .70f ? skillDirection * burst : Vector2.zero) + knock;
                     }
                     else rb.velocity = knock;
                     break;
@@ -236,6 +263,8 @@ namespace Aetheria
                 Vector2 c = Pos + Util.FacingVec(facing) * (def.behavior == "mantis_dash" ? 1.05f : 0.7f);
                 Fx.Claw(c + Vector2.up * 0.6f, facing);
                 float radius = def.behavior == "scarab_shockwave" ? 1.55f :
+                               def.behavior == "termite_burrow" ? 1.3f :
+                               def.behavior == "vespa_sting" ? 1.25f :
                                def.behavior == "mantis_dash" ? 1.35f : 1.05f;
                 if ((p.Pos - c).magnitude < radius)
                     p.Hurt(Mathf.Round(dmg * Random.Range(0.9f, 1.1f)), Pos, 7f, 20);
@@ -263,6 +292,46 @@ namespace Aetheria
                     if ((p.Pos - Pos).magnitude <= 2.35f)
                         p.Hurt(Mathf.Round(dmg * 1.15f), Pos, 10f, 30);
                     Sfx.Play("boom", .55f, .85f);
+                }
+                else if (def.behavior == "termite_burrow")
+                {
+                    // Burrows forward during cast animation; rises at dig impact frame 10.
+                    Fx.Dust(Pos, 1.9f);
+                    Fx.Shockwave(Pos, 1.35f);
+                    if ((p.Pos - Pos).magnitude < 1.55f)
+                        p.Hurt(Mathf.Round(dmg * 1.2f), Pos, 7f, 25);
+                    Sfx.Play("boom", .48f, .75f);
+                }
+                else if (def.behavior == "vespa_sting")
+                {
+                    // Flight dash + contact venom: animated sting on keyframe 10.
+                    Vector2 center = Pos + skillDirection * .6f;
+                    Fx.Claw(center + Vector2.up * .5f, facing);
+                    for (int i = 0; i < 6; i++)
+                    {
+                        var e = Fx.Ember(center + Random.insideUnitCircle * .28f, new Color(.55f,.95f,.4f));
+                        e.vel = Random.insideUnitCircle * 1.6f;
+                    }
+                    if ((p.Pos - center).magnitude < 1.6f &&
+                        p.Hurt(Mathf.Round(dmg * 1.05f), Pos, 6f, 20))
+                        p.ApplyVenom(3.2f);
+                    Sfx.Play("claw", .62f, 1.4f);
+                }
+                else if (def.behavior == "cicada_sonic")
+                {
+                    // Radius and timing are coupled to the 10th frame of the shriek.
+                    Fx.Shockwave(Pos + Vector2.up * .45f, 2.8f);
+                    for (int i = 0; i < 9; i++)
+                    {
+                        Vector2 dir = new Vector2(Mathf.Cos(i * Mathf.PI * 2f / 9f),
+                                                  Mathf.Sin(i * Mathf.PI * 2f / 9f));
+                        var e = Fx.Ember(Pos + Vector2.up * .55f + dir * .9f, new Color(.36f,.86f,.95f));
+                        e.vel = dir * 2.9f;
+                    }
+                    if ((p.Pos - Pos).magnitude < 2.8f &&
+                        p.Hurt(Mathf.Round(dmg * .65f), Pos, 4f, 18))
+                        p.ApplySonicDisrupt(.65f);
+                    Sfx.Play("boom", .45f, 1.55f);
                 }
                 else
                 {

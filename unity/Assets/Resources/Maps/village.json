@@ -2117,58 +2117,90 @@
 }
 ],
 "spawns": [
-{
-"kind": "imp",
-"x": 1536,
-"y": 2688,
-"level": 1
-},
-{
-"kind": "imp",
-"x": 1984,
-"y": 2816,
-"level": 2
-},
-{
-"kind": "imp",
-"x": 1280,
-"y": 3008,
-"level": 3
-},
-{
-"kind": "imp",
-"x": 2240,
-"y": 3136,
-"level": 1
-},
-{
-"kind": "imp",
-"x": 768,
-"y": 2560,
-"level": 2
-},
-{
-"kind": "imp",
-"x": 960,
-"y": 3136,
-"level": 3
-},
-{
-"kind": "imp",
-"x": 2560,
-"y": 2624,
-"level": 1
-},
-{
-"kind": "imp",
-"x": 1856,
-"y": 3264,
-"level": 2
-}
-,
-  {"kind":"mantis_reaver","x":1408,"y":3008,"level":2},
-  {"kind":"scarab_brute","x":2688,"y":2880,"level":2},
-  {"kind":"moth_hexer","x":2304,"y":3072,"level":2}
+  {
+    "kind": "imp",
+    "x": 1536,
+    "y": 2688,
+    "level": 1
+  },
+  {
+    "kind": "imp",
+    "x": 1984,
+    "y": 2816,
+    "level": 2
+  },
+  {
+    "kind": "imp",
+    "x": 1280,
+    "y": 3008,
+    "level": 3
+  },
+  {
+    "kind": "imp",
+    "x": 2240,
+    "y": 3136,
+    "level": 1
+  },
+  {
+    "kind": "imp",
+    "x": 768,
+    "y": 2560,
+    "level": 2
+  },
+  {
+    "kind": "imp",
+    "x": 960,
+    "y": 3136,
+    "level": 3
+  },
+  {
+    "kind": "imp",
+    "x": 2560,
+    "y": 2624,
+    "level": 1
+  },
+  {
+    "kind": "imp",
+    "x": 1856,
+    "y": 3264,
+    "level": 2
+  },
+  {
+    "kind": "mantis_reaver",
+    "x": 1408,
+    "y": 3008,
+    "level": 2
+  },
+  {
+    "kind": "scarab_brute",
+    "x": 2688,
+    "y": 2880,
+    "level": 2
+  },
+  {
+    "kind": "moth_hexer",
+    "x": 2304,
+    "y": 3072,
+    "level": 2
+  },
+  {
+    "kind": "termite_burrower",
+    "x": 1152,
+    "y": 2880,
+    "level": 2
+  },
+  {
+    "kind": "vespa_lancer",
+    "x": 2560,
+    "y": 3200,
+    "level": 2
+  },
+  {
+    "kind": "cicada_screecher",
+    "x": 1856,
+    "y": 2944,
+    "level": 2
+  }
 ],
 "npcs": [
 {

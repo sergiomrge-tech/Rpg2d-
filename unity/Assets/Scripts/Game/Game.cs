@@ -224,8 +224,10 @@ namespace Aetheria
             // Deterministic shots of real Lote 2 creatures in the running Unity world.
             // No concept art or generated fake screenshots are ever used here.
             player.invuln = 15f;
-            string[] pilotIds = { "mantis_reaver", "scarab_brute", "moth_hexer" };
-            string[] pilotNames = { "06_mantis_skill", "07_scarab_skill", "08_moth_skill" };
+            string[] pilotIds = { "mantis_reaver", "scarab_brute", "moth_hexer",
+                                  "termite_burrower", "vespa_lancer", "cicada_screecher" };
+            string[] pilotNames = { "06_mantis_skill", "07_scarab_skill", "08_moth_skill",
+                                    "09_termite_burrow", "10_vespa_sting", "11_cicada_sonic" };
             for (int i = 0; i < pilotIds.Length; i++)
             {
                 Enemy insect = Enemy.All.Find(e => !e.dead && e.def.id == pilotIds[i]);
