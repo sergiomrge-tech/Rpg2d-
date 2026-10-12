@@ -23,7 +23,7 @@ Para jogar no seu PC: abra a pasta `unity/` no Unity Hub (Unity 2022.3 LTS), abr
 
 ## Caminho sem instalar nada (ativação manual pelo navegador)
 1. O push de `docs/request-license.txt` roda o workflow **"Unity - pedir arquivo de ativação"** (aba *Actions*).
-2. Abra essa execução, baixe o artefato **Unity_v2022.3.45f1.alf** (seção *Artifacts*, no fim da página).
+2. Abra essa execução, baixe o artefato **o arquivo `.alf` (artefato `unity-activation-file`)** (seção *Artifacts*, no fim da página).
 3. Acesse https://license.unity3d.com/manual , envie o `.alf`, escolha **Unity Personal** e baixe o arquivo **.ulf**.
 4. Em *Settings → Secrets and variables → Actions* crie:
    - `UNITY_LICENSE` = conteúdo completo do `.ulf`

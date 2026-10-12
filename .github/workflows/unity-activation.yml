@@ -1,5 +1,6 @@
 name: Unity - pedir arquivo de ativação
-# Gera o arquivo .alf (ativação manual da licença Personal). Dispara quando docs/request-license.txt muda.
+# Gera o arquivo .alf (ativação manual da licença Personal) rodando o editor num contêiner GameCI.
+# Dispara quando docs/request-license.txt muda.
 on:
   push:
     branches: [ccr-f2d39ca4-hkguyt]
@@ -10,14 +11,19 @@ jobs:
   request:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Gerar arquivo de ativação
-        id: alf
-        uses: game-ci/unity-request-activation-file@v2
-        with:
-          unityVersion: 2022.3.45f1
+      - name: Gerar arquivo de ativação (.alf)
+        run: |
+          mkdir -p out
+          docker run --rm -v "$PWD/out:/out" unityci/editor:ubuntu-2022.3.45f1-base-3 bash -c '
+            cd /tmp
+            unity-editor -batchmode -nographics -quit -logFile - -createManualActivationFile || true
+            ls -la /tmp
+            cp /tmp/*.alf /out/ || true
+          '
+          ls -la out
+          test -n "$(ls out/*.alf 2>/dev/null)" || { echo "::error::Nenhum .alf foi gerado"; exit 1; }
       - name: Publicar o .alf como artefato
         uses: actions/upload-artifact@v4
         with:
-          name: Unity_v2022.3.45f1.alf
-          path: ${{ steps.alf.outputs.filePath }}
+          name: unity-activation-file
+          path: out/*.alf
