@@ -221,7 +221,7 @@ func _refresh() -> void:
 		if i == asel:
 			hud.img(page, Sheets.ui("smear"), C, Vector2(-335, y), Vector2(560, 60)).modulate = Color(0.85, 0.6, 0.2, 0.3)
 		hud.txt(page, "%s" % SkillTree.ATTR_NAMES[a], bold, 25, ink, C, Vector2(-445, y + 9), Vector2(240, 30), L, false)
-		hud.txt(page, SkillTree.ATTR_DESC[a], sans, 13, faint, C, Vector2(-420, y - 15), Vector2(260, 20), L, false)
+		hud.txt(page, SkillTree.ATTR_DESC[a], sans, 15, faint, C, Vector2(-420, y - 15), Vector2(260, 20), L, false)
 		var inv := gs.attr_inv(a)
 		hud.txt(page, "%d" % gs.attr(a), serif, 32, ink, C, Vector2(-215, y), Vector2(70, 40), M, false)
 		if inv > 0:

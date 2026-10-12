@@ -6,8 +6,8 @@ enum Face { DOWN, UP, LEFT, RIGHT }
 
 var fx_shader: Shader = preload("res://shaders/fx.gdshader")
 var font_serif: FontFile = load("res://assets/Fonts/Cinzel-700.ttf")
-var font_sans: FontFile = load("res://assets/Fonts/AlegreyaSans-400.ttf")
-var font_bold: FontFile = load("res://assets/Fonts/AlegreyaSans-700.ttf")
+var font_sans: FontFile = load("res://assets/Fonts/Inter-Medium.otf")
+var font_bold: FontFile = load("res://assets/Fonts/Inter-Bold.otf")
 
 var _soft: GradientTexture2D
 var _add_mat: CanvasItemMaterial
@@ -87,6 +87,9 @@ func label(text: String, size: int, color: Color, font: Font = null, outline: bo
 	l.text = text
 	var ls := LabelSettings.new()
 	ls.font = font if font else font_sans
+	# Inter is wider than the old condensed face: keep the layouts, gain legibility from the heavier strokes
+	if ls.font == font_sans or ls.font == font_bold:
+		size = roundi(size * 0.92)
 	# phones: small screen, same 1920x1080 canvas -> bigger text everywhere
 	ls.font_size = roundi(size * 1.3) if Game.touch_mode else size
 	ls.font_color = color
