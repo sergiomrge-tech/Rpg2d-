@@ -14,7 +14,7 @@ from PIL import Image
 from core import Frame, outline_rgba, to_image, hx
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-OUT = os.path.join(ROOT, 'unity', 'Assets', 'Resources', 'Sprites')
+OUT = os.path.join(ROOT, 'godot', 'assets', 'Sprites')
 OUTLINE = hx('#22131b')
 
 

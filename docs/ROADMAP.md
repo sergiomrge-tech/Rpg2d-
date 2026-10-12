@@ -2,12 +2,10 @@
 
 Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 
-## Etapa 0 — Infra
-- ✅ Projeto Unity 2022.3 (cena criada por código, `Boot.cs`)
-- ✅ CI GitHub Actions (GameCI) com build Linux + screenshots na branch `ci-shots`
-- ⬜ **Usuário:** cadastrar segredos `UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD` ([guia](UNITY_CI.md))
-- ✅ Checagem de compilação local (`tools/unity_check.sh`)
-- ⬜ Validar primeiro build real e corrigir o que aparecer nos screenshots
+## Etapa 0 — Infra (migrado para Godot 4.3)
+- ✅ **Motor trocado de Unity para Godot** (sem licença; roda e tira screenshots na nuvem). Port completo em GDScript; C# arquivado em `prototypes/unity`
+- ✅ CI GitHub Actions (`godot.yml`): importa, roda tour e publica screenshots na `ci-shots`
+- ✅ Primeiro run real validado: vila, diálogo, grimório, combate e as 10 regiões renderizam
 
 ## Etapa 1 — Capítulo 1 jogável (atual)
 - ✅ Herói: 10 animações × 3 direções (idle, andar, correr, 3 ataques, magia, rolar, dano, morte)
@@ -74,6 +72,6 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Builds Windows/Mac, página do jogo
 
 ## Próximo passo imediato
-0. **Concluir a Unity:** cadastrar licença (`docs/UNITY_CI.md`), rodar o build na nuvem, corrigir erros, validar screenshots e balancear de verdade.
-1. Assim que a licença estiver nos segredos: rodar o CI, ver screenshots e corrigir.
-2. Floresta de Velmoor (Capítulo 2).
+1. Jogar de verdade (clique/teclado) e anotar o que está estranho: combate, balanceamento, câmera.
+2. Música, iluminação 2D, Novo Jogo+, árvores de habilidade.
+3. Exportar builds (Windows/Linux/Web) pelo Godot.

@@ -9,7 +9,7 @@ Siga isto para que o asset entre no jogo **sem retrabalho**. Base: branch `ccr-f
 - Use o pipeline existente: `tools/art_hd/core.py` (`paint`, `Pal`, `outline_rgba`), rigs `humanoid.py` / `demons.py`.
 
 ## Personagens e inimigos (sprite sheet)
-- Arquivos: `unity/Assets/Resources/Sprites/Demons/<id>.png` + `<id>.json` (formato de `tools/art_hd/sheet.py`).
+- Arquivos: `godot/assets/Sprites/Demons/<id>.png` + `<id>.json` (formato de `tools/art_hd/sheet.py`).
 - JSON: `frameW, frameH, pivotX, pivotY (de baixo), cols, anims[{name,start,count,fps,loop,hit}]`.
 - **Animações obrigatórias** × **3 vistas** (`_down`, `_up`, `_side` virado para a direita):
   `idle` (≥8 q.), `move` (≥8), `attack` (≥8, `hit` = quadro do impacto), `cast` (≥8), `hurt` (≥4), `death` (≥10).

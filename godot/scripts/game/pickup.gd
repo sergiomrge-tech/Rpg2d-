@@ -1,0 +1,60 @@
+class_name Pickup
+extends Node2D
+## Loot on the ground: bounces out, bobs, magnetises to the hero.
+
+const T := 64.0
+var item := ""
+var count := 1
+var t := 0.0
+var z := 0.0
+var vz := 0.0
+var vxy := Vector2.ZERO
+var icon: Sprite2D
+var collecting := false
+
+
+static func spawn(item_: String, count_: int, at: Vector2) -> void:
+	var p := Pickup.new()
+	p.item = item_
+	p.count = count_
+	p.vxy = Vector2.from_angle(randf() * TAU) * randf() * 1.6 * T
+	p.vz = randf_range(5.0, 7.0)
+	var def: Dictionary = Data.items[item_]
+	var rar := int(def["rarity"])
+	p.icon = Sprite2D.new()
+	p.icon.texture = Sheets.icon(def["icon"])
+	p.icon.scale = Vector2.ONE * 0.7
+	p.add_child(p.icon)
+	Util.glow(p, Data.RARITY_COLORS[rar], 2.2 if rar >= 2 else 1.2, 0.6 if rar >= 2 else 0.3)
+	Util.make_shadow(p, 0.45, 0.16, 0.28)
+	Game.world.add_entity(p, at)
+	if rar >= 2:
+		Fx.toast(def["name"] + "!", Data.RARITY_COLORS[rar], at + Vector2.UP * 2.0 * T)
+
+
+func _process(dt: float) -> void:
+	t += dt
+	if vz != 0.0 or z > 0.0:
+		vz -= 22.0 * dt
+		z += vz * dt
+		global_position += vxy * dt
+		if z <= 0.0:
+			z = 0.0
+			vz = -vz * 0.35 if absf(vz) > 2.0 else 0.0
+			vxy *= 0.5
+	icon.position = Vector2(0, -(z + 0.12 + sin(t * 3.0) * 0.06 + 0.35) * T)
+	var p := Player.I
+	if p == null or p.dead or t < 0.6:
+		return
+	var d := p.global_position + Vector2.UP * 0.4 * T - global_position
+	if d.length() < 2.2 * T:
+		collecting = true
+	if collecting:
+		global_position += d.normalized() * minf(d.length(), (6.0 + t * 4.0) * T * dt)
+		if d.length() < 0.3 * T:
+			p.gs.add(item, count)
+			var def: Dictionary = Data.items[item]
+			if Game.hud:
+				Game.hud.loot_feed(def, count)
+			Sfx.play("coin" if item == "gold" else "pickup", 0.45, randf_range(0.95, 1.1))
+			queue_free()

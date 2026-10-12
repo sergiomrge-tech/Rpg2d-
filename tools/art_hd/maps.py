@@ -15,7 +15,7 @@ from env_ground import bake, T
 from env_objects import PROPS
 from sheet import ROOT
 
-OUT = os.path.join(ROOT, 'unity', 'Assets', 'Resources', 'Maps')
+OUT = os.path.join(ROOT, 'godot', 'assets', 'Maps')
 CHUNK = 1024
 
 

@@ -1,0 +1,60 @@
+[
+ {
+  "result": "horn_blade",
+  "gold": 80,
+  "needs": [
+   [
+    "imp_horn",
+    5
+   ]
+  ]
+ },
+ {
+  "result": "iron_mail",
+  "gold": 180,
+  "needs": [
+   [
+    "demon_hide",
+    4
+   ]
+  ]
+ },
+ {
+  "result": "ember_charm",
+  "gold": 120,
+  "needs": [
+   [
+    "hell_ember",
+    3
+   ],
+   [
+    "spirit_dust",
+    1
+   ]
+  ]
+ },
+ {
+  "result": "elven_robe",
+  "gold": 150,
+  "needs": [
+   [
+    "spirit_dust",
+    4
+   ]
+  ]
+ },
+ {
+  "result": "ember_blade",
+  "gold": 260,
+  "needs": [
+   [
+    "hell_ember",
+    4
+   ],
+   [
+    "imp_horn",
+    6
+   ]
+  ]
+ }
+]

@@ -1,0 +1,310 @@
+class_name Player
+extends Actor
+## The reincarnated hero. Stamina-gated melee combo, i-frame roll, Spark magic that evolves.
+
+enum St { FREE, ATTACK, CAST, ROLL, HURT, DEAD }
+
+static var I: Player
+
+var gs: GameState
+var mp := 0.0
+var st := 0.0
+var input_locked := false
+var scripted_move := Vector2.ZERO
+
+var state: int = St.FREE
+var combo := 0
+var buffered_attack := false
+var st_regen_delay := 0.0
+var state_t := 0.0
+var roll_dir := Vector2.ZERO
+var move_dir := Vector2.ZERO
+var step_t := 0.0
+
+const WALK := 4.0 * T
+const RUN := 6.4 * T
+const ROLL_SPD := 10.5 * T
+const ATTACK_COST := 14.0
+const ROLL_COST := 24.0
+const RUN_DRAIN := 9.0
+const CAST_COST := 12.0
+
+
+static func spawn(at: Vector2, state_: GameState) -> Player:
+	var p := Player.new()
+	p.gs = state_
+	p.collision_layer = 2
+	p.collision_mask = 1 | 4 | 8
+	p.build("Sprites/Chars/hero", 1.25, 0.42, 0.32)
+	p.max_hp = state_.hp_max()
+	p.hp = p.max_hp
+	p.mp = state_.max_mp
+	p.st = state_.max_st
+	p.anim.hit.connect(p._on_anim_hit)
+	p.anim.ended.connect(p._on_anim_end)
+	Game.world.add_entity(p, at)
+	p.anim.play("idle")
+	I = p
+	return p
+
+
+func _read_move() -> Vector2:
+	if input_locked:
+		return scripted_move
+	var v := Vector2.ZERO
+	if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT): v.x -= 1
+	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT): v.x += 1
+	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP): v.y -= 1
+	if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN): v.y += 1
+	return v.normalized() if v.length_squared() > 1.0 else v
+
+
+func _pressed(keys: Array) -> bool:
+	if input_locked:
+		return false
+	for k in keys:
+		if Game.consume(k):
+			return true
+	return false
+
+
+func _physics_process(dt: float) -> void:
+	if dead:
+		return
+	state_t += dt
+	move_dir = _read_move()
+	var run := (not input_locked) and Input.is_physical_key_pressed(KEY_SHIFT)
+
+	st_regen_delay -= dt
+	if st_regen_delay <= 0.0 and state != St.ROLL:
+		st = minf(gs.max_st, st + 38.0 * dt)
+	mp = minf(gs.max_mp, mp + 1.2 * dt)
+
+	if _pressed([KEY_J, -MOUSE_BUTTON_LEFT]): _try_attack()
+	if _pressed([KEY_K, -MOUSE_BUTTON_RIGHT]): _try_cast()
+	if _pressed([KEY_SPACE]): _try_roll()
+	if _pressed([KEY_Q]): _use_potion()
+	if _pressed([KEY_E]): Game.interact(self)
+
+	match state:
+		St.FREE:
+			if move_dir.length_squared() > 0.01:
+				var can_run := run and st > 1.0
+				if can_run:
+					st -= RUN_DRAIN * dt
+					st_regen_delay = 0.4
+				face(Util.facing_from(move_dir, facing))
+				anim.play("run" if can_run else "walk")
+				velocity = move_dir * (RUN if can_run else WALK) + knock
+				step_t -= dt * (1.5 if can_run else 1.0)
+				if step_t <= 0.0:
+					step_t = 0.36
+					Sfx.play("step", 0.18, randf_range(0.9, 1.1))
+					if can_run:
+						Fx.dust(pos(), 0.5)
+			else:
+				anim.play("idle")
+				velocity = knock
+		St.ATTACK:
+			var n := anim.normalized()
+			var lunge := ((5.5 if combo == 3 else 3.2) * (1.0 - n / 0.45) if n < 0.45 else 0.0) * T
+			if n < 0.2 and move_dir.length_squared() > 0.01:
+				face(Util.facing_from(move_dir, facing))
+			velocity = Util.facing_vec(facing) * lunge + knock
+			if buffered_attack and n > 0.58 and combo < 3:
+				buffered_attack = false
+				_start_attack(combo + 1)
+		St.CAST:
+			velocity = knock
+		St.ROLL:
+			var k := clampf(1.0 - state_t / 0.48, 0.0, 1.0)
+			velocity = roll_dir * ROLL_SPD * (0.35 + 0.65 * k)
+			if state_t > 0.46:
+				invuln = minf(invuln, 0.0)
+		St.HURT:
+			velocity = knock
+			if state_t > 0.32:
+				_to_free()
+	move_and_slide()
+	knock = knock.move_toward(Vector2.ZERO, 30.0 * T * dt)
+
+
+func _to_free() -> void:
+	state = St.FREE
+	state_t = 0.0
+	anim.play("idle", true)
+
+
+func ci_attack() -> void: _try_attack()
+func ci_cast() -> void: _try_cast()
+
+
+func _try_attack() -> void:
+	if state == St.ATTACK:
+		buffered_attack = true
+		return
+	if state != St.FREE:
+		return
+	if st < ATTACK_COST * 0.5:
+		Fx.toast("Sem fôlego!", Color(1, 0.85, 0.4))
+		return
+	_start_attack(1)
+
+
+func _start_attack(n: int) -> void:
+	if st < ATTACK_COST * 0.5:
+		_to_free()
+		return
+	combo = n
+	state = St.ATTACK
+	state_t = 0.0
+	st -= ATTACK_COST * (1.5 if n == 3 else 1.0)
+	st_regen_delay = 0.7
+	var target := Enemy.nearest(pos(), 2.6 * T)
+	if target != null and move_dir.length_squared() < 0.01:
+		face(Util.facing_from(target.pos() - pos(), facing))
+	anim.play("attack%d" % n, true)
+	Sfx.play("swing_heavy" if n == 3 else "swing", 0.55, randf_range(0.95, 1.08))
+
+
+func _on_anim_hit(a: String) -> void:
+	if a.begins_with("attack"):
+		var f := Util.facing_vec(facing)
+		var c := pos() + Vector2.UP * 0.55 * T + f * (1.0 if combo == 3 else 0.85) * T
+		var r := (1.55 if combo == 3 else 1.25) * T
+		Fx.slash(pos() + Vector2.UP * 0.6 * T, facing, combo)
+		if combo == 3 and gs.sword_tier >= 2:
+			Projectile.crescent(pos() + Vector2.UP * 0.7 * T + f * 0.9 * T, f, gs.total_atk() * 1.1)
+		if combo == 3:
+			Fx.shockwave(c, 1.2)
+			Game.camera.shake(0.22, 0.25)
+		var hits := 0
+		for e in Enemy.all.duplicate():
+			if e.dead:
+				continue
+			var d: Vector2 = e.pos() + Vector2.UP * 0.4 * T - c
+			if d.length() > r + 0.35 * T:
+				continue
+			var crit := randf() < 0.08
+			var dmg := gs.total_atk() * (1.9 if combo == 3 else (1.15 if combo == 2 else 1.0)) * randf_range(0.9, 1.1) * (1.8 if crit else 1.0)
+			if e.hurt(roundf(dmg), pos(), 9.0 if combo == 3 else 5.0, 30.0 if combo == 3 else 12.0, crit):
+				hits += 1
+		if hits > 0:
+			Game.hit_stop(0.09 if combo == 3 else 0.05)
+			Sfx.play("hit", 0.7, randf_range(0.92, 1.06))
+			if combo != 3:
+				Game.camera.shake(0.08, 0.12)
+	elif a == "cast":
+		var dir := Util.facing_vec(facing)
+		var t := Enemy.nearest(pos(), 9.0 * T, dir, 0.45)
+		if t != null:
+			dir = ((t.pos() + Vector2.UP * 0.5 * T) - (pos() + Vector2.UP * 0.8 * T)).normalized()
+		Projectile.spark(pos() + Vector2.UP * 0.8 * T + dir * 0.5 * T, dir, gs.total_mag() * (1.0 + 0.35 * (gs.spark_tier - 1)), gs.spark_tier, true)
+		Sfx.play("spark", 0.6, 1.0)
+
+
+func _on_anim_end(a: String) -> void:
+	if state == St.ATTACK and a.begins_with("attack"):
+		if buffered_attack and combo < 3:
+			buffered_attack = false
+			_start_attack(combo + 1)
+			return
+		buffered_attack = false
+		combo = 0
+		_to_free()
+	elif state == St.CAST and a == "cast":
+		_to_free()
+	elif state == St.ROLL and a == "roll":
+		_to_free()
+
+
+func _try_cast() -> void:
+	if state != St.FREE:
+		return
+	if mp < CAST_COST:
+		Fx.toast("Mana insuficiente", Color(0.5, 0.75, 1.0))
+		return
+	mp -= CAST_COST
+	state = St.CAST
+	state_t = 0.0
+	var target := Enemy.nearest(pos(), 9.0 * T)
+	if target != null and move_dir.length_squared() < 0.01:
+		face(Util.facing_from(target.pos() - pos(), facing))
+	elif move_dir.length_squared() > 0.01:
+		face(Util.facing_from(move_dir, facing))
+	anim.play("cast", true)
+	Fx.magic_circle(pos(), gs.spark_tier)
+	Sfx.play("charge", 0.4, 1.0)
+
+
+func _try_roll() -> void:
+	if state == St.ROLL or state == St.DEAD:
+		return
+	if state == St.ATTACK and anim.normalized() < 0.5:
+		return
+	if st < ROLL_COST * 0.6:
+		Fx.toast("Sem fôlego!", Color(1, 0.85, 0.4))
+		return
+	st -= ROLL_COST
+	st_regen_delay = 0.6
+	roll_dir = move_dir.normalized() if move_dir.length_squared() > 0.01 else Util.facing_vec(facing)
+	face(Util.facing_from(roll_dir, facing))
+	state = St.ROLL
+	state_t = 0.0
+	invuln = 0.36
+	combo = 0
+	buffered_attack = false
+	anim.play("roll", true)
+	Fx.dust(pos(), 1.0)
+	Sfx.play("roll", 0.4, 1.0)
+
+
+func _use_potion() -> void:
+	if hp >= gs.hp_max():
+		return
+	if not gs.take("potion"):
+		Fx.toast("Sem poções", Color(1, 0.5, 0.5))
+		return
+	hp = minf(gs.hp_max(), hp + maxf(float(Data.items["potion"]["heal"]), 0.35 * gs.hp_max()))
+	Fx.heal(pos())
+	Sfx.play("potion", 0.5, 1.0)
+
+
+func hurt(dmg: float, from: Vector2, knockback: float, poise_dmg: float, crit: bool = false) -> bool:
+	if state == St.ROLL and invuln > 0.0:
+		Fx.toast("Esquiva!", Color(0.7, 0.95, 1.0))
+		return false
+	dmg = maxf(1.0, roundf(dmg * 100.0 / (100.0 + gs.total_def() * 3.0)))
+	var ok := super.hurt(dmg, from, knockback, poise_dmg, crit)
+	if not ok:
+		return false
+	invuln = 0.6
+	Sfx.play("hurt", 0.6, 1.0)
+	Game.camera.shake(0.18, 0.2)
+	if Game.hud:
+		Game.hud.hurt_pulse()
+	if not dead:
+		state = St.HURT
+		state_t = 0.0
+		combo = 0
+		buffered_attack = false
+		anim.play("hurt", true)
+	return true
+
+
+func _die() -> void:
+	dead = true
+	state = St.DEAD
+	velocity = Vector2.ZERO
+	anim.play("death", true)
+	Sfx.play("death", 0.7, 0.9)
+	Game.on_player_died()
+
+
+func revive(at: Vector2) -> void:
+	dead = false
+	global_position = at
+	hp = gs.hp_max()
+	mp = gs.max_mp
+	st = gs.max_st
+	_to_free()

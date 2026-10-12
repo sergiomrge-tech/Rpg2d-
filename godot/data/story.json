@@ -1,0 +1,446 @@
+{
+ "regions": [
+  {
+   "map": "kharis",
+   "title": "Deserto de Kharis",
+   "npc": "nomad",
+   "boss": "scorpion_demon",
+   "bossName": "o Demônio Escorpião",
+   "start": "rq_nomad",
+   "done": "kharis_done",
+   "rank": "B",
+   "gold": 900,
+   "reward": [
+    "ether:3",
+    "potion:3"
+   ],
+   "hello": [
+    [
+     "nomad",
+     "Forasteiro de Valemont? A areia sussurra seu nome. Sou Hasim, guia das caravanas de Kharis."
+    ],
+    [
+     "nomad",
+     "Há um Demônio Escorpião no coração das obeliscos, a leste. Ele soterrou duas caravanas e rouba o oásis."
+    ],
+    [
+     "nomad",
+     "Ele ataca com as pinças em sequência e bate com a cauda no chão. Role para o lado, nunca para trás."
+    ]
+   ],
+   "back": [
+    [
+     "nomad",
+     "O ferrão do deserto ainda vive. Siga a trilha a leste, depois do oásis, até os obeliscos."
+    ],
+    [
+     "nomad",
+     "O Escorpião... morto! O oásis voltará a ser nosso. Tome 900 de ouro e minha gratidão."
+    ],
+    [
+     "nomad",
+     "A Guilda o promove ao Rank B. O caminho leste leva às Minas de Durnhold — os anões pedem ajuda."
+    ]
+   ],
+   "thanks": [
+    [
+     "nomad",
+     "O Escorpião... morto! O oásis voltará a ser nosso. Tome 900 de ouro e minha gratidão."
+    ],
+    [
+     "nomad",
+     "A Guilda o promove ao Rank B. O caminho leste leva às Minas de Durnhold — os anões pedem ajuda."
+    ]
+   ]
+  },
+  {
+   "map": "mines",
+   "title": "Minas de Durnhold",
+   "npc": "dwarf",
+   "boss": "ember_golem",
+   "bossName": "o Golem de Brasa",
+   "start": "rq_dwarf",
+   "done": "mines_done",
+   "rank": "B",
+   "gold": 1500,
+   "reward": [
+    "potion:3",
+    "hell_ember:3"
+   ],
+   "hello": [
+    [
+     "dwarf",
+     "Por Durnhold! Um humano nas minas! Sou Durnok. Os demônios acordaram o Golem de Brasa na grande forja."
+    ],
+    [
+     "dwarf",
+     "Ele é puro magma. Bate forte, e a cada golpe a rocha em volta racha. Fique longe dos cristais vermelhos."
+    ],
+    [
+     "dwarf",
+     "Se você o derrubar, eu mesmo lhe entrego a couraça que meu avô forjou."
+    ]
+   ],
+   "back": [
+    [
+     "dwarf",
+     "A forja fica ao leste, entre os cristais vermelhos. Leve poções, rapaz."
+    ],
+    [
+     "dwarf",
+     "O Golem caiu! A forja volta a esquentar para o bem. 1500 de ouro e as brasas que sobraram são suas."
+    ],
+    [
+     "dwarf",
+     "O pântano de Mirewail fica depois da saída leste. A bruxa de lá sabe de coisas que nem os anões sabem."
+    ]
+   ],
+   "thanks": [
+    [
+     "dwarf",
+     "O Golem caiu! A forja volta a esquentar para o bem. 1500 de ouro e as brasas que sobraram são suas."
+    ],
+    [
+     "dwarf",
+     "O pântano de Mirewail fica depois da saída leste. A bruxa de lá sabe de coisas que nem os anões sabem."
+    ]
+   ]
+  },
+  {
+   "map": "mirewail",
+   "title": "Pântano de Mirewail",
+   "npc": "witch",
+   "boss": "succubus_mirael",
+   "bossName": "Mirael, a Súcubo",
+   "start": "rq_witch",
+   "done": "mirewail_done",
+   "rank": "A",
+   "gold": 2200,
+   "reward": [
+    "ether:4",
+    "potion:4"
+   ],
+   "hello": [
+    [
+     "witch",
+     "Hehehe... um herói. Morgana, cuidadora do brejo. Cheiro de centelha de deusa em você, criança."
+    ],
+    [
+     "witch",
+     "Mirael, uma súcubo a serviço de Malgrath, encantou o pântano. Ela vive na ilha ao sul, cercada de bruma."
+    ],
+    [
+     "witch",
+     "Ela lança fogo violeta e chama espectros. Mate os espectros primeiro, ou eles o cercam."
+    ]
+   ],
+   "back": [
+    [
+     "witch",
+     "A ilha de Mirael fica ao sul das pontes. Não pise na água escura, criança."
+    ],
+    [
+     "witch",
+     "Hehehe! A súcubo caiu. 2200 de ouro, e este conselho: nos Picos Gelados há um templo da sua deusa."
+    ],
+    [
+     "witch",
+     "Rank A, pela Guilda. Poucos chegam tão longe. Vá — o último general antes do castelo espera no gelo."
+    ]
+   ],
+   "thanks": [
+    [
+     "witch",
+     "Hehehe! A súcubo caiu. 2200 de ouro, e este conselho: nos Picos Gelados há um templo da sua deusa."
+    ],
+    [
+     "witch",
+     "Rank A, pela Guilda. Poucos chegam tão longe. Vá — o último general antes do castelo espera no gelo."
+    ]
+   ]
+  },
+  {
+   "map": "peaks",
+   "title": "Picos Gelados",
+   "npc": "monk",
+   "boss": "ice_demon",
+   "bossName": "o Demônio de Gelo",
+   "start": "rq_monk",
+   "done": "peaks_done",
+   "rank": "A",
+   "gold": 3000,
+   "reward": [
+    "potion:5",
+    "ether:5"
+   ],
+   "hello": [
+    [
+     "monk",
+     "Que Lumia o guie, Ren. Sou Ilan, guardião deste templo. A deusa fala de você nas orações."
+    ],
+    [
+     "monk",
+     "O Demônio de Gelo congelou a nascente sagrada. Ele sopra rajadas em leque e invoca diabretes gélidos."
+    ],
+    [
+     "monk",
+     "Ao norte está o castelo de Valemont, tomado por demônios. Mas antes, liberte a nascente."
+    ]
+   ],
+   "back": [
+    [
+     "monk",
+     "A nascente congelada fica ao sul do templo, entre os espinhos de gelo."
+    ],
+    [
+     "monk",
+     "A nascente corre de novo! Lumia sorri. Aceite 3000 de ouro e nossa bênção."
+    ],
+    [
+     "monk",
+     "O Capítulo seguinte o levará ao Castelo tomado. A Guilda o aguarda como Rank A. Que a centelha o guie."
+    ]
+   ],
+   "thanks": [
+    [
+     "monk",
+     "A nascente corre de novo! Lumia sorri. Aceite 3000 de ouro e nossa bênção."
+    ],
+    [
+     "monk",
+     "O Capítulo seguinte o levará ao Castelo tomado. A Guilda o aguarda como Rank A. Que a centelha o guie."
+    ]
+   ]
+  },
+  {
+   "map": "castle",
+   "title": "Castelo de Valemont",
+   "npc": "elowen",
+   "boss": "vorath",
+   "bossName": "o General Vorath",
+   "start": "rq_elowen",
+   "done": "castle_done",
+   "rank": "A",
+   "gold": 4000,
+   "reward": [
+    "royal_plate:1",
+    "potion:5",
+    "ether:3"
+   ],
+   "hello": [
+    [
+     "elowen",
+     "Alto! ...Você é Ren? O herói de Velmoor? Sou a capitã Elowen, última da Guarda Real."
+    ],
+    [
+     "elowen",
+     "Malgrath mandou o General Vorath tomar o castelo. A rainha foi levada. Os cavaleiros demoníacos patrulham o pátio."
+    ],
+    [
+     "elowen",
+     "Vorath luta com uma montante negra: golpes lentos, mas devastadores, e um impacto no chão. Aguarde o brilho vermelho e role."
+    ]
+   ],
+   "back": [
+    [
+     "elowen",
+     "Vorath guarda a porta do salão do trono, ao norte do pátio. Que Lumia o proteja."
+    ],
+    [
+     "elowen",
+     "Vorath caiu... o castelo é nosso! A rainha foi levada para as Terras Devastadas, a leste."
+    ],
+    [
+     "elowen",
+     "Esta armadura real é sua, Ren. 4000 de ouro também. Salve-a. Salve Aetheria."
+    ]
+   ],
+   "thanks": [
+    [
+     "elowen",
+     "Vorath caiu... o castelo é nosso! A rainha foi levada para as Terras Devastadas, a leste."
+    ],
+    [
+     "elowen",
+     "Esta armadura real é sua, Ren. 4000 de ouro também. Salve-a. Salve Aetheria."
+    ]
+   ]
+  },
+  {
+   "map": "wastelands",
+   "title": "Terras Devastadas",
+   "npc": "cedric",
+   "boss": "thornmaw_alpha,velka_flamebeak,krull_chainlord,morgash_ironhorn",
+   "bossName": "os quatro Generais",
+   "start": "rq_cedric",
+   "done": "wastelands_done",
+   "rank": "S",
+   "gold": 6000,
+   "reward": [
+    "lumia_pendant:1",
+    "potion:6",
+    "ether:6"
+   ],
+   "hello": [
+    [
+     "cedric",
+     "Ren! Então os boatos eram verdade. Cedric, veterano da Resistência. Estamos escondidos aqui há anos."
+    ],
+    [
+     "cedric",
+     "A Cidadela de Malgrath fica a leste, selada por quatro generais: Thornmaw ao noroeste, Velka ao nordeste, Krull ao sudoeste e Morgash ao sudeste."
+    ],
+    [
+     "cedric",
+     "Cada um guarda um selo. Derrube os quatro e o portão do inferno se abrirá. Não há outro caminho."
+    ],
+    [
+     "cedric",
+     "Cada general luta diferente: espinhos, fogo em leque, correntes e martelo. Estude o padrão antes de atacar."
+    ]
+   ],
+   "back": [
+    [
+     "cedric",
+     "Faltam selos, Ren. Os quatro generais ficam nos cantos do mapa."
+    ],
+    [
+     "cedric",
+     "Os quatro selos caíram! O portão a leste vai abrir. Você é a lenda que esperávamos."
+    ],
+    [
+     "cedric",
+     "Rank S, o mais alto da Guilda. Leve este pingente, ele pertenceu a um sacerdote de Lumia. Boa sorte, herói."
+    ]
+   ],
+   "thanks": [
+    [
+     "cedric",
+     "Os quatro selos caíram! O portão a leste vai abrir. Você é a lenda que esperávamos."
+    ],
+    [
+     "cedric",
+     "Rank S, o mais alto da Guilda. Leve este pingente, ele pertenceu a um sacerdote de Lumia. Boa sorte, herói."
+    ]
+   ]
+  }
+ ],
+ "names": {
+  "receptionist": "Elina, da Guilda",
+  "blacksmith": "Borin, o Ferreiro",
+  "villager": "Tia Marta",
+  "lumia": "Deusa Lumia",
+  "sylra": "Sylra",
+  "elowen": "Capitã Elowen",
+  "cedric": "Cedric, o Veterano",
+  "nomad": "Hasim, Guia do Deserto",
+  "dwarf": "Durnok, Mestre Minerador",
+  "witch": "Bruxa Morgana",
+  "monk": "Monge Ilan",
+  "guildmaster": "Mestre Aldric",
+  "guard": "Guarda do Portão",
+  "noble": "Lady Seraphine",
+  "cleric": "Irmã Maelis",
+  "child": "Pip",
+  "shopkeeper": "Dorna, a Lojista"
+ },
+ "final_blessing": [
+  [
+   "lumia",
+   "Ren. Você chegou ao fim da estrada. Daqui em diante, nem eu posso segui-lo."
+  ],
+  [
+   "lumia",
+   "Malgrath espera no salão do trono. Ele muda a cada vez que cai um pouco — não se apresse."
+  ],
+  [
+   "lumia",
+   "Leve estas poções. E lembre-se: você nunca foi fraco. Só ainda não tinha crescido."
+  ],
+  [
+   "lumia",
+   "Vá. Salve o meu mundo."
+  ]
+ ],
+ "ending": [
+  [
+   "@scene",
+   "malgrath_fall"
+  ],
+  [
+   "",
+   "Malgrath cai de joelhos. A coroa de chifres racha, e a escuridão que cobria Aetheria se desfaz em cinzas douradas."
+  ],
+  [
+   "@scene",
+   "sunrise_peaks"
+  ],
+  [
+   "lumia",
+   "Está feito. O Rei Demônio caiu. O sol voltou a nascer sobre Aetheria."
+  ],
+  [
+   "sylra",
+   "Eu sempre soube que você chegaria até aqui. Velmoor já floresce de novo, Ren."
+  ],
+  [
+   "lumia",
+   "Ren Takamura. Você deu a sua vida por uma criança e, em outro mundo, por todo um povo."
+  ],
+  [
+   "lumia",
+   "Posso lhe oferecer um último presente: voltar para casa. Ou ficar."
+  ],
+  [
+   "@scene",
+   "vista"
+  ],
+  [
+   "",
+   "Ren olha o amanhecer sobre as montanhas. Pela primeira vez desde que chegou, não tem pressa."
+  ],
+  [
+   "",
+   "Ele decide ficar. Há uma Guilda a visitar, uma elfa que precisa de um companheiro de aventuras, e um mundo inteiro por explorar."
+  ]
+ ],
+ "prologue": [
+  [
+   "@scene",
+   "tokyo"
+  ],
+  [
+   "",
+   "Tóquio, 23h47. Uma buzina. Um caminhão. Uma criança no meio da rua."
+  ],
+  [
+   "",
+   "Você empurrou a menina para longe... e o mundo ficou branco."
+  ],
+  [
+   "@scene",
+   "void"
+  ],
+  [
+   "lumia",
+   "Ren Takamura. Sua vida terminou cedo demais — e com coragem."
+  ],
+  [
+   "lumia",
+   "Meu mundo, Aetheria, está sendo devorado pelo Rei Demônio Malgrath. Preciso de alguém assim."
+  ],
+  [
+   "lumia",
+   "Não posso lhe dar força. Só uma centelha. O resto... você terá de conquistar."
+  ],
+  [
+   "@scene",
+   "aurora_dawn"
+  ],
+  [
+   "",
+   "Você desperta na Vila de Aurora, com uma espada velha e uma faísca de magia na palma da mão."
+  ]
+ ],
+ "credits": "CRÔNICAS DE AETHERIA\nA Centelha\n\n\n— Elenco —\n\nRen Takamura — o herói\nDeusa Lumia\nSylra, arqueira de Velmoor\nMestre Aldric\nCapitã Elowen\nCedric, o Veterano\n\n— Os Generais —\n\nGrakk · Dríade Profanada · Assassino Sombrio\nEscorpião de Kharis · Golem de Brasa · Mirael\nDemônio de Gelo · General Vorath\n\nMalgrath, o Rei Demônio\n\n\n— Feito com —\n\nGodot · Python + Cairo (toda a arte gerada por código)\nClaude Code\n\n\nObrigado por jogar.\n\n\nFIM"
+}

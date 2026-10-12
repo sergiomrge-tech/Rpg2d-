@@ -1,0 +1,37 @@
+name: godot
+on:
+  push:
+    branches: [main, 'ccr-*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.3"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot + Xvfb
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1 libxcursor1 libxinerama1 libxi6 libxrandr2 unzip > /dev/null
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip && sudo mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Import project
+        run: godot --headless --path godot --import || true
+      - name: Run scripted tour and capture screenshots
+        run: |
+          mkdir -p shots
+          xvfb-run -a -s "-screen 0 1920x1080x24" timeout 240 godot --path godot --rendering-driver opengl3 -- -ciShots "$PWD/shots" 2>&1 | tee shots/run.log | tail -n 40
+          ls -la shots
+      - name: Publish screenshots to branch ci-shots
+        run: |
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          echo "${{ github.sha }}" > shots/SHA.txt
+          git switch --orphan ci-shots-tmp
+          git rm -rf --cached . > /dev/null 2>&1 || true
+          find . -mindepth 1 -maxdepth 1 ! -name shots ! -name .git -exec rm -rf {} +
+          git add shots
+          git commit -m "shots ${{ github.sha }}"
+          git push -f origin ci-shots-tmp:ci-shots

@@ -1,0 +1,3174 @@
+{
+ "imp": {
+  "id": "imp",
+  "name": "Diabrete",
+  "sheet": "Sprites/Demons/imp",
+  "hp": 46.0,
+  "dmg": 15.0,
+  "speed": 2.6,
+  "aggro": 7.0,
+  "xp": 14.0,
+  "caster": true,
+  "poise": 10.0,
+  "scale": 1.15,
+  "drops": [
+   [
+    "gold",
+    1.0,
+    3,
+    9
+   ],
+   [
+    "imp_horn",
+    0.45,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "ether",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.05,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ],
+  "title": "",
+  "boss": false
+ },
+ "oni": {
+  "id": "oni",
+  "name": "Oni Soldado",
+  "sheet": "Sprites/Demons/oni",
+  "hp": 110.0,
+  "dmg": 24.0,
+  "speed": 2.1,
+  "aggro": 6.0,
+  "xp": 30.0,
+  "poise": 38.0,
+  "scale": 1.25,
+  "drops": [
+   [
+    "gold",
+    1.0,
+    8,
+    18
+   ],
+   [
+    "potion",
+    0.2,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.02,
+    1,
+    1
+   ],
+   [
+    "demon_hide",
+    0.4,
+    1,
+    2
+   ]
+  ],
+  "title": "",
+  "boss": false,
+  "caster": false
+ },
+ "grakk": {
+  "id": "grakk",
+  "name": "Grakk",
+  "title": "Chefe dos Diabretes",
+  "sheet": "Sprites/Demons/grakk",
+  "hp": 420.0,
+  "dmg": 22.0,
+  "speed": 2.9,
+  "aggro": 8.0,
+  "xp": 160.0,
+  "caster": true,
+  "boss": true,
+  "poise": 70.0,
+  "scale": 1.9,
+  "drops": [
+   [
+    "gold",
+    1.0,
+    120,
+    160
+   ],
+   [
+    "spark_tome",
+    1.0,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    1.0,
+    2,
+    3
+   ],
+   [
+    "potion",
+    1.0,
+    2,
+    2
+   ]
+  ]
+ },
+ "imp_scout": {
+  "id": "imp_scout",
+  "name": "Diabrete Batedor",
+  "sheet": "Sprites/Demons/imp_scout",
+  "hp": 72.0,
+  "dmg": 14.0,
+  "speed": 3.7,
+  "aggro": 8.0,
+  "xp": 11.0,
+  "poise": 6.0,
+  "scale": 1.15,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "imp_raider": {
+  "id": "imp_raider",
+  "name": "Diabrete Saqueador",
+  "sheet": "Sprites/Demons/imp_raider",
+  "hp": 169.0,
+  "dmg": 20.0,
+  "speed": 2.3,
+  "aggro": 6.0,
+  "xp": 22.0,
+  "poise": 26.0,
+  "scale": 1.2,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "imp_pyro": {
+  "id": "imp_pyro",
+  "name": "Diabrete Piromante",
+  "sheet": "Sprites/Demons/imp_pyro",
+  "hp": 117.0,
+  "dmg": 20.0,
+  "speed": 2.4,
+  "aggro": 8.0,
+  "xp": 16.0,
+  "poise": 10.0,
+  "scale": 1.15,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "imp_hexer": {
+  "id": "imp_hexer",
+  "name": "Diabrete Feiticeiro",
+  "sheet": "Sprites/Demons/imp_hexer",
+  "hp": 104.0,
+  "dmg": 18.0,
+  "speed": 2.4,
+  "aggro": 8.5,
+  "xp": 15.0,
+  "poise": 8.0,
+  "scale": 1.15,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "imp_bomber": {
+  "id": "imp_bomber",
+  "name": "Diabrete Bombardeiro",
+  "sheet": "Sprites/Demons/imp_bomber",
+  "hp": 117.0,
+  "dmg": 22.0,
+  "speed": 2.5,
+  "aggro": 7.5,
+  "xp": 16.0,
+  "poise": 10.0,
+  "scale": 1.15,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "imp_howler": {
+  "id": "imp_howler",
+  "name": "Diabrete Uivador",
+  "sheet": "Sprites/Demons/imp_howler",
+  "hp": 130.0,
+  "dmg": 16.0,
+  "speed": 2.6,
+  "aggro": 9.0,
+  "xp": 18.0,
+  "poise": 14.0,
+  "scale": 1.2,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "oni_lancer": {
+  "id": "oni_lancer",
+  "name": "Oni Lanceiro",
+  "sheet": "Sprites/Demons/oni_lancer",
+  "hp": 221.0,
+  "dmg": 22.0,
+  "speed": 2.4,
+  "aggro": 6.5,
+  "xp": 28.0,
+  "poise": 34.0,
+  "scale": 1.25,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ],
+   [
+    "demon_hide",
+    0.4,
+    1,
+    2
+   ]
+  ]
+ },
+ "oni_shielder": {
+  "id": "oni_shielder",
+  "name": "Oni Escudeiro",
+  "sheet": "Sprites/Demons/oni_shielder",
+  "hp": 390.0,
+  "dmg": 16.0,
+  "speed": 1.7,
+  "aggro": 5.5,
+  "xp": 46.0,
+  "poise": 80.0,
+  "scale": 1.3,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ],
+   [
+    "demon_hide",
+    0.4,
+    1,
+    2
+   ]
+  ]
+ },
+ "oni_executioner": {
+  "id": "oni_executioner",
+  "name": "Oni Carrasco",
+  "sheet": "Sprites/Demons/oni_executioner",
+  "hp": 260.0,
+  "dmg": 32.0,
+  "speed": 1.9,
+  "aggro": 6.0,
+  "xp": 32.0,
+  "poise": 50.0,
+  "scale": 1.35,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ],
+   [
+    "demon_hide",
+    0.4,
+    1,
+    2
+   ],
+   [
+    "sword_tome",
+    0.03,
+    1,
+    1
+   ]
+  ]
+ },
+ "morgash_ironhorn": {
+  "id": "morgash_ironhorn",
+  "name": "Morgash Chifre-de-Ferro",
+  "sheet": "Sprites/Demons/morgash_ironhorn",
+  "hp": 1820.0,
+  "dmg": 34.0,
+  "speed": 2.0,
+  "aggro": 9.0,
+  "xp": 170.0,
+  "poise": 140.0,
+  "scale": 2.0,
+  "caster": false,
+  "boss": true,
+  "title": "General Oni das Minas",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "oni_cleaver",
+    1.0,
+    1,
+    1
+   ],
+   [
+    "sword_tome",
+    0.6,
+    1,
+    1
+   ]
+  ]
+ },
+ "velka_flamebeak": {
+  "id": "velka_flamebeak",
+  "name": "Velka Bico-de-Fogo",
+  "sheet": "Sprites/Demons/velka_flamebeak",
+  "hp": 1560.0,
+  "dmg": 29.0,
+  "speed": 3.2,
+  "aggro": 10.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.9,
+  "caster": true,
+  "boss": true,
+  "title": "Rainha Harpia do Deserto",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "krull_chainlord": {
+  "id": "krull_chainlord",
+  "name": "Krull Senhor-das-Correntes",
+  "sheet": "Sprites/Demons/krull_chainlord",
+  "hp": 1690.0,
+  "dmg": 31.0,
+  "speed": 2.3,
+  "aggro": 9.0,
+  "xp": 159.0,
+  "poise": 120.0,
+  "scale": 1.9,
+  "caster": false,
+  "boss": true,
+  "title": "Carcereiro do Pantano",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "thornmaw_alpha": {
+  "id": "thornmaw_alpha",
+  "name": "Thornmaw Alfa",
+  "sheet": "Sprites/Demons/thornmaw_alpha",
+  "hp": 1690.0,
+  "dmg": 31.0,
+  "speed": 2.8,
+  "aggro": 9.0,
+  "xp": 159.0,
+  "poise": 110.0,
+  "scale": 1.9,
+  "caster": false,
+  "boss": true,
+  "title": "Fera Espinhosa de Velmoor",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "spirit_corrupt": {
+  "id": "spirit_corrupt",
+  "name": "Espírito Corrompido",
+  "sheet": "Sprites/Demons/spirit_corrupt",
+  "hp": 117.0,
+  "dmg": 18.0,
+  "speed": 3.0,
+  "aggro": 8.5,
+  "xp": 16.0,
+  "poise": 12.0,
+  "scale": 1.2,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ],
+   [
+    "spirit_dust",
+    0.5,
+    1,
+    2
+   ]
+  ]
+ },
+ "treant_demon": {
+  "id": "treant_demon",
+  "name": "Treant-Demônio",
+  "sheet": "Sprites/Demons/treant_demon",
+  "hp": 312.0,
+  "dmg": 27.0,
+  "speed": 1.6,
+  "aggro": 6.0,
+  "xp": 38.0,
+  "poise": 90.0,
+  "scale": 1.45,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ],
+   [
+    "spirit_dust",
+    0.7,
+    1,
+    3
+   ]
+  ]
+ },
+ "dryad_profane": {
+  "id": "dryad_profane",
+  "name": "Dríade Profanada",
+  "sheet": "Sprites/Demons/dryad_profane",
+  "hp": 1560.0,
+  "dmg": 27.0,
+  "speed": 2.4,
+  "aggro": 10.0,
+  "xp": 149.0,
+  "poise": 120.0,
+  "scale": 1.9,
+  "caster": true,
+  "boss": true,
+  "title": "Guardiã Corrompida de Velmoor",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "velmoor_blade",
+    1.0,
+    1,
+    1
+   ],
+   [
+    "luma_charm",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "assassin_shadow": {
+  "id": "assassin_shadow",
+  "name": "Assassino Sombrio",
+  "sheet": "Sprites/Demons/assassin_shadow",
+  "hp": 1430.0,
+  "dmg": 32.0,
+  "speed": 3.4,
+  "aggro": 9.0,
+  "xp": 138.0,
+  "poise": 110.0,
+  "scale": 1.45,
+  "caster": false,
+  "boss": true,
+  "title": "Lâmina do Rei Demônio",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "sword_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "sand_imp": {
+  "id": "sand_imp",
+  "name": "Diabrete das Dunas",
+  "sheet": "Sprites/Demons/sand_imp",
+  "hp": 110.0,
+  "dmg": 20.0,
+  "speed": 3.1,
+  "aggro": 8.0,
+  "xp": 16.0,
+  "poise": 14.0,
+  "scale": 1.2,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "sand_wraith": {
+  "id": "sand_wraith",
+  "name": "Espectro de Areia",
+  "sheet": "Sprites/Demons/sand_wraith",
+  "hp": 124.0,
+  "dmg": 20.0,
+  "speed": 3.0,
+  "aggro": 8.5,
+  "xp": 17.0,
+  "poise": 14.0,
+  "scale": 1.2,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "oni_nomad": {
+  "id": "oni_nomad",
+  "name": "Oni Nômade",
+  "sheet": "Sprites/Demons/oni_nomad",
+  "hp": 234.0,
+  "dmg": 23.0,
+  "speed": 2.7,
+  "aggro": 6.5,
+  "xp": 30.0,
+  "poise": 60.0,
+  "scale": 1.3,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ],
+   [
+    "demon_hide",
+    0.4,
+    1,
+    2
+   ]
+  ]
+ },
+ "scorpion_demon": {
+  "id": "scorpion_demon",
+  "name": "Demônio Escorpião",
+  "sheet": "Sprites/Demons/scorpion_demon",
+  "hp": 1690.0,
+  "dmg": 32.0,
+  "speed": 3.0,
+  "aggro": 10.0,
+  "xp": 159.0,
+  "poise": 220.0,
+  "scale": 1.9,
+  "caster": false,
+  "boss": true,
+  "title": "Ferrão do Deserto de Kharis",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "sand_blade",
+    1.0,
+    1,
+    1
+   ]
+  ]
+ },
+ "mine_imp": {
+  "id": "mine_imp",
+  "name": "Diabrete Minerador",
+  "sheet": "Sprites/Demons/mine_imp",
+  "hp": 130.0,
+  "dmg": 22.0,
+  "speed": 3.0,
+  "aggro": 7.5,
+  "xp": 18.0,
+  "poise": 20.0,
+  "scale": 1.2,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "rock_oni": {
+  "id": "rock_oni",
+  "name": "Oni de Rocha",
+  "sheet": "Sprites/Demons/rock_oni",
+  "hp": 338.0,
+  "dmg": 27.0,
+  "speed": 2.0,
+  "aggro": 6.0,
+  "xp": 41.0,
+  "poise": 130.0,
+  "scale": 1.4,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "ember_golem": {
+  "id": "ember_golem",
+  "name": "Golem de Brasa",
+  "sheet": "Sprites/Demons/ember_golem",
+  "hp": 1950.0,
+  "dmg": 36.0,
+  "speed": 2.2,
+  "aggro": 10.0,
+  "xp": 180.0,
+  "poise": 320.0,
+  "scale": 2.0,
+  "caster": true,
+  "boss": true,
+  "title": "Coração da Forja de Durnhold",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "dwarf_plate",
+    1.0,
+    1,
+    1
+   ]
+  ]
+ },
+ "witch_imp": {
+  "id": "witch_imp",
+  "name": "Diabrete Bruxo",
+  "sheet": "Sprites/Demons/witch_imp",
+  "hp": 110.0,
+  "dmg": 22.0,
+  "speed": 2.8,
+  "aggro": 9.0,
+  "xp": 16.0,
+  "poise": 20.0,
+  "scale": 1.2,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "bog_wraith": {
+  "id": "bog_wraith",
+  "name": "Espectro do Brejo",
+  "sheet": "Sprites/Demons/bog_wraith",
+  "hp": 130.0,
+  "dmg": 22.0,
+  "speed": 3.0,
+  "aggro": 9.0,
+  "xp": 18.0,
+  "poise": 22.0,
+  "scale": 1.2,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "succubus_mirael": {
+  "id": "succubus_mirael",
+  "name": "Mirael, a Súcubo",
+  "sheet": "Sprites/Demons/succubus_mirael",
+  "hp": 1820.0,
+  "dmg": 36.0,
+  "speed": 3.2,
+  "aggro": 11.0,
+  "xp": 170.0,
+  "poise": 300.0,
+  "scale": 1.8,
+  "caster": true,
+  "boss": true,
+  "title": "Rainha do Pântano de Mirewail",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "swamp_charm",
+    1.0,
+    1,
+    1
+   ]
+  ]
+ },
+ "frost_imp": {
+  "id": "frost_imp",
+  "name": "Diabrete Gélido",
+  "sheet": "Sprites/Demons/frost_imp",
+  "hp": 130.0,
+  "dmg": 23.0,
+  "speed": 3.1,
+  "aggro": 9.0,
+  "xp": 18.0,
+  "poise": 24.0,
+  "scale": 1.25,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "ice_oni": {
+  "id": "ice_oni",
+  "name": "Oni de Gelo",
+  "sheet": "Sprites/Demons/ice_oni",
+  "hp": 312.0,
+  "dmg": 29.0,
+  "speed": 2.4,
+  "aggro": 6.5,
+  "xp": 38.0,
+  "poise": 170.0,
+  "scale": 1.4,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "ice_demon": {
+  "id": "ice_demon",
+  "name": "Demônio de Gelo",
+  "sheet": "Sprites/Demons/ice_demon",
+  "hp": 2080.0,
+  "dmg": 40.0,
+  "speed": 2.8,
+  "aggro": 11.0,
+  "xp": 190.0,
+  "poise": 380.0,
+  "scale": 2.0,
+  "caster": true,
+  "boss": true,
+  "title": "Senhor dos Picos Gelados",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "frost_blade",
+    1.0,
+    1,
+    1
+   ],
+   [
+    "ice_mail",
+    1.0,
+    1,
+    1
+   ]
+  ]
+ },
+ "demon_knight": {
+  "id": "demon_knight",
+  "name": "Cavaleiro Demoníaco",
+  "sheet": "Sprites/Demons/demon_knight",
+  "hp": 260.0,
+  "dmg": 29.0,
+  "speed": 2.5,
+  "aggro": 7.0,
+  "xp": 31.0,
+  "poise": 90.0,
+  "scale": 1.3,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "ash_wraith": {
+  "id": "ash_wraith",
+  "name": "Espectro de Cinzas",
+  "sheet": "Sprites/Demons/ash_wraith",
+  "hp": 130.0,
+  "dmg": 23.0,
+  "speed": 3.0,
+  "aggro": 9.0,
+  "xp": 18.0,
+  "poise": 22.0,
+  "scale": 1.2,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "vorath": {
+  "id": "vorath",
+  "name": "General Vorath",
+  "sheet": "Sprites/Demons/vorath",
+  "hp": 2210.0,
+  "dmg": 43.0,
+  "speed": 2.7,
+  "aggro": 10.0,
+  "xp": 270.0,
+  "poise": 300.0,
+  "scale": 2.1,
+  "caster": false,
+  "boss": true,
+  "title": "General Demoníaco do Castelo Tomado",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ],
+   [
+    "vorath_blade",
+    1.0,
+    1,
+    1
+   ]
+  ]
+ },
+ "malgrath": {
+  "id": "malgrath",
+  "name": "Malgrath, o Rei Demônio",
+  "sheet": "Sprites/Demons/malgrath",
+  "hp": 3380.0,
+  "dmg": 47.0,
+  "speed": 2.9,
+  "aggro": 12.0,
+  "xp": 600.0,
+  "poise": 400.0,
+  "scale": 2.4,
+  "caster": true,
+  "boss": true,
+  "title": "Soberano das Trevas de Aetheria",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_ant_guard": {
+  "id": "gpt_ant_guard",
+  "name": "Ant Guard (GPT)",
+  "sheet": "Sprites/DemonsGpt/ant_guard",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_brood_tyrant": {
+  "id": "gpt_brood_tyrant",
+  "name": "Brood Tyrant (GPT)",
+  "sheet": "Sprites/DemonsGpt/brood_tyrant",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.04,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_cicada_screecher": {
+  "id": "gpt_cicada_screecher",
+  "name": "Cicada Screecher (GPT)",
+  "sheet": "Sprites/DemonsGpt/cicada_screecher",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_dragonfly_skirmisher": {
+  "id": "gpt_dragonfly_skirmisher",
+  "name": "Dragonfly Skirmisher (GPT)",
+  "sheet": "Sprites/DemonsGpt/dragonfly_skirmisher",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_grakk": {
+  "id": "gpt_grakk",
+  "name": "Grakk (GPT)",
+  "sheet": "Sprites/DemonsGpt/grakk",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_imp": {
+  "id": "gpt_imp",
+  "name": "Imp (GPT)",
+  "sheet": "Sprites/DemonsGpt/imp",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_imp_bomber": {
+  "id": "gpt_imp_bomber",
+  "name": "Imp Bomber (GPT)",
+  "sheet": "Sprites/DemonsGpt/imp_bomber",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_imp_hexer": {
+  "id": "gpt_imp_hexer",
+  "name": "Imp Hexer (GPT)",
+  "sheet": "Sprites/DemonsGpt/imp_hexer",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_imp_howler": {
+  "id": "gpt_imp_howler",
+  "name": "Imp Howler (GPT)",
+  "sheet": "Sprites/DemonsGpt/imp_howler",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_imp_pyro": {
+  "id": "gpt_imp_pyro",
+  "name": "Imp Pyro (GPT)",
+  "sheet": "Sprites/DemonsGpt/imp_pyro",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_imp_raider": {
+  "id": "gpt_imp_raider",
+  "name": "Imp Raider (GPT)",
+  "sheet": "Sprites/DemonsGpt/imp_raider",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_imp_scout": {
+  "id": "gpt_imp_scout",
+  "name": "Imp Scout (GPT)",
+  "sheet": "Sprites/DemonsGpt/imp_scout",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_krull_chainlord": {
+  "id": "gpt_krull_chainlord",
+  "name": "Krull Chainlord (GPT)",
+  "sheet": "Sprites/DemonsGpt/krull_chainlord",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.56,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_mantis_high_reaper": {
+  "id": "gpt_mantis_high_reaper",
+  "name": "Mantis High Reaper (GPT)",
+  "sheet": "Sprites/DemonsGpt/mantis_high_reaper",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.04,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_mantis_reaver": {
+  "id": "gpt_mantis_reaver",
+  "name": "Mantis Reaver (GPT)",
+  "sheet": "Sprites/DemonsGpt/mantis_reaver",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_morgash_ironhorn": {
+  "id": "gpt_morgash_ironhorn",
+  "name": "Morgash Ironhorn (GPT)",
+  "sheet": "Sprites/DemonsGpt/morgash_ironhorn",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.56,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_moth_hexer": {
+  "id": "gpt_moth_hexer",
+  "name": "Moth Hexer (GPT)",
+  "sheet": "Sprites/DemonsGpt/moth_hexer",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_moth_oracle": {
+  "id": "gpt_moth_oracle",
+  "name": "Moth Oracle (GPT)",
+  "sheet": "Sprites/DemonsGpt/moth_oracle",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.04,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_oni_executioner": {
+  "id": "gpt_oni_executioner",
+  "name": "Oni Executioner (GPT)",
+  "sheet": "Sprites/DemonsGpt/oni_executioner",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.78,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_oni_lancer": {
+  "id": "gpt_oni_lancer",
+  "name": "Oni Lancer (GPT)",
+  "sheet": "Sprites/DemonsGpt/oni_lancer",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_oni_shielder": {
+  "id": "gpt_oni_shielder",
+  "name": "Oni Shielder (GPT)",
+  "sheet": "Sprites/DemonsGpt/oni_shielder",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.92,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_oni_soldier": {
+  "id": "gpt_oni_soldier",
+  "name": "Oni Soldier (GPT)",
+  "sheet": "Sprites/DemonsGpt/oni_soldier",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 2.08,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_queen_vespara": {
+  "id": "gpt_queen_vespara",
+  "name": "Queen Vespara (GPT)",
+  "sheet": "Sprites/DemonsGpt/queen_vespara",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.04,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_roach_plaguebearer": {
+  "id": "gpt_roach_plaguebearer",
+  "name": "Roach Plaguebearer (GPT)",
+  "sheet": "Sprites/DemonsGpt/roach_plaguebearer",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_scarab_brute": {
+  "id": "gpt_scarab_brute",
+  "name": "Scarab Brute (GPT)",
+  "sheet": "Sprites/DemonsGpt/scarab_brute",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_scarab_colossus": {
+  "id": "gpt_scarab_colossus",
+  "name": "Scarab Colossus (GPT)",
+  "sheet": "Sprites/DemonsGpt/scarab_colossus",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.04,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_spike_beetle": {
+  "id": "gpt_spike_beetle",
+  "name": "Spike Beetle (GPT)",
+  "sheet": "Sprites/DemonsGpt/spike_beetle",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_termite_burrower": {
+  "id": "gpt_termite_burrower",
+  "name": "Termite Burrower (GPT)",
+  "sheet": "Sprites/DemonsGpt/termite_burrower",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_thornmaw_alpha": {
+  "id": "gpt_thornmaw_alpha",
+  "name": "Thornmaw Alpha (GPT)",
+  "sheet": "Sprites/DemonsGpt/thornmaw_alpha",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_velka_flamebeak": {
+  "id": "gpt_velka_flamebeak",
+  "name": "Velka Flamebeak (GPT)",
+  "sheet": "Sprites/DemonsGpt/velka_flamebeak",
+  "hp": 1560.0,
+  "dmg": 32.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 149.0,
+  "poise": 90.0,
+  "scale": 1.56,
+  "caster": true,
+  "boss": true,
+  "title": "Asset do GPT",
+  "drops": [
+   [
+    "gold",
+    1,
+    150,
+    220
+   ],
+   [
+    "hell_ember",
+    1,
+    2,
+    4
+   ],
+   [
+    "potion",
+    1,
+    2,
+    3
+   ],
+   [
+    "spark_tome",
+    0.5,
+    1,
+    1
+   ]
+  ]
+ },
+ "gpt_vespa_lancer": {
+  "id": "gpt_vespa_lancer",
+  "name": "Vespa Lancer (GPT)",
+  "sheet": "Sprites/DemonsGpt/vespa_lancer",
+  "hp": 130.0,
+  "dmg": 18.0,
+  "speed": 2.3,
+  "aggro": 8.0,
+  "xp": 18.0,
+  "poise": 15.0,
+  "scale": 1.39,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "drops": [
+   [
+    "gold",
+    1,
+    4,
+    12
+   ],
+   [
+    "imp_horn",
+    0.35,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.12,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.06,
+    1,
+    1
+   ],
+   [
+    "spark_tome",
+    0.012,
+    1,
+    1
+   ]
+  ]
+ }
+}

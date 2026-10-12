@@ -1,16 +1,17 @@
 # Crônicas de Aetheria — A Centelha
 
-RPG de ação 2D **isekai** em **Unity 2022.3 LTS**, com arte HD cartoon (nível *Happy Harvest*): sombreamento suave, contorno colorido, animações fluidas.
-Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e carregada pela Unity via `Resources`.
+RPG de ação 2D **isekai** em **Godot 4.3** (GDScript), com arte HD cartoon (nível *Happy Harvest*): sombreamento suave, contorno colorido, animações fluidas.
+Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e importada pelo Godot (`godot/assets`).
 
-> **Estado atual:** campanha completa dos Capítulos 1 a 10 (da Vila de Aurora até Malgrath, o Rei Demônio), com final e créditos. Falta validar tudo rodando na Unity (ver `docs/ROADMAP.md`).
+> **Estado atual:** campanha completa dos Capítulos 1 a 10 (da Vila de Aurora até Malgrath, o Rei Demônio), com final e créditos. Rodando de ponta a ponta no Godot (screenshots de todas as regiões gerados em CI).
 > Planejamento completo: [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md) · Etapas e tarefas: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
-![Vila de Aurora](docs/previews/vila.png)
+![Vila de Aurora](docs/previews/godot_vila.png)
+![Combate](docs/previews/godot_combate.png)
 
 ## Jogar
-- **Local:** abra a pasta `unity/` na Unity 2022.3 LTS e aperte Play (a cena é criada por código).
-- **Nuvem (GitHub Actions):** configure os segredos da licença — ver [`docs/UNITY_CI.md`](docs/UNITY_CI.md). Cada push monta o jogo para Linux, roda e publica screenshots na branch `ci-shots`.
+- **Local:** instale o [Godot 4.3](https://godotengine.org/download), abra `godot/project.godot` e aperte F5 (sem licença, sem conta).
+- **Sandbox/CI:** `tools/run.sh 90 -ciShots /tmp/shots` importa, roda sob Xvfb e salva screenshots. O workflow `.github/workflows/godot.yml` faz o mesmo a cada push e publica na branch `ci-shots`.
 
 ## Controles
 | Ação | Tecla |
@@ -27,14 +28,15 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e carregad
 
 ## Estrutura
 ```
-unity/Assets/Scripts/Core   Boot, Sheets (sprites+JSON), SpriteAnim, Util/YSort, Sfx sintetizado
-unity/Assets/Scripts/Game   Game, World, Player, Enemy, Npc, Projectile, Loot, Fx, Story, Data, CameraRig
-unity/Assets/Scripts/UI     Hud (arcos, orbes, diálogo cinematográfico, banners, números de dano)
-unity/Assets/Editor         BuildScript (build headless) + importação de texturas
-unity/Assets/Resources      Sprites/, Maps/, Fonts/, Shaders/  (gerados por tools/art_hd)
-tools/art_hd                pipeline de arte: core, humanoid, anims, demons, fx, env_objects, env_ground, maps
-tools/unity_check.sh        checagem de compilação C# sem Unity
-prototypes/                 versões antigas (web e Godot), arquivadas
+godot/project.godot        projeto (autoloads: Util, Sheets, Data, Sfx, Story, Game)
+godot/scripts/core         Util, Sheets (sprites+JSON), Anim, Sfx sintetizado
+godot/scripts/game         Game, World, Player, Enemy, Npc, Companion, Projectile, Loot, Fx, Story, Data, CameraRig
+godot/scripts/ui           Hud (arcos, orbes, diálogo, banners, barra de chefe, créditos), Grimoire
+godot/data                 items / demons / recipes / story (JSON, fonte da verdade)
+godot/assets               Sprites/, Maps/, Fonts/  (gerados por tools/art_hd)
+tools/art_hd               pipeline de arte: core, humanoid, anims, demons, fx, env_objects, env_ground, maps
+tools/run.sh               importa + roda no Xvfb (screenshots)
+prototypes/                versões antigas (web, Godot 1, Unity C# completo), arquivadas
 ```
 
 ## Regerar a arte
