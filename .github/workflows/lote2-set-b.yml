@@ -1,0 +1,52 @@
+name: Lote 2 Set B - Four Refined Insectoid Sprites
+on:
+  push:
+    branches: [gpt6-lote2-set-b-20261012]
+    paths:
+      - 'tools/art_hd/lote2_set_b.py'
+      - 'tools/art_hd/build_lote2_set_b.py'
+      - 'tools/art_hd/verify_lote2_set_b.py'
+      - '.github/workflows/lote2-set-b.yml'
+  workflow_dispatch:
+concurrency:
+  group: set-b-sprites-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Aetheria HD Cairo rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libcairo2-dev pkg-config python3-dev
+          python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
+      - name: Render four distinct creature rigs and full directional motion
+        run: python -u tools/art_hd/build_lote2_set_b.py
+      - name: Verify animation changes, unique views and real PNGs
+        run: python tools/art_hd/verify_lote2_set_b.py
+      - name: Commit generated production sprites
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for id in ant_guard roach_plaguebearer spike_beetle dragonfly_skirmisher; do
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.png"
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.json"
+            git add "docs/asset_catalog/previews/lote2/${id}.png"
+          done
+          if git diff --cached --quiet; then
+            echo 'All outputs up to date'
+          else
+            git commit -m 'art: add four independent fully animated insectoid bodies'
+            git fetch origin gpt6-lote2-set-b-20261012
+            git rebase origin/gpt6-lote2-set-b-20261012
+            git push origin HEAD:gpt6-lote2-set-b-20261012
+          fi
