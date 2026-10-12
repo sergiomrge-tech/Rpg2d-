@@ -192,7 +192,6 @@ func new_game() -> void:
 	player.max_hp = state.hp_max()
 	player.hp = player.max_hp
 	player.mp = state.max_mp
-	player.st = state.max_st
 	player.dead = false
 	player.global_position = NEW_GAME_START
 	player.face(Util.Face.DOWN)
