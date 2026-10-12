@@ -82,7 +82,7 @@ def main() -> None:
 
         if record["production"]["art_status"] == "generated_pending_visual_gate":
             assert record["production"]["art_status"] == "generated_pending_visual_gate"
-            expected_generated = BASE_TRACKS + (("skill_2",) if is_boss and id_ != "grakk" else ())
+            expected_generated = BASE_TRACKS + (("skill_2",) if is_boss else ())
             assert tuple(record["production"]["generated_tracks"]) == expected_generated
             data = json.loads((ATLAS / (id_ + ".json")).read_text(encoding="utf-8"))
             assert (data["frameW"], data["frameH"], data["pivotX"], data["pivotY"]) == (

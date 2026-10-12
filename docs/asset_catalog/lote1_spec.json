@@ -5,7 +5,7 @@
   "engine": "Unity 2022.3 LTS",
   "visual_guard": "Maintain existing HD cartoon quality, coloured outlines, Cairo palettes, smooth shading, original silhouettes. Preserve previously approved sprites and environments.",
   "naming": "SpriteAnim.Play uses directional names such as cast_down; 'cast' is skill 1, bosses need NEW skill_2 tracks; left uses mirrored _side.",
-  "note": "All 15 creatures have generated PNG/JSON sheets with 3-direction base animations. Grakk skill_2 is still pending. Artwork still requires visual approval; no new combat AI/VFX/spawns integrated.",
+  "note": "All 15 creature atlases generated with 3 directional views for each action, including two ability animations for all 5 bosses. Art awaits visual approval and real Unity playtest; no new gameplay AI/VFX/spawns integrated.",
   "roster": [
     {
       "id": "imp_scout",
@@ -1182,7 +1182,8 @@
           "attack",
           "cast",
           "hurt",
-          "death"
+          "death",
+          "skill_2"
         ],
         "gameplay_registered": false,
         "unity_visual_approved": false,

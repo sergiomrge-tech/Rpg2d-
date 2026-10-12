@@ -1,4 +1,4 @@
-"""Renders 13 additional HD cartoon creatures in the Lote 1 catalog.
+"""Renders 13 new HD cartoon creatures plus Grakk's second skill in the Lote 1 catalog.
 
 All images come directly from the existing Cairo renderer and humanoid / imp
 rigs. Previews are sprite contact sheets, NEVER Unity screenshots.
@@ -48,7 +48,7 @@ def main():
     for entry in roster:
         id_=entry['id']
         if id_ not in CREATURES:
-            continue  # Oni and Grakk are already generated in a separate audited pipeline.
+            continue  # Oni already exists; Grakk is regenerated with its missing second skill.
         character=CREATURES[id_]
         a=entry['animations']['tracks']
         jobs=[]
@@ -96,7 +96,7 @@ def main():
         image.save(PREVIEW_DIR/(filename+'.png'),optimize=True)
     draw_overview(roster[:10],'LOTE1_DEMONIOS',5)
     draw_overview(roster[10:],'LOTE1_CHEFES',5,w=245,h=254)
-    print('Completed all 13 creature atlases and 2 overview galleries')
+    print('Completed 13 additional creature atlases, extended Grakk and 2 overview galleries')
 
 if __name__=='__main__':
     main()

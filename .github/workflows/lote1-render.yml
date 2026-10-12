@@ -1,4 +1,7 @@
 name: Render Lote 1 - 15 HD creatures
+concurrency:
+  group: render-lote1-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches: [gpt6-lote1-all-sprites-20261012]
@@ -25,7 +28,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq libcairo2-dev pkg-config python3-dev
           python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
-      - name: Render all thirteen missing 3-view animated atlases and contact previews
+      - name: Render 13 additional animated atlases and Grakk second skill + previews
         run: python -u tools/art_hd/build_lote1_art.py
       - name: Validate all fifteen artwork atlases and actual animation JSON
         run: python tools/art_hd/verify_lote1_rendered.py
@@ -34,7 +37,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          for id in imp_scout imp_raider imp_pyro imp_hexer imp_bomber imp_howler oni_lancer oni_shielder oni_executioner morgash_ironhorn velka_flamebeak krull_chainlord thornmaw_alpha; do
+          for id in imp_scout imp_raider imp_pyro imp_hexer imp_bomber imp_howler oni_lancer oni_shielder oni_executioner morgash_ironhorn velka_flamebeak krull_chainlord thornmaw_alpha grakk; do
             git add "unity/Assets/Resources/Sprites/Demons/${id}.png"
             git add "unity/Assets/Resources/Sprites/Demons/${id}.json"
             git add "docs/asset_catalog/previews/${id}.png"

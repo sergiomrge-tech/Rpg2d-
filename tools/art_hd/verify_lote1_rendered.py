@@ -26,7 +26,7 @@ def verify():
         meta=json.loads(j.read_text(encoding='utf-8'))
         assert (meta['frameW'],meta['frameH'],meta['pivotX'],meta['pivotY'])==(v['frameW'],v['frameH'],v['pivotX'],v['pivotY'])
         anims={x['name']:x for x in meta['anims']}
-        required={a['id']+'_'+direction for a in item['animations']['tracks'] if name!='grakk' or a['id']!='skill_2' for direction in ('down','up','side')}
+        required={a['id']+'_'+direction for a in item['animations']['tracks'] for direction in ('down','up','side')}
         assert set(anims)==required,(name,sorted(required-set(anims)),sorted(set(anims)-required))
         prev=PRE/(name+'.png')
         assert prev.is_file() and prev.stat().st_size>3000,(name,'missing preview')
@@ -60,7 +60,7 @@ def verify():
         assert png.is_file() and png.stat().st_size>10000,name
         with Image.open(png) as im: im.verify()
     print('SUCCESS: 15 unique creature sprites, JSONs and 15 previews; both gallery sheets verified.')
-    print('PENDING: Unity real gameplay, visual approval, AI, distinct VFX and Grakk skill_2.')
+    print('PENDING: Unity real gameplay, visual approval, AI, distinct VFX ; all boss skills now have animation tracks.')
 
 if __name__=='__main__':
     verify()
