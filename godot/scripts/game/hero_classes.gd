@@ -8,7 +8,7 @@ const ORDER := ["warrior", "mage", "archer", "paladin", "assassin", "summoner"]
 const CLASSES := {
 	"warrior": {
 		"name": "Guerreiro", "role": "Espada e combate corpo a corpo",
-		"strong": "Muita vida, defesa e golpes fortes", "weak": "Curto alcance, lento e sem magia", "weapon": "sword",
+		"strong": "Vida alta e defesa sólida", "weak": "Lento; sem magia ou alcance", "weapon": "sword",
 		"move": 0.91, "defense": 8.0, "crit": 0.08, "damage_taken": 0.91,
 		"skill": "Execução de Espada", "desc": "Só ataques com espada e técnicas físicas; sem conjuração.",
 		"hp": 135.0, "mp": 45.0, "atk": 16.0, "mag": 9.0,
@@ -17,7 +17,7 @@ const CLASSES := {
 	},
 	"mage": {
 		"name": "Mago", "role": "Magia elemental e arcana",
-		"strong": "Maior dano mágico e muita mana", "weak": "Pouca vida e defesa, sem armas", "weapon": "none",
+		"strong": "Magia forte e muita mana", "weak": "Pouca vida; não usa armas", "weapon": "none",
 		"move": 0.97, "defense": 0.0, "crit": 0.06, "damage_taken": 1.14,
 		"skill": "Explosão Arcana", "desc": "Somente magia: feitiço básico e feitiço carregado.",
 		"hp": 78.0, "mp": 105.0, "atk": 7.0, "mag": 23.0,
@@ -26,7 +26,7 @@ const CLASSES := {
 	},
 	"archer": {
 		"name": "Arqueiro", "role": "Alcance e precisão",
-		"strong": "Longo alcance, agilidade e precisão", "weak": "Frágil de perto, não usa outras armas ou magia", "weapon": "bow",
+		"strong": "Alcance e precisão", "weak": "Frágil de perto; apenas arco", "weapon": "bow",
 		"move": 1.12, "defense": 1.0, "crit": 0.13, "damage_taken": 1.09,
 		"skill": "Rajada de Flechas", "desc": "Somente arco: flecha simples e rajada tripla.",
 		"hp": 96.0, "mp": 60.0, "atk": 14.0, "mag": 10.0,
@@ -35,7 +35,7 @@ const CLASSES := {
 	},
 	"paladin": {
 		"name": "Paladino", "role": "Proteção e luz sagrada",
-		"strong": "Maior proteção, autocura e resistência", "weak": "Lento, menor dano ofensivo", "weapon": "sword",
+		"strong": "Defesa, cura e muita vida", "weak": "Lento; baixo dano explosivo", "weapon": "sword",
 		"move": 0.85, "defense": 11.0, "crit": 0.04, "damage_taken": 0.83,
 		"skill": "Luz Restauradora", "desc": "Espada e poder sagrado: golpe físico e cura.",
 		"hp": 151.0, "mp": 77.0, "atk": 12.0, "mag": 17.0,
@@ -44,7 +44,7 @@ const CLASSES := {
 	},
 	"assassin": {
 		"name": "Assassino", "role": "Mobilidade e golpes críticos",
-		"strong": "Muito rápido, crítico e golpes consecutivos", "weak": "Pouca defesa, precisa se aproximar", "weapon": "dual_daggers",
+		"strong": "Velocidade e críticos altos", "weak": "Defesa baixa e alcance curto", "weapon": "dual_daggers",
 		"move": 1.19, "defense": 0.0, "crit": 0.28, "damage_taken": 1.19,
 		"skill": "Passo das Adagas", "desc": "Só duas adagas: combos duplos e ataque rápido.",
 		"hp": 90.0, "mp": 64.0, "atk": 18.0, "mag": 10.0,
@@ -53,7 +53,7 @@ const CLASSES := {
 	},
 	"summoner": {
 		"name": "Invocador", "role": "Aliados invocados",
-		"strong": "Pets lutam e protegem à distância", "weak": "Muito frágil, depende dos pets, sem ataque próprio", "weapon": "none",
+		"strong": "Pets atacam e protegem", "weak": "Frágil sem seus familiares", "weapon": "none",
 		"move": 0.95, "defense": 0.0, "crit": 0.0, "damage_taken": 1.21,
 		"skill": "Espírito Guardião", "desc": "Somente invoca ou comanda pets: sem arma nem feitiços ofensivos.",
 		"hp": 84.0, "mp": 108.0, "atk": 8.0, "mag": 22.0,
