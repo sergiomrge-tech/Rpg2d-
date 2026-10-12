@@ -28,40 +28,40 @@
  "valemont": [
   {
    "kind": "roach_plaguebearer",
-   "x": 4448,
-   "y": 5280,
+   "x": 928,
+   "y": 5408,
    "level": 8
   },
   {
    "kind": "spike_beetle",
-   "x": 928,
-   "y": 5408,
+   "x": 1568,
+   "y": 672,
    "level": 8
   }
  ],
  "kharis": [
   {
    "kind": "scarab_brute",
-   "x": 672,
-   "y": 928,
-   "level": 9
-  },
-  {
-   "kind": "vespa_lancer",
-   "x": 5152,
+   "x": 928,
    "y": 4640,
    "level": 9
   },
   {
-   "kind": "cicada_screecher",
+   "kind": "vespa_lancer",
    "x": 3552,
    "y": 544,
+   "level": 9
+  },
+  {
+   "kind": "cicada_screecher",
+   "x": 4320,
+   "y": 2976,
    "level": 10
   },
   {
    "kind": "termite_burrower",
-   "x": 4320,
-   "y": 2976,
+   "x": 1952,
+   "y": 1312,
    "level": 10
   },
   {

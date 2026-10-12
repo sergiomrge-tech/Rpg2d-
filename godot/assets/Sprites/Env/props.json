@@ -889,6 +889,136 @@
    "colW": 14,
    "colH": 10,
    "colY": 0
+  },
+  {
+   "name": "tree_birch",
+   "w": 170,
+   "h": 250,
+   "pivotX": 85,
+   "pivotY": 14,
+   "colW": 18,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "tree_cherry",
+   "w": 190,
+   "h": 230,
+   "pivotX": 95,
+   "pivotY": 16,
+   "colW": 22,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "tree_willow",
+   "w": 220,
+   "h": 250,
+   "pivotX": 110,
+   "pivotY": 18,
+   "colW": 24,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "hedge",
+   "w": 150,
+   "h": 90,
+   "pivotX": 75,
+   "pivotY": 12,
+   "colW": 130,
+   "colH": 16,
+   "colY": 0
+  },
+  {
+   "name": "topiary",
+   "w": 70,
+   "h": 130,
+   "pivotX": 35,
+   "pivotY": 12,
+   "colW": 24,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "fern",
+   "w": 80,
+   "h": 60,
+   "pivotX": 40,
+   "pivotY": 8,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "flower_bed",
+   "w": 120,
+   "h": 60,
+   "pivotX": 60,
+   "pivotY": 14,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "berry_bush",
+   "w": 90,
+   "h": 70,
+   "pivotX": 45,
+   "pivotY": 8,
+   "colW": 34,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "tall_grass",
+   "w": 80,
+   "h": 80,
+   "pivotX": 40,
+   "pivotY": 8,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "log",
+   "w": 130,
+   "h": 70,
+   "pivotX": 65,
+   "pivotY": 12,
+   "colW": 100,
+   "colH": 16,
+   "colY": 0
+  },
+  {
+   "name": "dry_shrub",
+   "w": 90,
+   "h": 70,
+   "pivotX": 45,
+   "pivotY": 8,
+   "colW": 30,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "frost_shrub",
+   "w": 90,
+   "h": 70,
+   "pivotX": 45,
+   "pivotY": 8,
+   "colW": 30,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "glow_fern",
+   "w": 90,
+   "h": 70,
+   "pivotX": 45,
+   "pivotY": 10,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
   }
  ]
 }

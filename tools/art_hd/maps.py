@@ -12,12 +12,14 @@ import sys
 import numpy as np
 from PIL import Image
 from expand_maps import expand
+import vegetation
 from env_ground import bake, T
 from env_objects import PROPS
 from sheet import ROOT
 
 OUT = os.path.join(ROOT, 'godot', 'assets', 'Maps')
 CHUNK = 1024
+JSON_ONLY = '--json-only' in sys.argv
 EXPAND_FACTOR = {n: 0.21 for n in ['village', 'velmoor', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']}   # ring of new land on each side => ~2x area
 
 
@@ -115,15 +117,21 @@ class Map:
         if self.name in EXPAND_FACTOR and not getattr(self, '_expanded', False):
             f = EXPAND_FACTOR[self.name]
             expand(self, round(self.gw * f), round(self.gh * f))
+        vegetation.add(self)
         d = os.path.join(OUT, self.name)
         os.makedirs(d, exist_ok=True)
-        img = bake(self.grid, self.seed, self.shapes, getattr(self, 'grass', None))
-        h, w = img.shape[:2]
-        cx, cy = math.ceil(w / CHUNK), math.ceil(h / CHUNK)
-        for j in range(cy):
-            for i in range(cx):
-                tile = img[j * CHUNK:(j + 1) * CHUNK, i * CHUNK:(i + 1) * CHUNK]
-                Image.fromarray(tile, 'RGB').save(os.path.join(d, f'g_{i}_{j}.png'), optimize=True)
+        if JSON_ONLY:      # keep the already-baked ground; only rewrite the map JSON (props, spawns, ...)
+            h, w = self.gh * T, self.gw * T
+            cx, cy = math.ceil(w / CHUNK), math.ceil(h / CHUNK)
+            img = None
+        else:
+            img = bake(self.grid, self.seed, self.shapes, getattr(self, 'grass', None))
+            h, w = img.shape[:2]
+            cx, cy = math.ceil(w / CHUNK), math.ceil(h / CHUNK)
+            for j in range(cy):
+                for i in range(cx):
+                    tile = img[j * CHUNK:(j + 1) * CHUNK, i * CHUNK:(i + 1) * CHUNK]
+                    Image.fromarray(tile, 'RGB').save(os.path.join(d, f'g_{i}_{j}.png'), optimize=True)
         blocked = ''.join('1' if c in 'wx' else '0' for c in self.grid.flatten())
         data = dict(name=self.name, w=self.gw, h=self.gh, tile=T, chunk=CHUNK, chunksX=cx, chunksY=cy,
                     blocked=blocked, playerX=self.player[0], playerY=self.player[1],
@@ -131,7 +139,8 @@ class Map:
                     caches=getattr(self, 'caches', []))
         with open(os.path.join(OUT, self.name + '.json'), 'w') as fp:
             json.dump(data, fp, indent=0)
-        Image.fromarray(img, 'RGB').resize((w // 4, h // 4)).save(os.path.join(ROOT, 'tools', 'art_hd', f'_{self.name}_ground_small.png'))
+        if img is not None:
+            Image.fromarray(img, 'RGB').resize((w // 4, h // 4)).save(os.path.join(ROOT, 'tools', 'art_hd', f'_{self.name}_ground_small.png'))
         print(f'map {self.name}: {self.gw}x{self.gh} tiles, {len(self.props)} props, {len(self.spawns)} spawns')
         return img
 
@@ -458,6 +467,39 @@ def valemont():
             x, y = pol(r, a + 10)
             if m.grid[int(y), int(x)] == 's' and m.free(x, y, 0) is False and not road_near(x + 1.3, y, 0) is False:
                 pass
+    # ---- city greenery: avenue trees, plaza hedges and flower beds, topiary at the shops, willows along the river
+    def ok(x, y, pad=0):
+        return m.free(x, y, pad) and not hm[int(y) - 1:int(y) + 2, int(x) - 1:int(x) + 2].any()
+    for i, y in enumerate(list(range(22, 44, 5)) + list(range(57, 63, 5))):
+        for sx in (45.8, 54.2):
+            if ok(sx, y):
+                m.put('tree_birch' if (i + (sx > 50)) % 2 == 0 else 'tree_cherry', sx, y)
+    for i, x in enumerate(list(range(23, 44, 5)) + list(range(58, 79, 5))):
+        for sy in (46.0, 54.0):
+            if ok(x, sy):
+                m.put('tree_cherry' if (i + (sy > 50)) % 2 == 0 else 'tree_birch', x, sy)
+    for a in range(0, 360, 30):
+        if any(abs((a - g + 180) % 360 - 180) < 14 for g in (0, 90, 180, 270, 315, 45, 225)):
+            continue
+        x, y = pol(10.4, a)
+        if ok(x, y):
+            m.put('hedge', x, y)
+    for a in range(15, 360, 45):
+        x, y = pol(9.0, a)
+        if ok(x, y):
+            m.put('flower_bed', x, y)
+    for kind, hw in [('tavern', 3.2), ('apothecary', 2.5), ('armory', 2.6), ('bakery', 2.4), ('library', 2.4), ('barracks', 3.6), ('smithy', 2.8)]:
+        p = spot.get(kind)
+        if p:
+            for sx in (-hw - 0.9, hw + 0.9):
+                if ok(p[0] + sx, p[1] + 0.8):
+                    m.put('topiary', p[0] + sx, p[1] + 0.8)
+    for (x0, y0), (x1, y1) in zip(river, river[1:]):
+        for t in (0.25, 0.75):
+            rx, ry = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+            for off in (-3.6, 3.6):
+                if ok(rx + off, ry, 1) and math.hypot(rx - C[0], ry - C[1]) < RW - 2:
+                    m.put('tree_willow', rx + off, ry + 0.6)
     m.scatter(['bush_flower', 'bush', 'flowers', 'tuft'], 120, (24, 24, 76, 76), pad=0, min_d=1.0)
     # ---- outside the walls: farmland, hamlets, forests
     m.rect(8, 8, 20, 14, 't')
@@ -788,6 +830,6 @@ def self_rnd(m, items):
 
 if __name__ == '__main__':
     import sys
-    which = sys.argv[1:] or ['village', 'velmoor', 'valemont', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']
+    which = [a for a in sys.argv[1:] if not a.startswith('--')] or ['village', 'velmoor', 'valemont', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']
     for n in which:
         globals()[n]().export()

@@ -1000,6 +1000,12 @@ func _ci_shots() -> void:
 		_tour_to(m)
 		await _wait(1.0)
 		await shot("10_" + m)
+		if m == "valemont":
+			for spot in [["plaza", Vector2(50, 54)], ["taverna", Vector2(68, 51)], ["ferraria", Vector2(33, 52)], ["catedral", Vector2(38, 43)], ["estabulo", Vector2(30, 61)]]:
+				player.global_position = spot[1] * 64.0
+				camera.snap()
+				await _wait(0.6)
+				await shot("11_valemont_" + spot[0])
 	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")

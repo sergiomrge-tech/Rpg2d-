@@ -34,6 +34,7 @@ const LIGHTS := {
 	"cauldron": [Color(0.5, 1, 0.5), 2.4, 0.3, 0.7, 0.2],
 	"anvil": [Color(1, 0.6, 0.3), 1.8, 0.2, 0.5, 0.2],
 	"fountain": [Color(0.6, 0.85, 1), 3.0, 0.1, 1.0, 0.05],
+	"glow_fern": [Color(0.4, 1, 0.85), 2.4, 0.2, 0.5, 0.15],
 	"lamp_ornate": [Color(1, 0.82, 0.45), 3.4, 0.3, 2.2, 0.05],
 	"tavern": [Color(1, 0.72, 0.32), 5.0, 0.22, 1.3, 0.1],
 	"smithy": [Color(1, 0.5, 0.18), 4.2, 0.34, 0.9, 0.3],
@@ -158,7 +159,7 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 	s.centered = false
 	s.offset = Vector2(-float(info.get("pivotX", tx.get_width() / 2)), -(float(info.get("h", tx.get_height())) - float(info.get("pivotY", 0))))
 	var pos := Vector2(float(p["x"]), float(p["y"]))
-	if kind == "bridge" or kind == "flowers":
+	if kind == "bridge" or kind == "flowers" or kind == "flower_bed":
 		s.position = pos
 		flat_layer.add_child(s)
 	else:
@@ -169,7 +170,7 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 			var ch := float(info["colH"])
 			var cy := float(info["colY"])
 			_box(pos + Vector2(0, -(ch * 0.5 - cy)), Vector2(cw, ch))
-	if kind.begins_with("tree") or kind.begins_with("bush") or kind == "tuft" or kind == "swamp_tree" or kind == "snow_pine":
+	if kind.begins_with("tree") or kind.begins_with("bush") or kind in ["tuft", "swamp_tree", "snow_pine", "fern", "glow_fern", "tall_grass", "dry_shrub", "berry_bush", "hedge", "frost_shrub"]:
 		_swaying.append(s)
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
 		_tall.append({"n": s, "w": float(info.get("w", 200)), "h": float(info.get("h", 200)), "px": float(info.get("pivotX", 100))})

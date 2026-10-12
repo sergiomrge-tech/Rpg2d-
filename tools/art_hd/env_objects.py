@@ -1258,6 +1258,7 @@ def build_all():
 
 
 import env_town  # noqa: E402,F401  (registers the town props)
+import env_veg  # noqa: E402,F401  (registers extra vegetation)
 
 
 if __name__ == '__main__':

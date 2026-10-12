@@ -67,6 +67,8 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento
+- ✅ **Valemont urbanizada:** taverna (descanso 40 ouro: cura + salva), ferraria (forja), estábulo, boticário, armaria, padaria, quartel, biblioteca, 4 tipos novos de casa, estátuas do herói, bancos, vasos, carroça de feno, bebedouro, bancas coloridas e postes ornamentais com brilho noturno; NPCs e diálogos para cada serviço; prédios ficam translúcidos quando o herói passa atrás
+- ✅ **Vegetação:** 13 novas plantas (bétula, cerejeira, salgueiro, cerca-viva, topiaria, samambaia, canteiro de flores, arbusto de frutas, capim alto, tronco caído, arbusto seco, arbusto de gelo, samambaia luminosa), plantio em bosques por região, junco à beira d'água, alamedas e jardins na capital
 - ✅ **Mapas ampliados (~2× a área):** anel de terra nova ao redor de cada região (`tools/art_hd/expand_maps.py`), estradas e rios prolongados até as novas bordas, mesma densidade de objetos e inimigos, pontos de interesse (acampamentos com elite, círculos de pedra, ruínas, bosques) ligados por trilhas e **baús de tesouro** (`TreasureCache`) que só abrem uma vez
 - ✅ **Valemont circular** (100×100): muralha em anel com torres, três portões e comportas do rio, ruas radiais e concêntricas, praça com fonte, catedral e Guilda, mercado, bairro nobre, dois bosques e o beco do Assassino sem saída
 - ✅ Menu inicial (Continuar / Novo Jogo / Opções / Sair), teclado, mouse e toque; novo jogo acorda num campo além do rio, longe de Aurora, guiado pela bússola até a Guilda
