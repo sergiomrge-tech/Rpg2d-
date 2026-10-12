@@ -13,6 +13,24 @@ namespace Aetheria
         public bool inputLocked;
         public Vector2 scriptedMove;   // used by CI demo / cutscenes
         float hexSlowLeft;
+        float venomLeft;
+        float venomTickLeft;
+        float sonicDisruptLeft;
+
+        public void ApplyVenom(float seconds)
+        {
+            if (dead) return;
+            venomLeft = Mathf.Max(venomLeft, seconds);
+            venomTickLeft = Mathf.Max(venomTickLeft, .85f);
+            Fx.Toast("Veneno!", new Color(.66f, 1f, .48f), Pos + Vector2.up * 2.4f);
+        }
+
+        public void ApplySonicDisrupt(float seconds)
+        {
+            if (dead) return;
+            sonicDisruptLeft = Mathf.Max(sonicDisruptLeft, seconds);
+            Fx.Toast("Atordoado!", new Color(.51f, .9f, 1f), Pos + Vector2.up * 2.4f);
+        }
 
         // Moth Hexer's curse only slows movement for a short, visible period.
         public void ApplyHexSlow(float seconds)
@@ -56,6 +74,7 @@ namespace Aetheria
         Vector2 ReadMove()
         {
             if (inputLocked) return scriptedMove;
+            if (sonicDisruptLeft > 0f) return Vector2.zero;
             Vector2 v = Vector2.zero;
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) v.x -= 1;
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) v.x += 1;
@@ -66,7 +85,7 @@ namespace Aetheria
 
         bool Pressed(params KeyCode[] keys)
         {
-            if (inputLocked) return false;
+            if (inputLocked || sonicDisruptLeft > 0f) return false;
             foreach (var k in keys) if (Input.GetKeyDown(k)) return true;
             return false;
         }
@@ -78,6 +97,18 @@ namespace Aetheria
             float dt = Time.deltaTime;
             stateT += dt;
             if (hexSlowLeft > 0f) hexSlowLeft = Mathf.Max(0f, hexSlowLeft - dt);
+            if (sonicDisruptLeft > 0f) sonicDisruptLeft = Mathf.Max(0f, sonicDisruptLeft - dt);
+            if (venomLeft > 0f)
+            {
+                venomLeft = Mathf.Max(0f, venomLeft - dt);
+                venomTickLeft -= dt;
+                if (venomTickLeft <= 0f)
+                {
+                    venomTickLeft = .85f;
+                    Hurt(3f, Pos, 0f, 0f);
+                    if (dead) return;
+                }
+            }
             moveDir = ReadMove();
             bool run = !inputLocked && Input.GetKey(KeyCode.LeftShift);
 
@@ -306,6 +337,9 @@ namespace Aetheria
             mp = gs.maxMp;
             st = gs.maxSt;
             hexSlowLeft = 0f;
+            venomLeft = 0f;
+            venomTickLeft = 0f;
+            sonicDisruptLeft = 0f;
             ToFree();
         }
     }
