@@ -1,6 +1,6 @@
 class_name Hud
 extends CanvasLayer
-## Non-boxy HUD: portrait medallion wrapped by curved HP/MP/stamina arcs, skill orbs fanned along an arc,
+## Non-boxy HUD: portrait medallion wrapped by curved HP/MP arcs, skill orbs fanned along an arc,
 ## loot feed without panels, cinematic dialogue band, banners, boss bar, credits, cutscene backdrop.
 ## Layout is authored in a 1920x1080 space with Unity-like (anchor, centre offset, y-up) coordinates.
 
@@ -15,7 +15,6 @@ var gold_icon: TextureRect
 var hp_fill: TextureProgressBar
 var hp_trail: TextureProgressBar
 var mp_fill: TextureProgressBar
-var st_fill: TextureProgressBar
 var hp_text: Label
 var level_text: Label
 var gold_text: Label
@@ -35,7 +34,6 @@ var vignette: TextureRect
 var hp_shown := 1.0
 var hp_trail_shown := 1.0
 var mp_shown := 1.0
-var st_shown := 1.0
 var hurt_amt := 0.0
 
 var orb_cd: Array = []
@@ -174,8 +172,6 @@ func _build() -> void:
 	hp_fill = _radial(med, "arc_hp_fill", 440, ARC_SPAN, 270)
 	_radial(med, "arc_mp_track", 440, ARC_SPAN, 270)
 	mp_fill = _radial(med, "arc_mp_fill", 440, ARC_SPAN, 270)
-	_radial(med, "arc_st_track", 440, ARC_SPAN, 270)
-	st_fill = _radial(med, "arc_st_fill", 440, ARC_SPAN, 270)
 	img(med, Sheets.ui("portrait"), C, Vector2.ZERO, Vector2(196, 196))
 	img(med, Sheets.ui("medallion"), C, Vector2.ZERO, Vector2(300, 300))
 	level_text = txt(med, "1", serif, 30, Color(1, 0.93, 0.7), C, Vector2(0, -128), Vector2(80, 40))
@@ -446,15 +442,12 @@ func _process(delta: float) -> void:
 		var gs := p.gs
 		var hp_n := p.hp / gs.hp_max()
 		var mp_n := p.mp / gs.max_mp
-		var st_n := p.st / gs.max_st
 		hp_shown = lerpf(hp_shown, hp_n, minf(1.0, dt * 12.0))
 		hp_trail_shown = hp_shown if hp_trail_shown < hp_shown else move_toward(hp_trail_shown, hp_shown, dt * 0.35)
 		mp_shown = lerpf(mp_shown, mp_n, minf(1.0, dt * 10.0))
-		st_shown = lerpf(st_shown, st_n, minf(1.0, dt * 14.0))
 		hp_fill.value = clampf(hp_shown, 0.0, 1.0)
 		hp_trail.value = clampf(hp_trail_shown, 0.0, 1.0)
 		mp_fill.value = clampf(mp_shown, 0.0, 1.0)
-		st_fill.value = clampf(st_shown, 0.0, 1.0)
 		var low := (0.5 + 0.5 * sin(now * 8.0)) if hp_n < 0.3 else 0.0
 		hp_fill.tint_progress = Color.WHITE.lerp(Color(1, 0.6, 0.6), low)
 		hp_text.text = "%d / %d" % [ceili(p.hp), roundi(gs.hp_max())]
@@ -463,8 +456,9 @@ func _process(delta: float) -> void:
 		rank_text.text = "Aventureiro · Rank " + gs.guild_rank
 		potion_count.text = str(gs.count("potion"))
 		orb_cd[1].value = 1.0 - p.mp / 12.0 if p.mp < 12.0 else 0.0
-		orb_cd[2].value = 1.0 - p.st / 24.0 if p.st < 24.0 else 0.0
-		orb_cd[0].value = 1.0 - p.st / 7.0 if p.st < 7.0 else 0.0
+		# Melee and dodge have no stamina requirement; the orbs stay ready.
+		orb_cd[2].value = 0.0
+		orb_cd[0].value = 0.0
 	var ql := Game.quest_line().split("\n")
 	quest_head.text = ql[0]
 	quest_sub.text = ql[1] if ql.size() > 1 else ""
