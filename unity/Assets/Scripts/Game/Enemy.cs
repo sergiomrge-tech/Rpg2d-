@@ -52,6 +52,19 @@ namespace Aetheria
 
         void OnDestroy() { All.Remove(this); }
 
+        // Unity CI-only capture hook. Actual Enemy animation and ability logic,
+        // not a mockup or a texture preview; only called from -ciShots.
+        public void CiCastSkill(Vector2 target)
+        {
+            if (dead) return;
+            var direction = target - Pos;
+            skillDirection = direction.sqrMagnitude > .001f ? direction.normalized : Util.FacingVec(facing);
+            Face(Util.FacingFrom(skillDirection, facing));
+            hitDone = false;
+            Go(St.Cast);
+            anim.Play("cast", true);
+        }
+
         public static Enemy Nearest(Vector2 p, float maxDist, Vector2? dir = null, float minDot = -2f)
         {
             Enemy best = null;
