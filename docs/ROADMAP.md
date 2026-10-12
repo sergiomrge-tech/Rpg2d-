@@ -54,5 +54,6 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 ## Catálogo expandido — Lote 1 (especificação técnica)
 - ✅ Fichas técnicas de **10 demônios + 5 chefes** em `docs/asset_catalog/LOTE1_FICHAS.md`, com 285 trilhas e 3.024 quadros **planejados**, FPS, quadro de evento, rig, região e habilidades individuais.
 - ✅ Validador estático `tools/art_hd/verify_lote1.py` compara o contrato com os JSONs reais de Oni e Grakk sem depender da licença Unity.
-- ⬜ Gerar 13 sprites restantes; produzir a segunda habilidade animada de Grakk e os VFX únicos. Nenhum novo inimigo foi registrado no combate ainda.
-- ⬜ Aprovar a fidelidade HD cartoon via capturas **reais** do Unity, depois integrar IA, spawns e chefes opcionais. Preservar os chefes narrativos oficiais definidos no GDD.
+- ✅ 13 novas folhas de sprites produzidas (todos os 10 demônios e 5 chefes do Lote 1 possuem PNG/JSON e prévia); gerador em `tools/art_hd/build_lote1_art.py` e QA automática. **Ainda requer aprovação visual e testes reais Unity.**
+- ⬜ Renderizar `skill_2` de Grakk e criar VFX de habilidades individuais; integrar IA e spawns. Nenhum novo inimigo do Lote 1 foi registrado no combate.
+- ⬜ Aprovar fidelidade HD cartoon de todos os 15 via capturas **reais** do Unity, corrigir clipping/escala e só então integrar IA, spawns e chefes opcionais, preservando os chefes narrativos do GDD.
