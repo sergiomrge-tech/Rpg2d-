@@ -209,9 +209,11 @@ func _process(dt: float) -> void:
 		Engine.time_scale = want
 	if player == null:
 		return
-	if consume(KEY_ESCAPE) and not in_menu and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead:
+	# Modal-first input: never consume Esc/Tab before the open overlay sees it.
+	# These keys used to be stolen from Grimoire/Options during pause.
+	if not in_menu and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
 		options.toggle()
-	if consume(KEY_TAB) and not in_menu and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked:
+	if not in_menu and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
 		grimoire.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
