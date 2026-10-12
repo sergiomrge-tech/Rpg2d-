@@ -7,6 +7,7 @@ namespace Aetheria
         public Vector2 vel;
         public float dmg, life = 2.2f, radius = 0.35f;
         public bool friendly;
+        public bool inflictsHexSlow;
         public int tier;
         public string hitFx = "hit";
         SpriteAnim anim;
@@ -54,6 +55,18 @@ namespace Aetheria
             return p;
         }
 
+        // Moth's curse: distinct projectile color, flight speed and player debuff.
+        public static Projectile HexSpore(Vector2 pos, Vector2 dir, float dmg)
+        {
+            var p = Make("fireball", pos, dir, 4.4f, dmg, false, .78f,
+                new Color(.73f, .39f, .88f));
+            p.hitFx = "hit_spark";
+            p.life = 3.1f;
+            p.radius = .46f;
+            p.inflictsHexSlow = true;
+            return p;
+        }
+
         void Update()
         {
             float dt = Time.deltaTime;
@@ -63,7 +76,8 @@ namespace Aetheria
             if (trailT <= 0)
             {
                 trailT = 0.035f;
-                Fx.Ember(transform.position, friendly && tier == 1 ? new Color(0.6f, 0.9f, 1f) : new Color(1f, 0.6f, 0.2f));
+                Fx.Ember(transform.position, inflictsHexSlow ? new Color(.72f, .39f, .94f) :
+                    friendly && tier == 1 ? new Color(0.6f, 0.9f, 1f) : new Color(1f, 0.6f, 0.2f));
             }
             if (glow != null) glow.transform.localScale = Vector3.one * (1.8f + Mathf.Sin(Time.time * 30) * 0.15f);
             Vector2 p = transform.position;
@@ -85,7 +99,11 @@ namespace Aetheria
             {
                 if ((Player.I.Pos + Vector2.up * 0.6f - p).magnitude < radius + 0.3f)
                 {
-                    if (Player.I.Hurt(Mathf.Round(dmg), p - vel.normalized, 6f, 15)) { Explode(); return; }
+                    if (Player.I.Hurt(Mathf.Round(dmg), p - vel.normalized, 6f, 15))
+                    {
+                        if (inflictsHexSlow) Player.I.ApplyHexSlow(2.1f);
+                        Explode(); return;
+                    }
                 }
             }
             if (World.I != null && World.I.BlockedAt(p + Vector2.down * 0.8f, true)) { Explode(); return; }
