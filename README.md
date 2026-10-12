@@ -1,40 +1,44 @@
-# Crônicas de Aetheria — Fragmentos da Aurora
+# Crônicas de Aetheria — A Centelha
 
-RPG de ação 2D em **pixel art estilo anime**, feito do zero em TypeScript + Canvas 2D (sem assets externos: toda a arte e o áudio são gerados por código).
+RPG de ação 2D **isekai** em **Unity 2022.3 LTS**, com arte HD cartoon (nível *Happy Harvest*): sombreamento suave, contorno colorido, animações fluidas.
+Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e carregada pela Unity via `Resources`.
 
-> **Estado atual:** Capítulo 1 jogável (~1–1,5 h) + motor completo. Roteiro dos 10 capítulos (~30 h) em [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md).
+> **Estado atual:** Capítulo 1 (Vila de Aurora + Bosque dos Chifres) com combate, IA demoníaca, loot, missão da Guilda e prólogo.
+> Planejamento completo: [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md) · Etapas e tarefas: [`docs/ROADMAP.md`](docs/ROADMAP.md)
+
+![Vila de Aurora](docs/previews/vila.png)
 
 ## Jogar
-```bash
-npm install
-npm run dev      # http://localhost:5173
-npm run build    # produção em dist/ (hospedável em qualquer servidor estático)
-```
+- **Local:** abra a pasta `unity/` na Unity 2022.3 LTS e aperte Play (a cena é criada por código).
+- **Nuvem (GitHub Actions):** configure os segredos da licença — ver [`docs/UNITY_CI.md`](docs/UNITY_CI.md). Cada push monta o jogo para Linux, roda e publica screenshots na branch `ci-shots`.
 
 ## Controles
-| Ação | Teclado | Gamepad |
-|---|---|---|
-| Mover | Setas / WASD | Analógico / D-pad |
-| Atacar (combo ×3) | J / Z | X |
-| Esquivar (i-frames) | K / X / Shift | B |
-| Habilidades 1–4 | 1 2 3 4 | Y / RB / LB / RT |
-| Interagir / confirmar | E / Espaço / Enter | A |
-| Poção / Éter rápido | Q / R | — |
-| Menu | Esc / Tab | Start |
-
-No celular/tablet aparecem controles virtuais na tela.
+| Ação | Tecla |
+|---|---|
+| Mover / correr | WASD ou setas / Shift |
+| Combo de espada (×3) | J ou clique esquerdo |
+| Magia Centelha | K ou clique direito |
+| Rolar (invencível) | Espaço |
+| Poção | Q |
+| Falar | E |
+| Salvar | F5 |
 
 ## Estrutura
 ```
-src/engine     display (pixel buffer + UI), input, áudio (WebAudio), util
-src/art        geradores procedurais: personagens, retratos, monstros, tiles, ícones
-src/game       state, entities, world (mapa, combate, IA), ui (HUD, menu, loja), maps, story
-scripts        testes automatizados (Playwright): screenshots e playthrough do Capítulo 1
-docs           design do jogo e roteiro da campanha
+unity/Assets/Scripts/Core   Boot, Sheets (sprites+JSON), SpriteAnim, Util/YSort, Sfx sintetizado
+unity/Assets/Scripts/Game   Game, World, Player, Enemy, Npc, Projectile, Loot, Fx, Story, Data, CameraRig
+unity/Assets/Scripts/UI     Hud (arcos, orbes, diálogo cinematográfico, banners, números de dano)
+unity/Assets/Editor         BuildScript (build headless) + importação de texturas
+unity/Assets/Resources      Sprites/, Maps/, Fonts/, Shaders/  (gerados por tools/art_hd)
+tools/art_hd                pipeline de arte: core, humanoid, anims, demons, fx, env_objects, env_ground, maps
+tools/unity_check.sh        checagem de compilação C# sem Unity
+prototypes/                 versões antigas (web e Godot), arquivadas
 ```
 
-## Testes
+## Regerar a arte
 ```bash
-npm run dev &
-node scripts/playthrough.mjs   # percorre o Capítulo 1 inteiro e falha em qualquer erro de script
+pip install pycairo scipy numpy pillow
+cd tools/art_hd
+python3 build_hero.py && python3 build_npcs.py && python3 build_demons.py
+python3 fx.py && python3 env_objects.py && python3 maps.py
 ```
