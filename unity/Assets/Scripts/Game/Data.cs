@@ -81,6 +81,11 @@ namespace Aetheria
             D("krull_chainlord", "Krull Senhor-das-Correntes", "Demons/krull_chainlord", 780, 32, 2.3f, 9f, 380, 120, 1.9f, false, "Carcereiro do Pantano");
             D("thornmaw_alpha", "Thornmaw Alfa", "Demons/thornmaw_alpha", 700, 30, 2.8f, 9f, 360, 110, 1.9f, false, "Fera Espinhosa de Velmoor");
 
+            // ---- Etapa 2: Velmoor
+            D("spirit_corrupt", "Espírito Corrompido", "Demons/spirit_corrupt", 58, 20, 3.0f, 8.5f, 26, 12, 1.2f, true);
+            D("treant_demon", "Treant-Demônio", "Demons/treant_demon", 190, 30, 1.6f, 6f, 46, 90, 1.45f, false);
+            D("dryad_profane", "Dríade Profanada", "Demons/dryad_profane", 1100, 30, 2.4f, 10f, 520, 120, 1.9f, true, "Guardiã Corrompida de Velmoor");
+
             // ---- Assets do GPT, como foram entregues (Bestiario F9)
             D("gpt_ant_guard", "Ant Guard (GPT)", "DemonsGpt/ant_guard", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
             D("gpt_brood_tyrant", "Brood Tyrant (GPT)", "DemonsGpt/brood_tyrant", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");

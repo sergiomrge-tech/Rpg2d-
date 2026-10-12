@@ -596,6 +596,104 @@ def guild(ctx):
                                      tension=0.2), CLOTH_R, sh=2, hl=1)
 
 
+# ------------------------------------------------------------------ Velmoor (corrupted elven forest)
+LEAF_CURSE = Pal('#4a6a5a', '#33504a', '#6a9070', '#122420')
+LEAF_VIOLET = Pal('#5a4a7a', '#3e3260', '#7e6aa0', '#1a1030')
+BARK_DK = Pal('#5a4048', '#3e2a32', '#7a5a62', '#1a0e12')
+RUIN = Pal('#b8c0b0', '#8a9488', '#e0e6da', '#3a4038')
+
+
+@prop('tree_twisted', 210, 240, 105, 224, col=(26, 14, 0), shadow=(6, 0, 72, 20, 0.4))
+def tree_twisted(ctx):
+    def trunk(c):
+        smooth_poly(c, [(-16, 0), (-8, -14), (-14, -44), (-30, -66), (-12, -58), (-2, -84), (6, -60), (26, -76), (12, -46),
+                        (10, -14), (18, 0), (2, 4)], tension=0.45)
+    paint(ctx, trunk, BARK_DK, sh=3.5, hl=1.5)
+    for y in (-14, -30, -46):
+        stroke(ctx, lambda c, y=y: (c.move_to(-6, y), c.curve_to(-2, y - 6, 4, y - 4, 6, y - 12)), BARK_DK.shadow, 1.3)
+    canopy(ctx, -42, -118, 40, 30, LEAF_VIOLET, 31, n=9)
+    canopy(ctx, 40, -112, 38, 30, LEAF_CURSE, 32, n=9)
+    canopy(ctx, 0, -142, 60, 46, LEAF_CURSE, 33, n=12)
+    for i, (x, y) in enumerate(((-30, -130), (26, -150), (6, -112), (-8, -160))):   # hanging glow spores
+        radial_glow(ctx, x, y, 9, hx('#8affc0'), 0.7)
+        flat(ctx, lambda c, x=x, y=y: ellipse(c, x, y, 2.2, 2.2), hx('#e8fff0'))
+
+
+@prop('tree_dead', 160, 220, 80, 206, col=(20, 12, 0), shadow=(5, 0, 50, 15, 0.35))
+def tree_dead(ctx):
+    def trunk(c):
+        smooth_poly(c, [(-12, 0), (-7, -40), (-24, -96), (-40, -120), (-20, -104), (-6, -70), (-2, -140), (6, -96), (30, -130),
+                        (12, -78), (8, -40), (14, 0), (0, 3)], tension=0.35)
+    paint(ctx, trunk, BARK_DK, sh=3, hl=1.4)
+    for (x0, y0, x1, y1) in ((-24, -96, -46, -100), (6, -96, 22, -150), (-2, -130, -14, -170), (24, -124, 44, -118)):
+        stroke(ctx, lambda c, a=(x0, y0, x1, y1): (c.move_to(a[0], a[1]), c.line_to(a[2], a[3])), BARK_DK.line, 4.5)
+        stroke(ctx, lambda c, a=(x0, y0, x1, y1): (c.move_to(a[0], a[1]), c.line_to(a[2], a[3])), BARK_DK.base, 2.6)
+
+
+@prop('mushrooms', 70, 60, 35, 52, col=None, shadow=(2, 0, 26, 7, 0.3))
+def mushrooms(ctx):
+    cap = Pal('#5ac8d0', '#3a90a8', '#a8f0f0', '#0a2a3a')
+    for x, y, r in ((-14, -2, 9), (6, 0, 12), (20, -4, 7)):
+        paint(ctx, lambda c, x=x, y=y, r=r: smooth_poly(c, [(x - 2.5, y), (x - 2, y - r), (x + 2, y - r), (x + 2.5, y)], tension=0.2),
+              Pal('#f0e8d8', '#cfc4b0', '#ffffff', '#4a4030'), sh=1, hl=0.5, line=0.8)
+        radial_glow(ctx, x, y - r - 2, r * 1.8, hx('#5affe0'), 0.45)
+        paint(ctx, lambda c, x=x, y=y, r=r: smooth_poly(c, [(x - r, y - r + 1), (x - r * 0.6, y - r * 1.7), (x, y - r * 1.95),
+                                                            (x + r * 0.6, y - r * 1.7), (x + r, y - r + 1)], tension=0.4),
+              cap, sh=2, hl=1.4, line=0.9)
+        for k in (-0.4, 0.3):
+            flat(ctx, lambda c, x=x, y=y, r=r, k=k: ellipse(c, x + k * r, y - r * 1.5, 1.6, 1.3), hx('#e8ffff'))
+
+
+@prop('roots', 120, 50, 60, 38, col=None, outline=0.8)
+def roots(ctx):
+    for i, (a, l) in enumerate(((-160, 50), (-20, 46), (170, 34), (10, 30))):
+        r = math.radians(a)
+        tip = (math.cos(r) * l, math.sin(r) * l * 0.35)
+        mid = (tip[0] * 0.5, tip[1] * 0.5 - 6)
+        paint(ctx, lambda c, tip=tip, mid=mid: (capsule(c, (0, 0), mid, 6, 4), capsule(c, mid, tip, 4, 1.5)), BARK_DK, sh=1.5, hl=0.8)
+
+
+@prop('ruin_pillar', 80, 170, 40, 156, col=(44, 18, 0), shadow=(4, 0, 32, 9, 0.35))
+def ruin_pillar(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-26, 4), (-26, -10), (26, -10), (26, 4)], tension=0.02), RUIN, sh=2, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-18, -10), (-18, -110), (-8, -124), (2, -112), (10, -130), (18, -116), (18, -10)],
+                                     tension=0.05), RUIN, sh=5, hl=2)
+    for x in (-10, 0, 10):
+        stroke(ctx, lambda c, x=x: (c.move_to(x, -14), c.line_to(x, -104)), RUIN.shadow, 1.4)
+    paint(ctx, lambda c: smooth_poly(c, [(-8, -60), (0, -72), (8, -60), (0, -48)], tension=0.1),
+          Pal('#8affc0', '#3ad090', '#e8fff0', '#0a3a20'), sh=1, hl=1, line=0.8)
+    radial_glow(ctx, 0, -60, 16, hx('#8affc0'), 0.45)
+    flat(ctx, lambda c: blob(c, [(-14, -40, 8), (-16, -28, 6), (12, -90, 7)]), hx('#5a8a4a'), 0.9)
+
+
+@prop('ruin_arch', 260, 230, 130, 214, col=None, shadow=(6, 0, 110, 16, 0.32))
+def ruin_arch(ctx):
+    for sx in (-1, 1):
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 120, 4), (sx * 120, -150), (sx * 92, -150), (sx * 92, 4)], tension=0.02),
+              RUIN, sh=5, hl=2)
+    def arch(c):
+        c.move_to(-124, -146)
+        c.curve_to(-110, -230, 110, -230, 124, -146)
+        c.line_to(96, -146)
+        c.curve_to(84, -200, -84, -200, -96, -146)
+        c.close_path()
+    paint(ctx, arch, RUIN, sh=5, hl=2)
+    paint(ctx, lambda c: smooth_poly(c, [(-10, -206), (0, -220), (10, -206), (0, -194)], tension=0.1),
+          Pal('#8affc0', '#3ad090', '#e8fff0', '#0a3a20'), sh=1, hl=1, line=0.8)
+    radial_glow(ctx, 0, -206, 22, hx('#8affc0'), 0.5)
+    flat(ctx, lambda c: blob(c, [(-108, -120, 10), (-104, -100, 8), (106, -60, 9), (60, -196, 8)]), hx('#5a8a4a'), 0.9)
+
+
+@prop('portal', 180, 120, 90, 96, col=None, outline=0)
+def portal(ctx):
+    for r, a in ((70, 0.25), (52, 0.45), (34, 0.7)):
+        ctx.save(); ctx.scale(1, 0.45)
+        radial_glow(ctx, 0, -40 / 0.45 * 0.45, r, hx('#8affc0'), a)
+        ctx.restore()
+    stroke(ctx, lambda c: ellipse(c, 0, -18, 62, 26), hx('#c8ffe0'), 2.5, 0.9)
+    stroke(ctx, lambda c: ellipse(c, 0, -18, 44, 18), hx('#8affc0'), 1.6, 0.8)
+
+
 # ------------------------------------------------------------------ render
 def render_prop(name):
     p = PROPS[name]

@@ -1,0 +1,129 @@
+{
+ "frameW": 192,
+ "frameH": 176,
+ "pivotX": 96,
+ "pivotY": 26,
+ "cols": 21,
+ "anims": [
+  {
+   "name": "idle_down",
+   "start": 0,
+   "count": 10,
+   "fps": 8,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_up",
+   "start": 10,
+   "count": 10,
+   "fps": 8,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_side",
+   "start": 20,
+   "count": 10,
+   "fps": 8,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "walk_down",
+   "start": 30,
+   "count": 10,
+   "fps": 13,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "walk_up",
+   "start": 40,
+   "count": 10,
+   "fps": 13,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "walk_side",
+   "start": 50,
+   "count": 10,
+   "fps": 13,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "run_down",
+   "start": 60,
+   "count": 8,
+   "fps": 15,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "run_up",
+   "start": 68,
+   "count": 8,
+   "fps": 15,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "run_side",
+   "start": 76,
+   "count": 8,
+   "fps": 15,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "cast_down",
+   "start": 84,
+   "count": 10,
+   "fps": 16,
+   "loop": false,
+   "hit": 5
+  },
+  {
+   "name": "cast_up",
+   "start": 94,
+   "count": 10,
+   "fps": 16,
+   "loop": false,
+   "hit": 5
+  },
+  {
+   "name": "cast_side",
+   "start": 104,
+   "count": 10,
+   "fps": 16,
+   "loop": false,
+   "hit": 5
+  },
+  {
+   "name": "hurt_down",
+   "start": 114,
+   "count": 5,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hurt_up",
+   "start": 119,
+   "count": 5,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hurt_side",
+   "start": 124,
+   "count": 5,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  }
+ ]
+}

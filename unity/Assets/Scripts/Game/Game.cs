@@ -46,6 +46,7 @@ namespace Aetheria
             var spawn = Util.MapToWorld(world.data.playerX, world.data.playerY);
             player = Player.Spawn(spawn, state);
             world.SpawnActors();
+            if (flags.Contains("sylra_joined")) Companion.Spawn(spawn + Vector2.left);
             cam.target = player.transform;
             cam.Snap();
             hud = Hud.Create();
@@ -75,6 +76,12 @@ namespace Aetheria
             }
             if (Input.GetKeyDown(KeyCode.Tab) && Grimoire.I != null && !Grimoire.I.open && !hud.InDialogue && player != null && !player.dead && !player.inputLocked)
                 Grimoire.I.Toggle();
+            if (player != null && !player.dead && travelCd <= 0)
+            {
+                var ex = world.ExitAt(player.Pos);
+                if (ex != null) Travel(ex.to);
+            }
+            travelCd -= Time.deltaTime;
             if (Input.GetKeyDown(KeyCode.F9) && player != null && !player.dead) SpawnBestiary();
             if (Input.GetKeyDown(KeyCode.F5)) { Save(); Fx.Toast("Jogo salvo", Color.white); }
         }
@@ -90,6 +97,40 @@ namespace Aetheria
             bestiaryIdx++;
             var e = Enemy.Spawn(id, player.Pos + Util.FacingVec(player.facing) * 3.5f, Mathf.Max(1, state.level));
             Fx.Toast($"Bestiário {bestiaryIdx}/{bestiary.Count}: {e.def.name}", new Color(1f, 0.9f, 0.6f), e.Pos + Vector2.up * 2.8f);
+        }
+
+        float travelCd = 1f;
+        public string mapName = "village";
+
+        static readonly System.Collections.Generic.Dictionary<string, string[]> MapTitles = new System.Collections.Generic.Dictionary<string, string[]>
+        {
+            { "village", new[] { "Vila de Aurora", "Capítulo I — A Centelha" } },
+            { "velmoor", new[] { "Floresta de Velmoor", "Capítulo II — Raízes Profanas" } },
+        };
+
+        public void Travel(string to)
+        {
+            if (to == "velmoor" && !flags.Contains("rank_e"))
+            {
+                Fx.Toast("O portal rejeita você. A Guilda exige Rank E.", new Color(0.7f, 1f, 0.85f));
+                travelCd = 2f;
+                player.transform.position += Vector3.up * 1.2f;
+                return;
+            }
+            string from = mapName;
+            mapName = to;
+            world = World.Load(to);
+            // arrive at the exit that leads back to where we came from
+            Vector2 at = Util.MapToWorld(world.data.playerX, world.data.playerY);
+            foreach (var e in world.data.exits)
+                if (e.to == from) at = Util.MapToWorld(e.x, e.y) + (e.y < world.data.h * 32 ? Vector2.down * 2.2f : Vector2.up * 2.2f);
+            player.transform.position = at;
+            world.SpawnActors();
+            if (Companion.I != null) Companion.I.transform.position = at + Vector2.left;
+            CameraRig.I.Snap();
+            travelCd = 1.5f;
+            if (MapTitles.TryGetValue(to, out var t)) hud.Banner(t[0], t[1]);
+            Save();
         }
 
         public static void HitStop(float t)
@@ -117,6 +158,12 @@ namespace Aetheria
             {
                 npc.talking = false;
                 p.inputLocked = false;
+                if (npc.id == "sylra" && flags.Contains("sylra_joined") && Companion.I == null)
+                {
+                    Companion.Spawn(npc.Pos);
+                    Destroy(npc.gameObject);
+                    hud.Banner("Sylra entrou no grupo", "Arqueira de Velmoor");
+                }
                 Save();
             });
         }
@@ -140,7 +187,10 @@ namespace Aetheria
             }
             if (!flags.Contains("grakk_dead")) return "◆ Derrote Grakk, Chefe dos Diabretes\n<size=22>sul do Bosque dos Chifres</size>";
             if (!flags.Contains("rank_e")) return "◆ Volte à Guilda e fale com Elina";
-            return "◆ Rank E — aguarde novas missões\n<size=20>Floresta de Velmoor (em breve)</size>";
+            if (!flags.Contains("sylra_joined")) return "◆ Entre no portal ao sul do Bosque\n<size=22>e encontre o santuário élfico de Velmoor</size>";
+            if (!flags.Contains("dryad_profane_dead")) return "◆ Purifique o bosque sagrado\n<size=22>derrote a Dríade Profanada (sul de Velmoor)</size>";
+            if (!flags.Contains("rank_d")) return "◆ Volte à Guilda de Aurora";
+            return "◆ Rank D — Cidade de Valemont\n<size=20>(Capítulo III em breve)</size>";
         }
 
         public void OnEnemyKilled(Enemy e)

@@ -229,6 +229,76 @@
    "colW": 360,
    "colH": 90,
    "colY": 30
+  },
+  {
+   "name": "tree_twisted",
+   "w": 210,
+   "h": 240,
+   "pivotX": 105,
+   "pivotY": 16,
+   "colW": 26,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "tree_dead",
+   "w": 160,
+   "h": 220,
+   "pivotX": 80,
+   "pivotY": 14,
+   "colW": 20,
+   "colH": 12,
+   "colY": 0
+  },
+  {
+   "name": "mushrooms",
+   "w": 70,
+   "h": 60,
+   "pivotX": 35,
+   "pivotY": 8,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "roots",
+   "w": 120,
+   "h": 50,
+   "pivotX": 60,
+   "pivotY": 12,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "ruin_pillar",
+   "w": 80,
+   "h": 170,
+   "pivotX": 40,
+   "pivotY": 14,
+   "colW": 44,
+   "colH": 18,
+   "colY": 0
+  },
+  {
+   "name": "ruin_arch",
+   "w": 260,
+   "h": 230,
+   "pivotX": 130,
+   "pivotY": 16,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "portal",
+   "w": 180,
+   "h": 120,
+   "pivotX": 90,
+   "pivotY": 24,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
   }
  ]
 }

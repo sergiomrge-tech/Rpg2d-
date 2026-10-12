@@ -201,3 +201,44 @@ class ThornmawAlpha(Imp):
 
 
 LOTE1_IMPS = [ImpScout(), ImpRaider(), ImpPyro(), ImpHexer(), ImpBomber(), ImpHowler(), VelkaFlamebeak(), ThornmawAlpha()]
+
+
+# ---------------------------------------------------------------- Etapa 2: Velmoor
+class SpiritCorrupt(Imp):
+    """Espírito corrompido: elven spirit twisted by the demons - ghostly teal, ribbon wings, glowing eyes."""
+    name = 'spirit_corrupt'
+    skin = Pal('#5aa8a0', '#3a8080', '#9ae0d0', '#0a2a2a')
+    belly = Pal('#c8fff0', '#90d8c8', '#ffffff', '#1a3a34')
+    wing = Pal('#8affc0', '#4ad090', '#e0fff0', '#0a3a20')
+    membrane = Pal('#6ad0b0', '#3a9a80', '#b0ffe8', '#0a3028')
+    eye = hx('#e8ffff')
+    fire = ('#c8fff0', '#5affc0', '#ffffff', '#0a4a30')
+    fire_glow = '#5affc0'
+    wing_span = 0.85
+
+    def extra_back(self, ctx, view, P):
+        radial_glow(ctx, 0, -4, 34, hx('#5affc0'), 0.28)
+
+
+class TreantDemon(Imp):
+    """Treant-demônio: a walking corrupted stump with a mossy crown and ember eyes."""
+    name = 'treant_demon'
+    skin = Pal('#6a5040', '#4a362a', '#8e7058', '#1e120a')
+    belly = Pal('#8a7a5a', '#6a5a40', '#b0a080', '#2a2010')
+    eye = hx('#ff9a2a')
+    wing_span = 0
+    body_scale = 1.5
+    hover = 34
+    FW, FH, OX, OY = 160, 160, 80, 144
+
+    def extra_back(self, ctx, view, P):
+        from env_objects import canopy, LEAF_CURSE
+        canopy(ctx, 0, -40, 26, 16, LEAF_CURSE, 41, n=8, top_light=False)
+
+    def extra_front(self, ctx, view, P, hand, hc):
+        if view != 'up':
+            for x in (-6, 0, 6):
+                stroke(ctx, lambda c, x=x: (c.move_to(x, -2), c.curve_to(x + 2, 4, x - 2, 8, x, 12)), self.skin.shadow, 1.2)
+
+
+LOTE1_IMPS += [SpiritCorrupt(), TreantDemon()]

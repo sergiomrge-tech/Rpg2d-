@@ -46,6 +46,15 @@ namespace Aetheria
             return p;
         }
 
+        public static Projectile Arrow(Vector2 pos, Vector2 dir, float dmg)
+        {
+            var p = Make("arrow", pos, dir, 16f, dmg, true, 0.9f, new Color(0.6f, 1f, 0.8f));
+            p.hitFx = "hit";
+            p.life = 1.2f;
+            p.radius = 0.3f;
+            return p;
+        }
+
         public static Projectile Fireball(Vector2 pos, Vector2 dir, float dmg)
         {
             var p = Make("fireball", pos, dir, 6.2f, dmg, false, 0.9f, new Color(1f, 0.5f, 0.15f));

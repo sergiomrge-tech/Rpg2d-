@@ -109,7 +109,7 @@ class Map:
     def export(self):
         d = os.path.join(OUT, self.name)
         os.makedirs(d, exist_ok=True)
-        img = bake(self.grid, self.seed, self.shapes)
+        img = bake(self.grid, self.seed, self.shapes, getattr(self, 'grass', None))
         h, w = img.shape[:2]
         cx, cy = math.ceil(w / CHUNK), math.ceil(h / CHUNK)
         for j in range(cy):
@@ -208,9 +208,54 @@ def village():
     for k, x, y, lv in [('imp_scout', 14, 38, 2), ('imp_raider', 30, 40, 2), ('imp_pyro', 8, 48, 2), ('imp_hexer', 36, 44, 3), ('imp_bomber', 25, 46, 2), ('imp_howler', 42, 46, 3), ('oni_lancer', 16, 52, 3), ('oni_shielder', 31, 52, 3), ('oni_executioner', 44, 52, 4)]:
         m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
     m.spawns.append(dict(kind='grakk', x=22 * T, y=51.5 * T, level=4))
-    m.exits = [dict(to='forest', x=27 * T, y=53.5 * T, w=3 * T, h=T)]
+    m.exits = [dict(to='velmoor', x=27 * T, y=53.4 * T, w=3 * T, h=T)]
+    m.put('portal', 27, 52.8)
+    return m
+
+
+def velmoor():
+    """Floresta de Velmoor (Cap. 2): corrupted elven woods, ruins, the Profane Dryad's grove in the south."""
+    from env_ground import GRASS_VELMOOR
+    m = Map('velmoor', 60, 60, seed=21)
+    m.grass = GRASS_VELMOOR
+    m.path([(30, -1), (30, 10), (22, 18), (24, 30), (36, 38), (32, 48), (30, 55)], 2.4)
+    m.path([(22, 18), (8, 22), (4, 34)], 2.0)
+    m.path([(36, 38), (50, 34), (54, 22)], 2.0)
+    m.river([(61, 8), (52, 14), (44, 24), (46, 30), (58, 44), (61, 46)], 3.4)
+    m.disk(12, 44, 4.2, 'w')
+    m.disk(30, 52, 6.0, 's')          # ruined grove floor (boss arena)
+    m.disk(24, 30, 3.2, 's')          # elven shrine (Sylra)
+    for y in range(28, 33):
+        for x in range(44, 50):
+            if m.grid[y, x] == 'w':
+                m.grid[y, x] = 'b'
+    m.put('bridge', 46.8, 31.6)
+    m.put('portal', 30, 1.2)
+    for x, y in [(21, 28.6), (27, 28.6), (21, 32.2), (27, 32.2)]:
+        m.put('ruin_pillar', x, y)
+    m.put('ruin_arch', 30, 46.4)
+    for x, y in [(25, 50), (35, 50), (25, 55.5), (35, 55.5)]:
+        m.put('ruin_pillar', x, y)
+    m.reserve(18, 26, 30, 34)
+    m.reserve(22, 44, 38, 58)
+    trees = ['tree_twisted', 'tree_twisted', 'tree_dead', 'tree_pine']
+    m.scatter(trees, 120, (0, 0, 60, 60), pad=1, min_d=2.4)
+    m.scatter(['mushrooms', 'mushrooms', 'roots', 'rock_small', 'stump', 'bush'], 90, (0, 0, 60, 60), pad=0, min_d=1.4)
+    m.scatter(['tuft', 'roots'], 160, (0, 0, 60, 60), pad=0, min_d=0.8)
+    m.player = (30 * T, 3.4 * T)
+    m.npcs = [dict(id='sylra', x=24 * T, y=30.6 * T, look='sylra', facing='down')]
+    sp = [('spirit_corrupt', 26, 12, 4), ('spirit_corrupt', 34, 16, 4), ('treant_demon', 16, 20, 5), ('spirit_corrupt', 10, 28, 5),
+          ('oni_lancer', 38, 26, 5), ('treant_demon', 40, 40, 6), ('spirit_corrupt', 52, 26, 5), ('imp_hexer', 8, 36, 5),
+          ('oni_shielder', 20, 40, 6), ('treant_demon', 44, 48, 6), ('spirit_corrupt', 16, 50, 6), ('oni_executioner', 40, 54, 6)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='dryad_profane', x=30 * T, y=53 * T, level=7))
+    m.exits = [dict(to='village', x=30 * T, y=0.4 * T, w=3 * T, h=T)]
     return m
 
 
 if __name__ == '__main__':
-    village().export()
+    import sys
+    which = sys.argv[1:] or ['village', 'velmoor']
+    for n in which:
+        globals()[n]().export()

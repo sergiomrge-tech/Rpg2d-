@@ -34,6 +34,17 @@ namespace Aetheria
 
         public static World Load(string name)
         {
+            if (I != null)
+            {
+                foreach (var e in Enemy.All.ToArray()) if (e != null) Destroy(e.gameObject);
+                Enemy.All.Clear();
+                foreach (var n in FindObjectsOfType<Npc>()) Destroy(n.gameObject);
+                foreach (var pk in FindObjectsOfType<Pickup>()) Destroy(pk.gameObject);
+                foreach (var pr in FindObjectsOfType<Projectile>()) Destroy(pr.gameObject);
+                Destroy(I.gameObject);
+                I = null;
+                Resources.UnloadUnusedAssets();   // frees the previous region's textures
+            }
             var go = new GameObject("World_" + name);
             var w = go.AddComponent<World>();
             I = w;
@@ -140,6 +151,19 @@ namespace Aetheria
             }
         }
 
+        /// <summary>Exit whose rectangle contains the world point, or null.</summary>
+        public MapExit ExitAt(Vector2 w)
+        {
+            if (data.exits == null) return null;
+            foreach (var e in data.exits)
+            {
+                var a = Util.MapToWorld(e.x - e.w / 2, e.y - e.h / 2);
+                var b = Util.MapToWorld(e.x + e.w / 2, e.y + e.h / 2);
+                if (w.x >= a.x && w.x <= b.x && w.y <= a.y && w.y >= b.y) return e;
+            }
+            return null;
+        }
+
         public bool BlockedAt(Vector2 w, bool forProjectile = false)
         {
             if (!bounds.Contains(w)) return true;
@@ -154,7 +178,10 @@ namespace Aetheria
             foreach (var s in data.spawns)
                 spawned.Add(Enemy.Spawn(s.kind, Util.MapToWorld(s.x, s.y), s.level).gameObject);
             foreach (var n in data.npcs)
+            {
+                if (n.id == "sylra" && Game.I != null && Game.I.flags.Contains("sylra_joined")) continue;
                 spawned.Add(Npc.Spawn(n).gameObject);
+            }
         }
 
         public void RespawnEnemies()

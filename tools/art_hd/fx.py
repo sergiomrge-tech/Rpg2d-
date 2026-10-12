@@ -300,7 +300,19 @@ def projectile(ctx, t, kind):
         flat(ctx, lambda c: ellipse(c, 0, 0, 13, 13), hx('#fff0ff'))
 
 
+def arrow(ctx, t):
+    radial_glow(ctx, 10, 0, 20, hx('#c8ffe0'), 0.35)
+    for i in range(5):
+        stroke(ctx, lambda c, i=i: (c.move_to(-14 - i * 7, 0), c.line_to(-20 - i * 7, 0)), hx('#c8ffe0'), 2 - i * 0.3, 0.6 - i * 0.1)
+    stroke(ctx, lambda c: (c.move_to(-16, 0), c.line_to(14, 0)), hx('#3a2410'), 3.4)
+    stroke(ctx, lambda c: (c.move_to(-16, 0), c.line_to(14, 0)), hx('#c89060'), 1.8)
+    flat(ctx, lambda c: smooth_poly(c, [(12, -4), (22, 0), (12, 4)], tension=0), hx('#e8f0ff'))
+    for sy in (-1, 1):
+        flat(ctx, lambda c, sy=sy: smooth_poly(c, [(-16, 0), (-22, sy * 6), (-12, 0)], tension=0), hx('#3fc87a'))
+
+
 ANIMS = {
+    'arrow': (2, 12, True, arrow),
     # name: (frames, fps, loop, fn, additive_alpha_fn?)
     'slash': (7, 26, False, lambda c, t: slash(c, t)),
     'slash_heavy': (9, 24, False, lambda c, t: slash(c, t, True)),

@@ -31,9 +31,13 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Música e ambiência por região
 
 ## Etapa 2 — Capítulos 2–3
-- ⬜ Floresta de Velmoor (mapa, Dríade Profanada, companheira Sylra)
+- ✅ Floresta de Velmoor: mapa (chão sombrio, rio, ruínas élficas, cogumelos luminosos, árvores corrompidas), portal no fim do bosque
+- ✅ Viagem entre mapas (portais), descarrega a região anterior da memória
+- ✅ Sylra, arqueira élfica: entra no grupo, segue o herói e atira flechas nos demônios
+- ✅ Espírito Corrompido, Treant-Demônio; chefe **Dríade Profanada** (fase 2: invoca espíritos a 50% de vida)
+- ✅ Missões: portal (exige Rank E) → Sylra → Dríade → Rank D
+- ✅ Texturas com compressão BC7 (≈ ¼ da memória)
 - ⬜ Cidade de Valemont (mapa grande, Guilda principal, lojas)
-- ⬜ Sistema de companheiro (IA aliada)
 - ⬜ Evolução Centelha II + Corte Crescente
 - ⬜ Equipamentos com atributos e forja
 

@@ -58,7 +58,8 @@ namespace Aetheria.EditorTools
         }
     }
 
-    /// <summary>Art from tools/art_hd is imported uncompressed, readable, without mipmaps, up to 8K.</summary>
+    /// <summary>Art from tools/art_hd: high-quality GPU compression (BC7 on PC, ~4x less VRAM than raw RGBA),
+    /// no mipmaps (2D at 1:1), up to 8K.</summary>
     public class ArtImport : AssetPostprocessor
     {
         void OnPreprocessTexture()
@@ -73,7 +74,8 @@ namespace Aetheria.EditorTools
             ti.wrapMode = TextureWrapMode.Clamp;
             ti.filterMode = FilterMode.Bilinear;
             ti.maxTextureSize = 8192;
-            ti.textureCompression = TextureImporterCompression.Uncompressed;
+            ti.textureCompression = TextureImporterCompression.CompressedHQ;
+            ti.crunchedCompression = false;
             ti.sRGBTexture = true;
         }
     }

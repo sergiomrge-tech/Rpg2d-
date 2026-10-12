@@ -199,3 +199,64 @@ def oni_variant(kind):
         L.weapon = flail
         L.hat = make_horns(1.0, 2, 0.4, helmet=STEEL)
     return L
+
+
+# ---------------------------------------------------------------- Etapa 2: Velmoor humanoids
+class Antlers:
+    """Branch antlers + leaves (Dríade)."""
+
+    def __call__(self, ctx, view):
+        bark = Pal('#6a5040', '#4a362a', '#8e7058', '#1e120a')
+        sides = (-1, 1) if view != 'side' else (-1,)
+        for sx in sides:
+            b = (sx * 9, -12) if view != 'side' else (-4, -14)
+            pts = [b, (b[0] + sx * 8, b[1] - 14), (b[0] + sx * 18, b[1] - 22)]
+            stroke(ctx, lambda c, pts=pts: (c.move_to(*pts[0]), c.curve_to(*pts[1], *pts[1], *pts[2])), bark.line, 4)
+            stroke(ctx, lambda c, pts=pts: (c.move_to(*pts[0]), c.curve_to(*pts[1], *pts[1], *pts[2])), bark.base, 2.4)
+            br = (b[0] + sx * 6, b[1] - 10)
+            stroke(ctx, lambda c, br=br: (c.move_to(*br), c.line_to(br[0] - sx * 4, br[1] - 12)), bark.base, 2.2)
+            for lx, ly in ((pts[2][0], pts[2][1]), (br[0] - sx * 4, br[1] - 12)):
+                paint(ctx, lambda c, lx=lx, ly=ly: ellipse(c, lx, ly, 4, 2.6, 30 * sx),
+                      Pal('#8a4aa0', '#5e2a78', '#b87ad0', '#200830'), sh=0.8, hl=0.6, line=0.7)
+
+
+class ElfEars:
+    def __call__(self, ctx, view):
+        skin = Pal('#f7d6bf', '#e6ad93', '#fff0e4', '#8a4b3c')
+        if view == 'side':
+            paint(ctx, lambda c: smooth_poly(c, [(-2, 2), (-12, -8), (-1, 7)], tension=0.2), skin, sh=0.8, hl=0.4, line=0.8)
+            return
+        for sx in (-1, 1):
+            paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 16, 1), (sx * 27, -9), (sx * 17, 7)], tension=0.2), skin,
+                  sh=0.8, hl=0.4, line=0.8)
+
+
+def bow(ctx, L, hand, ang, scale=1.0):
+    ctx.save()
+    ctx.translate(*hand)
+    ctx.rotate(math.radians(-ang + 90))
+    wood = Pal('#a06a3a', '#7a4a24', '#c89060', '#2a160a')
+    stroke(ctx, lambda c: (c.move_to(0, -20), c.curve_to(10, -10, 10, 10, 0, 20)), wood.line, 4.2)
+    stroke(ctx, lambda c: (c.move_to(0, -20), c.curve_to(10, -10, 10, 10, 0, 20)), wood.base, 2.6)
+    stroke(ctx, lambda c: (c.move_to(0, -20), c.line_to(0, 20)), (0.95, 0.92, 0.85, 1), 0.8)
+    ctx.restore()
+
+
+def dryad_look():
+    from humanoid import Look
+    L = Look(hair_style='long', hair=Pal('#4a8a4a', '#2e6a36', '#7ab86a', '#0e2a12'), eye=hx('#ff5ad0'),
+             skin=Pal('#c8b89a', '#a8957a', '#e8dcc4', '#3a2e1e'), tunic=Pal('#5a3a6a', '#3e2450', '#7e5a90', '#160a20'),
+             shirt=Pal('#c8b89a', '#a8957a', '#e8dcc4', '#3a2e1e'), glove=Pal('#6a5040', '#4a362a', '#8e7058', '#1e120a'),
+             pants=Pal('#3e2a32', '#2a1a20', '#5a4048', '#0e0608'), boots=Pal('#6a5040', '#4a362a', '#8e7058', '#1e120a'),
+             scarf_on=False, weapon=None)
+    L.hat = Antlers()
+    return L
+
+
+def sylra_look():
+    from humanoid import Look
+    L = Look(hair_style='long', hair=Pal('#e0e4f0', '#b0b8d0', '#ffffff', '#4a5068'), eye=hx('#3fc87a'),
+             tunic=Pal('#3a7a4a', '#285c36', '#5aa068', '#0e2a16'), shirt=Pal('#f2e8d5', '#d2c2a8', '#ffffff', '#6b5844'),
+             scarf=Pal('#e8c060', '#b88a30', '#fff0a0', '#4a3008'), scarf_on=True, weapon=bow)
+    L.hat = ElfEars()
+    return L

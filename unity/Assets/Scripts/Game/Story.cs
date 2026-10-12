@@ -23,6 +23,7 @@ namespace Aetheria
                 case "blacksmith": return "Borin, o Ferreiro";
                 case "villager": return "Tia Marta";
                 case "lumia": return "Deusa Lumia";
+                case "sylra": return "Sylra";
                 default: return id;
             }
         }
@@ -79,8 +80,20 @@ namespace Aetheria
                             new Line(npc, "Os relatórios dizem que os demônios vêm da Floresta de Velmoor. É para lá que o Rank D vai."),
                         };
                     }
+                    if (g.flags.Contains("dryad_profane_dead") && !g.flags.Contains("rank_d"))
+                    {
+                        g.flags.Add("rank_d");
+                        gs.gold += 350;
+                        gs.guildRank = "D";
+                        gs.Add("ether", 2);
+                        return new[]
+                        {
+                            new Line(npc, "A Dríade de Velmoor... purificada? E você trouxe uma elfa junto?!"),
+                            new Line(npc, "Rank D. 350 de ouro. Valemont, a capital, vai querer conhecer você."),
+                        };
+                    }
                     if (g.flags.Contains("rank_e"))
-                        return new[] { new Line(npc, "Novas missões chegam em breve ao quadro. O Rank D exige ir à Floresta de Velmoor.") };
+                        return new[] { new Line(npc, "Velmoor fica além do portal élfico, no fim do Bosque dos Chifres. Leve poções.") };
                     if (g.flags.Contains("q_imps_done"))
                         return new[] { new Line(npc, "Grakk se esconde no sul do bosque, perto do lago. Cuidado com o leque de fogo.") };
                     return new[] { new Line(npc, $"Diabretes abatidos: {g.QuestProgress(QuestImps)}/{QuestImpsGoal}. O bosque fica ao sul da praça.") };
@@ -104,6 +117,18 @@ namespace Aetheria
                         new Line(npc, $"Hm. Essa lâmina não corta nem manteiga. Traga 5 Chifres de Diabrete e 80 de ouro (você tem {gs.Count("imp_horn")})."),
                         new Line(npc, "Com material demoníaco eu forjo coisa de verdade. Demônio fraco, arma fraca. Demônio forte..."),
                     };
+                case "sylra":
+                    if (!g.flags.Contains("sylra_joined"))
+                    {
+                        g.flags.Add("sylra_joined");
+                        return new[]
+                        {
+                            new Line(npc, "Um humano... com a centelha da deusa? Então a profecia era verdade."),
+                            new Line(npc, "Sou Sylra, guardiã deste santuário. A Dríade do bosque sagrado foi corrompida pelos demônios."),
+                            new Line(npc, "Sozinha não consigo chegar até ela. Meu arco é seu, Ren. Vamos purificar Velmoor."),
+                        };
+                    }
+                    return new[] { new Line(npc, "Fique perto. Eu cuido dos que vierem pelos flancos.") };
                 case "villager":
                     return new[]
                     {

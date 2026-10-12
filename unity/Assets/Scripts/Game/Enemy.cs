@@ -22,6 +22,7 @@ namespace Aetheria
         Vector2 wander;
         bool hitDone;
         bool nextIsCast;
+        bool summoned;
 
         public static Enemy Spawn(string kind, Vector2 pos, int level)
         {
@@ -220,6 +221,19 @@ namespace Aetheria
         {
             if (!base.Hurt(d, from, knockback, poiseDmg, crit)) return false;
             lastHurt = Time.time;
+            if (def.boss && !summoned && hp < maxHp * 0.5f && hp > 0)
+            {
+                summoned = true;
+                string minion = def.id == "dryad_profane" ? "spirit_corrupt" : def.id == "grakk" ? "imp" : null;
+                if (minion != null)
+                {
+                    Hud.I?.Banner(def.name + " se enfurece", "Reforços demoníacos!");
+                    CameraRig.Shake(0.3f, 0.5f);
+                    for (int k = 0; k < 3; k++)
+                        Enemy.Spawn(minion, Pos + (Vector2)(Quaternion.Euler(0, 0, k * 120f) * Vector2.right) * 2.2f, Mathf.Max(1, level - 2));
+                    speed *= 1.25f;
+                }
+            }
             Sfx.Play("imp_hurt", 0.4f, Random.Range(1.0f, 1.25f));
             if (dead) return true;
             if (state == St.Idle) Go(St.Chase);

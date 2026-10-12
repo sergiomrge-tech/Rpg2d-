@@ -53,7 +53,7 @@ namespace UnityEditor
 
     public enum TextureImporterType { Default = 0, Sprite = 8 }
     public enum TextureImporterNPOTScale { None = 0 }
-    public enum TextureImporterCompression { Uncompressed = 0, Compressed = 1 }
+    public enum TextureImporterCompression { Uncompressed = 0, Compressed = 1, CompressedHQ = 2, CompressedLQ = 3 }
 
     public class TextureImporter : AssetImporter
     {
@@ -67,6 +67,7 @@ namespace UnityEditor
         public int maxTextureSize { get; set; }
         public TextureImporterCompression textureCompression { get; set; }
         public bool sRGBTexture { get; set; }
+        public bool crunchedCompression { get; set; }
     }
 
     public class AssetPostprocessor

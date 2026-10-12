@@ -114,7 +114,14 @@ def over(base, rgb_pm, a, mask=None):
     return base * (1 - a) + rgb_pm
 
 
-def bake(grid: np.ndarray, seed=1, shapes=()):
+GRASS = dict(dark='#5b9e45', mid='#73b552', light='#8cc85e', warm='#9cc660', blade_l=(0.66, 0.85, 0.42), blade_d=(0.30, 0.55, 0.26),
+             flowers=True)
+GRASS_VELMOOR = dict(dark='#2f5a3e', mid='#3e7048', light='#548a52', warm='#6a6a8a', blade_l=(0.42, 0.62, 0.42),
+                     blade_d=(0.16, 0.32, 0.22), flowers=False)
+
+
+def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
+    G = grass or GRASS
     SHAPES[:] = list(shapes)
     gh, gw = grid.shape
     h, w = gh * T, gw * T
@@ -122,7 +129,7 @@ def bake(grid: np.ndarray, seed=1, shapes=()):
     # ---------------- grass
     n1 = fbm(h, w, seed)
     n2 = fbm(h, w, seed + 10, (180, 60, 20), (0.6, 0.3, 0.1))
-    g_dark, g_mid, g_light, g_warm = col('#5b9e45'), col('#73b552'), col('#8cc85e'), col('#9cc660')
+    g_dark, g_mid, g_light, g_warm = col(G['dark']), col(G['mid']), col(G['light']), col(G['warm'])
     img = lerp_c(g_dark, g_mid, smoothstep(0.25, 0.55, n1))
     img = lerp_c(img, g_light, smoothstep(0.55, 0.8, n1) * 0.8)
     img = lerp_c(img, g_warm, smoothstep(0.6, 0.85, n2) * 0.35)
@@ -133,9 +140,9 @@ def bake(grid: np.ndarray, seed=1, shapes=()):
             x, y = rnd.uniform(0, w), rnd.uniform(0, h)
             nv = n1[int(y) % h, int(x) % w]
             light = rnd.random() < 0.55
-            c = (0.66, 0.85, 0.42) if light else (0.30, 0.55, 0.26)
+            c = G['blade_l'] if light else G['blade_d']
             if nv < 0.35:
-                c = (0.55, 0.78, 0.38) if light else (0.24, 0.47, 0.22)
+                c = tuple(v * 0.88 for v in (G['blade_l'] if light else G['blade_d']))
             ctx.set_source_rgba(*c, rnd.uniform(0.35, 0.7))
             ctx.set_line_width(rnd.uniform(1.4, 2.4))
             l = rnd.uniform(5, 10)
@@ -146,7 +153,8 @@ def bake(grid: np.ndarray, seed=1, shapes=()):
         # tiny clover/flower specks
         for i in range(int(w * h / 22000)):
             x, y = rnd.uniform(0, w), rnd.uniform(0, h)
-            c = rnd.choice([(1, 1, 1), (1, 0.85, 0.3), (1, 0.55, 0.65), (0.75, 0.6, 1)])
+            c = rnd.choice([(1, 1, 1), (1, 0.85, 0.3), (1, 0.55, 0.65), (0.75, 0.6, 1)] if G['flowers'] else
+                           [(0.55, 1, 0.75), (0.75, 0.6, 1), (0.5, 0.85, 1)])
             for k in range(rnd.randint(2, 5)):
                 xx, yy = x + rnd.uniform(-10, 10), y + rnd.uniform(-8, 8)
                 ctx.set_source_rgba(*c, 0.95)
