@@ -2,6 +2,7 @@ extends Node
 ## Top-level orchestrator (autoload): world, player, HUD, quests, travel, saves, key queue, CI screenshot tour.
 
 const SAVE_PATH := "user://aetheria_save.json"
+const NEW_GAME_START := Vector2(3300, 440)   # meadow across the river, far from Aurora; follow the compass to the Guild
 
 const MAP_TITLES := {
 	"village": ["Vila de Aurora", "Capítulo I — A Centelha"],
@@ -45,6 +46,8 @@ var touch_mode := false
 var touch_move := Vector2.ZERO
 var touch_run := false
 var touch: TouchControls
+var menu: MainMenu
+var in_menu := false
 
 var _time := 0.0
 var _hit_until := 0
@@ -108,6 +111,8 @@ func start(m: Node2D) -> void:
 	var spawn := Vector2(float(world.data["playerX"]), float(world.data["playerY"]))
 	if _has_saved_pos and world.bounds.has_point(_saved_pos):
 		spawn = _saved_pos
+	elif not flags.has("prologue") and map_name == "village":
+		spawn = NEW_GAME_START
 	player = Player.spawn(spawn, state)
 	world.spawn_actors()
 	if flags.has("sylra_joined"):
@@ -137,7 +142,13 @@ func start(m: Node2D) -> void:
 	if ci_dir != "":
 		_ci_shots()
 		return
-	if not flags.has("prologue"):
+	menu = MainMenu.new()
+	hud.root.add_child(menu)     # keep the menu under the options/touch layers' z-order handling
+	menu.setup(hud, FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists(SAVE_PATH + ".bak"))
+	menu.on_continue = _begin
+	menu.on_new = new_game
+	player.input_locked = true
+	if false:
 		player.input_locked = true
 		hud.show_dialogue(Story.prologue, func():
 			flags["prologue"] = true
@@ -147,6 +158,43 @@ func start(m: Node2D) -> void:
 	else:
 		var t: Array = MAP_TITLES.get(map_name, ["", ""])
 		hud.banner(t[0], "Rank " + state.guild_rank)
+
+
+## Continue: the loaded save is already in memory; just start playing (prologue only if never seen).
+func _begin() -> void:
+	if not flags.has("prologue"):
+		player.input_locked = true
+		hud.show_dialogue(Story.prologue, func():
+			flags["prologue"] = true
+			player.input_locked = false
+			hud.banner("Vila de Aurora", "Capítulo I — A Centelha")
+			save())
+	else:
+		player.input_locked = false
+		var t: Array = MAP_TITLES.get(map_name, ["", ""])
+		hud.banner(t[0], "Rank " + state.guild_rank)
+
+
+## New game: wipe progress, wake up in the meadow west of Aurora (far from the town), then play the prologue.
+func new_game() -> void:
+	state.from_dict(GameState.new().to_dict())
+	flags.clear()
+	quests.clear()
+	_announced = {"__init": true}
+	_load_map_now("village")
+	world.spawn_actors()
+	player.max_hp = state.hp_max()
+	player.hp = player.max_hp
+	player.mp = state.max_mp
+	player.st = state.max_st
+	player.dead = false
+	player.global_position = NEW_GAME_START
+	player.face(Util.Face.DOWN)
+	if Companion.I:
+		Companion.I.queue_free()
+	camera.snap()
+	_travel_cd = 3.0
+	_begin()
 
 
 func _process(dt: float) -> void:
@@ -161,9 +209,9 @@ func _process(dt: float) -> void:
 		Engine.time_scale = want
 	if player == null:
 		return
-	if consume(KEY_ESCAPE) and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead:
+	if consume(KEY_ESCAPE) and not in_menu and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead:
 		options.toggle()
-	if consume(KEY_TAB) and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked:
+	if consume(KEY_TAB) and not in_menu and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked:
 		grimoire.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
@@ -539,6 +587,19 @@ func shot(n: String) -> void:
 
 
 func _ci_shots() -> void:
+	menu = MainMenu.new()
+	hud.root.add_child(menu)
+	menu.setup(hud, true)
+	await _wait(0.5)
+	await shot("00_menu")
+	menu.close()
+	var keep := player.global_position
+	player.global_position = NEW_GAME_START
+	camera.snap()
+	await _wait(0.6)
+	await shot("00b_new_game_start")
+	player.global_position = keep
+	camera.snap()
 	player.input_locked = true
 	hud.banner("Vila de Aurora", "Capítulo I — A Centelha")
 	await _wait(1.5)
@@ -552,6 +613,8 @@ func _ci_shots() -> void:
 		await get_tree().process_frame
 	await _wait(0.3)
 	await shot("02b_quest_update")
+	if touch_mode:
+		await _ci_touch()
 	grimoire.toggle()
 	await _wait(0.5)
 	await shot("03_grimoire")
@@ -597,6 +660,12 @@ func _ci_shots() -> void:
 
 
 func _tour_to(m: String) -> void:
+	_load_map_now(m)
+	world.spawn_actors()
+	hud.banner(MAP_TITLES[m][0], MAP_TITLES[m][1])
+
+
+func _load_map_now(m: String) -> void:
 	var old := world
 	old.entities.remove_child(player)
 	main.remove_child(old)
@@ -606,9 +675,7 @@ func _tour_to(m: String) -> void:
 	main.add_child(world)
 	camera.set_world(world)
 	world.add_entity(player, Vector2(float(world.data["playerX"]), float(world.data["playerY"])))
-	world.spawn_actors()
 	camera.snap()
-	hud.banner(MAP_TITLES[m][0], MAP_TITLES[m][1])
 
 
 const BOSS_TOUR := [
@@ -726,3 +793,47 @@ func _ci_insects() -> void:
 		for o in Enemy.all.duplicate():
 			if is_instance_valid(o) and o != e:
 				o.queue_free()
+
+
+## Touch test: injects real screen-touch events (window pixels) and checks the stick and buttons react.
+func _ci_touch() -> void:
+	player.input_locked = false
+	var k := float(get_window().size.x) / 1920.0
+	var stick := Vector2(270, 800)
+	var t0 := InputEventScreenTouch.new()
+	t0.index = 3
+	t0.pressed = true
+	t0.position = (stick + Vector2(30, 0)) * k
+	Input.parse_input_event(t0)
+	await _wait(0.1)
+	var d := InputEventScreenDrag.new()
+	d.index = 3
+	d.position = (stick + Vector2(130, 0)) * k
+	Input.parse_input_event(d)
+	await _wait(0.4)
+	print("[ci] touch_move after drag right: ", touch_move, " run=", touch_run)
+	var p0 := player.global_position
+	await _wait(0.6)
+	await shot("09_touch_stick")
+	print("[ci] hero moved dx=", player.global_position.x - p0.x)
+	var t1 := InputEventScreenTouch.new()
+	t1.index = 3
+	t1.pressed = false
+	t1.position = d.position
+	Input.parse_input_event(t1)
+	await _wait(0.2)
+	print("[ci] touch_move after release: ", touch_move)
+	var b := InputEventScreenTouch.new()
+	b.index = 4
+	b.pressed = true
+	b.position = Vector2(1700, 800) * k
+	Input.parse_input_event(b)
+	await _wait(0.15)
+	print("[ci] attack button -> player state ", player.state, " (1 = ATTACK)")
+	var b2 := InputEventScreenTouch.new()
+	b2.index = 4
+	b2.pressed = false
+	b2.position = b.position
+	Input.parse_input_event(b2)
+	player.input_locked = true
+	player.scripted_move = Vector2.ZERO

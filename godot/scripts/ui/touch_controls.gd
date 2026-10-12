@@ -103,6 +103,7 @@ func _menu_open() -> bool:
 
 
 func _process(_dt: float) -> void:
+	layer.visible = not Game.in_menu
 	var menu := _menu_open()
 	menu_pad.visible = menu
 	game_buttons.visible = not menu
@@ -127,8 +128,9 @@ func _near_npc() -> bool:
 
 
 func _virtual(p: Vector2) -> Vector2:
-	# screen -> 1920x1080 virtual coordinates (stretch keeps aspect, so this is the canvas transform inverse)
-	return get_viewport().get_canvas_transform().affine_inverse() * p
+	# Input events already arrive in viewport (1920x1080 stretched) coordinates; the camera's canvas
+	# transform must NOT be applied (the HUD lives on its own CanvasLayer).
+	return p
 
 
 func _button_at(v: Vector2) -> Dictionary:
@@ -142,6 +144,8 @@ func _button_at(v: Vector2) -> Dictionary:
 
 
 func _input(ev: InputEvent) -> void:
+	if Game.in_menu:
+		return
 	if ev is InputEventScreenTouch:
 		var v := _virtual(ev.position)
 		if ev.pressed:

@@ -51,7 +51,7 @@ func setup(h: Hud) -> void:
 func toggle() -> void:
 	open = not open
 	root.visible = open
-	get_tree().paused = open
+	get_tree().paused = open or Game.in_menu
 	if open:
 		sel = 0
 		_refresh()
@@ -59,7 +59,7 @@ func toggle() -> void:
 	else:
 		Game.save_settings_note()
 	if Player.I != null:
-		Player.I.input_locked = open
+		Player.I.input_locked = open or Game.in_menu
 
 
 func _refresh() -> void:

@@ -67,6 +67,8 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento
+- ✅ Menu inicial (Continuar / Novo Jogo / Opções / Sair), teclado, mouse e toque; novo jogo acorda num campo além do rio, longe de Aurora, guiado pela bússola até a Guilda
+- ✅ Correção do toque no celular: o analógico e os botões usavam a transformada da câmera por engano; agora usam as coordenadas da tela (testado com toques simulados no CI)
 - ✅ Passos por superfície: grama (Aurora/Velmoor), pedra (Valemont/Minas/Castelo/Cidadela), areia (Kharis), lama (Mirewail), neve (Picos), cascalho (Terras Devastadas) — sintetizados, 3 variações cada
 - ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
 - ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
