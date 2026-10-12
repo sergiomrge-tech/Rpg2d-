@@ -652,6 +652,96 @@ func _ui_smoke_test() -> void:
 	touch_move = Vector2.ZERO
 	touch_run = false
 	print("[ui-smoke] PASS unlimited sprint animation at zero legacy stamina")
+	# Six-class regression: the selection screen is real touch UI and each
+	# selected class governs stats, weapon rules and allowed actions.
+	var chosen := [""]
+	var selector := ClassSelect.new()
+	hud.add_child(selector)
+	selector.setup(hud, func(id): chosen[0] = id, func(): chosen[0] = "cancel")
+	await _wait(.1)
+	if selector.cards.size() != 6 or not in_menu or not get_tree().paused:
+		push_error("[class-smoke] class selector not displayed after New Game")
+		get_tree().quit(1)
+		return
+	var tap := InputEventScreenTouch.new()
+	tap.index = 24
+	tap.pressed = true
+	tap.position = selector.cards[5].get_global_rect().get_center() * (Vector2(get_window().size) / Hud.SIZE)
+	Input.parse_input_event(tap)
+	await _wait(.06)
+	tap.pressed = false
+	Input.parse_input_event(tap)
+	if selector.selected != 5:
+		push_error("[class-smoke] summoner could not be chosen via touch")
+		get_tree().quit(1)
+		return
+	tap.pressed = true
+	tap.position = selector.confirm_button.get_global_rect().get_center() * (Vector2(get_window().size) / Hud.SIZE)
+	Input.parse_input_event(tap)
+	await _wait(.06)
+	tap.pressed = false
+	Input.parse_input_event(tap)
+	if str(chosen[0]) != "summoner" or in_menu or get_tree().paused:
+		push_error("[class-smoke] confirmation did not return chosen class")
+		get_tree().quit(1)
+		return
+	print("[class-smoke] PASS touchscreen select and confirm without starting gameplay")
+	var legacy := GameState.new()
+	legacy.from_dict({"level": 3, "atk": 18.0})
+	if legacy.class_id != "warrior":
+		push_error("[class-smoke] existing save class was not preserved")
+		get_tree().quit(1)
+		return
+	for id in HeroClasses.ORDER:
+		var trial := GameState.new()
+		HeroClasses.apply_new_game(trial, id)
+		player.gs = trial
+		player.mp = trial.max_mp
+		player.hp = trial.hp_max()
+		player.input_locked = false
+		player._to_free()
+		if trial.class_id != id or trial.to_dict()["class_id"] != id:
+			push_error("[class-smoke] class not applied or saved: " + id)
+			get_tree().quit(1)
+			return
+		for weapon_id in ["rusty_sword", "hunter_bow", "twin_daggers"]:
+			var weapon: Dictionary = Data.items[weapon_id]
+			var expected := str(HeroClasses.info(id)["weapon"]) == str(weapon.get("weapon_type", "sword"))
+			if HeroClasses.can_equip(id, weapon) != expected:
+				push_error("[class-smoke] wrong equipment restriction: " + id + "/" + weapon_id)
+				get_tree().quit(1)
+				return
+		player._try_attack()
+		var expected_attack: int = Player.St.FREE if id == "summoner" else (Player.St.CAST if id in ["mage", "archer"] else Player.St.ATTACK)
+		if player.state != expected_attack:
+			push_error("[class-smoke] invalid primary combat: " + id)
+			get_tree().quit(1)
+			return
+		player._to_free()
+		player._try_cast()
+		var expected_skill: int = Player.St.ATTACK if id in ["warrior", "assassin"] else Player.St.CAST
+		if player.state != expected_skill:
+			push_error("[class-smoke] invalid skill channel: " + id)
+			get_tree().quit(1)
+			return
+		if id == "summoner":
+			player._on_anim_hit("cast")
+			if SpiritPet.count_for(player) != 1:
+				push_error("[class-smoke] summoner skill did not create a real AI pet")
+				get_tree().quit(1)
+				return
+			player._to_free()
+			player._try_attack()
+			if player.state != Player.St.CAST:
+				push_error("[class-smoke] summoner cannot command pet")
+				get_tree().quit(1)
+				return
+		player._to_free()
+	player.gs = state
+	for pet in SpiritPet.active_pets.duplicate():
+		if is_instance_valid(pet):
+			pet.queue_free()
+	print("[class-smoke] PASS six distinct classes, restrictions, stats, save and pet AI")
 	print("[ui-smoke] PASS all tests")
 	get_tree().quit(0)
 
