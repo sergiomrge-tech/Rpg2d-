@@ -176,7 +176,6 @@ func _refresh() -> void:
 	hud.img(page, Sheets.ui("medallion"), C, Vector2(-535, 150), Vector2(170, 170))
 	var stats := "Vida          %d / %d\n" % [ceili(p.hp), roundi(gs.hp_max())]
 	stats += "Mana          %d / %d\n" % [floori(p.mp), roundi(gs.max_mp)]
-	stats += "Fôlego        %d\n" % roundi(gs.max_st)
 	stats += "Ataque        %d   Defesa  %d\n" % [roundi(gs.total_atk()), roundi(gs.total_def())]
 	stats += "Magia          %d\n" % roundi(gs.total_mag())
 	stats += "Experiência  %d / %d\n" % [gs.xp, Data.xp_to_next(gs.level)]
