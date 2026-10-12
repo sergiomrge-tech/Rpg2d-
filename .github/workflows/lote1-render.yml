@@ -1,0 +1,48 @@
+name: Render Lote 1 - 15 HD creatures
+on:
+  push:
+    branches: [gpt6-lote1-all-sprites-20261012]
+    paths:
+      - 'tools/art_hd/lote1_creatures.py'
+      - 'tools/art_hd/build_lote1_art.py'
+      - 'tools/art_hd/verify_lote1_rendered.py'
+      - 'docs/asset_catalog/lote1_spec.json'
+      - '.github/workflows/lote1-render.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing HD pipeline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libcairo2-dev pkg-config python3-dev
+          python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
+      - name: Render all thirteen missing 3-view animated atlases and contact previews
+        run: python -u tools/art_hd/build_lote1_art.py
+      - name: Validate all fifteen artwork atlases and actual animation JSON
+        run: python tools/art_hd/verify_lote1_rendered.py
+      - name: Commit new atlases and previews to feature branch only
+        if: github.ref == 'refs/heads/gpt6-lote1-all-sprites-20261012'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for id in imp_scout imp_raider imp_pyro imp_hexer imp_bomber imp_howler oni_lancer oni_shielder oni_executioner morgash_ironhorn velka_flamebeak krull_chainlord thornmaw_alpha; do
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.png"
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.json"
+            git add "docs/asset_catalog/previews/${id}.png"
+          done
+          git add docs/asset_catalog/previews/LOTE1_DEMONIOS.png docs/asset_catalog/previews/LOTE1_CHEFES.png
+          if git diff --cached --quiet; then
+            echo 'No artwork changes'
+          else
+            git commit -m 'art: render 13 new HD creatures with 3-view animation sheets'
+            git push origin HEAD:gpt6-lote1-all-sprites-20261012
+          fi
