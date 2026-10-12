@@ -46,14 +46,14 @@ def validate():
                     assert a['loop']==(stage in ('idle','move'))
                     assert a['start']>=0
                     assert a['start']+a['count']<=(sheet.height//192)*meta['cols']
-                    for step in (0,a['count']//2,a['count']-1):
+                    for step in (0,a['count']//4,a['count']//2,(a['count']*3)//4,a['count']-1):
                         idx=a['start']+step
                         fr=sheet.crop(((idx%meta['cols'])*192,(idx//meta['cols'])*192,
                              ((idx%meta['cols'])+1)*192,((idx//meta['cols'])+1)*192))
                         assert fr.getchannel('A').getbbox(),(name,a['name'],'blank frame')
                         if dr=='down' and stage in ('move','attack','cast'):
                             seen.add(fr.tobytes())
-            assert len(seen)>=6,(name,'no animation motion')
+            assert len(seen)>=6,(name,'insufficient distinct attack/movement/skill frames',len(seen))
             sprites.append(first_frame(sheet,meta,'idle_down').getchannel('A').resize((96,96)))
         with Image.open(PRE/(name+'.png')) as im:
             im.verify()
