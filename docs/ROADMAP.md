@@ -67,6 +67,8 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento
+- ✅ **Mapas ampliados (~2× a área):** anel de terra nova ao redor de cada região (`tools/art_hd/expand_maps.py`), estradas e rios prolongados até as novas bordas, mesma densidade de objetos e inimigos, pontos de interesse (acampamentos com elite, círculos de pedra, ruínas, bosques) ligados por trilhas e **baús de tesouro** (`TreasureCache`) que só abrem uma vez
+- ✅ **Valemont circular** (100×100): muralha em anel com torres, três portões e comportas do rio, ruas radiais e concêntricas, praça com fonte, catedral e Guilda, mercado, bairro nobre, dois bosques e o beco do Assassino sem saída
 - ✅ Menu inicial (Continuar / Novo Jogo / Opções / Sair), teclado, mouse e toque; novo jogo acorda num campo além do rio, longe de Aurora, guiado pela bússola até a Guilda
 - ✅ Correção do toque no celular: o analógico e os botões usavam a transformada da câmera por engano; agora usam as coordenadas da tela (testado com toques simulados no CI)
 - ✅ Passos por superfície: grama (Aurora/Velmoor), pedra (Valemont/Minas/Castelo/Cidadela), areia (Kharis), lama (Mirewail), neve (Picos), cascalho (Terras Devastadas) — sintetizados, 3 variações cada

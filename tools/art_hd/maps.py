@@ -204,6 +204,7 @@ def village():
     m.scatter(['tuft', 'tuft', 'flowers'], 220, (0, 0, 56, 54), pad=0, min_d=0.7)
 
     m.player = (27 * T, 26 * T)
+    m.safe_points = [(72, 8)]          # new-game start meadow (in expanded-map tile coordinates)
     m.npcs = [
         dict(id='receptionist', x=27 * T, y=15.0 * T, look='guild_clerk', facing='down'),
         dict(id='blacksmith', x=34.0 * T, y=22.4 * T, look='merchant', facing='left'),
@@ -269,7 +270,7 @@ def valemont():
     cathedral and Guild HQ flanking the avenue, central fountain plaza, market, noble quarter, dark south alley."""
     m = Map('valemont', 100, 100, seed=33)
     C = (50.0, 50.0)
-    RW = 27.0
+    RW = 31.0
 
     def pol(r, deg):
         return (C[0] + r * math.cos(math.radians(deg)), C[1] + r * math.sin(math.radians(deg)))
@@ -277,16 +278,16 @@ def valemont():
     # ---- river: enters the west wall, bends through the south-west quarter, leaves by the SW water gate
     river = [(-1, 36), (10, 39), (21, 40.5), (27, 42), (34, 45), (38, 50), (39.5, 56), (37.5, 63), (34.5, 70.7), (30, 78), (26, 90), (22, 101)]
     # ---- roads outside (dirt) and avenues inside (stone)
-    m.path([(50, -1), (50, 23)], 3.2, 'd')                    # north road to Velmoor
-    m.path([(77, 50), (101, 50)], 3.2, 'd')                   # east road to Kharis
-    m.path([(23, 50), (-1, 52)], 3.0, 'd')                    # west road (farms)
+    m.path([(50, -1), (50, 19)], 3.2, 'd')                    # north road to Velmoor
+    m.path([(81, 50), (101, 50)], 3.2, 'd')                   # east road to Kharis
+    m.path([(19, 50), (-1, 52)], 3.0, 'd')                    # west road (farms)
     m.river(river, 3.2)
-    m.path([(50, 23), (50, 62)], 3.4, 's')                    # north-south avenue
-    m.path([(23, 50), (77, 50)], 3.4, 's')                    # west-east avenue
+    m.path([(50, 19), (50, 62)], 3.4, 's')                    # north-south avenue
+    m.path([(19, 50), (81, 50)], 3.4, 's')                    # west-east avenue
     # diagonals + concentric ring roads (skip the river sector)
     for ang in (-135, -45, 45):
-        m.path([pol(7, ang), pol(24.5, ang)], 2.2, 's')
-    for r in (13.5, 20.5):
+        m.path([pol(7, ang), pol(28.5, ang)], 2.2, 's')
+    for r in (16.5,):
         pts = [pol(r, a) for a in range(-100, 100, 6)] + [pol(r, 100)]
         m.path(pts, 2.2, 's')
         pts2 = [pol(r, a) for a in range(206, 262, 6)]
@@ -296,8 +297,8 @@ def valemont():
     m.disk(38, 38.5, 4.6, 's')                                # cathedral square
     m.disk(62, 38.5, 4.6, 's')                                # guild forecourt
     # ---- dark south alley (dirt, dead end under the wall)
-    m.path([(50, 62), (50, 70)], 2.6, 'd')
-    m.disk(50, 72.4, 4.6, 'd')
+    m.path([(50, 62), (50, 74)], 2.6, 'd')
+    m.disk(50, 76.4, 4.6, 'd')
     # ---- wall ring: arcs between the gates / river gaps
     gaps = [(270, 5.4), (0, 5.4), (180, 5.4), (199, 5.8), (127, 5.8)]    # N gate, E gate, W gate, river in, river out
     iv = sorted(((g - w) % 360, (g + w) % 360) for g, w in gaps)
@@ -321,12 +322,19 @@ def valemont():
     m.reserve(0, 0, 100, 100)                                 # clear; re-open below
     m.reserved[:, :] = False
     # ---- landmarks
+    hm = np.zeros((m.gh, m.gw), bool)
+
+    def hres(x0, y0, x1, y1):
+        hm[int(y0):int(y1) + 1, int(x0):int(x1) + 1] = True
     m.put('fountain', 50, 51.2)
     m.reserve(44, 45, 56, 53)
+    hres(46.5, 48, 53.5, 53)
     m.put('cathedral', 38, 36.4)
     m.reserve(30, 26, 47, 37)
+    hres(34, 29, 42, 37)
     m.put('guild', 62, 36.8)
     m.reserve(52, 28, 72, 38)
+    hres(56, 31, 68, 37.5)
     m.put('quest_board', 57.6, 43.2)
     m.reserve(55, 41.5, 60, 44.2)
     m.put('bridge', 38.2, 51.4)
@@ -342,10 +350,13 @@ def valemont():
     for x, y in [(57, 54.6), (62, 54.6), (57, 60), (62, 60), (67, 57.5)]:
         m.put('stall', x, y)
     m.reserve(54, 52, 70, 63)
+    for sx, sy in [(57, 54.6), (62, 54.6), (57, 60), (62, 60), (67, 57.5)]:
+        hres(sx - 2.4, sy - 1.5, sx + 2.4, sy + 0.5)
     # ---- noble quarter (east) with larger houses
-    for x, y, k in [(64, 70, 'house_c'), (71, 62, 'house_c'), (58, 68.5, 'house_b')]:
+    for x, y, k in [(64, 70, 'house_c'), (72, 62, 'house_c'), (58, 68.5, 'house_b')]:
         m.put(k, x, y)
         m.reserve(x - 3.2, y - 5.4, x + 3.2, y + 1.0)
+        hres(x - 2.2, y - 1.5, x + 2.2, y + 0.8)
     # ---- parks (two great groves, as in the reference art)
     for gx, gy in [(34, 44.6), (66, 66.6)]:
         pass
@@ -357,6 +368,7 @@ def valemont():
         for k in range(5):
             m.put('flowers', gx + m.rnd.uniform(-2.5, 2.5), gy + m.rnd.uniform(-2, 2))
         m.reserve(gx - 5, gy - 5, gx + 5, gy + 4)
+        hres(gx - 4, gy - 3.5, gx + 4, gy + 3.5)
     # ---- residential blocks: houses along the concentric rings (skip roads, plaza, landmarks, river, wall)
     def road_near(x, y, pad=1):
         xi, yi = int(x), int(y)
@@ -366,30 +378,28 @@ def valemont():
                     return True
         return False
     placed = []
-    for r in (9.6, 16.8, 23.0):
-        n = int(2 * math.pi * r / 5.6)
-        for i in range(n):
-            ang = i * 360.0 / n + (r * 7) % 17
-            x, y = pol(r, ang)
-            if not (6 < x < 94 and 6 < y < 94):
-                continue
-            if math.hypot(x - C[0], y - C[1]) > RW - 3.2:
-                continue
-            if 55 < y < 80 and 44 < x < 56:                        # alley
-                continue
-            if any(abs((ang % 360) - a0) < 7 for a0 in (270, 0, 180, 315, 45, 225)) and r < 22:
-                continue                                          # keep radial streets clear
-            if road_near(x, y - 1.0, 2) or road_near(x, y, 2):
-                continue
-            if m.reserved[int(y) - 3:int(y) + 1, int(x) - 2:int(x) + 3].any():
-                continue
-            if any((x - a) ** 2 + (y - b) ** 2 < 4.8 ** 2 for a, b in placed):
-                continue
-            k = m.rnd.choice(['house_a', 'house_b', 'house_c', 'house_a', 'house_b'])
-            m.put(k, x, y)
-            placed.append((x, y))
-            m.reserve(x - 2.4, y - 5.0, x + 2.4, y + 0.8)
-    for x, y, k in [(48.2, 63.6, 'barrel'), (51.8, 63.4, 'crate'), (46.6, 69, 'crate'), (53.6, 68.4, 'barrel'), (47.5, 75, 'crate'), (52.5, 74.6, 'barrel')]:
+    attempts = 0
+    while len(placed) < 150 and attempts < 12000:
+        attempts += 1
+        r = m.rnd.uniform(9.0, RW - 3.4)
+        ang = m.rnd.uniform(0, 360)
+        x, y = pol(r, ang)
+        if not (6 < x < 94 and 6 < y < 94):
+            continue
+        if 60 < y < 82 and 43 < x < 57:                            # dark alley
+            continue
+        # footprint (base of the house) must be clear of roads, water, walls and landmarks
+        fx0, fx1, fy0, fy1 = int(x - 2), int(x + 3), int(y - 1), int(y + 2)
+        if (m.grid[fy0:fy1, fx0:fx1] != 'g').any() or hm[int(y) - 1:int(y) + 2, int(x) - 2:int(x) + 3].any():
+            continue
+        if any(((x - a) / 4.0) ** 2 + ((y - b) / 2.8) ** 2 < 1.0 for a, b in placed):
+            continue
+        k = m.rnd.choice(['house_a', 'house_b', 'house_c', 'house_a', 'house_b'])
+        m.put(k, x, y)
+        placed.append((x, y))
+        m.reserve(x - 2.0, y - 1.5, x + 2.0, y + 0.8)
+        hres(x - 2.2, y - 1.0, x + 2.2, y + 0.8)
+    for x, y, k in [(48.2, 63.6, 'barrel'), (51.8, 63.4, 'crate'), (46.6, 70, 'crate'), (53.6, 69.4, 'barrel'), (47.5, 79, 'crate'), (52.5, 78.6, 'barrel')]:
         m.put(k, x, y)
     # street dressing
     for a in range(0, 360, 20):
@@ -410,24 +420,24 @@ def valemont():
         for i, k in enumerate(ks):
             m.put(k, hx + i * 5.6, hy + (i % 2) * 2.4)
             m.reserve(hx + i * 5.6 - 3, hy + (i % 2) * 2.4 - 5.4, hx + i * 5.6 + 3, hy + (i % 2) * 2.4 + 1)
-    m.put('sign', 52.4, 8)
+    m.put('sign', 52.4, 10)
     m.put('sign', 95, 52.4)
     m.scatter(['tree_oak', 'tree_oak', 'tree_pine', 'tree_round'], 150, (0, 0, 100, 100), pad=1, min_d=2.7)
     m.scatter(['bush', 'bush_flower', 'rock_small', 'stump', 'rock_big'], 70, (0, 0, 100, 100), pad=0, min_d=1.5)
     m.scatter(['tuft', 'tuft', 'flowers'], 260, (0, 0, 100, 100), pad=0, min_d=0.8)
-    m.player = (50 * T, 25.2 * T)
+    m.player = (50 * T, 21.4 * T)
     m.npcs = [
         dict(id='guildmaster', x=62 * T, y=40.6 * T, look='v_guildmaster', facing='down'),
-        dict(id='guard', x=47.2 * T, y=26.4 * T, look='v_guard', facing='down'),
+        dict(id='guard', x=47.2 * T, y=22.4 * T, look='v_guard', facing='down'),
         dict(id='noble', x=60.2 * T, y=66.2 * T, look='v_noble', facing='left'),
         dict(id='cleric', x=38 * T, y=40.4 * T, look='v_cleric', facing='down'),
         dict(id='child', x=53.8 * T, y=52.2 * T, look='v_child', facing='left'),
         dict(id='shopkeeper', x=59.6 * T, y=56.6 * T, look='merchant', facing='up'),
     ]
-    for k, x, y, lv in [('imp_raider', 46, 71, 7), ('oni_executioner', 54, 72, 8), ('imp_howler', 49, 75.5, 7),
-                        ('oni_lancer', 53, 75.2, 8), ('imp_bomber', 45.5, 74, 7)]:
+    for k, x, y, lv in [('imp_raider', 46, 75, 7), ('oni_executioner', 54, 76, 8), ('imp_howler', 49, 79, 7),
+                        ('oni_lancer', 53, 79, 8), ('imp_bomber', 45.5, 78, 7)]:
         m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
-    m.spawns.append(dict(kind='assassin_shadow', x=50 * T, y=73.2 * T, level=9))
+    m.spawns.append(dict(kind='assassin_shadow', x=50 * T, y=77.4 * T, level=9))
     # wilderness patrols outside the walls
     for k, x, y, lv in [('imp_raider', 40, 8, 7), ('oni_lancer', 70, 12, 8), ('imp_howler', 90, 30, 7), ('oni_executioner', 92, 74, 8),
                         ('imp_bomber', 70, 90, 7), ('oni_lancer', 40, 92, 8), ('imp_raider', 8, 70, 7), ('imp_howler', 8, 30, 7)]:

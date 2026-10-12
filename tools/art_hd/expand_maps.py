@@ -133,7 +133,7 @@ def _points_of_interest(m, mx, my, ow, oh):
     ring_area = m.gw * m.gh - ow * oh
     n_poi = max(5, int(ring_area / 520))
     pois = []
-    avoid = [(m.player[0] / T, m.player[1] / T)] + [(e['x'] / T, e['y'] / T) for e in m.exits]
+    avoid = [(m.player[0] / T, m.player[1] / T)] + [(e['x'] / T, e['y'] / T) for e in m.exits] + list(getattr(m, 'safe_points', []))
     types = ['camp', 'circle', 'ruins', 'grove', 'camp', 'ruins']
     caches = []
     for i in range(n_poi):
@@ -196,6 +196,7 @@ def _ring_spawns(m, mx, my, ow, oh, old_spawns):
     dens = max(0.0034, len(regular) / float(ow * oh))
     n = int(dens * ring_area)
     avoid = [(m.player[0] / T, m.player[1] / T)] + [(e['x'] / T, e['y'] / T) for e in m.exits] + [(n_['x'] / T, n_['y'] / T) for n_ in m.npcs]
+    avoid += list(getattr(m, 'safe_points', []))      # e.g. the new-game start: no monsters within 12 tiles
     taken = [(s['x'] / T, s['y'] / T) for s in m.spawns]
     placed = 0
     tries = 0

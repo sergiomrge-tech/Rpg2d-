@@ -2,7 +2,7 @@ extends Node
 ## Top-level orchestrator (autoload): world, player, HUD, quests, travel, saves, key queue, CI screenshot tour.
 
 const SAVE_PATH := "user://aetheria_save.json"
-const NEW_GAME_START := Vector2(3300, 440)   # meadow across the river, far from Aurora; follow the compass to the Guild
+const NEW_GAME_START := Vector2(4640, 544)   # meadow across the river, far from Aurora; follow the compass to the Guild
 
 const MAP_TITLES := {
 	"village": ["Vila de Aurora", "Capítulo I — A Centelha"],
@@ -957,7 +957,7 @@ func _ci_shots() -> void:
 	await _wait(0.5)
 	await shot("03_grimoire")
 	grimoire.toggle()
-	player.global_position = Vector2(27 * 64, 39 * 64)
+	player.global_position = Vector2(39 * 64, 50 * 64)
 	camera.snap()
 	player.scripted_move = Vector2.DOWN
 	await _wait(1.2)
@@ -1108,7 +1108,7 @@ func _ci_insects() -> void:
 	for e in Enemy.all.duplicate():
 		e.queue_free()
 	player.input_locked = true
-	player.global_position = Vector2(1728, 1250)
+	player.global_position = Vector2(2496, 1954)
 	camera.snap()
 	await _wait(0.5)
 	for id in INSECTS:
