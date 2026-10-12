@@ -1,0 +1,62 @@
+name: Unity build + screenshots
+on:
+  push:
+    branches: [ccr-f2d39ca4-hkguyt]
+    paths: ['unity/**', '.github/workflows/unity.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - name: Check license secrets
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ]; then
+            echo "::error::Configure os secrets UNITY_LICENSE, UNITY_EMAIL e UNITY_PASSWORD (veja docs/UNITY_CI.md)"
+            exit 1
+          fi
+      - uses: actions/cache@v4
+        with:
+          path: unity/Library
+          key: Library-${{ hashFiles('unity/Assets/**', 'unity/Packages/**', 'unity/ProjectSettings/**') }}
+          restore-keys: Library-
+      - name: Build (Linux player)
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: unity
+          targetPlatform: StandaloneLinux64
+          buildMethod: Aetheria.EditorTools.BuildScript.BuildLinux
+          buildName: Aetheria
+      - name: Run player headless and capture screenshots
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb mesa-utils libgl1 > /dev/null
+          chmod +x build/StandaloneLinux64/Aetheria || true
+          mkdir -p shots
+          xvfb-run -a -s "-screen 0 1920x1080x24" timeout 240 build/StandaloneLinux64/Aetheria -force-glcore -screen-width 1920 -screen-height 1080 -screen-fullscreen 0 -logFile player.log -ciShots "$PWD/shots" || true
+          tail -n 200 player.log || true
+          ls -la shots || true
+      - name: Publish screenshots + log to branch ci-shots
+        run: |
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          cp player.log shots/ 2>/dev/null || true
+          git fetch origin ci-shots || true
+          git switch --orphan ci-shots-tmp
+          git rm -rf --cached . > /dev/null 2>&1 || true
+          find . -mindepth 1 -maxdepth 1 ! -name shots ! -name .git -exec rm -rf {} +
+          echo "${{ github.sha }}" > shots/SHA.txt
+          git add shots
+          git commit -m "shots ${{ github.sha }}" || true
+          git push -f origin ci-shots-tmp:ci-shots
