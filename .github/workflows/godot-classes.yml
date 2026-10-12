@@ -8,6 +8,8 @@ on:
       - 'godot/scripts/ui/main_menu.gd'
       - 'godot/data/items.json'
       - 'tools/test_classes.py'
+      - 'tools/test_no_stamina.py'
+      - 'tools/test_ui_contract.py'
       - '.github/workflows/godot-classes.yml'
   workflow_dispatch:
 permissions:
