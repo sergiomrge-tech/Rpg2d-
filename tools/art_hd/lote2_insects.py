@@ -58,6 +58,9 @@ class Insect:
         if p['dead']:
             c.rotate(math.radians(31*p['dead']))
             c.scale(1,1-.52*p['dead'])
+        if view=='side':
+            c.translate(7,0)
+            c.scale(.78,1)
         self.body(c,view,p)
         c.restore()
 
@@ -136,6 +139,24 @@ class Mantis(Insect):
             for s in (-1,1):
                 x=s*(30+cast*17)
                 radial_glow(c,x,-76,16,self.ember.base,.45*cast)
+        # Final plate engraving and emissive scythe veins: species-specific material pass.
+        for j in range(6):
+            yy=-64-j*9
+            vein(c,[(-10,yy),(0,yy-3),(10,yy)],self.bone.light,.85,.68)
+            for sidecar in (-1,1):
+                disk(c,sidecar*11,yy,1.5,1.9,self.dark,.3)
+        for s in (-1,1):
+            for j in range(4):
+                x=s*(21+j*5)
+                vein(c,[(x,-115-j*3),(x+s*2,-118-j*5)],self.bone.light,.9,.65)
+            # Bioluminescent joints on the six-segmented limbs.
+            disk(c,s*19,-34,2.2,2.2,self.ember,.3)
+            for k in range(3):
+                yy=-71+k*9
+                poly(c,[(s*(25+k*2),yy),(s*(34+k*2),yy-5),(s*(29+k*2),yy+5)],self.bone,.8,.4,.65)
+        for s in (-1,1):
+            disk(c,s*13,-101,2.4,2.7,self.ember,.3)
+            vein(c,[(s*7,-106),(0,-111),(-s*7,-106)],self.bone.light,1.0,.55)
         c.restore()
 
 class Scarab(Insect):
@@ -199,6 +220,24 @@ class Scarab(Insect):
         if cast:
             for s in (-1,1):
                 radial_glow(c,s*42,-26,22,self.lava.base,.32*cast)
+        # Runic basalt carving over the dorsal plates, riveted chitin seams.
+        for sign in (-1,1):
+            for j in range(4):
+                xx=sign*(21+j*7)+shellshift
+                yy=-126+j*13
+                vein(c,[(xx,yy),(xx+sign*3,yy+7),(xx+sign*1,yy+13)],self.lava.light,1.45,.76)
+                disk(c,xx+sign*3,yy+7,1.8,1.8,self.gold,.4)
+            for j in range(3):
+                yy=-102+j*19
+                poly(c,[(sign*46+shellshift,yy-6),(sign*54+shellshift,yy),
+                        (sign*47+shellshift,yy+11)],self.shell,1.4,.65,.8)
+        # Encrusted infernal center crest instead of a plain repeated circle.
+        poly(c,[(-6+shellshift,-97),(shellshift,-115),(6+shellshift,-97),
+                (shellshift,-81)],self.gold,1.3,.75,.85)
+        poly(c,[(-2+shellshift,-97),(shellshift,-105),(3+shellshift,-97),
+                (shellshift,-88)],self.lava,.7,.35,.5)
+        for xx in (-24,24):
+            for yy in (-59,-81,-103):disk(c,xx+shellshift,yy,1.6,2.2,self.lava,.3)
         c.restore()
 
 class Moth(Insect):
@@ -271,6 +310,31 @@ class Moth(Insect):
                     x=ex+s*(i*9-10); y=-70-i*9
                     disk(c,x,y,2.3+i*.3,2.8,self.mana,.7)
             radial_glow(c,0,-88,34,self.mana.base,.42*cast)
+        # Hand-painted moth-scale highlights, branching wing veins and occult pupils.
+        for wing_side in (-1,1):
+            for j in range(5):
+                yy=-144+j*13
+                x=wing_side*(25+j*6)
+                vein(c,[(wing_side*19,-117),(x,yy)],self.cream.light,.7,.50)
+                vein(c,[(x,yy),(x+wing_side*8,yy-5)],self.cream.light,.7,.42)
+            for j in range(4):
+                x=wing_side*(20+j*11)
+                y=-75+(j%2)*6
+                disk(c,x,y,1.6,2.2,self.mana,.3)
+            eye_x=wing_side*(47 if not side else 33)
+            disk(c,eye_x,-117,2.8,4.5,self.dark,.4)
+            disk(c,eye_x-wing_side*1.1,-120,1,1.2,self.cream,.1)
+            for k in range(3):
+                x=wing_side*(25+k*7)
+                poly(c,[(x,-56),(x+wing_side*4,-39),(x+wing_side*8,-56)],self.cream,.8,.5,.7)
+        # Segmented ritual sigil embedded into moth thorax.
+        poly(c,[(-7,-104),(0,-114),(7,-104),(0,-95)],self.mana,1.0,.7,.7)
+        disk(c,0,-104,2.7,3.6,self.cream,.3)
+        if cast:
+            for j in range(6):
+                angle=TAU*j/6+cast*.3
+                x=math.cos(angle)*36;y=-100+math.sin(angle)*21
+                disk(c,x,y,1.5+cast,1.5+cast,self.mana,.4)
         c.restore()
 
 CREATURES={d.name:d() for d in (Mantis,Scarab,Moth)}
