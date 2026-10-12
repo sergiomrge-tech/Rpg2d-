@@ -1,0 +1,206 @@
+{
+ "velmoor": [
+  {
+   "kind": "mantis_reaver",
+   "x": 3296,
+   "y": 2912,
+   "level": 5
+  },
+  {
+   "kind": "moth_hexer",
+   "x": 1248,
+   "y": 2912,
+   "level": 5
+  },
+  {
+   "kind": "termite_burrower",
+   "x": 480,
+   "y": 928,
+   "level": 6
+  },
+  {
+   "kind": "moth_oracle",
+   "x": 3360,
+   "y": 3552,
+   "level": 8
+  }
+ ],
+ "valemont": [
+  {
+   "kind": "roach_plaguebearer",
+   "x": 864,
+   "y": 800,
+   "level": 8
+  },
+  {
+   "kind": "spike_beetle",
+   "x": 288,
+   "y": 1120,
+   "level": 8
+  }
+ ],
+ "kharis": [
+  {
+   "kind": "scarab_brute",
+   "x": 3104,
+   "y": 1056,
+   "level": 9
+  },
+  {
+   "kind": "vespa_lancer",
+   "x": 1952,
+   "y": 928,
+   "level": 9
+  },
+  {
+   "kind": "cicada_screecher",
+   "x": 1504,
+   "y": 2720,
+   "level": 10
+  },
+  {
+   "kind": "termite_burrower",
+   "x": 2656,
+   "y": 288,
+   "level": 10
+  },
+  {
+   "kind": "scarab_colossus",
+   "x": 2208,
+   "y": 3104,
+   "level": 12
+  }
+ ],
+ "mines": [
+  {
+   "kind": "ant_guard",
+   "x": 2208,
+   "y": 2208,
+   "level": 11
+  },
+  {
+   "kind": "spike_beetle",
+   "x": 352,
+   "y": 3296,
+   "level": 11
+  },
+  {
+   "kind": "roach_plaguebearer",
+   "x": 1696,
+   "y": 1888,
+   "level": 12
+  },
+  {
+   "kind": "brood_tyrant",
+   "x": 3552,
+   "y": 608,
+   "level": 14
+  }
+ ],
+ "mirewail": [
+  {
+   "kind": "roach_plaguebearer",
+   "x": 928,
+   "y": 3232,
+   "level": 13
+  },
+  {
+   "kind": "dragonfly_skirmisher",
+   "x": 1248,
+   "y": 3296,
+   "level": 13
+  },
+  {
+   "kind": "moth_hexer",
+   "x": 2912,
+   "y": 1952,
+   "level": 13
+  },
+  {
+   "kind": "mantis_reaver",
+   "x": 2464,
+   "y": 992,
+   "level": 14
+  }
+ ],
+ "peaks": [
+  {
+   "kind": "vespa_lancer",
+   "x": 2848,
+   "y": 2272,
+   "level": 15
+  },
+  {
+   "kind": "dragonfly_skirmisher",
+   "x": 1376,
+   "y": 2336,
+   "level": 15
+  },
+  {
+   "kind": "cicada_screecher",
+   "x": 2976,
+   "y": 416,
+   "level": 15
+  },
+  {
+   "kind": "queen_vespara",
+   "x": 544,
+   "y": 3232,
+   "level": 18
+  }
+ ],
+ "castle": [
+  {
+   "kind": "mantis_reaver",
+   "x": 3616,
+   "y": 608,
+   "level": 18
+  },
+  {
+   "kind": "spike_beetle",
+   "x": 2976,
+   "y": 352,
+   "level": 18
+  },
+  {
+   "kind": "ant_guard",
+   "x": 1632,
+   "y": 3232,
+   "level": 18
+  }
+ ],
+ "wastelands": [
+  {
+   "kind": "scarab_brute",
+   "x": 4256,
+   "y": 480,
+   "level": 20
+  },
+  {
+   "kind": "vespa_lancer",
+   "x": 1248,
+   "y": 736,
+   "level": 20
+  },
+  {
+   "kind": "mantis_high_reaper",
+   "x": 1376,
+   "y": 3552,
+   "level": 23
+  }
+ ],
+ "citadel": [
+  {
+   "kind": "dragonfly_skirmisher",
+   "x": 3296,
+   "y": 1824,
+   "level": 24
+  },
+  {
+   "kind": "cicada_screecher",
+   "x": 2912,
+   "y": 1632,
+   "level": 24
+  }
+ ]
+}

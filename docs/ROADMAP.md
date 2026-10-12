@@ -70,7 +70,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ **Missão principal animada:** marcador dourado flutuante sobre o alvo (NPC/chefe/inimigo) ou chevron na saída do mapa que leva até ele, seta de bússola na borda da tela com distância, painel de missão que desliza/brilha com "NOVA MISSÃO"/"PROGRESSO", banner animado "MISSÃO CONCLUÍDA" nas promoções e chefes
 - ✅ Save resiliente (arquivo temporário validado + `.bak` + recuperação automática; salva ao morrer/fechar) — ideia do PR #1
 - ✅ Tour automático longo no CI: todos os 10 chefes (com Sylra), fases, final e créditos
-- ⬜ Integrar os insetoides do GPT (PRs #5–#10): PNG/JSON já servem no Godot; falta IA/habilidades em GDScript
+- ✅ **Insetoides do GPT portados** (PRs #6–#10): 10 insetos comuns + 5 chefes opcionais com IA e habilidades próprias em GDScript (`insect.gd`): investida, onda sísmica, maldição, veneno, onda sonora, carapaça, nuvem tóxica, agulhas, invocação de formigas; status Veneno/Lentidão/Atordoado no herói; encontros opcionais em `data/insect_spawns.json`
 - ⬜ Gamepad, opções, legendas/idiomas
 - ⬜ Balanceamento (alvo ~30 h)
 - ⬜ Builds Windows/Mac, página do jogo

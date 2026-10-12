@@ -1774,188 +1774,6 @@
    ]
   ]
  },
- "gpt_ant_guard": {
-  "id": "gpt_ant_guard",
-  "name": "Ant Guard (GPT)",
-  "sheet": "Sprites/DemonsGpt/ant_guard",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_brood_tyrant": {
-  "id": "gpt_brood_tyrant",
-  "name": "Brood Tyrant (GPT)",
-  "sheet": "Sprites/DemonsGpt/brood_tyrant",
-  "hp": 1560.0,
-  "dmg": 32.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 149.0,
-  "poise": 90.0,
-  "scale": 1.04,
-  "caster": true,
-  "boss": true,
-  "title": "Asset do GPT",
-  "drops": [
-   [
-    "gold",
-    1,
-    150,
-    220
-   ],
-   [
-    "hell_ember",
-    1,
-    2,
-    4
-   ],
-   [
-    "potion",
-    1,
-    2,
-    3
-   ],
-   [
-    "spark_tome",
-    0.5,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_cicada_screecher": {
-  "id": "gpt_cicada_screecher",
-  "name": "Cicada Screecher (GPT)",
-  "sheet": "Sprites/DemonsGpt/cicada_screecher",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_dragonfly_skirmisher": {
-  "id": "gpt_dragonfly_skirmisher",
-  "name": "Dragonfly Skirmisher (GPT)",
-  "sheet": "Sprites/DemonsGpt/dragonfly_skirmisher",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
  "gpt_grakk": {
   "id": "gpt_grakk",
   "name": "Grakk (GPT)",
@@ -2367,94 +2185,6 @@
    ]
   ]
  },
- "gpt_mantis_high_reaper": {
-  "id": "gpt_mantis_high_reaper",
-  "name": "Mantis High Reaper (GPT)",
-  "sheet": "Sprites/DemonsGpt/mantis_high_reaper",
-  "hp": 1560.0,
-  "dmg": 32.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 149.0,
-  "poise": 90.0,
-  "scale": 1.04,
-  "caster": true,
-  "boss": true,
-  "title": "Asset do GPT",
-  "drops": [
-   [
-    "gold",
-    1,
-    150,
-    220
-   ],
-   [
-    "hell_ember",
-    1,
-    2,
-    4
-   ],
-   [
-    "potion",
-    1,
-    2,
-    3
-   ],
-   [
-    "spark_tome",
-    0.5,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_mantis_reaver": {
-  "id": "gpt_mantis_reaver",
-  "name": "Mantis Reaver (GPT)",
-  "sheet": "Sprites/DemonsGpt/mantis_reaver",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
  "gpt_morgash_ironhorn": {
   "id": "gpt_morgash_ironhorn",
   "name": "Morgash Ironhorn (GPT)",
@@ -2466,94 +2196,6 @@
   "xp": 149.0,
   "poise": 90.0,
   "scale": 1.56,
-  "caster": true,
-  "boss": true,
-  "title": "Asset do GPT",
-  "drops": [
-   [
-    "gold",
-    1,
-    150,
-    220
-   ],
-   [
-    "hell_ember",
-    1,
-    2,
-    4
-   ],
-   [
-    "potion",
-    1,
-    2,
-    3
-   ],
-   [
-    "spark_tome",
-    0.5,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_moth_hexer": {
-  "id": "gpt_moth_hexer",
-  "name": "Moth Hexer (GPT)",
-  "sheet": "Sprites/DemonsGpt/moth_hexer",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_moth_oracle": {
-  "id": "gpt_moth_oracle",
-  "name": "Moth Oracle (GPT)",
-  "sheet": "Sprites/DemonsGpt/moth_oracle",
-  "hp": 1560.0,
-  "dmg": 32.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 149.0,
-  "poise": 90.0,
-  "scale": 1.04,
   "caster": true,
   "boss": true,
   "title": "Asset do GPT",
@@ -2772,276 +2414,6 @@
    ]
   ]
  },
- "gpt_queen_vespara": {
-  "id": "gpt_queen_vespara",
-  "name": "Queen Vespara (GPT)",
-  "sheet": "Sprites/DemonsGpt/queen_vespara",
-  "hp": 1560.0,
-  "dmg": 32.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 149.0,
-  "poise": 90.0,
-  "scale": 1.04,
-  "caster": true,
-  "boss": true,
-  "title": "Asset do GPT",
-  "drops": [
-   [
-    "gold",
-    1,
-    150,
-    220
-   ],
-   [
-    "hell_ember",
-    1,
-    2,
-    4
-   ],
-   [
-    "potion",
-    1,
-    2,
-    3
-   ],
-   [
-    "spark_tome",
-    0.5,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_roach_plaguebearer": {
-  "id": "gpt_roach_plaguebearer",
-  "name": "Roach Plaguebearer (GPT)",
-  "sheet": "Sprites/DemonsGpt/roach_plaguebearer",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_scarab_brute": {
-  "id": "gpt_scarab_brute",
-  "name": "Scarab Brute (GPT)",
-  "sheet": "Sprites/DemonsGpt/scarab_brute",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_scarab_colossus": {
-  "id": "gpt_scarab_colossus",
-  "name": "Scarab Colossus (GPT)",
-  "sheet": "Sprites/DemonsGpt/scarab_colossus",
-  "hp": 1560.0,
-  "dmg": 32.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 149.0,
-  "poise": 90.0,
-  "scale": 1.04,
-  "caster": true,
-  "boss": true,
-  "title": "Asset do GPT",
-  "drops": [
-   [
-    "gold",
-    1,
-    150,
-    220
-   ],
-   [
-    "hell_ember",
-    1,
-    2,
-    4
-   ],
-   [
-    "potion",
-    1,
-    2,
-    3
-   ],
-   [
-    "spark_tome",
-    0.5,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_spike_beetle": {
-  "id": "gpt_spike_beetle",
-  "name": "Spike Beetle (GPT)",
-  "sheet": "Sprites/DemonsGpt/spike_beetle",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
- "gpt_termite_burrower": {
-  "id": "gpt_termite_burrower",
-  "name": "Termite Burrower (GPT)",
-  "sheet": "Sprites/DemonsGpt/termite_burrower",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
-  "boss": false,
-  "title": "",
-  "drops": [
-   [
-    "gold",
-    1,
-    4,
-    12
-   ],
-   [
-    "imp_horn",
-    0.35,
-    1,
-    1
-   ],
-   [
-    "potion",
-    0.12,
-    1,
-    1
-   ],
-   [
-    "hell_ember",
-    0.06,
-    1,
-    1
-   ],
-   [
-    "spark_tome",
-    0.012,
-    1,
-    1
-   ]
-  ]
- },
  "gpt_thornmaw_alpha": {
   "id": "gpt_thornmaw_alpha",
   "name": "Thornmaw Alpha (GPT)",
@@ -3124,32 +2496,243 @@
    ]
   ]
  },
- "gpt_vespa_lancer": {
-  "id": "gpt_vespa_lancer",
-  "name": "Vespa Lancer (GPT)",
-  "sheet": "Sprites/DemonsGpt/vespa_lancer",
-  "hp": 130.0,
-  "dmg": 18.0,
-  "speed": 2.3,
-  "aggro": 8.0,
-  "xp": 18.0,
-  "poise": 15.0,
-  "scale": 1.39,
-  "caster": true,
+ "mantis_reaver": {
+  "id": "mantis_reaver",
+  "name": "Mantídeo Ceifador",
+  "sheet": "Sprites/DemonsGpt/mantis_reaver",
+  "hp": 105,
+  "dmg": 20,
+  "speed": 3.5,
+  "aggro": 8.5,
+  "xp": 28,
+  "poise": 16,
+  "scale": 1.035,
+  "caster": false,
   "boss": false,
   "title": "",
+  "behavior": "mantis_dash",
   "drops": [
    [
     "gold",
-    1,
-    4,
-    12
+    1.0,
+    7,
+    14
    ],
    [
     "imp_horn",
-    0.35,
+    0.25,
     1,
     1
+   ],
+   [
+    "hell_ember",
+    0.13,
+    1,
+    1
+   ]
+  ]
+ },
+ "scarab_brute": {
+  "id": "scarab_brute",
+  "name": "Escaravelho Infernal",
+  "sheet": "Sprites/DemonsGpt/scarab_brute",
+  "hp": 260,
+  "dmg": 25,
+  "speed": 1.65,
+  "aggro": 7.2,
+  "xp": 70,
+  "poise": 48,
+  "scale": 1.092,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "scarab_shockwave",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    12,
+    24
+   ],
+   [
+    "hell_ember",
+    0.24,
+    1,
+    1
+   ],
+   [
+    "potion",
+    0.15,
+    1,
+    1
+   ]
+  ]
+ },
+ "moth_hexer": {
+  "id": "moth_hexer",
+  "name": "Mariposa Ocultista",
+  "sheet": "Sprites/DemonsGpt/moth_hexer",
+  "hp": 80,
+  "dmg": 16,
+  "speed": 2.75,
+  "aggro": 9.0,
+  "xp": 22,
+  "poise": 12,
+  "scale": 0.977,
+  "caster": true,
+  "boss": false,
+  "title": "",
+  "behavior": "moth_hex",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    6,
+    14
+   ],
+   [
+    "ether",
+    0.3,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.1,
+    1,
+    1
+   ]
+  ]
+ },
+ "termite_burrower": {
+  "id": "termite_burrower",
+  "name": "Térmita Escavadora",
+  "sheet": "Sprites/DemonsGpt/termite_burrower",
+  "hp": 125,
+  "dmg": 21,
+  "speed": 2.0,
+  "aggro": 7.5,
+  "xp": 34,
+  "poise": 27,
+  "scale": 1.035,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "termite_burrow",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    8,
+    16
+   ],
+   [
+    "potion",
+    0.1,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.17,
+    1,
+    1
+   ]
+  ]
+ },
+ "vespa_lancer": {
+  "id": "vespa_lancer",
+  "name": "Vespa Perfuradora",
+  "sheet": "Sprites/DemonsGpt/vespa_lancer",
+  "hp": 90,
+  "dmg": 20,
+  "speed": 4.1,
+  "aggro": 9.0,
+  "xp": 24,
+  "poise": 12,
+  "scale": 0.977,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "vespa_sting",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    6,
+    17
+   ],
+   [
+    "ether",
+    0.15,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.11,
+    1,
+    1
+   ]
+  ]
+ },
+ "cicada_screecher": {
+  "id": "cicada_screecher",
+  "name": "Cigarra Estridente",
+  "sheet": "Sprites/DemonsGpt/cicada_screecher",
+  "hp": 110,
+  "dmg": 17,
+  "speed": 2.9,
+  "aggro": 8.0,
+  "xp": 30,
+  "poise": 21,
+  "scale": 0.977,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "cicada_sonic",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    7,
+    16
+   ],
+   [
+    "ether",
+    0.15,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.12,
+    1,
+    1
+   ]
+  ]
+ },
+ "ant_guard": {
+  "id": "ant_guard",
+  "name": "Formiga Sentinela",
+  "sheet": "Sprites/DemonsGpt/ant_guard",
+  "hp": 150,
+  "dmg": 19,
+  "speed": 2.6,
+  "aggro": 7.7,
+  "xp": 40,
+  "poise": 34,
+  "scale": 1.035,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "ant_carapace",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    9,
+    17
    ],
    [
     "potion",
@@ -3159,15 +2742,297 @@
    ],
    [
     "hell_ember",
-    0.06,
+    0.11,
+    1,
+    1
+   ]
+  ]
+ },
+ "roach_plaguebearer": {
+  "id": "roach_plaguebearer",
+  "name": "Barata Pestilenta",
+  "sheet": "Sprites/DemonsGpt/roach_plaguebearer",
+  "hp": 115,
+  "dmg": 15,
+  "speed": 3.45,
+  "aggro": 8.3,
+  "xp": 31,
+  "poise": 16,
+  "scale": 0.977,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "roach_plague",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    8,
+    17
+   ],
+   [
+    "ether",
+    0.12,
     1,
     1
    ],
    [
-    "spark_tome",
-    0.012,
+    "hell_ember",
+    0.14,
     1,
     1
+   ]
+  ]
+ },
+ "spike_beetle": {
+  "id": "spike_beetle",
+  "name": "Besouro Ouriço",
+  "sheet": "Sprites/DemonsGpt/spike_beetle",
+  "hp": 170,
+  "dmg": 21,
+  "speed": 2.1,
+  "aggro": 7.5,
+  "xp": 46,
+  "poise": 35,
+  "scale": 1.012,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "spike_roll",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    9,
+    18
+   ],
+   [
+    "potion",
+    0.08,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.15,
+    1,
+    1
+   ]
+  ]
+ },
+ "dragonfly_skirmisher": {
+  "id": "dragonfly_skirmisher",
+  "name": "Libélula Caçadora",
+  "sheet": "Sprites/DemonsGpt/dragonfly_skirmisher",
+  "hp": 90,
+  "dmg": 18,
+  "speed": 4.2,
+  "aggro": 9.0,
+  "xp": 24,
+  "poise": 12,
+  "scale": 1.012,
+  "caster": false,
+  "boss": false,
+  "title": "",
+  "behavior": "dragonfly_zigzag",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    9,
+    20
+   ],
+   [
+    "ether",
+    0.14,
+    1,
+    1
+   ],
+   [
+    "hell_ember",
+    0.12,
+    1,
+    1
+   ]
+  ]
+ },
+ "mantis_high_reaper": {
+  "id": "mantis_high_reaper",
+  "name": "Alto Ceifador Mantídeo",
+  "sheet": "Sprites/DemonsGpt/mantis_high_reaper",
+  "hp": 740,
+  "dmg": 31,
+  "speed": 3.2,
+  "aggro": 10.5,
+  "xp": 148,
+  "poise": 110,
+  "scale": 1.8,
+  "caster": false,
+  "boss": true,
+  "title": "Mestre das Quatro Foices",
+  "behavior": "boss_reaper",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    65,
+    100
+   ],
+   [
+    "hell_ember",
+    0.65,
+    1,
+    2
+   ],
+   [
+    "potion",
+    0.8,
+    1,
+    2
+   ]
+  ]
+ },
+ "scarab_colossus": {
+  "id": "scarab_colossus",
+  "name": "Colosso do Escaravelho",
+  "sheet": "Sprites/DemonsGpt/scarab_colossus",
+  "hp": 1100,
+  "dmg": 35,
+  "speed": 1.55,
+  "aggro": 9.0,
+  "xp": 220,
+  "poise": 220,
+  "scale": 1.8,
+  "caster": false,
+  "boss": true,
+  "title": "A Carapaça Que Anda",
+  "behavior": "boss_scarab",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    85,
+    145
+   ],
+   [
+    "hell_ember",
+    0.8,
+    1,
+    3
+   ],
+   [
+    "potion",
+    0.9,
+    1,
+    2
+   ]
+  ]
+ },
+ "moth_oracle": {
+  "id": "moth_oracle",
+  "name": "Oráculo da Mariposa",
+  "sheet": "Sprites/DemonsGpt/moth_oracle",
+  "hp": 790,
+  "dmg": 26,
+  "speed": 2.7,
+  "aggro": 10.5,
+  "xp": 158,
+  "poise": 110,
+  "scale": 1.8,
+  "caster": true,
+  "boss": true,
+  "title": "Vidente das Mil Asas",
+  "behavior": "boss_moth",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    78,
+    115
+   ],
+   [
+    "ether",
+    0.85,
+    1,
+    3
+   ],
+   [
+    "hell_ember",
+    0.6,
+    1,
+    2
+   ]
+  ]
+ },
+ "queen_vespara": {
+  "id": "queen_vespara",
+  "name": "Rainha Vespara",
+  "sheet": "Sprites/DemonsGpt/queen_vespara",
+  "hp": 850,
+  "dmg": 30,
+  "speed": 3.25,
+  "aggro": 10.0,
+  "xp": 170,
+  "poise": 100,
+  "scale": 1.725,
+  "caster": false,
+  "boss": true,
+  "title": "Soberana da Colmeia",
+  "behavior": "boss_vespara",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    72,
+    132
+   ],
+   [
+    "hell_ember",
+    0.7,
+    1,
+    3
+   ],
+   [
+    "ether",
+    0.6,
+    1,
+    2
+   ]
+  ]
+ },
+ "brood_tyrant": {
+  "id": "brood_tyrant",
+  "name": "Tirano da Ninhada",
+  "sheet": "Sprites/DemonsGpt/brood_tyrant",
+  "hp": 1200,
+  "dmg": 38,
+  "speed": 1.45,
+  "aggro": 9.0,
+  "xp": 240,
+  "poise": 245,
+  "scale": 1.875,
+  "caster": false,
+  "boss": true,
+  "title": "Pai de Todas as Formigas",
+  "behavior": "boss_brood",
+  "drops": [
+   [
+    "gold",
+    1.0,
+    120,
+    190
+   ],
+   [
+    "hell_ember",
+    1.0,
+    2,
+    4
+   ],
+   [
+    "potion",
+    0.9,
+    1,
+    3
    ]
   ]
  }

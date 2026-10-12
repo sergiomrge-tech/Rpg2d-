@@ -559,6 +559,7 @@ func _ci_shots() -> void:
 		_tour_to(m)
 		await _wait(1.0)
 		await shot("10_" + m)
+	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")
 	await _wait(0.3)
@@ -659,3 +660,39 @@ func _ci_bosses() -> void:
 	await _wait(2.0)
 	await shot("32_credits")
 	print("[ci] credits visible: ", hud.in_credits())
+
+
+const INSECTS := ["mantis_reaver", "scarab_brute", "moth_hexer", "termite_burrower", "vespa_lancer", "cicada_screecher", "ant_guard",
+	"roach_plaguebearer", "spike_beetle", "dragonfly_skirmisher", "mantis_high_reaper", "scarab_colossus", "moth_oracle", "queen_vespara", "brood_tyrant"]
+
+
+## Spawns each insectoid next to the (invulnerable) hero in the village square and lets the real AI fight.
+func _ci_insects() -> void:
+	_tour_to("village")
+	_travel_cd = 999.0
+	for e in Enemy.all.duplicate():
+		e.queue_free()
+	player.input_locked = true
+	player.global_position = Vector2(1728, 1250)
+	camera.snap()
+	await _wait(0.5)
+	for id in INSECTS:
+		var lv := 8
+		var e := Enemy.spawn(id, player.global_position + Vector2(4.2 * 64.0, 0), lv)
+		var t := 0.0
+		var shots := 0
+		while t < (6.0 if e.def["boss"] else 3.6) and not e.dead:
+			player.invuln = 99.0
+			player.hp = player.max_hp
+			var to := e.global_position - player.global_position
+			player.face(Util.facing_from(to, player.facing))
+			await _wait(0.3)
+			t += 0.3
+			if (t > 2.4 and shots == 0) or (e.def["boss"] and t > 4.8 and shots == 1):
+				await shot("40_insect_%s_%d" % [id, shots])
+				shots += 1
+		e.hurt(99999, player.global_position, 0, 999)
+		await _wait(0.4)
+		for o in Enemy.all.duplicate():
+			if is_instance_valid(o) and o != e:
+				o.queue_free()

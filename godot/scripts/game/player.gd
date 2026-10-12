@@ -20,6 +20,10 @@ var state_t := 0.0
 var roll_dir := Vector2.ZERO
 var move_dir := Vector2.ZERO
 var step_t := 0.0
+var hex_slow := 0.0
+var venom := 0.0
+var venom_tick := 0.0
+var sonic := 0.0
 
 const WALK := 4.0 * T
 const RUN := 6.4 * T
@@ -48,9 +52,33 @@ static func spawn(at: Vector2, state_: GameState) -> Player:
 	return p
 
 
+func apply_venom(sec: float) -> void:
+	if dead:
+		return
+	venom = maxf(venom, sec)
+	venom_tick = maxf(venom_tick, 0.85)
+	Fx.toast("Veneno!", Color(0.66, 1.0, 0.48), pos() + Vector2.UP * 2.4 * T)
+
+
+func apply_sonic(sec: float) -> void:
+	if dead:
+		return
+	sonic = maxf(sonic, sec)
+	Fx.toast("Atordoado!", Color(0.51, 0.9, 1.0), pos() + Vector2.UP * 2.4 * T)
+
+
+func apply_hex_slow(sec: float) -> void:
+	if dead:
+		return
+	hex_slow = maxf(hex_slow, sec)
+	Fx.toast("Lentidão!", Color(0.81, 0.54, 1.0), pos() + Vector2.UP * 2.4 * T)
+
+
 func _read_move() -> Vector2:
 	if input_locked:
 		return scripted_move
+	if sonic > 0.0:
+		return Vector2.ZERO
 	var v := Vector2.ZERO
 	if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT): v.x -= 1
 	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT): v.x += 1
@@ -60,7 +88,7 @@ func _read_move() -> Vector2:
 
 
 func _pressed(keys: Array) -> bool:
-	if input_locked:
+	if input_locked or sonic > 0.0:
 		return false
 	for k in keys:
 		if Game.consume(k):
@@ -72,6 +100,17 @@ func _physics_process(dt: float) -> void:
 	if dead:
 		return
 	state_t += dt
+	hex_slow = maxf(0.0, hex_slow - dt)
+	sonic = maxf(0.0, sonic - dt)
+	if venom > 0.0:
+		venom = maxf(0.0, venom - dt)
+		venom_tick -= dt
+		if venom_tick <= 0.0:
+			venom_tick = 0.85
+			invuln = 0.0
+			hurt(3.0, pos(), 0.0, 0.0)
+			if dead:
+				return
 	move_dir = _read_move()
 	var run := (not input_locked) and Input.is_physical_key_pressed(KEY_SHIFT)
 
@@ -95,7 +134,7 @@ func _physics_process(dt: float) -> void:
 					st_regen_delay = 0.4
 				face(Util.facing_from(move_dir, facing))
 				anim.play("run" if can_run else "walk")
-				velocity = move_dir * (RUN if can_run else WALK) + knock
+				velocity = move_dir * (RUN if can_run else WALK) * (0.52 if hex_slow > 0.0 else 1.0) + knock
 				step_t -= dt * (1.5 if can_run else 1.0)
 				if step_t <= 0.0:
 					step_t = 0.36
@@ -303,6 +342,9 @@ func _die() -> void:
 
 func revive(at: Vector2) -> void:
 	dead = false
+	hex_slow = 0.0
+	venom = 0.0
+	sonic = 0.0
 	global_position = at
 	hp = gs.hp_max()
 	mp = gs.max_mp

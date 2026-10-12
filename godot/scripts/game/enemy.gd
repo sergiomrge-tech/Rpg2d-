@@ -7,7 +7,7 @@ const MINIONS := {
 	"dryad_profane": "spirit_corrupt", "grakk": "imp", "assassin_shadow": "imp_scout", "scorpion_demon": "sand_imp",
 	"ember_golem": "mine_imp", "succubus_mirael": "bog_wraith", "ice_demon": "frost_imp",
 }
-enum St { IDLE, CHASE, TELEGRAPH, ATTACK, CAST, HURT, DEAD }
+enum St { IDLE, CHASE, TELEGRAPH, ATTACK, CAST, CAST2, HURT, DEAD }
 
 var def: Dictionary
 var level := 1
@@ -28,6 +28,11 @@ var summoned := false
 var tp_cd := 3.0
 var phase := 1
 var _seed := 0.0
+var next_is_skill2 := false
+var secondary_cd := 0.0
+var boss_guard := 0.0
+var chitin_guard := 0.0
+var skill_dir := Vector2.DOWN
 
 
 static func spawn(kind: String, at: Vector2, lv: int) -> Enemy:
@@ -40,7 +45,14 @@ static func spawn(kind: String, at: Vector2, lv: int) -> Enemy:
 	var sd := Data.dmg_scale(lv)
 	e.collision_layer = 4
 	e.collision_mask = 1 | 2 | 8
-	e.build(d["sheet"], 0.9, 0.3, 0.3, float(d["scale"]) + 0.05 * (lv - 1))
+	var beh: String = d.get("behavior", "")
+	if beh != "":
+		var is_boss: bool = d["boss"]
+		e.build(d["sheet"], 2.7 if is_boss else 0.9, 0.68 if is_boss else 0.3,
+			0.8 if is_boss else float(Insect.BODY_RADIUS.get(beh, 0.3)), float(d["scale"]) + 0.03 * (lv - 1))
+		e.secondary_cd = randf_range(5.0, 7.0) if is_boss else 0.0
+	else:
+		e.build(d["sheet"], 0.9, 0.3, 0.3, float(d["scale"]) + 0.05 * (lv - 1))
 	e.max_hp = roundf(float(d["hp"]) * s)
 	e.hp = e.max_hp
 	e.dmg = float(d["dmg"]) * sd
@@ -91,10 +103,14 @@ func _physics_process(dt: float) -> void:
 	state_t += dt
 	cast_cd -= dt
 	attack_cd -= dt
+	secondary_cd -= dt
+	boss_guard = maxf(0.0, boss_guard - dt)
+	chitin_guard = maxf(0.0, chitin_guard - dt)
 	var p := Player.I
 	var to_p := (p.pos() - pos()) if p else Vector2.ZERO
 	var dist := to_p.length()
 	var player_ok := p != null and not p.dead
+	var beh: String = def.get("behavior", "")
 
 	match state:
 		St.IDLE:
@@ -118,7 +134,9 @@ func _physics_process(dt: float) -> void:
 			else:
 				face(Util.facing_from(to_p, facing))
 				tp_cd -= dt
-				if (def["id"] == "assassin_shadow" or (def["id"] == "malgrath" and phase >= 2)) and tp_cd <= 0.0 and dist > 1.8 * T:
+				if beh != "":
+					Insect.chase(self, to_p, dist)
+				elif (def["id"] == "assassin_shadow" or (def["id"] == "malgrath" and phase >= 2)) and tp_cd <= 0.0 and dist > 1.8 * T:
 					# shadow step: vanish and reappear behind the hero, then strike after a short tell
 					tp_cd = randf_range(3.6, 5.0)
 					Fx.demon_poof(pos() + Vector2.UP * 0.7 * T)
@@ -147,9 +165,11 @@ func _physics_process(dt: float) -> void:
 			# coloured pulse warns the player; the window is the time to roll
 			var pulse := pingpong(state_t * 8.0, 1.0)
 			flash(Color(1, 0.6, 0.2) if next_is_cast else Color(1, 0.15, 0.15), 0.55 * pulse)
-			if state_t > (0.35 if next_is_cast else 0.42):
+			if state_t > (Insect.tell_time(self) if beh != "" else (0.35 if next_is_cast else 0.42)):
 				hit_done = false
-				if next_is_cast:
+				if beh != "":
+					Insect.begin(self)
+				elif next_is_cast:
 					_go(St.CAST)
 					anim.play("cast", true)
 					cast_cd = randf_range(3.2, 4.6)
@@ -161,8 +181,14 @@ func _physics_process(dt: float) -> void:
 			var n := anim.normalized()
 			var f := Util.facing_vec(facing)
 			velocity = (f * 7.5 * T if (n > 0.3 and n < 0.6) else Vector2.ZERO) + knock
+			if beh != "":
+				velocity = Insect.attack_velocity(self, n) + knock
 		St.CAST:
 			velocity = knock
+			if beh != "":
+				velocity += Insect.cast_velocity(self, anim.normalized())
+		St.CAST2:
+			velocity = knock + Insect.skill2_velocity(self, anim.normalized())
 		St.HURT:
 			velocity = knock
 			if state_t > 0.38:
@@ -195,6 +221,8 @@ func _on_anim_hit(a: String) -> void:
 	var p := Player.I
 	if p == null or p.dead:
 		return
+	if def.get("behavior", "") != "" and Insect.on_hit(self, a, p):
+		return
 	if a == "attack" and not hit_done:
 		hit_done = true
 		var c := pos() + Util.facing_vec(facing) * 0.7 * T
@@ -223,7 +251,7 @@ func _on_anim_hit(a: String) -> void:
 
 
 func _on_anim_end(a: String) -> void:
-	if a == "attack" or a == "cast":
+	if a == "attack" or a == "cast" or a == "skill_2":
 		_go(St.CHASE)
 		anim.play("move")
 	elif a == "death":
@@ -231,6 +259,14 @@ func _on_anim_end(a: String) -> void:
 
 
 func hurt(d: float, from: Vector2, knockback: float, poise_dmg: float, crit: bool = false) -> bool:
+	if def["boss"] and boss_guard > 0.0:
+		d *= 0.38
+		poise_dmg *= 0.42
+		Fx.dust(pos(), 0.3)
+	if def.get("behavior", "") == "ant_carapace" and chitin_guard > 0.0:
+		d *= 0.36
+		poise_dmg *= 0.45
+		Fx.dust(pos(), 0.2)
 	if not super.hurt(d, from, knockback, poise_dmg, crit):
 		return false
 	last_hurt = Game.time()

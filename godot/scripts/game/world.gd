@@ -201,8 +201,18 @@ func exit_at(w: Vector2) -> Dictionary:
 	return {}
 
 
+## Regular spawns of the map plus the optional insectoid encounters (data/insect_spawns.json).
+func all_spawns() -> Array:
+	var list: Array = data["spawns"].duplicate()
+	var f := FileAccess.open("res://data/insect_spawns.json", FileAccess.READ)
+	if f:
+		var extra = JSON.parse_string(f.get_as_text())
+		list.append_array(extra.get(data["name"], []))
+	return list
+
+
 func spawn_actors() -> void:
-	for s in data["spawns"]:
+	for s in all_spawns():
 		Enemy.spawn(s["kind"], Vector2(float(s["x"]), float(s["y"])), int(s["level"]))
 	for n in data["npcs"]:
 		if n["id"] == "sylra" and Game.flags.has("sylra_joined"):
@@ -211,7 +221,7 @@ func spawn_actors() -> void:
 
 
 func respawn_enemies() -> void:
-	for s in data["spawns"]:
+	for s in all_spawns():
 		var at := Vector2(float(s["x"]), float(s["y"]))
 		var alive := false
 		for e in Enemy.all:
