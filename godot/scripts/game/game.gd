@@ -1070,6 +1070,7 @@ func _ci_shots() -> void:
 				await shot("11_valemont_" + spot[0])
 	await _ci_mage()
 	await _ci_life()
+	await _ci_gear()
 	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")
@@ -1323,6 +1324,44 @@ func _ci_mage() -> void:
 
 
 ## Side quests and the day/night routine.
+func _ci_gear() -> void:
+	var dist := [0, 0, 0, 0, 0]
+	for i in 600:
+		dist[Loot.rarity_for(8, false)] += 1
+	var bd := [0, 0, 0, 0, 0]
+	for i in 200:
+		bd[Loot.rarity_for(18, true)] += 1
+	print("[ci] rarity lv8 mob ", dist, " lv18 boss ", bd)
+	var bad := 0
+	for i in 300:
+		var id := Loot.roll_gear(10, i % 2 == 0)
+		if id == "" or not Data.items.has(id):
+			bad += 1
+	print("[ci] gear rolls invalid: ", bad)
+	for id in ["sw_0", "sw_2", "sw_4", "ar_1", "ar_3", "ch_2", "ch_4", "bw_3", "dg_1", "potion"]:
+		state.add(id, 1)
+	state.equip("sw_2")
+	state.equip("ar_3")
+	state.equip("ch_4")
+	grimoire.toggle()
+	grimoire.sel = state.inv_ids.find("sw_4")
+	grimoire._refresh()
+	await _wait(0.5)
+	await shot("70_bolsa_raridades")
+	var g0 := state.gold
+	var n0 := state.inv_ids.size()
+	grimoire._sell("sw_0")
+	print("[ci] sold: gold ", g0, " -> ", state.gold, " bag ", n0, " -> ", state.inv_ids.size())
+	grimoire.toggle()
+	hud.show_dialogue([["elowen", "Teste de legenda grande para celular: a lendária lâmina repousa onde a luz nunca chega, jovem herói."]], Callable())
+	await _wait(1.5)
+	await shot("71_legenda")
+	while hud.in_dialogue():
+		hud.advance()
+		hud.advance()
+		await get_tree().process_frame
+
+
 func _ci_life() -> void:
 	_tour_to("valemont")
 	_travel_cd = 999.0

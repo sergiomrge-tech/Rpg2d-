@@ -60,14 +60,7 @@ func _open() -> void:
 	Fx.toast("Baú encontrado!", Color(1, 0.9, 0.5), global_position + Vector2.UP * 1.4 * T)
 	var lv := maxi(1, level / 2)
 	Loot.drop({"drops": TABLES[clampi(tier, 1, 3)]}, lv, global_position + Vector2(0, 0.4 * T))
-	if tier >= 3 and randf() < 0.3:
-		var pool: Array = []
-		for id in Data.items:
-			var it: Dictionary = Data.items[id]
-			if int(it["slot"]) > 0 and int(it["rarity"]) <= 2 and id != "rusty_sword":
-				pool.append(id)
-		if not pool.is_empty():
-			Pickup.spawn(pool[randi() % pool.size()], 1, global_position + Vector2(0.5 * T, 0.5 * T))
+	Loot.gear_drop(level, tier >= 3, global_position + Vector2(0.5 * T, 0.5 * T), 0.45 if tier >= 2 else 0.2)
 	Game.save()
 
 

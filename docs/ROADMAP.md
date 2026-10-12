@@ -72,6 +72,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ **Ambiência regional** (pássaros, grilos, gotas, sapos…) por mapa em `Sfx.region_ambience`
 - ✅ **Ciclo dia/noite com rotina:** relógio no HUD; aldeões e lojistas recolhem à noite (guardas e taverneiro ficam)
 - ✅ **5 missões secundárias** em Valemont (chifres, forja, ervas, hidromel, relíquias) com rastreador no HUD
+- ✅ **Equipamentos por raridade:** Comum, Incomum, Raro, Épico e Lendário para espada, arco, adagas, armadura e amuleto (`tools/gen_gear.py`); drops aleatórios por nível (chefes sempre soltam Raro ou melhor), baús melhores dão mais; bolsa com rolagem, raridade colorida, botões Usar/Equipar e Vender (Q)
+- ✅ **Legibilidade no celular:** textos 30% maiores no modo toque e caixa de diálogo maior
+- ✅ **Área inicial mais calma:** sem monstros num raio de 16 tiles do herói e metade dos monstros de Aurora
 - ✅ **Valemont urbanizada:** taverna (descanso 40 ouro: cura + salva), ferraria (forja), estábulo, boticário, armaria, padaria, quartel, biblioteca, 4 tipos novos de casa, estátuas do herói, bancos, vasos, carroça de feno, bebedouro, bancas coloridas e postes ornamentais com brilho noturno; NPCs e diálogos para cada serviço; prédios ficam translúcidos quando o herói passa atrás
 - ✅ **Vegetação:** 13 novas plantas (bétula, cerejeira, salgueiro, cerca-viva, topiaria, samambaia, canteiro de flores, arbusto de frutas, capim alto, tronco caído, arbusto seco, arbusto de gelo, samambaia luminosa), plantio em bosques por região, junco à beira d'água, alamedas e jardins na capital
 - ✅ **Mapas ampliados (~2× a área):** anel de terra nova ao redor de cada região (`tools/art_hd/expand_maps.py`), estradas e rios prolongados até as novas bordas, mesma densidade de objetos e inimigos, pontos de interesse (acampamentos com elite, círculos de pedra, ruínas, bosques) ligados por trilhas e **baús de tesouro** (`TreasureCache`) que só abrem uma vez

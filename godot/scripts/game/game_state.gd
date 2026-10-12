@@ -88,6 +88,18 @@ func equip(id: String) -> bool:
 	return true
 
 
+## Take a piece off and put it back in the bag.
+func unequip(slot: int) -> bool:
+	var id := equipped(slot)
+	if id == "":
+		return false
+	if slot == 1: eq_weapon = ""
+	elif slot == 2: eq_armor = ""
+	else: eq_charm = ""
+	add(id, 1)
+	return true
+
+
 func can_craft(r: Dictionary) -> bool:
 	if gold < int(r["gold"]):
 		return false

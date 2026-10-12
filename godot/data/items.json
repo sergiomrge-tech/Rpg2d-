@@ -156,7 +156,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 40
   },
   "horn_blade": {
     "id": "horn_blade",
@@ -171,7 +172,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 120
   },
   "velmoor_blade": {
     "id": "velmoor_blade",
@@ -186,7 +188,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 320
   },
   "ember_blade": {
     "id": "ember_blade",
@@ -201,7 +204,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 320
   },
   "oni_cleaver": {
     "id": "oni_cleaver",
@@ -216,7 +220,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 900
   },
   "leather_vest": {
     "id": "leather_vest",
@@ -231,7 +236,8 @@
     "icon": "gear_armor",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 40
   },
   "iron_mail": {
     "id": "iron_mail",
@@ -246,7 +252,8 @@
     "icon": "gear_armor",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 120
   },
   "elven_robe": {
     "id": "elven_robe",
@@ -261,7 +268,8 @@
     "icon": "gear_armor",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 320
   },
   "sand_blade": {
     "id": "sand_blade",
@@ -276,7 +284,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 900
   },
   "dwarf_plate": {
     "id": "dwarf_plate",
@@ -291,7 +300,8 @@
     "icon": "gear_armor",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 900
   },
   "swamp_charm": {
     "id": "swamp_charm",
@@ -306,7 +316,8 @@
     "icon": "gear_charm",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 900
   },
   "frost_blade": {
     "id": "frost_blade",
@@ -321,7 +332,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 2400
   },
   "ice_mail": {
     "id": "ice_mail",
@@ -336,7 +348,8 @@
     "icon": "gear_armor",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 2400
   },
   "vorath_blade": {
     "id": "vorath_blade",
@@ -351,7 +364,8 @@
     "icon": "gear_sword",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 2400
   },
   "royal_plate": {
     "id": "royal_plate",
@@ -366,7 +380,8 @@
     "icon": "gear_armor",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 2400
   },
   "lumia_pendant": {
     "id": "lumia_pendant",
@@ -381,7 +396,8 @@
     "icon": "gear_charm",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 2400
   },
   "luma_charm": {
     "id": "luma_charm",
@@ -396,7 +412,8 @@
     "icon": "gear_charm",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 320
   },
   "ember_charm": {
     "id": "ember_charm",
@@ -411,7 +428,8 @@
     "icon": "gear_charm",
     "heal": 0,
     "mana": 0,
-    "consumable": false
+    "consumable": false,
+    "value": 320
   },
   "hunter_bow": {
     "id": "hunter_bow",
@@ -427,7 +445,8 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "weapon_type": "bow"
+    "weapon_type": "bow",
+    "value": 40
   },
   "twin_daggers": {
     "id": "twin_daggers",
@@ -443,6 +462,417 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
+    "weapon_type": "dual_daggers",
+    "value": 40
+  },
+  "sw_0": {
+    "id": "sw_0",
+    "name": "Espada de Ferro",
+    "desc": "Equipamento comum.",
+    "slot": 1,
+    "rarity": 0,
+    "atk": 5,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 40
+  },
+  "bw_0": {
+    "id": "bw_0",
+    "name": "Arco de Freixo",
+    "desc": "Equipamento comum. Só arqueiros.",
+    "slot": 1,
+    "rarity": 0,
+    "atk": 4,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_roll",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 40,
+    "weapon_type": "bow"
+  },
+  "dg_0": {
+    "id": "dg_0",
+    "name": "Adagas de Ferro",
+    "desc": "Equipamento comum. Só assassinos.",
+    "slot": 1,
+    "rarity": 0,
+    "atk": 4,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 40,
     "weapon_type": "dual_daggers"
+  },
+  "ar_0": {
+    "id": "ar_0",
+    "name": "Gibão Reforçado",
+    "desc": "Equipamento comum.",
+    "slot": 2,
+    "rarity": 0,
+    "atk": 0,
+    "defense": 6,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_armor",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 40
+  },
+  "ch_0": {
+    "id": "ch_0",
+    "name": "Amuleto de Madeira",
+    "desc": "Equipamento comum.",
+    "slot": 3,
+    "rarity": 0,
+    "atk": 0,
+    "defense": 0,
+    "mag": 0,
+    "hp": 12,
+    "icon": "gear_charm",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 40
+  },
+  "sw_1": {
+    "id": "sw_1",
+    "name": "Espada de Aço Temperado",
+    "desc": "Bem trabalhado.",
+    "slot": 1,
+    "rarity": 1,
+    "atk": 11,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 120
+  },
+  "bw_1": {
+    "id": "bw_1",
+    "name": "Arco Composto",
+    "desc": "Bem trabalhado. Só arqueiros.",
+    "slot": 1,
+    "rarity": 1,
+    "atk": 10,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_roll",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 120,
+    "weapon_type": "bow"
+  },
+  "dg_1": {
+    "id": "dg_1",
+    "name": "Adagas Serrilhadas",
+    "desc": "Bem trabalhado. Só assassinos.",
+    "slot": 1,
+    "rarity": 1,
+    "atk": 9,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 120,
+    "weapon_type": "dual_daggers"
+  },
+  "ar_1": {
+    "id": "ar_1",
+    "name": "Cota de Malha",
+    "desc": "Bem trabalhado.",
+    "slot": 2,
+    "rarity": 1,
+    "atk": 0,
+    "defense": 12,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_armor",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 120
+  },
+  "ch_1": {
+    "id": "ch_1",
+    "name": "Anel de Prata",
+    "desc": "Bem trabalhado.",
+    "slot": 3,
+    "rarity": 1,
+    "atk": 0,
+    "defense": 0,
+    "mag": 6,
+    "hp": 10,
+    "icon": "gear_charm",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 120
+  },
+  "sw_2": {
+    "id": "sw_2",
+    "name": "Lâmina Rúnica",
+    "desc": "Artesanato raro, de brilho azulado.",
+    "slot": 1,
+    "rarity": 2,
+    "atk": 18,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 320
+  },
+  "bw_2": {
+    "id": "bw_2",
+    "name": "Arco do Vento Norte",
+    "desc": "Artesanato raro, de brilho azulado. Só arqueiros.",
+    "slot": 1,
+    "rarity": 2,
+    "atk": 16,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_roll",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 320,
+    "weapon_type": "bow"
+  },
+  "dg_2": {
+    "id": "dg_2",
+    "name": "Presas da Víbora",
+    "desc": "Artesanato raro, de brilho azulado. Só assassinos.",
+    "slot": 1,
+    "rarity": 2,
+    "atk": 15,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 320,
+    "weapon_type": "dual_daggers"
+  },
+  "ar_2": {
+    "id": "ar_2",
+    "name": "Armadura de Escamas",
+    "desc": "Artesanato raro, de brilho azulado.",
+    "slot": 2,
+    "rarity": 2,
+    "atk": 0,
+    "defense": 19,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_armor",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 320
+  },
+  "ch_2": {
+    "id": "ch_2",
+    "name": "Talismã do Guardião",
+    "desc": "Artesanato raro, de brilho azulado.",
+    "slot": 3,
+    "rarity": 2,
+    "atk": 0,
+    "defense": 0,
+    "mag": 10,
+    "hp": 24,
+    "icon": "gear_charm",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 320
+  },
+  "sw_3": {
+    "id": "sw_3",
+    "name": "Espada do Alvorecer",
+    "desc": "Peça épica; runas pulsam no metal.",
+    "slot": 1,
+    "rarity": 3,
+    "atk": 27,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 900
+  },
+  "bw_3": {
+    "id": "bw_3",
+    "name": "Arco Estelar",
+    "desc": "Peça épica; runas pulsam no metal. Só arqueiros.",
+    "slot": 1,
+    "rarity": 3,
+    "atk": 25,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_roll",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 900,
+    "weapon_type": "bow"
+  },
+  "dg_3": {
+    "id": "dg_3",
+    "name": "Lâminas da Lua Nova",
+    "desc": "Peça épica; runas pulsam no metal. Só assassinos.",
+    "slot": 1,
+    "rarity": 3,
+    "atk": 23,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 900,
+    "weapon_type": "dual_daggers"
+  },
+  "ar_3": {
+    "id": "ar_3",
+    "name": "Couraça Drácônica",
+    "desc": "Peça épica; runas pulsam no metal.",
+    "slot": 2,
+    "rarity": 3,
+    "atk": 0,
+    "defense": 28,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_armor",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 900
+  },
+  "ch_3": {
+    "id": "ch_3",
+    "name": "Olho de Aetheria",
+    "desc": "Peça épica; runas pulsam no metal.",
+    "slot": 3,
+    "rarity": 3,
+    "atk": 0,
+    "defense": 0,
+    "mag": 15,
+    "hp": 40,
+    "icon": "gear_charm",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 900
+  },
+  "sw_4": {
+    "id": "sw_4",
+    "name": "Excalibur de Aetheria",
+    "desc": "LENDÁRIO — forjado para heróis antigos.",
+    "slot": 1,
+    "rarity": 4,
+    "atk": 40,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 2400
+  },
+  "bw_4": {
+    "id": "bw_4",
+    "name": "Falcão Dourado, Arco Lendário",
+    "desc": "LENDÁRIO — forjado para heróis antigos. Só arqueiros.",
+    "slot": 1,
+    "rarity": 4,
+    "atk": 37,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_roll",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 2400,
+    "weapon_type": "bow"
+  },
+  "dg_4": {
+    "id": "dg_4",
+    "name": "Duo Eclipse, Adagas Lendárias",
+    "desc": "LENDÁRIO — forjado para heróis antigos. Só assassinos.",
+    "slot": 1,
+    "rarity": 4,
+    "atk": 34,
+    "defense": 0,
+    "mag": 0,
+    "hp": 0,
+    "icon": "skill_sword",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 2400,
+    "weapon_type": "dual_daggers"
+  },
+  "ar_4": {
+    "id": "ar_4",
+    "name": "Égide do Último Rei",
+    "desc": "LENDÁRIO — forjado para heróis antigos.",
+    "slot": 2,
+    "rarity": 4,
+    "atk": 0,
+    "defense": 38,
+    "mag": 0,
+    "hp": 0,
+    "icon": "gear_armor",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 2400
+  },
+  "ch_4": {
+    "id": "ch_4",
+    "name": "Coração da Centelha",
+    "desc": "LENDÁRIO — forjado para heróis antigos.",
+    "slot": 3,
+    "rarity": 4,
+    "atk": 0,
+    "defense": 0,
+    "mag": 24,
+    "hp": 70,
+    "icon": "gear_charm",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 2400
   }
 }

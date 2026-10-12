@@ -277,9 +277,9 @@ func _build() -> void:
 	img(dlg, Sheets.ui("dialogue_band"), C, Vector2(0, -20), Vector2(1920, 380))
 	dlg_portrait = img(dlg, Sheets.ui("portrait"), C, Vector2(-700, 30), Vector2(230, 230))
 	dlg_frame = img(dlg, Sheets.ui("medallion"), C, Vector2(-700, 30), Vector2(340, 340))
-	dlg_plate = img(dlg, Sheets.ui("nameplate"), C, Vector2(-330, 118), Vector2(480, 70))
-	dlg_name = txt(dlg, "", serif, 32, Color(1, 0.92, 0.7), C, Vector2(-330, 120), Vector2(460, 50))
-	dlg_text = txt(dlg, "", sans, 34, Color(1, 0.98, 0.94), C, Vector2(130, 20), Vector2(1250, 160), HORIZONTAL_ALIGNMENT_LEFT, true, VERTICAL_ALIGNMENT_TOP)
+	dlg_plate = img(dlg, Sheets.ui("nameplate"), C, Vector2(-330, 150), Vector2(480, 70))
+	dlg_name = txt(dlg, "", serif, 32, Color(1, 0.92, 0.7), C, Vector2(-330, 152), Vector2(460, 50))
+	dlg_text = txt(dlg, "", sans, 38, Color(1, 0.98, 0.94), C, Vector2(170, -20), Vector2(1280, 250), HORIZONTAL_ALIGNMENT_LEFT, true, VERTICAL_ALIGNMENT_TOP)
 	dlg_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	dlg_hint = txt(dlg, "E / Enter ▸", bold, 22, Color(1, 0.9, 0.6, 0.9), C, Vector2(700, -90), Vector2(200, 30))
 	dlg.visible = false

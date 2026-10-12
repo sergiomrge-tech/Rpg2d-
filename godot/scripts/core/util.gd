@@ -87,7 +87,8 @@ func label(text: String, size: int, color: Color, font: Font = null, outline: bo
 	l.text = text
 	var ls := LabelSettings.new()
 	ls.font = font if font else font_sans
-	ls.font_size = size
+	# phones: small screen, same 1920x1080 canvas -> bigger text everywhere
+	ls.font_size = roundi(size * 1.3) if Game.touch_mode else size
 	ls.font_color = color
 	if outline:
 		ls.outline_size = 5

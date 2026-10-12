@@ -25,6 +25,18 @@ JSON_ONLY = '--json-only' in sys.argv
 EXPAND_FACTOR = {n: 0.21 for n in ['village', 'velmoor', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']}   # ring of new land on each side => ~2x area
 
 
+def thin_spawns(spawns, keep=0.4, start=(72.5, 8.5), safe=16.0):
+    """Starting region: no packs around the hero's spawn and roughly 2/5 of the original monsters elsewhere."""
+    out = []
+    for i, sp in enumerate(spawns):
+        tx, ty = sp['x'] / T, sp['y'] / T
+        if math.hypot(tx - start[0], ty - start[1]) < safe:
+            continue
+        if sp['kind'] == 'grakk' or i % 5 in (0, 2) or (i % 5 == 4 and i % 2 == 0):
+            out.append(sp)
+    return out
+
+
 class Map:
     def __init__(self, name, gw, gh, seed=1):
         self.name, self.gw, self.gh, self.seed = name, gw, gh, seed
@@ -122,6 +134,8 @@ class Map:
         vegetation.add(self)
         if self.name in TOWN_WALKERS:
             town_life.add_walkers(self, TOWN_WALKERS[self.name])
+        if self.name == 'village':
+            self.spawns = thin_spawns(self.spawns)
         d = os.path.join(OUT, self.name)
         os.makedirs(d, exist_ok=True)
         if JSON_ONLY:      # keep the already-baked ground; only rewrite the map JSON (props, spawns, ...)

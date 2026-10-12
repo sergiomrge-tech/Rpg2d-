@@ -9,6 +9,8 @@ const RARITY_COLORS := [
 	Color(0.92, 0.9, 0.85), Color(0.45, 0.9, 0.45), Color(0.35, 0.65, 1.0), Color(0.78, 0.45, 1.0), Color(1.0, 0.68, 0.2),
 ]
 
+const RARITY_NAMES := ["Comum", "Incomum", "Raro", "Épico", "Lendário"]
+
 
 func _ready() -> void:
 	items = _load("items")
