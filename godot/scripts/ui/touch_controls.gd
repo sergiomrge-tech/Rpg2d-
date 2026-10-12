@@ -13,7 +13,8 @@ var _stick_id := -1
 var _stick_origin := Vector2.ZERO
 var _fingers := {}      # touch index -> button dict
 var _buttons: Array = []   # {c: Control, center: Vector2, r: float, key: int, id: String}
-const STICK_R := 130.0
+const STICK_R := 140.0
+const STICK_C := Vector2(270, 800)
 
 
 func setup(h: Hud) -> void:
@@ -22,6 +23,14 @@ func setup(h: Hud) -> void:
 	var C := Vector2(0.5, 0.5)
 	if hud.fan_node:
 		hud.fan_node.visible = false
+	if hud.medallion:
+		hud.medallion.scale = Vector2.ONE * 0.58
+		hud.medallion.position = Vector2(150, 150) - hud.medallion.size / 2.0
+	for c in hud.root.get_children():
+		if c is Label and c.text.begins_with("WASD"):
+			c.visible = false     # keyboard hint is meaningless on a phone
+	hud.gold_icon.position = Vector2(300, 30)
+	hud.gold_text.position = Vector2(356, 28)
 	layer = Control.new()
 	layer.size = Hud.SIZE
 	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -31,10 +40,11 @@ func setup(h: Hud) -> void:
 	game_buttons.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(game_buttons)
 	# floating stick visuals (shown while a finger is down); a faint ghost marks the idle spot
-	stick_base = hud.img(layer, Util.soft_circle(), Vector2(0, 0), Vector2.ZERO, Vector2(STICK_R * 2.4, STICK_R * 2.4))
-	stick_base.modulate = Color(1, 1, 1, 0.16)
-	stick_knob = hud.img(layer, Util.soft_circle(), Vector2(0, 0), Vector2.ZERO, Vector2(120, 120))
-	stick_knob.modulate = Color(1, 0.9, 0.6, 0.55)
+	# fixed analog stick, bottom-left: ornate ring base + golden knob
+	stick_base = hud.img(layer, Sheets.ui("orb"), Vector2(0, 0), Vector2.ZERO, Vector2(STICK_R * 2.3, STICK_R * 2.3))
+	stick_knob = hud.img(layer, Sheets.ui("orb"), Vector2(0, 0), Vector2.ZERO, Vector2(118, 118))
+	var dot := hud.img(stick_knob, Util.soft_circle(), Vector2(0.5, 0.5), Vector2.ZERO, Vector2(70, 70))
+	dot.modulate = Color(1, 0.85, 0.45, 0.8)
 	_stick_idle()
 	# action buttons (virtual 1920x1080 coordinates)
 	_add_btn("attack", Vector2(1700, 800), 105, KEY_J, "skill_sword", 1.0)
@@ -42,8 +52,8 @@ func setup(h: Hud) -> void:
 	_add_btn("roll", Vector2(1530, 690), 78, KEY_SPACE, "skill_roll", 1.0)
 	_add_btn("potion", Vector2(1830, 590), 68, KEY_Q, "potion", 1.0)
 	_add_btn("talk", Vector2(1290, 830), 62, KEY_E, "", 1.0)
-	_add_btn("book", Vector2(310, 62), 46, KEY_TAB, "", 0.8)
-	_add_btn("menu", Vector2(410, 62), 46, KEY_ESCAPE, "", 0.8)
+	_add_btn("book", Vector2(560, 62), 46, KEY_TAB, "", 0.8)
+	_add_btn("menu", Vector2(665, 62), 46, KEY_ESCAPE, "", 0.8)
 	# menu navigation pad (grimoire / options)
 	menu_pad = Control.new()
 	menu_pad.size = Hud.SIZE
@@ -80,10 +90,10 @@ func _add_btn(id: String, center: Vector2, r: float, key: int, icon: String, alp
 
 
 func _stick_idle() -> void:
-	stick_base.position = Vector2(480, 790) - stick_base.size / 2.0
-	stick_knob.position = Vector2(480, 790) - stick_knob.size / 2.0
-	stick_base.modulate.a = 0.1
-	stick_knob.modulate.a = 0.25
+	stick_base.position = STICK_C - stick_base.size / 2.0
+	stick_knob.position = STICK_C - stick_knob.size / 2.0
+	stick_base.modulate = Color(1, 1, 1, 0.55)
+	stick_knob.modulate = Color(1, 1, 1, 0.75)
 	Game.touch_move = Vector2.ZERO
 	Game.touch_run = false
 
@@ -144,13 +154,12 @@ func _input(ev: InputEvent) -> void:
 				Game.press_key(b["key"])
 				b["c"].scale = Vector2(0.92, 0.92)
 				return
-			if not _menu_open() and _stick_id < 0 and v.x < 1000.0 and v.y > 220.0:
+			if not _menu_open() and _stick_id < 0 and v.x < 900.0 and v.y > 330.0:
 				_stick_id = ev.index
-				_stick_origin = v
-				stick_base.position = v - stick_base.size / 2.0
-				stick_knob.position = v - stick_knob.size / 2.0
-				stick_base.modulate.a = 0.28
-				stick_knob.modulate.a = 0.7
+				_stick_origin = STICK_C
+				stick_base.modulate.a = 0.85
+				stick_knob.modulate.a = 1.0
+				_drag(v)
 		else:
 			if _fingers.has(ev.index):
 				_fingers[ev.index]["c"].scale = Vector2.ONE
@@ -159,11 +168,14 @@ func _input(ev: InputEvent) -> void:
 				_stick_id = -1
 				_stick_idle()
 	elif ev is InputEventScreenDrag and ev.index == _stick_id:
-		var v := _virtual(ev.position)
-		var d := v - _stick_origin
-		var m := minf(d.length(), STICK_R)
-		var dir := d.normalized() if d.length() > 1.0 else Vector2.ZERO
-		stick_knob.position = _stick_origin + dir * m - stick_knob.size / 2.0
-		var amount := m / STICK_R
-		Game.touch_move = dir * (0.0 if amount < 0.18 else minf(amount * 1.15, 1.0))
-		Game.touch_run = amount > 0.92
+		_drag(_virtual(ev.position))
+
+
+func _drag(v: Vector2) -> void:
+	var d := v - _stick_origin
+	var m := minf(d.length(), STICK_R)
+	var dir := d.normalized() if d.length() > 1.0 else Vector2.ZERO
+	stick_knob.position = _stick_origin + dir * m - stick_knob.size / 2.0
+	var amount := m / STICK_R
+	Game.touch_move = dir * (0.0 if amount < 0.18 else minf(amount * 1.15, 1.0))
+	Game.touch_run = amount > 0.92

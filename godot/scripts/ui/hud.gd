@@ -9,6 +9,8 @@ const ARC_SPAN := 240.0
 
 var root: Control
 var fan_node: Control
+var medallion: Control
+var gold_icon: TextureRect
 
 var hp_fill: TextureProgressBar
 var hp_trail: TextureProgressBar
@@ -165,6 +167,7 @@ func _build() -> void:
 
 	# ---- portrait medallion + arcs (bottom-left)
 	var med := ctl(root, Vector2(0, 0), Vector2(190, 190), Vector2(460, 460))
+	medallion = med
 	img(med, Sheets.ui("smear"), C, Vector2(40, -10), Vector2(620, 420)).modulate = Color(0, 0, 0, 0.38)
 	_radial(med, "arc_hp_track", 440, ARC_SPAN, 270)
 	hp_trail = _radial(med, "arc_hp_fill", 440, ARC_SPAN, 270, Color(1, 0.92, 0.75, 0.9))
@@ -180,7 +183,7 @@ func _build() -> void:
 	rank_text = txt(med, "Aventureiro · Rank F", bold, 22, Color(0.95, 0.88, 0.7), C, Vector2(150, 230), Vector2(380, 30), HORIZONTAL_ALIGNMENT_LEFT)
 
 	# ---- gold (top-left)
-	img(root, Sheets.icon("coin"), Vector2(0, 1), Vector2(58, -52), Vector2(46, 46))
+	gold_icon = img(root, Sheets.icon("coin"), Vector2(0, 1), Vector2(58, -52), Vector2(46, 46))
 	gold_text = txt(root, "0", serif, 30, Color(1, 0.88, 0.45), Vector2(0, 1), Vector2(170, -52), Vector2(160, 40), HORIZONTAL_ALIGNMENT_LEFT)
 
 	# ---- quest tracker (top-right)
