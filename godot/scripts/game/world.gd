@@ -14,6 +14,7 @@ var _blocked := PackedByteArray()
 var _swaying: Array[Node2D] = []
 var _t := 0.0
 var _lights: Array = []
+var _tall: Array = []     # [{n: Sprite2D, w, h}] big sprites that fade when the hero walks behind them
 var _mod: CanvasModulate
 var _base_tint := Color.WHITE
 var _outdoor := false
@@ -33,6 +34,15 @@ const LIGHTS := {
 	"cauldron": [Color(0.5, 1, 0.5), 2.4, 0.3, 0.7, 0.2],
 	"anvil": [Color(1, 0.6, 0.3), 1.8, 0.2, 0.5, 0.2],
 	"fountain": [Color(0.6, 0.85, 1), 3.0, 0.1, 1.0, 0.05],
+	"lamp_ornate": [Color(1, 0.82, 0.45), 3.4, 0.3, 2.2, 0.05],
+	"tavern": [Color(1, 0.72, 0.32), 5.0, 0.22, 1.3, 0.1],
+	"smithy": [Color(1, 0.5, 0.18), 4.2, 0.34, 0.9, 0.3],
+	"library": [Color(0.7, 0.55, 1), 3.8, 0.24, 1.9, 0.1],
+	"apothecary": [Color(0.5, 1, 0.6), 3.0, 0.16, 1.1, 0.1],
+	"bakery": [Color(1, 0.75, 0.4), 3.0, 0.18, 1.0, 0.08],
+	"armory": [Color(0.6, 0.75, 1), 2.8, 0.12, 1.0, 0.05],
+	"house_f": [Color(1, 0.78, 0.4), 2.6, 0.14, 1.1, 0.06],
+	"house_e": [Color(1, 0.78, 0.4), 3.0, 0.12, 1.0, 0.06],
 }
 # map -> [ambient tint, outdoor (follows the day/night cycle)]
 const AMBIENT := {
@@ -161,6 +171,8 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 			_box(pos + Vector2(0, -(ch * 0.5 - cy)), Vector2(cw, ch))
 	if kind.begins_with("tree") or kind.begins_with("bush") or kind == "tuft" or kind == "swamp_tree" or kind == "snow_pine":
 		_swaying.append(s)
+	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
+		_tall.append({"n": s, "w": float(info.get("w", 200)), "h": float(info.get("h", 200)), "px": float(info.get("pivotX", 100))})
 	if LIGHTS.has(kind):
 		var L: Array = LIGHTS[kind]
 		var g := Util.glow(s, L[0], L[1], L[2])
@@ -182,6 +194,7 @@ func night_amount() -> float:
 
 func _process(dt: float) -> void:
 	_t += dt
+	_fade_tall(dt)
 	var n := night_amount()
 	_mod.color = _base_tint.lerp(_base_tint * NIGHT_TINT, n * 0.85)
 	for l in _lights:
@@ -236,3 +249,18 @@ func respawn_enemies() -> void:
 				alive = true
 		if not alive:
 			Enemy.spawn(s["kind"], at, int(s["level"]))
+
+
+## Buildings turn translucent while the hero stands behind them, so roofs never hide the player.
+func _fade_tall(dt: float) -> void:
+	var p := Player.I
+	if p == null:
+		return
+	var pp := p.global_position
+	for t in _tall:
+		var n: Sprite2D = t["n"]
+		var d := pp - n.global_position
+		var behind: bool = d.y < -8.0 and d.y > -float(t["h"]) * 0.92 and absf(d.x) < float(t["w"]) * 0.45
+		var target := 0.42 if behind else 1.0
+		if absf(n.modulate.a - target) > 0.01:
+			n.modulate.a = move_toward(n.modulate.a, target, dt * 4.0)

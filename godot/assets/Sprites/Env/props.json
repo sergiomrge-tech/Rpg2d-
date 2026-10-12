@@ -679,6 +679,216 @@
    "colW": 120,
    "colH": 36,
    "colY": 0
+  },
+  {
+   "name": "tavern",
+   "w": 380,
+   "h": 360,
+   "pivotX": 190,
+   "pivotY": 40,
+   "colW": 240,
+   "colH": 70,
+   "colY": 26
+  },
+  {
+   "name": "smithy",
+   "w": 320,
+   "h": 330,
+   "pivotX": 160,
+   "pivotY": 38,
+   "colW": 210,
+   "colH": 70,
+   "colY": 26
+  },
+  {
+   "name": "stable",
+   "w": 400,
+   "h": 300,
+   "pivotX": 200,
+   "pivotY": 38,
+   "colW": 280,
+   "colH": 66,
+   "colY": 24
+  },
+  {
+   "name": "apothecary",
+   "w": 280,
+   "h": 330,
+   "pivotX": 140,
+   "pivotY": 38,
+   "colW": 170,
+   "colH": 64,
+   "colY": 26
+  },
+  {
+   "name": "armory",
+   "w": 300,
+   "h": 330,
+   "pivotX": 150,
+   "pivotY": 38,
+   "colW": 190,
+   "colH": 66,
+   "colY": 26
+  },
+  {
+   "name": "bakery",
+   "w": 270,
+   "h": 320,
+   "pivotX": 135,
+   "pivotY": 38,
+   "colW": 170,
+   "colH": 64,
+   "colY": 26
+  },
+  {
+   "name": "barracks",
+   "w": 400,
+   "h": 330,
+   "pivotX": 200,
+   "pivotY": 38,
+   "colW": 260,
+   "colH": 70,
+   "colY": 26
+  },
+  {
+   "name": "library",
+   "w": 260,
+   "h": 420,
+   "pivotX": 130,
+   "pivotY": 40,
+   "colW": 160,
+   "colH": 60,
+   "colY": 26
+  },
+  {
+   "name": "house_d",
+   "w": 200,
+   "h": 360,
+   "pivotX": 100,
+   "pivotY": 38,
+   "colW": 124,
+   "colH": 60,
+   "colY": 26
+  },
+  {
+   "name": "house_e",
+   "w": 340,
+   "h": 300,
+   "pivotX": 170,
+   "pivotY": 38,
+   "colW": 260,
+   "colH": 66,
+   "colY": 26
+  },
+  {
+   "name": "house_f",
+   "w": 260,
+   "h": 350,
+   "pivotX": 130,
+   "pivotY": 38,
+   "colW": 200,
+   "colH": 66,
+   "colY": 26
+  },
+  {
+   "name": "house_g",
+   "w": 190,
+   "h": 230,
+   "pivotX": 95,
+   "pivotY": 38,
+   "colW": 118,
+   "colH": 56,
+   "colY": 22
+  },
+  {
+   "name": "hay_bale",
+   "w": 70,
+   "h": 60,
+   "pivotX": 35,
+   "pivotY": 8,
+   "colW": 46,
+   "colH": 22,
+   "colY": 0
+  },
+  {
+   "name": "trough",
+   "w": 120,
+   "h": 70,
+   "pivotX": 60,
+   "pivotY": 12,
+   "colW": 90,
+   "colH": 20,
+   "colY": 0
+  },
+  {
+   "name": "hay_cart",
+   "w": 200,
+   "h": 150,
+   "pivotX": 100,
+   "pivotY": 20,
+   "colW": 130,
+   "colH": 36,
+   "colY": 0
+  },
+  {
+   "name": "planter",
+   "w": 70,
+   "h": 90,
+   "pivotX": 35,
+   "pivotY": 10,
+   "colW": 40,
+   "colH": 20,
+   "colY": 0
+  },
+  {
+   "name": "bench",
+   "w": 110,
+   "h": 70,
+   "pivotX": 55,
+   "pivotY": 10,
+   "colW": 90,
+   "colH": 18,
+   "colY": 0
+  },
+  {
+   "name": "statue_hero",
+   "w": 140,
+   "h": 260,
+   "pivotX": 70,
+   "pivotY": 28,
+   "colW": 70,
+   "colH": 40,
+   "colY": 0
+  },
+  {
+   "name": "stall_blue",
+   "w": 170,
+   "h": 160,
+   "pivotX": 85,
+   "pivotY": 14,
+   "colW": 140,
+   "colH": 30,
+   "colY": 0
+  },
+  {
+   "name": "stall_green",
+   "w": 170,
+   "h": 160,
+   "pivotX": 85,
+   "pivotY": 14,
+   "colW": 140,
+   "colH": 30,
+   "colY": 0
+  },
+  {
+   "name": "lamp_ornate",
+   "w": 70,
+   "h": 170,
+   "pivotX": 35,
+   "pivotY": 10,
+   "colW": 14,
+   "colH": 10,
+   "colY": 0
   }
  ]
 }

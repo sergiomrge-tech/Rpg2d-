@@ -393,7 +393,9 @@ func _show_line() -> void:
 	dlg_frame.visible = not narr
 	dlg_portrait.visible = not narr
 	if not narr:
-		var pn := "portrait_" + str(ln[0])
+		var who: String = str(ln[0])
+		who = {"tavern_keeper": "villager", "smith_v": "dwarf", "stable_master": "cedric", "armorer": "elowen", "librarian": "monk", "guard_captain": "guard"}.get(who, who)
+		var pn := "portrait_" + who
 		dlg_portrait.texture = Sheets.ui(pn) if ResourceLoader.exists("res://assets/Sprites/Ui/%s.png" % pn) else Sheets.ui("portrait")
 	dlg_text.modulate = Color(0.85, 0.88, 1.0) if narr else Color.WHITE
 	dlg_text.text = ln[1]

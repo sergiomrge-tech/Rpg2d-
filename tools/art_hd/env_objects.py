@@ -1257,5 +1257,9 @@ def build_all():
     print('props:', len(meta))
 
 
+import env_town  # noqa: E402,F401  (registers the town props)
+
+
 if __name__ == '__main__':
-    build_all()
+    import env_objects as _self   # run through the importable module so env_town's props register in the same PROPS
+    _self.build_all()

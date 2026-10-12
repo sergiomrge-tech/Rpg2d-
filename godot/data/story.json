@@ -342,7 +342,13 @@
   "noble": "Lady Seraphine",
   "cleric": "Irmã Maelis",
   "child": "Pip",
-  "shopkeeper": "Dorna, a Lojista"
+  "shopkeeper": "Dorna, a Lojista",
+  "tavern_keeper": "Bruna, a Taverneira",
+  "smith_v": "Hargrim, o Ferreiro",
+  "stable_master": "Tobias, Mestre dos Estábulos",
+  "armorer": "Cássia, a Armeira",
+  "librarian": "Mestre Orrin",
+  "guard_captain": "Capitão Brandt"
  },
  "final_blessing": [
   [

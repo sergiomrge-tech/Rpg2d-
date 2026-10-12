@@ -276,6 +276,16 @@ func save_settings_note() -> void:
 	pass   # volumes are saved as they change (Sfx.set_level)
 
 
+## Tavern rest: pay, restore HP/MP, save the game.
+func rest(cost: int) -> void:
+	state.gold -= cost
+	player.hp = player.max_hp
+	player.mp = state.max_mp
+	Fx.heal(player.pos())
+	Sfx.play("potion", 0.5, 0.9)
+	save()
+
+
 func hit_stop(t: float) -> void:
 	_hit_until = maxi(_hit_until, Time.get_ticks_msec() + int(t * 1000.0))
 

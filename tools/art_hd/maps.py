@@ -347,8 +347,8 @@ def valemont():
     for x in (45.4, 54.6):
         m.put('banner_pole', x, 27.2)
     # market stalls south-east of the plaza
-    for x, y in [(57, 54.6), (62, 54.6), (57, 60), (62, 60), (67, 57.5)]:
-        m.put('stall', x, y)
+    for (x, y), k in zip([(57, 54.6), (62, 54.6), (57, 60), (62, 60), (67, 57.5)], ['stall', 'stall_blue', 'stall_green', 'stall', 'stall_blue']):
+        m.put(k, x, y)
     m.reserve(54, 52, 70, 63)
     for sx, sy in [(57, 54.6), (62, 54.6), (57, 60), (62, 60), (67, 57.5)]:
         hres(sx - 2.4, sy - 1.5, sx + 2.4, sy + 0.5)
@@ -369,6 +369,57 @@ def valemont():
             m.put('flowers', gx + m.rnd.uniform(-2.5, 2.5), gy + m.rnd.uniform(-2, 2))
         m.reserve(gx - 5, gy - 5, gx + 5, gy + 4)
         hres(gx - 4, gy - 3.5, gx + 4, gy + 3.5)
+    # ---- town services: placed on the nearest free ground to a desired spot (tavern, smithy, stable, shops, barracks, library)
+    def place(kind, ax, ay, hw, search=12.0):
+        best = None
+        steps = int(search * 2)
+        for iy in range(-steps, steps + 1):
+            for ix in range(-steps, steps + 1):
+                x, y = ax + ix * 0.5, ay + iy * 0.5
+                if math.hypot(x - C[0], y - C[1]) > RW - 3.6:
+                    continue
+                x0, x1, y0, y1 = int(x - hw), int(x + hw) + 1, int(y - 1.4), int(y + 1.8) + 1
+                if y0 < 2 or x0 < 2 or x1 >= m.gw - 2 or y1 >= m.gh - 2:
+                    continue
+                if (m.grid[y0:y1, x0:x1] != 'g').any() or hm[y0:y1, x0:x1].any():
+                    continue
+                d = math.hypot(ix, iy)
+                if best is None or d < best[0]:
+                    best = (d, x, y)
+        if best is None:
+            print('WARN: could not place', kind)
+            return None
+        _, x, y = best
+        m.put(kind, x, y)
+        hres(x - hw - 0.4, y - 1.6, x + hw + 0.4, y + 1.8)
+        m.reserve(x - hw - 1, y - 5, x + hw + 1, y + 2)
+        return (x, y)
+    spot = {}
+    for kind, ax, ay, hw in [('tavern', 70, 47.5, 3.2), ('smithy', 30, 47.5, 2.8), ('stable', 28, 59, 3.8), ('apothecary', 43, 58, 2.5),
+                             ('armory', 58, 66, 2.6), ('bakery', 66, 62.5, 2.4), ('barracks', 70, 33, 3.6), ('library', 31, 36, 2.4)]:
+        spot[kind] = place(kind, ax, ay, hw)
+    # street furniture around the services
+    sx, sy = spot.get('stable') or (28, 59)
+    for dx, dy, k in [(4.6, 0.8, 'trough'), (-4.4, 1.0, 'hay_bale'), (-5.5, 1.2, 'hay_bale'), (5.8, 2.6, 'hay_cart')]:
+        m.put(k, sx + dx, sy + dy)
+    tx, ty = spot.get('tavern') or (70, 47.5)
+    for dx, dy, k in [(-4.4, 1.6, 'bench'), (4.4, 1.6, 'bench')]:
+        m.put(k, tx + dx, ty + dy)
+    # plaza dressing: planters + benches around the fountain, statue of the hero, ornate lamps along the avenues
+    for a in range(0, 360, 45):
+        x, y = pol(7.8, a + 22)
+        m.put('planter', x, y)
+    for a in (45, 135, 225, 315):
+        x, y = pol(6.2, a)
+        m.put('bench', x, y + 0.4)
+    m.put('statue_hero', 38, 41.4)
+    m.put('statue_hero', 62, 41.4)
+    for y in (24, 30, 36, 42, 58, 64):
+        m.put('lamp_ornate', 47.6, y)
+        m.put('lamp_ornate', 52.4, y)
+    for x in (25, 32, 38.5, 61.5, 68, 75):
+        m.put('lamp_ornate', x, 47.6)
+        m.put('lamp_ornate', x, 52.6)
     # ---- residential blocks: houses along the concentric rings (skip roads, plaza, landmarks, river, wall)
     def road_near(x, y, pad=1):
         xi, yi = int(x), int(y)
@@ -394,7 +445,7 @@ def valemont():
             continue
         if any(((x - a) / 4.0) ** 2 + ((y - b) / 2.8) ** 2 < 1.0 for a, b in placed):
             continue
-        k = m.rnd.choice(['house_a', 'house_b', 'house_c', 'house_a', 'house_b'])
+        k = m.rnd.choice(['house_a', 'house_b', 'house_c', 'house_d', 'house_e', 'house_f', 'house_g', 'house_g', 'house_a', 'house_b'])
         m.put(k, x, y)
         placed.append((x, y))
         m.reserve(x - 2.0, y - 1.5, x + 2.0, y + 0.8)
@@ -416,7 +467,7 @@ def valemont():
     m.rect(10, 80, 24, 86, 't')
     for x in range(8, 20):
         m.put('fence', x + 0.55, 7.5)
-    for hx, hy, ks in [(84, 42, ['house_a', 'house_b']), (88, 58, ['house_b', 'house_a']), (14, 62, ['house_a', 'house_c']), (62, 90, ['house_b', 'house_a'])]:
+    for hx, hy, ks in [(84, 42, ['house_g', 'house_e']), (88, 60, ['house_f', 'house_g']), (14, 62, ['house_g', 'house_d']), (62, 90, ['house_e', 'house_g'])]:
         for i, k in enumerate(ks):
             m.put(k, hx + i * 5.6, hy + (i % 2) * 2.4)
             m.reserve(hx + i * 5.6 - 3, hy + (i % 2) * 2.4 - 5.4, hx + i * 5.6 + 3, hy + (i % 2) * 2.4 + 1)
@@ -426,13 +477,22 @@ def valemont():
     m.scatter(['bush', 'bush_flower', 'rock_small', 'stump', 'rock_big'], 70, (0, 0, 100, 100), pad=0, min_d=1.5)
     m.scatter(['tuft', 'tuft', 'flowers'], 260, (0, 0, 100, 100), pad=0, min_d=0.8)
     m.player = (50 * T, 21.4 * T)
+    def front(kind, dx=0.0, dy=1.9, default=(50, 50)):
+        p = spot.get(kind) or default
+        return (p[0] + dx) * T, (p[1] + dy) * T
     m.npcs = [
         dict(id='guildmaster', x=62 * T, y=40.6 * T, look='v_guildmaster', facing='down'),
         dict(id='guard', x=47.2 * T, y=22.4 * T, look='v_guard', facing='down'),
         dict(id='noble', x=60.2 * T, y=66.2 * T, look='v_noble', facing='left'),
         dict(id='cleric', x=38 * T, y=40.4 * T, look='v_cleric', facing='down'),
         dict(id='child', x=53.8 * T, y=52.2 * T, look='v_child', facing='left'),
-        dict(id='shopkeeper', x=59.6 * T, y=56.6 * T, look='merchant', facing='up'),
+        dict(id='shopkeeper', x=front('apothecary', 2.2)[0], y=front('apothecary', 2.2)[1], look='merchant', facing='left'),
+        dict(id='tavern_keeper', x=front('tavern', -1.6)[0], y=front('tavern', -1.6)[1], look='villager', facing='down'),
+        dict(id='smith_v', x=front('smithy', 1.6)[0], y=front('smithy', 1.6)[1], look='r_dwarf', facing='left'),
+        dict(id='stable_master', x=front('stable', -2.0)[0], y=front('stable', -2.0)[1], look='x_veteran', facing='right'),
+        dict(id='armorer', x=front('armory', 0)[0], y=front('armory', 0)[1], look='x_knight', facing='down'),
+        dict(id='librarian', x=front('library', 0)[0], y=front('library', 0)[1], look='r_monk', facing='down'),
+        dict(id='guard_captain', x=front('barracks', 2.2)[0], y=front('barracks', 2.2)[1], look='v_guard', facing='down'),
     ]
     for k, x, y, lv in [('imp_raider', 46, 75, 7), ('oni_executioner', 54, 76, 8), ('imp_howler', 49, 79, 7),
                         ('oni_lancer', 53, 79, 8), ('imp_bomber', 45.5, 78, 7)]:

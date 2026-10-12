@@ -102,7 +102,7 @@ func talk(npc: String) -> Array:
 			if g.flags.has("q_imps_done"):
 				return [_l(npc, "Grakk se esconde no sul do bosque, perto do lago. Cuidado com o leque de fogo.")]
 			return [_l(npc, "Diabretes abatidos: %d/%d. O bosque fica ao sul da praça." % [g.quest_progress(QUEST_IMPS), QUEST_IMPS_GOAL])]
-		"blacksmith":
+		"blacksmith", "smith_v":
 			# Forge: crafts the first affordable recipe; otherwise says what the next one needs.
 			for r in Data.recipes:
 				if g.flags.has("forged_" + r["result"]):
@@ -180,6 +180,46 @@ func talk(npc: String) -> Array:
 				gs.add("ether" if eth else "potion", 1)
 				return [_l(npc, "Já tem poções de sobra. Leve um Éter Azul: 30 de ouro." if eth else "Uma Poção de Vida, 25 de ouro. Fale de novo para comprar mais.")]
 			return [_l(npc, "Poção custa 25 de ouro. Volte quando tiver moedas dos demônios.")]
+		"tavern_keeper":
+			var rumor := "O beco ao sul da cidade anda quieto demais. Quieto demais é pior que barulho."
+			if g.flags.has("assassin_shadow_dead"):
+				rumor = "Dizem que há ninhos de insetos gigantes nas florestas e no deserto. Quem os caça volta rico... ou não volta."
+			if g.flags.has("kharis_done"):
+				rumor = "Um forasteiro passou aqui falando de anões nas minas de Durnhold. Pediam ajuda contra um golem de brasa."
+			if gs.gold >= 40:
+				g.rest(40)
+				return [
+					_l(npc, "Bem-vindo ao Javali Dourado! Quarto, sopa quente e cama macia: 40 de ouro."),
+					_l(npc, "Dormiu bem? Vida e mana restauradas, e anotei seu progresso no livro da casa."),
+					_l(npc, rumor),
+				]
+			return [_l(npc, "Quarto e refeição custam 40 de ouro. A casa não vive só de glória, herói."), _l(npc, rumor)]
+		"stable_master":
+			return [
+				_l(npc, "Os cavalos da guarda não saem sem ordem do Capitão. Mas posso lhe dizer o caminho."),
+				_l(npc, "Pelo portão norte você volta à floresta de Velmoor. Pelo leste, a estrada leva ao deserto de Kharis."),
+				_l(npc, "Leve poções. O deserto não perdoa quem confia só na espada."),
+			]
+		"armorer":
+			if not g.flags.has("bought_mail") and gs.gold >= 220:
+				g.flags["bought_mail"] = true
+				gs.gold -= 220
+				gs.add("iron_mail", 1)
+				return [_l(npc, "Uma Cota de Malha de ferro, 220 de ouro: boa defesa. Equipe no Grimório (Tab).")]
+			if g.flags.has("bought_mail"):
+				return [_l(npc, "Cuide do aço e ele cuida de você. Arma boa só nasce da forja de verdade — fale com Hargrim.")]
+			return [_l(npc, "Cota de Malha: 220 de ouro. Armadura boa salva mais vidas que espada afiada."), _l(npc, "Volte com as moedas dos demônios.")]
+		"librarian":
+			return [
+				_l(npc, "Silêncio, por favor... ah, o herói da Centelha. Li sobre você nos relatos da Guilda."),
+				_l(npc, "Os tomos de habilidade caem dos chefes mais poderosos. Cada Tomo da Centelha evolui sua magia."),
+				_l(npc, "E guarde isto: os demônios insetoides das ruínas protegem tesouros. Mate-os com cuidado."),
+			]
+		"guard_captain":
+			return [
+				_l(npc, "Capitão Brandt, guarda de Valemont. As muralhas aguentam exércitos, mas não uma lâmina na escuridão."),
+				_l(npc, "Se for caçar a Sombra, vá preparado. Ela ataca por trás."),
+			]
 		"guard":
 			return [_l(npc, "Cuidado depois do anoitecer. A Sombra ataca quem anda sozinho perto do beco sul.")]
 		"noble":
