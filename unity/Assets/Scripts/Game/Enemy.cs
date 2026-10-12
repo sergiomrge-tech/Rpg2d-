@@ -22,6 +22,7 @@ namespace Aetheria
         Vector2 wander;
         bool hitDone;
         bool nextIsCast;
+        Vector2 skillDirection; // locked during telegraph; skill hit matches animation keyframe
 
         public static Enemy Spawn(string kind, Vector2 pos, int level)
         {
@@ -32,7 +33,7 @@ namespace Aetheria
             e.def = def;
             e.level = level;
             float s = Data.LevelScale(level);
-            e.Build(def.sheet, 0.9f, 0.3f, 0.3f, def.scale + 0.05f * (level - 1));
+            e.Build(def.sheet, 0.9f, 0.3f, def.behavior == "scarab_shockwave" ? 0.56f : 0.3f, def.scale + 0.05f * (level - 1));
             e.rb.mass = 0.6f;
             e.rb.drag = 0;
             e.maxHp = e.hp = Mathf.Round(def.hp * s);
@@ -50,6 +51,19 @@ namespace Aetheria
         }
 
         void OnDestroy() { All.Remove(this); }
+
+        // Unity CI-only capture hook. Actual Enemy animation and ability logic,
+        // not a mockup or a texture preview; only called from -ciShots.
+        public void CiCastSkill(Vector2 target)
+        {
+            if (dead) return;
+            var direction = target - Pos;
+            skillDirection = direction.sqrMagnitude > .001f ? direction.normalized : Util.FacingVec(facing);
+            Face(Util.FacingFrom(skillDirection, facing));
+            hitDone = false;
+            Go(St.Cast);
+            anim.Play("cast", true);
+        }
 
         public static Enemy Nearest(Vector2 p, float maxDist, Vector2? dir = null, float minDot = -2f)
         {
@@ -109,14 +123,35 @@ namespace Aetheria
                 {
                     if (!playerOk || dist > def.aggro * 1.8f) { Go(St.Idle); break; }
                     Face(Util.FacingFrom(toP, facing));
-                    // casters keep mid range and throw fire, melee when cornered
-                    if (def.caster && castCd <= 0 && dist > 2.6f && dist < 7.5f) { nextIsCast = true; Go(St.Telegraph); break; }
-                    if (dist < 1.55f && attackCd <= 0) { nextIsCast = false; Go(St.Telegraph); break; }
+                    // Each Lote 2 species has its own combat range and skill windows.
+                    bool mantis = def.behavior == "mantis_dash";
+                    bool scarab = def.behavior == "scarab_shockwave";
+                    bool moth = def.behavior == "moth_hex";
+                    if (castCd <= 0 && ((mantis && dist > 1.9f && dist < 5.3f) ||
+                                        (scarab && dist < 3.2f) ||
+                                        (moth && dist > 2.2f && dist < 9f) ||
+                                        (def.caster && !moth && dist > 2.6f && dist < 7.5f)))
+                    {
+                        nextIsCast = true; skillDirection = toP.sqrMagnitude > 0.01f ? toP.normalized : Util.FacingVec(facing);
+                        Go(St.Telegraph); break;
+                    }
+                    if (dist < (scarab ? 1.85f : 1.55f) && attackCd <= 0)
+                    {
+                        nextIsCast = false; Go(St.Telegraph); break;
+                    }
                     Vector2 want = toP.normalized;
-                    // circle-strafe a little so groups surround the player instead of stacking
                     Vector2 side = new Vector2(-want.y, want.x) * Mathf.Sin(Time.time * 1.3f + GetInstanceID()) * 0.45f;
-                    float sp = dist < 1.3f ? 0 : speed;
-                    Move((want + side).normalized, sp);
+                    if (moth)
+                    {
+                        // Floating caster keeps a 4-6-unit standoff; does not behave like a melee imp.
+                        Vector2 kite = dist < 4f ? -want : dist > 6.5f ? want : side.normalized;
+                        Move(kite, speed);
+                    }
+                    else
+                    {
+                        float sp = dist < (scarab ? 1.7f : 1.3f) ? 0 : speed;
+                        Move((want + side * (mantis ? .8f : .45f)).normalized, sp);
+                    }
                     Separate();
                     break;
                 }
@@ -127,10 +162,18 @@ namespace Aetheria
                     // red pulse warns the player; the window is the time to roll
                     float pulse = Mathf.PingPong(stateT * 8f, 1f);
                     Flash(nextIsCast ? new Color(1f, 0.6f, 0.2f) : new Color(1f, 0.15f, 0.15f), 0.55f * pulse);
-                    if (stateT > (nextIsCast ? 0.35f : 0.42f))
+                    float tell = nextIsCast
+                        ? (def.behavior == "scarab_shockwave" ? 0.72f : def.behavior == "moth_hex" ? 0.65f : 0.46f)
+                        : (def.behavior == "scarab_shockwave" ? 0.52f : 0.42f);
+                    if (stateT > tell)
                     {
                         hitDone = false;
-                        if (nextIsCast) { Go(St.Cast); anim.Play("cast", true); castCd = Random.Range(3.2f, 4.6f); }
+                        if (nextIsCast)
+                        {
+                            Go(St.Cast); anim.Play("cast", true);
+                            castCd = def.behavior == "scarab_shockwave" ? 6.2f :
+                                     def.behavior == "mantis_dash" ? 4.2f : Random.Range(3.6f, 5.4f);
+                        }
                         else { Go(St.Attack); anim.Play("attack", true); attackCd = Random.Range(1.0f, 1.6f); }
                     }
                     break;
@@ -140,11 +183,18 @@ namespace Aetheria
                     float n = anim.Normalized;
                     // lunge burst right before the hit frame
                     Vector2 f = Util.FacingVec(facing);
-                    rb.velocity = (n > 0.3f && n < 0.6f ? f * 7.5f : Vector2.zero) + knock;
+                    float burst = def.behavior == "scarab_shockwave" ? 3.5f : def.behavior == "mantis_dash" ? 9f : 5f;
+                    rb.velocity = (n > 0.3f && n < 0.6f ? f * burst : Vector2.zero) + knock;
                     break;
                 }
                 case St.Cast:
-                    rb.velocity = knock;
+                    // A real skill animation controls the strike window; this is not idle with recolor.
+                    if (def.behavior == "mantis_dash")
+                    {
+                        float n = anim.Normalized;
+                        rb.velocity = (n > 0.18f && n < 0.65f ? skillDirection * 10.5f : Vector2.zero) + knock;
+                    }
+                    else rb.velocity = knock;
                     break;
                 case St.Hurt:
                     rb.velocity = knock;
@@ -183,25 +233,55 @@ namespace Aetheria
             if (a == "attack" && !hitDone)
             {
                 hitDone = true;
-                Vector2 c = Pos + Util.FacingVec(facing) * 0.7f;
+                Vector2 c = Pos + Util.FacingVec(facing) * (def.behavior == "mantis_dash" ? 1.05f : 0.7f);
                 Fx.Claw(c + Vector2.up * 0.6f, facing);
-                if ((p.Pos - c).magnitude < 1.05f)
+                float radius = def.behavior == "scarab_shockwave" ? 1.55f :
+                               def.behavior == "mantis_dash" ? 1.35f : 1.05f;
+                if ((p.Pos - c).magnitude < radius)
                     p.Hurt(Mathf.Round(dmg * Random.Range(0.9f, 1.1f)), Pos, 7f, 20);
                 Sfx.Play("claw", 0.5f, Random.Range(1.0f, 1.15f));
             }
-            else if (a == "cast")
+            else if (a == "cast" && !hitDone)
             {
-                Vector2 from = Pos + Vector2.up * 0.9f;
-                // lead the target slightly
-                Vector2 aim = (p.Pos + p.rb.velocity * 0.25f + Vector2.up * 0.5f - from).normalized;
-                Projectile.Fireball(from + aim * 0.4f, aim, dmg * 0.8f);
-                Sfx.Play("fireball", 0.5f, Random.Range(0.95f, 1.1f));
+                hitDone = true;
+                if (def.behavior == "mantis_dash")
+                {
+                    // Scythe dash strike: damage is timed to frame 8, after a real forward movement.
+                    Vector2 forward = skillDirection.sqrMagnitude > .01f ? skillDirection : Util.FacingVec(facing);
+                    Vector2 center = Pos + forward * 0.7f;
+                    Fx.Claw(center + Vector2.up * .65f, facing);
+                    Fx.Slash(center + Vector2.up * .3f, facing, 3);
+                    if ((p.Pos - center).magnitude < 1.65f)
+                        p.Hurt(Mathf.Round(dmg * 1.45f), Pos, 8f, 25);
+                    Sfx.Play("swing_heavy", .65f, 1.1f);
+                }
+                else if (def.behavior == "scarab_shockwave")
+                {
+                    // Heavy beetle releases a radial shockwave independent of normal melee.
+                    Fx.Shockwave(Pos + Vector2.up * .18f, 2.35f);
+                    CameraRig.Shake(.16f, .18f);
+                    if ((p.Pos - Pos).magnitude <= 2.35f)
+                        p.Hurt(Mathf.Round(dmg * 1.15f), Pos, 10f, 30);
+                    Sfx.Play("boom", .55f, .85f);
+                }
+                else
+                {
+                    Vector2 from = Pos + Vector2.up * 0.9f;
+                    Vector2 aim = (p.Pos + p.rb.velocity * 0.25f + Vector2.up * 0.5f - from).normalized;
+                    if (def.behavior == "moth_hex")
+                    {
+                        Fx.MagicCircle(Pos, 2);
+                        Projectile.HexSpore(from + aim * .4f, aim, dmg * .7f);
+                    }
+                    else Projectile.Fireball(from + aim * .4f, aim, dmg * .8f);
+                    Sfx.Play("fireball", 0.5f, Random.Range(0.95f, 1.1f));
+                }
             }
         }
 
         void OnAnimEnd(string a)
         {
-            if (a == "attack" || a == "cast")
+            if ((a == "attack" && state == St.Attack) || (a == "cast" && state == St.Cast))
             {
                 Go(St.Chase);
                 anim.Play("move");

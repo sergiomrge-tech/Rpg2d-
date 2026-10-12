@@ -2165,6 +2165,10 @@
 "y": 3264,
 "level": 2
 }
+,
+  {"kind":"mantis_reaver","x":1408,"y":3008,"level":2},
+  {"kind":"scarab_brute","x":2688,"y":2880,"level":2},
+  {"kind":"moth_hexer","x":2304,"y":3072,"level":2}
 ],
 "npcs": [
 {

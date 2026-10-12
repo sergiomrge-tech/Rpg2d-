@@ -20,6 +20,8 @@ namespace Aetheria
         public string id, name, sheet;
         public float hp, dmg, speed, aggro, xp, scale = 1f, poise;
         public bool caster;
+        // Optional combat archetype; empty preserves the original imp behaviour.
+        public string behavior = "";
         public (string item, float chance, int min, int max)[] drops;
     }
 
@@ -50,6 +52,30 @@ namespace Aetheria
                 xp = 14, caster = true, poise = 10, scale = 1.15f,
                 drops = new[] { ("gold", 1f, 3, 9), ("imp_horn", 0.45f, 1, 1), ("potion", 0.12f, 1, 1), ("ether", 0.06f, 1, 1),
                                 ("hell_ember", 0.05f, 1, 1), ("spark_tome", 0.012f, 1, 1) }
+            };
+
+            // Pilot Lote 2: three distinct insectoid species, with existing loot IDs.
+            // Additional demons are not substituted for the prologue's imp quest targets.
+            Demons["mantis_reaver"] = new DemonDef
+            {
+                id = "mantis_reaver", name = "Mantis Reaver", sheet = "Sprites/Demons/mantis_reaver",
+                behavior = "mantis_dash", hp = 95, dmg = 19, speed = 3.5f, aggro = 8.5f,
+                xp = 33, poise = 16, scale = 0.86f,
+                drops = new[] { ("gold", 1f, 7, 14), ("imp_horn", 0.25f, 1, 1), ("hell_ember", 0.13f, 1, 1) }
+            };
+            Demons["scarab_brute"] = new DemonDef
+            {
+                id = "scarab_brute", name = "Escaravelho Infernal", sheet = "Sprites/Demons/scarab_brute",
+                behavior = "scarab_shockwave", hp = 240, dmg = 24, speed = 1.65f, aggro = 7.2f,
+                xp = 55, poise = 48, scale = 0.91f,
+                drops = new[] { ("gold", 1f, 12, 24), ("hell_ember", 0.24f, 1, 1), ("potion", 0.15f, 1, 1) }
+            };
+            Demons["moth_hexer"] = new DemonDef
+            {
+                id = "moth_hexer", name = "Mariposa Ocultista", sheet = "Sprites/Demons/moth_hexer",
+                behavior = "moth_hex", hp = 75, dmg = 15, speed = 2.75f, aggro = 9f,
+                xp = 37, poise = 12, caster = true, scale = 0.78f,
+                drops = new[] { ("gold", 1f, 6, 14), ("ether", 0.3f, 1, 1), ("hell_ember", 0.10f, 1, 1) }
             };
         }
 
