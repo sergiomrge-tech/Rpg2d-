@@ -7,7 +7,7 @@ from __future__ import annotations
 import math
 from core import Pal, paint, flat, stroke, ellipse, capsule, smooth_poly, hx, radial_glow, keys
 from demons import Imp
-from extra_demons import OniSoldier, _armor, _horns
+from extra_demons import OniSoldier, Grakk, _armor, _horns
 from humanoid import Look, draw_figure
 
 PI=math.pi
@@ -358,9 +358,45 @@ class Thornmaw:
         ctx.restore()
 
 
+
+class GrakkFull(Grakk):
+    """Add the missing second boss skill while preserving Grakk's existing rig/art."""
+    ANIMS=dict(Grakk.ANIMS,skill_2=(13,16,False,8))
+
+    def pose(self,anim,t,view):
+        p=super().pose('cast' if anim=='skill_2' else anim,t,view)
+        if anim=='skill_2':
+            p['flap']=math.sin(t*TAU*3.1)
+            p['glow']=max(p['glow'],math.sin(PI*t)*.95)
+            p['y']-=7*math.sin(PI*t)
+            p['arm_a']=(5+90*math.sin(PI*t),-60)
+            p['arm_b']=(-5-90*math.sin(PI*t),60)
+            p['boss_special']=math.sin(PI*t)
+        return p
+
+    def draw(self,ctx,view,p):
+        super().draw(ctx,view,p)
+        special=p.get('boss_special',0)
+        if special<=0.02:
+            return
+        ctx.save()
+        ctx.translate(p['x'],p['y']-46)
+        ctx.scale(1.34,1.34)
+        for r,alpha in ((31,.50),(43,.36),(53,.24)):
+            stroke(ctx,lambda c,r=r:c.arc(0,1,r,0,TAU),
+                   hx('#9df7ff'),1.5,alpha*special)
+        radial_glow(ctx,0,0,38,hx('#66dcf5'),.30*special)
+        for i in range(7):
+            a=i*TAU/7+p['flap']*.11
+            x=math.cos(a)*46;y=math.sin(a)*32
+            shape(ctx,[(x-3,y),(x,y-9),(x+3,y),(x,y+7)],
+                  Pal('#74d9eb','#328caa','#e8ffff','#23647a'),.6,.6,.5)
+        ctx.restore()
+
 def build_creatures():
     items={n:ImpVariant(n) for n in ('imp_scout','imp_raider','imp_pyro','imp_hexer','imp_bomber','imp_howler')}
     items.update({n:OniVariant(n) for n in ('oni_lancer','oni_shielder','oni_executioner','morgash_ironhorn','krull_chainlord')})
+    items['grakk']=GrakkFull()
     items['velka_flamebeak']=Velka()
     items['thornmaw_alpha']=Thornmaw()
     return items
