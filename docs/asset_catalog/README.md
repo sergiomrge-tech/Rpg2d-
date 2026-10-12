@@ -22,11 +22,18 @@ Sprites/Demons/oni_soldier e Sprites/Demons/grakk.
     python tools/art_hd/verify_extra_demons.py
 
 O workflow demon-art.yml executa estas etapas automaticamente e versiona os PNGs.
-Status: arte candidata; Unity runtime, screenshots reais e integração estão pendentes.
+Status: 15 sprite sheets e seus JSONs renderizados; Unity runtime, screenshots reais, aprovação visual e integração ao combate continuam pendentes.
 
 ## Lote 1 — 10 demônios e 5 chefes
 
 - [Fichas individuais (quadros, FPS, evento de ataque e habilidade)](LOTE1_FICHAS.md)
 - [Contrato JSON versionado](lote1_spec.json)
 - Validação sem licença Unity: `python tools/art_hd/verify_lote1.py`
-- Status: **285 trilhas/3.024 quadros especificados**, não significa sprites produzidos. Apenas Oni e Grakk têm PNG/JSON dos estados-base; Grakk ainda precisa de `skill_2`. Os demais 13 aguardam desenho/animação e revisão HD cartoon.
+- Status: **15 folhas de sprites PNG/JSON renderizadas** e prévias reais dos quadros; 285 trilhas/3.024 quadros **planejados** no contrato. Todos os 15 possuem os seis estados-base e 4 chefes adicionais têm `skill_2`; apenas Grakk ainda precisa da segunda habilidade animada. A arte aguarda aprovação visual e testes Unity. Nenhum desses 14 novos inimigos/chefes está integrado ao combate.
+
+## Pranchas reais de arte (não screenshots do jogo)
+
+- [10 demônios](previews/LOTE1_DEMONIOS.png)
+- [5 chefes](previews/LOTE1_CHEFES.png)
+
+A geração de 13 criaturas adicionais é feita por `tools/art_hd/build_lote1_art.py` (Python/Cairo), seguindo o mesmo pipeline e mantendo intactos os sprites originais.
