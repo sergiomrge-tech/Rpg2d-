@@ -1,6 +1,6 @@
 # Classes — assets reais HD e integração no Godot
 
-**Estado em 12/10/2026: ARTES GERADAS e arquivos reais disponíveis no GitHub.** Testes nativos Godot e capturas do jogo em andamento. **Não aprovado ainda para publicação Android ou avaliação visual final.**
+**Estado em 12/10/2026: assets reais criados, carregados e verificados no Godot 4.3.** Render/contratos, testes nativos de UI/combate e **14 capturas reais do jogo** foram concluídos com sucesso. Foi compilado um APK **experimental separado**, que ainda requer instalação, desempenho e avaliação visual no aparelho. A expansão **não foi mesclada ao ramo principal**.
 
 ## Origem e identidade visual
 
@@ -44,8 +44,9 @@ Novo familiar inédito para o Invocador, com corpo **quadrúpede**, pernas e gar
 
 - **Render/arquivos aprovados:** [GitHub Actions #38290804310](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38290804310).
 - `tools/art_hd/verify_class_art.py` valida transparência real, trilhas completas, quadros não estáticos, direções distintas, retratos não vazios e caminhos usados pelo código.
-- **Godot runtime:** `godot-class-art.yml` importa recursos e executa `-uiSmoke -touch` para seis classes, seleção e sprites carregados, pet e regressões gerais. Confirmar resultado antes do merge.
-- **Screenshots verdadeiros do jogo:** `godot-class-screenshots.yml` chama `-classShots` para salvar 14 capturas PNG do **viewport real Godot** (menu + seis idle + seis skills + pet) em `docs/asset_catalog/captures/classes/`; o diretório existe somente depois do workflow concluir com sucesso.
-- **Pendente:** inspeção final do refinamento, colisões e timing visual, teste Android em dispositivo real, exportação de APK e aprovação do diretor.
+- **Godot runtime aprovado:** [GitHub Actions #38291966997](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38291966997) e [validação mais recente #38292474839](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38292474839) importam no Godot 4.3 e executam `-uiSmoke -touch`, validando seis classes, o carregamento dos sprites originais, o pet, a seleção, habilidades e regressões.
+- **Screenshots autênticos aprovados pelo CI:** [GitHub Actions #38292498437](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38292498437) executou `-classShots` em Godot 4.3 e publicou **14 capturas** do **viewport real**, em [`docs/asset_catalog/captures/classes/`](asset_catalog/captures/classes/). A primeira inspeção levou a duas melhorias verificáveis: textos curtos para não escapar dos cartões e câmera de QA afastada do poço do centro da vila; as capturas mais recentes refletem ambas.
+- **APK de teste Android:** compilação real [38292733622](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38292733622) aprovada e release separada [`aetheria-6-classes-preview`](https://github.com/sergiomrge-tech/Rpg2d-/releases/tag/aetheria-6-classes-preview); atualizações apenas nesta prerelease, sem alterar a release principal `apk-latest`. App ainda não testado em dispositivo real.
+- **Pendente:** aprovação artística do diretor das capturas reais, hitboxes em combate num dispositivo, FPS/memória em Android, instalação/update do APK e balanceamento. **O APK foi exportado, não instalado/testado por nós.**
 
 Os assets de classes devem continuar visualmente distintos, porém **coerentes com a arte atual**. Não substituir os gráficos aprovados por baixo detalhamento, imagens conceituais ou poses estáticas.
