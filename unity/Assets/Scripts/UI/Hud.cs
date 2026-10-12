@@ -33,6 +33,10 @@ namespace Aetheria
         class Plate { public Enemy e; public RectTransform rt; public Image fill; public Image trail; public Text name; public float shown; }
         readonly Dictionary<Enemy, Plate> plates = new Dictionary<Enemy, Plate>();
 
+        // cutscene backdrop (full-screen illustration shown behind the dialogue band)
+        Image sceneImg;
+        float sceneAlpha, sceneTarget;
+
         // dialogue
         RectTransform dlg;
         Text dlgName, dlgText, dlgHint;
@@ -204,6 +208,15 @@ namespace Aetheria
             // central large orb gets the "main" spot
             Txt("hint", root, "WASD mover · Shift correr · E falar", Sans, 20, new Color(1, 1, 1, 0.7f), new Vector2(1, 0), new Vector2(-250, 26), new Vector2(480, 28));
 
+            // ---- cutscene backdrop (above the HUD, below the dialogue band)
+            sceneImg = Img("scene", root, null, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1920, 1080));
+            sceneImg.rectTransform.anchorMin = Vector2.zero;
+            sceneImg.rectTransform.anchorMax = Vector2.one;
+            sceneImg.rectTransform.sizeDelta = Vector2.zero;
+            sceneImg.preserveAspect = false;
+            sceneImg.color = new Color(1, 1, 1, 0);
+            sceneImg.gameObject.SetActive(false);
+
             // ---- dialogue band (bottom, full width gradient, no box)
             dlg = Rect("dialogue", root, new Vector2(0.5f, 0), new Vector2(0, 170), new Vector2(1920, 340));
             Img("band", dlg, Ui("dialogue_band"), new Vector2(0.5f, 0.5f), new Vector2(0, -20), new Vector2(1920, 380));
@@ -325,7 +338,37 @@ namespace Aetheria
             typeT = 0;
             onDone = done;
             dlg.gameObject.SetActive(true);
+            if (!SkipScenes()) return;
             ShowLine();
+        }
+
+        /// <summary>Applies "@scene" marker lines (illustration name in `text`). Returns false when the script ended.</summary>
+        bool SkipScenes()
+        {
+            while (lineIdx < lines.Length && lines[lineIdx].who == "@scene")
+            {
+                var sp = Sheets.Single("Sprites/Cutscenes/" + lines[lineIdx].text);
+                if (sp != null)
+                {
+                    sceneImg.sprite = sp;
+                    sceneImg.gameObject.SetActive(true);
+                    sceneAlpha = 0;
+                    sceneTarget = 1;
+                }
+                lineIdx++;
+            }
+            if (lineIdx >= lines.Length) { FinishDialogue(); return false; }
+            return true;
+        }
+
+        void FinishDialogue()
+        {
+            lines = null;
+            dlg.gameObject.SetActive(false);
+            sceneTarget = 0;
+            var d = onDone;
+            onDone = null;
+            d?.Invoke();
         }
 
         void ShowLine()
@@ -354,15 +397,8 @@ namespace Aetheria
             int shown = Mathf.FloorToInt(typeT * 55f);
             if (shown < full.Length) { typeT = 999; return; }
             lineIdx++;
-            if (lineIdx >= lines.Length)
-            {
-                lines = null;
-                dlg.gameObject.SetActive(false);
-                var d = onDone;
-                onDone = null;
-                d?.Invoke();
-                return;
-            }
+            if (lineIdx >= lines.Length) { FinishDialogue(); return; }
+            if (!SkipScenes()) return;
             ShowLine();
         }
 
@@ -428,6 +464,12 @@ namespace Aetheria
             }
             UpdatePlates(cam, scale);
             UpdateBossBar();
+            if (sceneImg.gameObject.activeSelf)
+            {
+                sceneAlpha = Mathf.MoveTowards(sceneAlpha, sceneTarget, dt * 2.2f);
+                sceneImg.color = new Color(1, 1, 1, sceneAlpha);
+                if (sceneTarget == 0 && sceneAlpha <= 0) sceneImg.gameObject.SetActive(false);
+            }
             if (InCredits)
             {
                 creditsT += dt;

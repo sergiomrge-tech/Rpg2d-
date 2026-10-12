@@ -65,7 +65,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Final: epílogo com Lumia e Sylra, créditos rolantes e modo de exploração livre
 - ✅ Barra de vida de chefe (nome + título), save guarda mapa e posição
 - ✅ **Rebalanceamento:** HP do inimigo ∝ dano do jogador (×(1+0,28·(nv−1))), dano do inimigo ∝ vida do jogador (×(1+0,14·(nv−1))); XP linear; poções curam 35 % da vida máxima
-- ⬜ Cutscenes ilustradas (prólogo e final com arte própria)
+- ✅ **Cutscenes ilustradas** em tela cheia (1920×1080): prólogo (Tóquio à noite, o vazio da deusa Lumia, o despertar em Aurora) e final (queda de Malgrath, nascer do sol nos picos, vista de Aetheria) — `tools/art_hd/cutscenes.py`, exibidas pelo sistema de diálogo
 - ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento

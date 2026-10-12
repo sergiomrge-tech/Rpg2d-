@@ -172,11 +172,14 @@ namespace Aetheria
 
         public static readonly Line[] Ending =
         {
+            new Line("@scene", "malgrath_fall"),
             new Line("", "Malgrath cai de joelhos. A coroa de chifres racha, e a escuridão que cobria Aetheria se desfaz em cinzas douradas."),
+            new Line("@scene", "sunrise_peaks"),
             new Line("lumia", "Está feito. O Rei Demônio caiu. O sol voltou a nascer sobre Aetheria."),
             new Line("sylra", "Eu sempre soube que você chegaria até aqui. Velmoor já floresce de novo, Ren."),
             new Line("lumia", "Ren Takamura. Você deu a sua vida por uma criança e, em outro mundo, por todo um povo."),
             new Line("lumia", "Posso lhe oferecer um último presente: voltar para casa. Ou ficar."),
+            new Line("@scene", "vista"),
             new Line("", "Ren olha o amanhecer sobre as montanhas. Pela primeira vez desde que chegou, não tem pressa."),
             new Line("", "Ele decide ficar. Há uma Guilda a visitar, uma elfa que precisa de um companheiro de aventuras, e um mundo inteiro por explorar."),
         };
@@ -190,11 +193,14 @@ namespace Aetheria
 
         public static readonly Line[] Prologue =
         {
+            new Line("@scene", "tokyo"),
             new Line("", "Tóquio, 23h47. Uma buzina. Um caminhão. Uma criança no meio da rua."),
             new Line("", "Você empurrou a menina para longe... e o mundo ficou branco."),
+            new Line("@scene", "void"),
             new Line("lumia", "Ren Takamura. Sua vida terminou cedo demais — e com coragem."),
             new Line("lumia", "Meu mundo, Aetheria, está sendo devorado pelo Rei Demônio Malgrath. Preciso de alguém assim."),
             new Line("lumia", "Não posso lhe dar força. Só uma centelha. O resto... você terá de conquistar."),
+            new Line("@scene", "aurora_dawn"),
             new Line("", "Você desperta na Vila de Aurora, com uma espada velha e uma faísca de magia na palma da mão."),
         };
 
