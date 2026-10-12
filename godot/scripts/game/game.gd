@@ -877,7 +877,10 @@ func _ci_class_shots() -> void:
 	for foe in Enemy.all.duplicate():
 		if is_instance_valid(foe):
 			foe.queue_free()
-	player.global_position = Vector2(1728, 1250)
+	# Genuine scenic clearing; the original plaza well otherwise covers the
+	# character. Camera zoom is screenshot-only, not a gameplay setting.
+	player.global_position = Vector2(1664, 2176)
+	camera.zoom = Vector2.ONE * 1.9
 	camera.snap()
 	await _wait(.22)
 	for class_id in HeroClasses.ORDER:
