@@ -41,12 +41,12 @@ Os valores são parâmetros iniciais de **balanceamento**, sujeitos a ajustes ap
 
 ### Invocador: pets efetivos no mundo
 
-`SpiritPet` é uma unidade aliada separada do jogador. Ela segue Ren, seleciona inimigos, anima `idle/move/cast` e dispara projéteis **no quadro de conjuração**, sem atribuir o ataque ao herói. Sua arte usa temporariamente a folha HD existente de um espírito (`bog_wraith`) com cor etérea; uma **arte final exclusiva do pet permanece pendente**. Não representar essa reutilização provisória como modelagem inédita aprovada.
+`SpiritPet` é uma unidade aliada separada do jogador. Ela segue Ren, seleciona inimigos, anima `idle/move/cast` e dispara projéteis **no quadro de conjuração**, sem atribuir o ataque ao herói. A arte provisória `bog_wraith` foi **substituída** pelo **Lince Astral**, personagem 2D quadrúpede de rig original com **240 quadros, 18 trilhas animadas** em `godot/assets/Sprites/Pets/astral_lynx.png/.json`. O familiar usa animações de movimento e conjuração com hit frame. Essa modelagem está disponível na branch de arte, mas ainda aguarda aprovação visual e testes Android. [Detalhes dos assets](CLASS_ART_IMPLEMENTATION.md).
 
 ### Gates ainda obrigatórios
 
-1. Compilar e executar a branch `gpt6-class-selection-20261012` no **Godot 4.3+** com testes de seleção por toque e teclado.
-2. Verificar visualmente cada classe e seu equipamento em animações reais. **Sprites de Ren para arco, duas adagas e ausência de espada nos conjuradores ainda precisam de tratamento visual específico** antes de considerar a entrega artística final.
+1. Executar a branch de arte `gpt6-class-art-in-game-20261012` no **Godot 4.3+** com testes de sprites reais, seleção por toque, combate e familiar.
+2. **Seis atlases HD já foram produzidos e ligados à Unity/Godot?** Ao projeto **Godot**: arco, duas adagas, magias sem espada, guerreiro e paladino, mais 6 retratos do menu. Verificar fidelidade e leitura visual nos screenshots **verdadeiros do motor** e no Android antes do gate artístico.
 3. Confirmar IA, duração, quantidade e alvo dos pets em combate; equilibrar dano, proteção e mobilidade.
 4. Garantir que não exista regressão no Grimório (X), nas cutscenes, na música de flauta ou na remoção do fôlego.
 5. Gerar APK somente após a validação. O PR permanece isolado da branch principal até aprovação.
