@@ -99,6 +99,35 @@ namespace Aetheria
                 xp = 40, poise = 21, scale = 0.77f,
                 drops = new[] { ("gold", 1f, 7, 16), ("ether", 0.15f, 1, 1), ("hell_ember", 0.12f, 1, 1) }
             };
+            // Set B: four new independent bodies and actual combat archetypes.
+            Demons["ant_guard"] = new DemonDef
+            {
+                id = "ant_guard", name = "Formiga Sentinela", sheet = "Sprites/Demons/ant_guard",
+                behavior = "ant_carapace", hp = 145, dmg = 18, speed = 2.6f, aggro = 7.7f,
+                xp = 45, poise = 34, scale = .86f,
+                drops = new[] { ("gold", 1f, 9, 17), ("potion", .12f, 1, 1), ("hell_ember", .11f, 1, 1) }
+            };
+            Demons["roach_plaguebearer"] = new DemonDef
+            {
+                id = "roach_plaguebearer", name = "Barata Pestilenta", sheet = "Sprites/Demons/roach_plaguebearer",
+                behavior = "roach_plague", hp = 108, dmg = 14, speed = 3.45f, aggro = 8.3f,
+                xp = 41, poise = 16, scale = .78f,
+                drops = new[] { ("gold", 1f, 8, 17), ("ether", .12f, 1, 1), ("hell_ember", .14f, 1, 1) }
+            };
+            Demons["spike_beetle"] = new DemonDef
+            {
+                id = "spike_beetle", name = "Besouro Ouriço", sheet = "Sprites/Demons/spike_beetle",
+                behavior = "spike_roll", hp = 160, dmg = 20, speed = 2.1f, aggro = 7.5f,
+                xp = 48, poise = 35, scale = .82f,
+                drops = new[] { ("gold", 1f, 9, 18), ("potion", .08f, 1, 1), ("hell_ember", .15f, 1, 1) }
+            };
+            Demons["dragonfly_skirmisher"] = new DemonDef
+            {
+                id = "dragonfly_skirmisher", name = "Libélula Caçadora", sheet = "Sprites/Demons/dragonfly_skirmisher",
+                behavior = "dragonfly_zigzag", hp = 80, dmg = 17, speed = 4.2f, aggro = 9f,
+                xp = 47, poise = 12, scale = .82f,
+                drops = new[] { ("gold", 1f, 9, 20), ("ether", .14f, 1, 1), ("hell_ember", .12f, 1, 1) }
+            };
         }
 
         static void Add(ItemDef d) => Items[d.id] = d;

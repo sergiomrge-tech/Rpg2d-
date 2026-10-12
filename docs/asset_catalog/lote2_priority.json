@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game": "Crônicas de Aetheria — A Centelha",
   "lot": "LOTE_02",
-  "status": "ordered_for_production_no_art_generated",
+  "status": "10_demoniac_insectoids_rendered_and_wired_cpp_csharp_checked__5_bosses_not_started",
   "style_guard": "Official existing HD cartoon Cairo shading and outlines; NEVER lower quality, pixelate, use low-poly, or replace approved graphics. Each insectoid has unique anatomy and pose cycle.",
   "morphology_rules": {
     "max_same_body_archetype": 1,
@@ -27,7 +27,8 @@
         "scarab_brute",
         "moth_hexer"
       ],
-      "gate": "approve three genuinely different silhouettes, poses, coloring and shadow depth before the rest"
+      "gate": "approve three genuinely different silhouettes, poses, coloring and shadow depth before the rest",
+      "status": "implemented_art_and_gameplay_pending_Unity_runtime"
     },
     {
       "id": "set_a",
@@ -37,7 +38,8 @@
         "vespa_lancer",
         "cicada_screecher"
       ],
-      "gate": "new geometry per species, air/ground locomotion distinct and readable"
+      "gate": "new geometry per species, air/ground locomotion distinct and readable",
+      "status": "implemented_art_and_gameplay_pending_Unity_runtime"
     },
     {
       "id": "set_b",
@@ -48,7 +50,8 @@
         "spike_beetle",
         "dragonfly_skirmisher"
       ],
-      "gate": "10/10 distinct silhouettes blacked out; no repeated anatomy"
+      "gate": "10/10 distinct silhouettes blacked out; no repeated anatomy",
+      "status": "implemented_art_and_gameplay_pending_Unity_runtime"
     },
     {
       "id": "boss_a",
@@ -58,7 +61,8 @@
         "scarab_colossus",
         "moth_oracle"
       ],
-      "gate": "bespoke boss skeletons (not scaled normal mobs), distinct attack and two skill animations"
+      "gate": "bespoke boss skeletons (not scaled normal mobs), distinct attack and two skill animations",
+      "status": "not_started"
     },
     {
       "id": "boss_b",
@@ -67,7 +71,8 @@
         "queen_vespara",
         "brood_tyrant"
       ],
-      "gate": "signature bosses with multi-phase telegraphs and unique body plans"
+      "gate": "signature bosses with multi-phase telegraphs and unique body plans",
+      "status": "not_started"
     }
   ],
   "artifacts": [
@@ -111,7 +116,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/mantis_reaver.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/mantis_reaver.json",
+      "preview": "docs/asset_catalog/previews/lote2/mantis_reaver.png"
     },
     {
       "id": "scarab_brute",
@@ -141,7 +151,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/scarab_brute.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/scarab_brute.json",
+      "preview": "docs/asset_catalog/previews/lote2/scarab_brute.png"
     },
     {
       "id": "moth_hexer",
@@ -171,7 +186,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/moth_hexer.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/moth_hexer.json",
+      "preview": "docs/asset_catalog/previews/lote2/moth_hexer.png"
     },
     {
       "id": "termite_burrower",
@@ -201,7 +221,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/termite_burrower.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/termite_burrower.json",
+      "preview": "docs/asset_catalog/previews/lote2/termite_burrower.png"
     },
     {
       "id": "vespa_lancer",
@@ -231,7 +256,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/vespa_lancer.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/vespa_lancer.json",
+      "preview": "docs/asset_catalog/previews/lote2/vespa_lancer.png"
     },
     {
       "id": "cicada_screecher",
@@ -261,7 +291,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/cicada_screecher.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/cicada_screecher.json",
+      "preview": "docs/asset_catalog/previews/lote2/cicada_screecher.png"
     },
     {
       "id": "ant_guard",
@@ -291,7 +326,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/ant_guard.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/ant_guard.json",
+      "preview": "docs/asset_catalog/previews/lote2/ant_guard.png"
     },
     {
       "id": "roach_plaguebearer",
@@ -321,7 +361,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/roach_plaguebearer.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/roach_plaguebearer.json",
+      "preview": "docs/asset_catalog/previews/lote2/roach_plaguebearer.png"
     },
     {
       "id": "spike_beetle",
@@ -351,7 +396,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/spike_beetle.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/spike_beetle.json",
+      "preview": "docs/asset_catalog/previews/lote2/spike_beetle.png"
     },
     {
       "id": "dragonfly_skirmisher",
@@ -381,7 +431,12 @@
         192,
         192
       ],
-      "art_status": "not_started"
+      "art_status": "generated_pending_Unity_visual_review",
+      "gameplay_status": "wired_in_Data_Enemy_village_map_and_CSharp_compilation",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/dragonfly_skirmisher.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/dragonfly_skirmisher.json",
+      "preview": "docs/asset_catalog/previews/lote2/dragonfly_skirmisher.png"
     }
   ],
   "bosses": [
@@ -413,7 +468,9 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_started",
+      "unity_runtime_verified": false
     },
     {
       "id": "scarab_colossus",
@@ -443,7 +500,9 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_started",
+      "unity_runtime_verified": false
     },
     {
       "id": "moth_oracle",
@@ -473,7 +532,9 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_started",
+      "unity_runtime_verified": false
     },
     {
       "id": "queen_vespara",
@@ -503,7 +564,9 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_started",
+      "unity_runtime_verified": false
     },
     {
       "id": "brood_tyrant",
@@ -533,7 +596,10 @@
         256,
         256
       ],
-      "art_status": "not_started"
+      "art_status": "not_started",
+      "gameplay_status": "not_started",
+      "unity_runtime_verified": false
     }
-  ]
+  ],
+  "status_note": "10 common insectoid demons are real 3-direction PNG/JSON sprite atlases with unique scripts, on-map spawns and C#-compiled ability code. No real Unity Editor run/visual gate yet. Five bosses do not have sprites or gameplay implementations."
 }

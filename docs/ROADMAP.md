@@ -63,10 +63,18 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - 🔄 **Lote 1: oito silhuetas redesenhadas** após avaliação de repetição: batedor alado, saqueador de quatro braços, salamandra de brasas, sapo ressonador, naga lanceiro, tartaruga blindada, ceifador ósseo e Morgash bovino de seis patas. Arte candidata, aguardando aprovação visual.
 - ✅ Renderização completa em `gpt6-lote1-silhouettes-20261012`: os 15 atlas PNG/JSON continuam verificáveis e a Action de revisão **38246798620** passou; máscaras de silhueta e corte de bordas foram verificadas sem alterar personagem/cenário aprovado.
 - 🔄 Pranchas de comparação de sprites originais versus remodelados: `docs/asset_catalog/previews/LOTE1_REMODEL_COMPARACAO.png` e `LOTE1_REMODEL_OITO.png`; imagens do pipeline, **não capturas do jogo**.
-- ✅ **Ordem de produção do Lote 2 definida:** `docs/asset_catalog/LOTE2_ORDEM_PRODUCAO.md` (10 insetoides e 5 bosses de anatomias próprias). Nenhum sprite do Lote 2 gerado ainda.
+- ✅ **Ordem de produção do Lote 2 definida:** `docs/asset_catalog/LOTE2_ORDEM_PRODUCAO.md` (10 insetoides e 5 bosses únicos). Dez demônios comuns já têm sprites e integração C# no ramo Set B; cinco chefes permanecem pendentes.
 - ⬜ Inspecionar a fidelidade ao estilo HD cartoon em escala real na Unity; obter aprovação do diretor antes de incorporar os remodelados. VFX únicos, IA, spawns e gameplays dos novos inimigos seguem pendentes.
 
 ## Regra permanente — entrega obrigatoriamente jogável (12/10/2026)
 **Exigência do usuário:** parar de entregar arte conceitual ou pranchas avulsas como se fossem conclusão de produção. Para cada novo inimigo, criar os assets **no projeto Unity**, com sprites importados, animações de caminhada, ataque e habilidades em três direções, movimentação/IA, hitbox, VFX, dano e cooldown realmente funcionais. Chefes têm duas habilidades. Validar em runtime Unity antes de declarar pronto. **Detalhes:** [Regra obrigatória de assets jogáveis](asset_catalog/REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md).
-- ⬜ Lote 2 — piloto jogável de `mantis_reaver`, `scarab_brute` e `moth_hexer` com modelagem 2D refinada e rigs próprios; status ainda não implementado.
-- ⬜ Integrar em Unity movimentos, ataques, habilidades e testes reais; só então avançar nas demais 12 criaturas.
+- ✅ Lote 2: **10 demônios insetoides** renderizados como assets PNG/JSON, ligados ao combate e ao mapa; QA do código e compile check passaram, mas **não passaram ainda no runtime real da Unity**.
+- 🔄 Codificados em Unity: movimentos, ataques com event-frame, VFX e habilidades distintas; falta verificação real em Editor, testes de hitbox, escala, FPS, VFX/arte e aprovação. Cinco chefes insetoides ainda não foram modelados/animados.
+
+## Lote 2 — dez demônios no código Unity (12/10/2026)
+- ✅ Piloto (3): mantis, scarab, moth — atlas de animações, IA de perseguição, investida, choque radial e maldição.
+- ✅ Set A (3): térmita escavadora, vespa perfuradora e cigarra sônica — atlas, colisões/dano temporizado, status de veneno e efeito sônico.
+- ✅ Set B (4): formiga sentinela, barata pestilenta, besouro ouriço e libélula caçadora — atlas, armadura temporária, zona tóxica persistente, rolagem e disparos rápidos.
+- ✅ Testes independentes: renderização GitHub Actions; verificadores de imagens e 180 trilhas de animação; compilação Unity C# via arquivos de referência.
+- ⬜ **Cinco chefes insetoides**: modelos realmente próprios e duas habilidades animadas cada (não usar escalonamento dos demônios comuns).
+- ⬜ Unity Editor 2022.3 LTS: inspeção de animações/qualidade, screenshot real, colisão, IA, balanceamento, FPS e build jogável. A execução automatizada ainda não substitui esse teste.

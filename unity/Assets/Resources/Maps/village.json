@@ -2200,6 +2200,30 @@
     "x": 1856,
     "y": 2944,
     "level": 2
+  },
+  {
+    "kind": "ant_guard",
+    "x": 1472,
+    "y": 3264,
+    "level": 2
+  },
+  {
+    "kind": "roach_plaguebearer",
+    "x": 2368,
+    "y": 3328,
+    "level": 2
+  },
+  {
+    "kind": "spike_beetle",
+    "x": 2624,
+    "y": 3264,
+    "level": 3
+  },
+  {
+    "kind": "dragonfly_skirmisher",
+    "x": 2048,
+    "y": 2944,
+    "level": 2
   }
 ],
 "npcs": [

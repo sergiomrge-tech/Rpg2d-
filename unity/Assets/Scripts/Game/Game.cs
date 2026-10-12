@@ -225,9 +225,13 @@ namespace Aetheria
             // No concept art or generated fake screenshots are ever used here.
             player.invuln = 15f;
             string[] pilotIds = { "mantis_reaver", "scarab_brute", "moth_hexer",
-                                  "termite_burrower", "vespa_lancer", "cicada_screecher" };
+                                  "termite_burrower", "vespa_lancer", "cicada_screecher",
+                                  "ant_guard", "roach_plaguebearer", "spike_beetle",
+                                  "dragonfly_skirmisher" };
             string[] pilotNames = { "06_mantis_skill", "07_scarab_skill", "08_moth_skill",
-                                    "09_termite_burrow", "10_vespa_sting", "11_cicada_sonic" };
+                                    "09_termite_burrow", "10_vespa_sting", "11_cicada_sonic",
+                                    "12_ant_guard", "13_roach_cloud", "14_spike_roll",
+                                    "15_dragonfly_needles" };
             for (int i = 0; i < pilotIds.Length; i++)
             {
                 Enemy insect = Enemy.All.Find(e => !e.dead && e.def.id == pilotIds[i]);

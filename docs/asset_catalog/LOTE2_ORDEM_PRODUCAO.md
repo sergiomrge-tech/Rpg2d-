@@ -1,6 +1,6 @@
 # Lote 2 — ordem de produção, demônios insetoides (10 + 5 chefes)
 
-**Decisão do diretor:** primeiro corrigir as silhuetas repetitivas do Lote 1. Só iniciar o Lote 2 após inspecionar as oito remodelagens. Nenhuma arte do Lote 2 foi gerada ainda.
+**Estado em 12/10/2026:** os **10 demônios comuns** deste lote foram criados como PNG + JSON do jogo, possuem animações reais em três direções e foram cadastrados em `Data.Demons`, `Enemy.cs` e `village.json`. O teste C# passou. A aprovação de aparência/movimentação e a execução no Editor Unity ainda estão pendentes. **Os cinco chefes ainda não foram criados.**
 
 **Direção artística obrigatória:** manter o **HD cartoon do projeto**, com materiais Cairo, sombras suaves, contornos coloridos, animações em três direções e alta legibilidade em jogo. Espécies novas exigem **anatomia própria** e não podem diferir apenas por cor, textura ou arma.
 
@@ -49,7 +49,7 @@
 
 Detalhes estruturados: [`lote2_priority.json`](lote2_priority.json).
 
-**Status:** fila de produção definida, **sprites do Lote 2 ainda não foram criados**. A prioridade é resolver primeiro a repetição do Lote 1.
+**Status atualizado:** ✅ 10/10 demônios comuns — assets renderizados, IA/skills codificados, 18 trilhas de animação por criatura, encontrados no mapa e compilação C# aprovada; ⬜ 5/5 chefes — arte e jogabilidade ainda pendentes. Falta teste real de runtime/visual na Unity.
 
 ## CRITÉRIO DE ENTREGA OBRIGATÓRIO — definido pelo diretor em 12/10/2026
 

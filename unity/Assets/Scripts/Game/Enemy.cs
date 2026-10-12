@@ -23,6 +23,7 @@ namespace Aetheria
         bool hitDone;
         bool nextIsCast;
         Vector2 skillDirection; // locked during telegraph; skill hit matches animation keyframe
+        float chitinGuardLeft; // ant's active defensive cast buff
 
         public static Enemy Spawn(string kind, Vector2 pos, int level)
         {
@@ -34,7 +35,11 @@ namespace Aetheria
             e.level = level;
             float s = Data.LevelScale(level);
             e.Build(def.sheet, 0.9f, 0.3f, def.behavior == "scarab_shockwave" ? 0.56f :
-                def.behavior == "termite_burrow" ? 0.46f : def.behavior == "cicada_sonic" ? .38f : 0.3f,
+                def.behavior == "termite_burrow" ? 0.46f :
+                def.behavior == "ant_carapace" ? .43f :
+                def.behavior == "spike_roll" ? .48f :
+                def.behavior == "roach_plague" ? .42f :
+                def.behavior == "cicada_sonic" ? .38f : 0.3f,
                 def.scale + 0.05f * (level - 1));
             e.rb.mass = 0.6f;
             e.rb.drag = 0;
@@ -98,6 +103,7 @@ namespace Aetheria
             stateT += dt;
             castCd -= dt;
             attackCd -= dt;
+            if (chitinGuardLeft > 0f) chitinGuardLeft = Mathf.Max(0f, chitinGuardLeft - dt);
             var p = Player.I;
             Vector2 toP = p != null ? p.Pos - Pos : Vector2.zero;
             float dist = toP.magnitude;
@@ -132,12 +138,20 @@ namespace Aetheria
                     bool termite = def.behavior == "termite_burrow";
                     bool vespa = def.behavior == "vespa_sting";
                     bool cicada = def.behavior == "cicada_sonic";
+                    bool ant = def.behavior == "ant_carapace";
+                    bool roach = def.behavior == "roach_plague";
+                    bool spike = def.behavior == "spike_roll";
+                    bool dragonfly = def.behavior == "dragonfly_zigzag";
                     if (castCd <= 0 && ((mantis && dist > 1.9f && dist < 5.3f) ||
                                         (scarab && dist < 3.2f) ||
                                         (moth && dist > 2.2f && dist < 9f) ||
                                         (termite && dist > 1.5f && dist < 5.1f) ||
                                         (vespa && dist > 2.1f && dist < 6.4f) ||
                                         (cicada && dist < 3.8f) ||
+                                        (ant && dist < 2.7f && chitinGuardLeft <= 0f) ||
+                                        (roach && dist > 1.2f && dist < 5.4f) ||
+                                        (spike && dist > 1.8f && dist < 5.5f) ||
+                                        (dragonfly && dist > 2.8f && dist < 8.4f) ||
                                         (def.caster && !moth && dist > 2.6f && dist < 7.5f)))
                     {
                         nextIsCast = true; skillDirection = toP.sqrMagnitude > 0.01f ? toP.normalized : Util.FacingVec(facing);
@@ -149,17 +163,17 @@ namespace Aetheria
                     }
                     Vector2 want = toP.normalized;
                     Vector2 side = new Vector2(-want.y, want.x) * Mathf.Sin(Time.time * 1.3f + GetInstanceID()) * 0.45f;
-                    if (moth || cicada)
+                    if (moth || cicada || roach || dragonfly)
                     {
                         // Cicada circles near to build a sonic pulse; moth maintains longer casting range.
-                        float tooNear = cicada ? 2.0f : 4.0f;
-                        float tooFar = cicada ? 3.2f : 6.5f;
+                        float tooNear = cicada ? 2.0f : roach ? 2.1f : dragonfly ? 3.3f : 4.0f;
+                        float tooFar = cicada ? 3.2f : roach ? 4.1f : dragonfly ? 7.1f : 6.5f;
                         Vector2 kite = dist < tooNear ? -want : dist > tooFar ? want : side.normalized;
                         Move(kite, speed);
                     }
                     else
                     {
-                        float sp = dist < (scarab ? 1.7f : termite ? 1.0f : 1.3f) ? 0 : speed;
+                        float sp = dist < (scarab ? 1.7f : termite ? 1.0f : spike ? 1.45f : 1.3f) ? 0 : speed;
                         Move((want + side * (mantis ? .8f : .45f)).normalized, sp);
                     }
                     Separate();
@@ -177,7 +191,11 @@ namespace Aetheria
                            def.behavior == "termite_burrow" ? .78f :
                            def.behavior == "cicada_sonic" ? .72f :
                            def.behavior == "moth_hex" ? .65f :
-                           def.behavior == "vespa_sting" ? .35f : .46f)
+                           def.behavior == "vespa_sting" ? .35f :
+                           def.behavior == "spike_roll" ? .57f :
+                           def.behavior == "roach_plague" ? .55f :
+                           def.behavior == "ant_carapace" ? .48f :
+                           def.behavior == "dragonfly_zigzag" ? .37f : .46f)
                         : (def.behavior == "scarab_shockwave" ? 0.52f : 0.42f);
                     if (stateT > tell)
                     {
@@ -189,6 +207,10 @@ namespace Aetheria
                                      def.behavior == "termite_burrow" ? 5.1f :
                                      def.behavior == "cicada_sonic" ? 6.0f :
                                      def.behavior == "vespa_sting" ? 4.0f :
+                                     def.behavior == "ant_carapace" ? 7.2f :
+                                     def.behavior == "roach_plague" ? 6.3f :
+                                     def.behavior == "spike_roll" ? 5.2f :
+                                     def.behavior == "dragonfly_zigzag" ? 4.4f :
                                      def.behavior == "mantis_dash" ? 4.2f : Random.Range(3.6f, 5.4f);
                         }
                         else { Go(St.Attack); anim.Play("attack", true); attackCd = Random.Range(1.0f, 1.6f); }
@@ -203,6 +225,8 @@ namespace Aetheria
                     float burst = def.behavior == "scarab_shockwave" ? 3.5f :
                                   def.behavior == "termite_burrow" ? 4f :
                                   def.behavior == "vespa_sting" ? 8.0f :
+                                  def.behavior == "dragonfly_zigzag" ? 8.7f :
+                                  def.behavior == "roach_plague" ? 6.3f :
                                   def.behavior == "mantis_dash" ? 9f : 5f;
                     rb.velocity = (n > 0.3f && n < 0.6f ? f * burst : Vector2.zero) + knock;
                     break;
@@ -220,6 +244,18 @@ namespace Aetheria
                         float burst = def.behavior == "vespa_sting" ? 12.5f : 6.0f;
                         float start = def.behavior == "vespa_sting" ? .20f : .29f;
                         rb.velocity = (n > start && n < .70f ? skillDirection * burst : Vector2.zero) + knock;
+                    }
+                    else if (def.behavior == "spike_roll" || def.behavior == "dragonfly_zigzag")
+                    {
+                        float n = anim.Normalized;
+                        if (n > .22f && n < .70f)
+                        {
+                            float v = def.behavior == "spike_roll" ? 12.2f : 7.5f;
+                            Vector2 cross = new Vector2(-skillDirection.y, skillDirection.x);
+                            rb.velocity = skillDirection * v +
+                                (def.behavior == "dragonfly_zigzag" ? cross * Mathf.Sin(Time.time * 27f) * 4f : Vector2.zero) + knock;
+                        }
+                        else rb.velocity = knock;
                     }
                     else rb.velocity = knock;
                     break;
@@ -263,6 +299,8 @@ namespace Aetheria
                 Vector2 c = Pos + Util.FacingVec(facing) * (def.behavior == "mantis_dash" ? 1.05f : 0.7f);
                 Fx.Claw(c + Vector2.up * 0.6f, facing);
                 float radius = def.behavior == "scarab_shockwave" ? 1.55f :
+                               def.behavior == "spike_roll" ? 1.38f :
+                               def.behavior == "ant_carapace" ? 1.35f :
                                def.behavior == "termite_burrow" ? 1.3f :
                                def.behavior == "vespa_sting" ? 1.25f :
                                def.behavior == "mantis_dash" ? 1.35f : 1.05f;
@@ -333,6 +371,48 @@ namespace Aetheria
                         p.ApplySonicDisrupt(.65f);
                     Sfx.Play("boom", .45f, 1.55f);
                 }
+                else if (def.behavior == "ant_carapace")
+                {
+                    // Mandibles interlock: temporary defensive carapace and real shield bash.
+                    chitinGuardLeft = 3.1f;
+                    Fx.MagicCircle(Pos, 1);
+                    Fx.Shockwave(Pos, 1.5f);
+                    if ((p.Pos - Pos).magnitude < 1.5f)
+                        p.Hurt(Mathf.Round(dmg * .85f), Pos, 8f, 18);
+                    Sfx.Play("claw", .54f, .70f);
+                }
+                else if (def.behavior == "roach_plague")
+                {
+                    // Moving, visible poison zone persists even after cast animation ends.
+                    Vector2 center = Pos + skillDirection * 1.25f;
+                    if (World.I != null && World.I.BlockedAt(center)) center = Pos;
+                    InsectHazard.SpawnPoison(center, 2.25f, 3.6f, 3.4f);
+                    Fx.DemonPoof(center);
+                    Sfx.Play("fireball", .44f, .68f);
+                }
+                else if (def.behavior == "spike_roll")
+                {
+                    // Hit on the actual roll frame, after moving forward.
+                    Fx.Shockwave(Pos + Vector2.up * .23f, 1.75f);
+                    Fx.Claw(Pos + Vector2.up * .4f, facing);
+                    if ((p.Pos - Pos).magnitude < 1.72f)
+                        p.Hurt(Mathf.Round(dmg * 1.30f), Pos, 8f, 22);
+                    Sfx.Play("boom", .47f, 1.16f);
+                }
+                else if (def.behavior == "dragonfly_zigzag")
+                {
+                    // Three slender real projectiles, with a visually different teal trail.
+                    Vector2 start = Pos + Vector2.up * .6f;
+                    Vector2 aim = (p.Pos + Vector2.up * .5f - start).normalized;
+                    for (int k = -1; k <= 1; k++)
+                    {
+                        float ang = k * 0.13f;
+                        Vector2 dir = new Vector2(aim.x * Mathf.Cos(ang) - aim.y * Mathf.Sin(ang),
+                                                  aim.x * Mathf.Sin(ang) + aim.y * Mathf.Cos(ang));
+                        Projectile.InsectNeedle(start + dir * .35f, dir, dmg * .70f);
+                    }
+                    Sfx.Play("spark", .56f, 1.5f);
+                }
                 else
                 {
                     Vector2 from = Pos + Vector2.up * 0.9f;
@@ -360,6 +440,12 @@ namespace Aetheria
 
         public override bool Hurt(float d, Vector2 from, float knockback, float poiseDmg, bool crit = false)
         {
+            if (def.behavior == "ant_carapace" && chitinGuardLeft > 0f)
+            {
+                d *= .36f; // actual temporary armour, not simply a bright shader pulse
+                poiseDmg *= .45f;
+                Fx.Dust(Pos, .2f);
+            }
             if (!base.Hurt(d, from, knockback, poiseDmg, crit)) return false;
             lastHurt = Time.time;
             Sfx.Play("imp_hurt", 0.4f, Random.Range(1.0f, 1.25f));
