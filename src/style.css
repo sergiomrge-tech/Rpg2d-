@@ -1,0 +1,7 @@
+html, body { margin: 0; height: 100%; background: #05030a; overflow: hidden; }
+#app { position: fixed; inset: 0; }
+canvas { display: block; touch-action: none; image-rendering: pixelated; -webkit-user-select: none; user-select: none; }
+.touch { position: fixed; inset: 0; pointer-events: none; z-index: 5; -webkit-user-select: none; user-select: none; }
+.touch .btn, .touch .stick { pointer-events: auto; position: absolute; border-radius: 50%; background: rgba(255,255,255,.14); border: 2px solid rgba(255,255,255,.35); color: #fff; font: 700 14px sans-serif; display: flex; align-items: center; justify-content: center; touch-action: none; }
+.touch .btn.on { background: rgba(255,255,255,.4); }
+.touch .knob { position: absolute; width: 44%; height: 44%; border-radius: 50%; background: rgba(255,255,255,.45); left: 28%; top: 28%; }

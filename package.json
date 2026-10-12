@@ -1,0 +1,19 @@
+{
+  "name": "cronicas-de-aetheria",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "RPG de ação 2D em pixel art estilo anime",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@fontsource/pixelify-sans": "^5.3.0",
+    "playwright-core": "^1.64.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  }
+}
