@@ -1,7 +1,7 @@
 """Oni soldier: humanoid demon built on the hero rig (red skin, horns, spiked club, armour)."""
 from __future__ import annotations
 import math
-from core import Pal, paint, flat, stroke, ellipse, capsule, smooth_poly, hx
+from core import Pal, paint, flat, stroke, ellipse, capsule, smooth_poly, hx, radial_glow
 from humanoid import Look
 
 SKIN = Pal('#d24a3c', '#a02c2c', '#f2806a', '#3e0c0c')
@@ -260,3 +260,65 @@ def sylra_look():
              scarf=Pal('#e8c060', '#b88a30', '#fff0a0', '#4a3008'), scarf_on=True, weapon=bow)
     L.hat = ElfEars()
     return L
+
+
+# ---------------------------------------------------------------- Etapa 2: Valemont
+def dagger(ctx, L, hand, ang, scale=1.0):
+    _xf(ctx, hand, ang, scale)
+    paint(ctx, lambda c: capsule(c, (0, -4), (0, 3), 2.0), SHAFT, sh=0.6, hl=0.3, line=0.7)
+    paint(ctx, lambda c: smooth_poly(c, [(-3, 3), (3, 3), (2, 20), (0, 25), (-2, 20)], tension=0.1),
+          Pal('#b8f0e0', '#6ac0a8', '#ffffff', '#10382c'), sh=1.2, hl=0.8, line=0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-6, 2), (6, 2), (5, 5), (-5, 5)], tension=0.1), GOLD, sh=0.6, hl=0.4, line=0.6)
+    ctx.restore()
+
+
+class Hood:
+    """Hooded cowl with a shadowed face (Assassino Sombrio) - picklable Look.hat."""
+
+    def __call__(self, ctx, view):
+        cloth = Pal('#2a2038', '#181224', '#463a5c', '#08040e')
+        if view == 'up':
+            paint(ctx, lambda c: smooth_poly(c, [(-22, 6), (-22, -14), (0, -30), (22, -14), (22, 6), (0, 14)], tension=0.4), cloth, sh=2.5, hl=1.2, line=1.0)
+            return
+        w = 22 if view == 'down' else 20
+        paint(ctx, lambda c: smooth_poly(c, [(-w, 8), (-w, -14), (0, -30), (w, -14), (w, 8), (w * 0.5, 2), (0, -4), (-w * 0.5, 2)], tension=0.4),
+              cloth, sh=2.5, hl=1.2, line=1.0)
+        flat(ctx, lambda c: smooth_poly(c, [(-14, -2), (14, -2), (12, 12), (-12, 12)], tension=0.3), (0.03, 0.02, 0.06, 1), 0.85)
+        for sx in ((-1, 1) if view == 'down' else (1,)):
+            x = sx * 6 if view == 'down' else 7
+            radial_glow(ctx, x, 3, 6, hx('#ff3a6a'), 0.6)
+            flat(ctx, lambda c, x=x: ellipse(c, x, 3, 2.4, 1.6), hx('#ff7a9a'))
+
+
+def assassin_look():
+    from humanoid import Look
+    cl = Pal('#2a2038', '#181224', '#463a5c', '#08040e')
+    L = Look(skin=Pal('#c8b0a8', '#9a8078', '#e8d8d0', '#3a2a28'), tunic=cl, shirt=cl, pants=Pal('#1c1626', '#100c18', '#322a42', '#040208'),
+             boots=Pal('#1c1626', '#100c18', '#322a42', '#040208'), glove=Pal('#2a2038', '#181224', '#463a5c', '#08040e'),
+             belt=Pal('#6a1a3a', '#480e26', '#8a3a5a', '#1a0410'), scarf=Pal('#8a1a4a', '#5e0e30', '#b84a78', '#2a0410'),
+             scarf_on=True, weapon=dagger, eye=hx('#ff5a7a'))
+    L.hat = Hood()
+    return L
+
+
+def valemont_look(kind):
+    from humanoid import Look
+    P = Pal
+    if kind == 'guard':
+        return Look(hair=P('#5a4030', '#3e2a1e', '#7e5a44', '#1c1008'), tunic=P('#5a6a8a', '#3e4a66', '#7e8eae', '#141a2a'),
+                    shirt=P('#c8d0e0', '#8a94ac', '#ffffff', '#1e2434'), scarf=P('#2a4a8a', '#1a3266', '#4a72c0', '#08122a'), weapon=spear)
+    if kind == 'noble':
+        return Look(hair_style='long', hair=P('#e8c860', '#b8962c', '#fff0a0', '#4a3808'), eye=hx('#6a5ae0'),
+                    tunic=P('#7a2a8a', '#561a66', '#a456b8', '#240a2e'), shirt=P('#fff4e0', '#e0d0b0', '#ffffff', '#6a5a40'),
+                    scarf=P('#f0c860', '#b8862c', '#fff2b0', '#4a300c'), weapon=None)
+    if kind == 'cleric':
+        return Look(hair=P('#d8d0c0', '#a8a090', '#fffaf0', '#4a4438'), tunic=P('#f4f0e8', '#d0c8b8', '#ffffff', '#6a6050'),
+                    shirt=P('#f4f0e8', '#d0c8b8', '#ffffff', '#6a6050'), scarf=P('#e8b840', '#b8862c', '#fff0a0', '#4a300c'), weapon=None)
+    if kind == 'child':
+        return Look(hair=P('#c8602a', '#964214', '#f0904a', '#3a1404'), eye=hx('#3a9ae0'), tunic=P('#e0b040', '#b88a20', '#ffe080', '#4a3408'),
+                    scarf_on=False, weapon=None)
+    if kind == 'guildmaster':
+        return Look(hair=P('#8a8a98', '#62626e', '#b8b8c8', '#22222a'), hair_style='spiky', eye=hx('#b8862c'),
+                    tunic=P('#6a1a2a', '#480e1a', '#963a4a', '#1e0408'), shirt=P('#e8d8b8', '#c8b490', '#fff4d8', '#5a4630'),
+                    scarf=P('#f0c860', '#b8862c', '#fff2b0', '#4a300c'), weapon=None)
+    raise KeyError(kind)

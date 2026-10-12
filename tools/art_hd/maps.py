@@ -250,12 +250,87 @@ def velmoor():
     for k, x, y, lv in sp:
         m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
     m.spawns.append(dict(kind='dryad_profane', x=30 * T, y=53 * T, level=7))
-    m.exits = [dict(to='village', x=30 * T, y=0.4 * T, w=3 * T, h=T)]
+    m.exits = [dict(to='village', x=30 * T, y=0.4 * T, w=3 * T, h=T), dict(to='valemont', x=59.6 * T, y=22 * T, w=T, h=3 * T)]
+    m.put('sign', 57.2, 24.4)
     return m
+
+
+def valemont():
+    """Cidade de Valemont (Cap. 3): walled capital - cathedral, Guild HQ, market, noble houses, a dark southern alley."""
+    m = Map('valemont', 72, 64, seed=33)
+    m.path([(36, -1), (36, 62)], 3.4, 's')              # main avenue
+    m.path([(2, 32), (70, 32)], 3.2, 's')               # cross avenue
+    m.path([(18, 14), (18, 50)], 2.4, 's')
+    m.path([(54, 14), (54, 50)], 2.4, 's')
+    m.disk(36, 32, 7.0, 's')                            # central plaza
+    m.disk(36, 15, 5.2, 's')                            # cathedral square
+    m.disk(46, 18, 4.0, 's')                            # guild forecourt
+    m.path([(36, 52), (36, 60)], 2.6, 'd')              # dark alley (dirt)
+    m.disk(36, 57, 4.4, 'd')
+    # walls: north & south runs of 4-tile segments, towers on the corners and along the sides
+    for x in range(4, 70, 4):
+        if abs(x - 36) > 4:
+            m.put('city_wall', x, 2.6)
+        m.put('city_wall', x, 62.4)
+    m.put('city_gate', 36, 3.2)
+    for x, y in [(2, 3), (70, 3), (2, 62), (70, 62)] + [(1.2, v) for v in range(9, 58, 6)] + [(70.8, v) for v in range(9, 58, 6)]:
+        m.put('city_tower', x, y)
+    m.reserve(0, 0, 72, 5)
+    m.reserve(0, 60, 72, 64)
+    # landmarks
+    m.put('cathedral', 36, 14.4)
+    m.reserve(27, 4, 45, 15)
+    m.put('guild', 47, 16.6)
+    m.reserve(38, 6, 56, 17)
+    m.put('fountain', 36, 33.6)
+    m.reserve(30, 28, 42, 35)
+    m.put('quest_board', 40.6, 22.6)
+    for x, y in [(30, 22), (42, 22), (30, 26), (42, 26), (29, 38), (43, 38), (36, 8), (36, 48)]:
+        m.put('lamp', x, y)
+    for x in (33, 39):
+        for y in (8.5, 21):
+            m.put('banner_pole', x, y)
+    # market stalls (east of plaza) and noble houses
+    for x, y in [(46, 29), (51, 29), (46, 36.6), (51, 36.6)]:
+        m.put('stall', x, y)
+    m.reserve(43, 26, 55, 38)
+    for x, y, k in [(10, 12, 'house_c'), (24, 12, 'house_b'), (10, 26, 'house_b'), (24, 26, 'house_c'),
+                    (10, 42, 'house_c'), (24, 42, 'house_b'), (60, 12, 'house_c'), (66, 26, 'house_b'),
+                    (60, 42, 'house_b'), (66, 48, 'house_c'), (47, 47, 'house_c')]:
+        m.put(k, x, y)
+        m.reserve(x - 4.5, y - 6, x + 4.5, y + 1)
+    for x, y, k in [(14, 14, 'barrel'), (28, 14, 'crate'), (28, 28, 'barrel'), (14, 44, 'crate'), (62, 14, 'barrel'),
+                    (40, 54, 'crate'), (33, 55, 'barrel'), (39, 58, 'barrel'), (33, 59, 'crate')]:
+        m.put(k, x, y)
+    for x in range(4, 68, 3):
+        for y in (4.4, 60.6):
+            if m.free(x, y, 0) and abs(x - 36) > 4:
+                m.put(self_rnd(m, ['bush_flower', 'bush']), x + 0.4, y)
+    m.scatter(['tree_round', 'tree_oak'], 22, (3, 6, 69, 58), pad=1, min_d=3.0)
+    m.scatter(['bush_flower', 'bush', 'flowers', 'tuft'], 90, (3, 6, 69, 58), pad=0, min_d=1.0)
+    m.player = (36 * T, 6.4 * T)
+    m.npcs = [
+        dict(id='guildmaster', x=47 * T, y=19.8 * T, look='v_guildmaster', facing='down'),
+        dict(id='guard', x=33 * T, y=5.6 * T, look='v_guard', facing='down'),
+        dict(id='noble', x=29.5 * T, y=29.4 * T, look='v_noble', facing='right'),
+        dict(id='cleric', x=36 * T, y=19.2 * T, look='v_cleric', facing='down'),
+        dict(id='child', x=40.5 * T, y=36.4 * T, look='v_child', facing='left'),
+        dict(id='shopkeeper', x=48.5 * T, y=31 * T, look='merchant', facing='left'),
+    ]
+    for i, (k, x, y, lv) in enumerate([('imp_raider', 31, 54, 7), ('oni_executioner', 41, 55, 8), ('imp_howler', 34, 58.5, 7),
+                                       ('oni_lancer', 40, 59, 8), ('imp_bomber', 32, 52, 7)]):
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='assassin_shadow', x=36 * T, y=57.4 * T, level=9))
+    m.exits = [dict(to='velmoor', x=36 * T, y=0.5 * T, w=3 * T, h=T)]
+    return m
+
+
+def self_rnd(m, items):
+    return m.rnd.choice(items)
 
 
 if __name__ == '__main__':
     import sys
-    which = sys.argv[1:] or ['village', 'velmoor']
+    which = sys.argv[1:] or ['village', 'velmoor', 'valemont']
     for n in which:
         globals()[n]().export()

@@ -86,6 +86,9 @@ namespace Aetheria
             D("treant_demon", "Treant-Demônio", "Demons/treant_demon", 190, 30, 1.6f, 6f, 46, 90, 1.45f, false);
             D("dryad_profane", "Dríade Profanada", "Demons/dryad_profane", 1100, 30, 2.4f, 10f, 520, 120, 1.9f, true, "Guardiã Corrompida de Velmoor");
 
+            // ---- Etapa 3: Valemont
+            D("assassin_shadow", "Assassino Sombrio", "Demons/assassin_shadow", 1450, 40, 3.4f, 9f, 700, 110, 1.45f, false, "Lâmina do Rei Demônio");
+
             // ---- Assets do GPT, como foram entregues (Bestiario F9)
             D("gpt_ant_guard", "Ant Guard (GPT)", "DemonsGpt/ant_guard", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
             D("gpt_brood_tyrant", "Brood Tyrant (GPT)", "DemonsGpt/brood_tyrant", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");

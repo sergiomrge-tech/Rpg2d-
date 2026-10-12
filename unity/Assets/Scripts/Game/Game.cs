@@ -106,10 +106,18 @@ namespace Aetheria
         {
             { "village", new[] { "Vila de Aurora", "Capítulo I — A Centelha" } },
             { "velmoor", new[] { "Floresta de Velmoor", "Capítulo II — Raízes Profanas" } },
+            { "valemont", new[] { "Cidade de Valemont", "Capítulo III — Sombras na Capital" } },
         };
 
         public void Travel(string to)
         {
+            if (to == "valemont" && !flags.Contains("rank_d"))
+            {
+                Fx.Toast("Os guardas barram você. Valemont exige Rank D.", new Color(1f, 0.85f, 0.5f));
+                travelCd = 2f;
+                player.transform.position += Vector3.left * 1.5f;
+                return;
+            }
             if (to == "velmoor" && !flags.Contains("rank_e"))
             {
                 Fx.Toast("O portal rejeita você. A Guilda exige Rank E.", new Color(0.7f, 1f, 0.85f));
@@ -123,7 +131,11 @@ namespace Aetheria
             // arrive at the exit that leads back to where we came from
             Vector2 at = Util.MapToWorld(world.data.playerX, world.data.playerY);
             foreach (var e in world.data.exits)
-                if (e.to == from) at = Util.MapToWorld(e.x, e.y) + (e.y < world.data.h * 32 ? Vector2.down * 2.2f : Vector2.up * 2.2f);
+                if (e.to == from)
+                {
+                    Vector2 ep = Util.MapToWorld(e.x, e.y), centre = Util.MapToWorld(world.data.w * 32, world.data.h * 32);
+                    at = ep + (centre - ep).normalized * 2.4f;   // step inside, away from the exit trigger
+                }
             player.transform.position = at;
             world.SpawnActors();
             if (Companion.I != null) Companion.I.transform.position = at + Vector2.left;
@@ -190,7 +202,10 @@ namespace Aetheria
             if (!flags.Contains("sylra_joined")) return "◆ Entre no portal ao sul do Bosque\n<size=22>e encontre o santuário élfico de Velmoor</size>";
             if (!flags.Contains("dryad_profane_dead")) return "◆ Purifique o bosque sagrado\n<size=22>derrote a Dríade Profanada (sul de Velmoor)</size>";
             if (!flags.Contains("rank_d")) return "◆ Volte à Guilda de Aurora";
-            return "◆ Rank D — Cidade de Valemont\n<size=20>(Capítulo III em breve)</size>";
+            if (!flags.Contains("val_started")) return "◆ Viaje a Valemont\n<size=22>saída leste de Velmoor — fale com o Mestre da Guilda</size>";
+            if (!flags.Contains("assassin_shadow_dead")) return "◆ Cace o Assassino Sombrio\n<size=22>beco ao sul de Valemont</size>";
+            if (!flags.Contains("rank_c")) return "◆ Volte ao Mestre Aldric, na Guilda";
+            return "◆ Rank C — o Deserto de Kharis\n<size=20>(Capítulo IV em breve)</size>";
         }
 
         public void OnEnemyKilled(Enemy e)

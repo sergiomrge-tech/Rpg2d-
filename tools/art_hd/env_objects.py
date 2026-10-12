@@ -694,6 +694,146 @@ def portal(ctx):
     stroke(ctx, lambda c: ellipse(c, 0, -18, 44, 18), hx('#8affc0'), 1.6, 0.8)
 
 
+
+# ------------------------------------------------------------------ Valemont (capital)
+CITY_STONE = Pal('#c9c2b4', '#9e978a', '#ece6d8', '#443e34')
+CITY_PLASTER = Pal('#e8d8b8', '#c8b490', '#fff4d8', '#5a4630')
+ROOF_TEAL = Pal('#3a8a8a', '#276a6a', '#62b4ae', '#0e2a2a')
+
+
+@prop('city_wall', 256, 170, 128, 150, col=(256, 40, 0), shadow=(0, 0, 124, 12, 0.35))
+def city_wall(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-128, 0), (-128, -110), (128, -110), (128, 0)], tension=0.01), CITY_STONE, sh=0, hl=0)
+    for row in range(7):
+        y = -8 - row * 15
+        off = 14 if row % 2 else 0
+        for i in range(10):
+            x = -128 + off + i * 28
+            stroke(ctx, lambda c, x=x, y=y: (c.move_to(x, y), c.line_to(x, y - 15)), CITY_STONE.shadow, 1.1, 0.8)
+        stroke(ctx, lambda c, y=y: (c.move_to(-128, y - 15), c.line_to(128, y - 15)), CITY_STONE.shadow, 1.0, 0.6)
+    for i in range(8):   # battlements
+        x = -128 + i * 34
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x, -110), (x, -128), (x + 22, -128), (x + 22, -110)], tension=0.02), CITY_STONE, sh=2, hl=1)
+    flat(ctx, lambda c: smooth_poly(c, [(-128, -110), (128, -110), (128, -96), (-128, -100)], tension=0.01), CITY_STONE.shadow, 0.8)
+
+
+@prop('city_tower', 130, 260, 65, 240, col=(100, 50, 0), shadow=(4, 0, 58, 14, 0.35))
+def city_tower(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-46, 0), (-46, -150), (46, -150), (46, 0)], tension=0.01), CITY_STONE, sh=6, hl=2)
+    for row in range(9):
+        y = -8 - row * 16
+        for i in range(4):
+            x = -46 + (10 if row % 2 else 0) + i * 24
+            stroke(ctx, lambda c, x=x, y=y: (c.move_to(x, y), c.line_to(x, y - 16)), CITY_STONE.shadow, 1.1, 0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-8, -100), (8, -100), (8, -124), (-8, -124)], tension=0.4), Pal('#2a2a3a', '#14141e', '#4a4a5e', '#06060a'), sh=1, hl=0)
+    paint(ctx, lambda c: smooth_poly(c, [(-56, -150), (0, -236), (56, -150)], tension=0.0), ROOF_TEAL, sh=6, hl=2)
+    roof_tiles(ctx, ((-4, -236), (4, -236), (56, -150), (-56, -150)), ROOF_TEAL, rows=5, cols=6)
+    stroke(ctx, lambda c: (c.move_to(0, -236), c.line_to(0, -258)), hx('#3a2a20'), 2.2)
+    paint(ctx, lambda c: smooth_poly(c, [(1, -258), (24, -252), (1, -244)], tension=0.2), CLOTH_B, sh=1.5, hl=0.8)
+
+
+@prop('city_gate', 300, 240, 150, 220, col=None, shadow=(0, 0, 140, 12, 0.3))
+def city_gate(ctx):
+    for sx in (-1, 1):
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 140, 0), (sx * 140, -150), (sx * 70, -150), (sx * 70, 0)], tension=0.01), CITY_STONE, sh=6, hl=2)
+        for row in range(8):
+            y = -8 - row * 18
+            for i in range(3):
+                x = sx * (72 + i * 24 + (10 if row % 2 else 0))
+                stroke(ctx, lambda c, x=x, y=y: (c.move_to(x, y), c.line_to(x, y - 18)), CITY_STONE.shadow, 1.1, 0.8)
+    def arch(c):
+        c.move_to(-146, -146)
+        c.line_to(146, -146)
+        c.line_to(146, -190)
+        c.line_to(-146, -190)
+        c.close_path()
+    paint(ctx, arch, CITY_STONE, sh=4, hl=2)
+    for i in range(8):
+        x = -140 + i * 36
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x, -190), (x, -206), (x + 22, -206), (x + 22, -190)], tension=0.02), CITY_STONE, sh=2, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-34, -90), (-34, -150), (34, -150), (34, -90)], tension=0.02), CLOTH_R, sh=3, hl=1.2)
+    paint(ctx, lambda c: smooth_poly(c, [(0, -130), (8, -116), (0, -100), (-8, -116)], tension=0.1), METAL, sh=1, hl=0.8, line=0.8)
+    for sx in (-1, 1):
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 70, 0), (sx * 70, -140), (sx * 46, -140), (sx * 46, 0)], tension=0.02), Pal('#2a2a3a', '#14141e', '#4a4a5e', '#06060a'), sh=0, hl=0)
+
+
+@prop('fountain', 180, 170, 90, 150, col=(130, 34, 0), shadow=(2, 0, 80, 18, 0.3))
+def fountain(ctx):
+    paint(ctx, lambda c: ellipse(c, 0, -14, 70, 28), CITY_STONE, sh=4, hl=2)
+    paint(ctx, lambda c: ellipse(c, 0, -20, 58, 21), Pal('#6ac8e8', '#3a98c0', '#b0f0ff', '#0c3a50'), sh=3, hl=0, line=1)
+    paint(ctx, lambda c: smooth_poly(c, [(-12, -20), (-9, -64), (9, -64), (12, -20)], tension=0.3), CITY_STONE, sh=2, hl=1)
+    paint(ctx, lambda c: ellipse(c, 0, -66, 30, 11), CITY_STONE, sh=2, hl=1)
+    paint(ctx, lambda c: ellipse(c, 0, -69, 24, 8), Pal('#6ac8e8', '#3a98c0', '#b0f0ff', '#0c3a50'), sh=2, hl=0, line=0.8)
+    for dx in (-1, 0, 1):
+        stroke(ctx, lambda c, dx=dx: (c.move_to(dx * 3, -70), c.curve_to(dx * 14, -110, dx * 26, -92, dx * 34, -66)), hx('#c8f4ff'), 2.2, 0.8)
+    radial_glow(ctx, 0, -86, 26, hx('#b0f0ff'), 0.3)
+
+
+@prop('house_c', 250, 310, 125, 274, col=(200, 66, 26), shadow=(6, 0, 112, 20, 0.35))
+def house_c(ctx):
+    W, H = 94, 116
+    paint(ctx, lambda c: smooth_poly(c, [(-W, 0), (-W, -H), (W, -H), (W, 0)], tension=0.01), CITY_PLASTER, sh=0, hl=0)
+    flat(ctx, lambda c: smooth_poly(c, [(-W, -H), (W, -H), (W, -H + 16), (-W, -H + 10)], tension=0.01), CITY_PLASTER.shadow, 0.9)
+    paint(ctx, lambda c: smooth_poly(c, [(-W - 4, 2), (-W - 4, -20), (W + 4, -20), (W + 4, 2)], tension=0.02), CITY_STONE, sh=3, hl=1.2)
+    for y in (-62,):
+        paint(ctx, lambda c, y=y: smooth_poly(c, [(-W - 6, y), (W + 6, y), (W + 6, y + 8), (-W - 6, y + 8)], tension=0.01), WOOD_DK, sh=1.5, hl=0.6, line=0.9)
+    door(ctx, 0, -2, 32, 54, pal=Pal('#3a8a8a', '#276a6a', '#62b4ae', '#0e2a2a'))
+    for x in (-60, 60):
+        window(ctx, x, -34, 22, 24, shutters=False, box=True, lit=True)
+        window(ctx, x, -92, 22, 24, shutters=True, box=False)
+    window(ctx, 0, -92, 22, 24, shutters=False, box=False)
+    quad = ((-W - 6, -H - 98), (W + 6, -H - 98), (W + 22, -H + 6), (-W - 22, -H + 6))
+    paint(ctx, lambda c: smooth_poly(c, list(quad), tension=0.0), ROOF_TEAL, sh=0, hl=0)
+    roof_tiles(ctx, quad, ROOF_TEAL, rows=7, cols=11)
+    stroke(ctx, lambda c: (c.move_to(-W - 22, -H + 6), c.line_to(W + 22, -H + 6)), ROOF_TEAL.line, 2)
+    paint(ctx, lambda c: smooth_poly(c, [(-W - 10, -H - 104), (W + 10, -H - 104), (W + 6, -H - 94), (-W - 6, -H - 94)], tension=0.02),
+          Pal('#276a6a', '#1c5050', '#3a8a8a', '#0a2020'), sh=1.5, hl=1)
+    paint(ctx, lambda c: smooth_poly(c, [(40, -H - 82), (40, -H - 130), (62, -H - 130), (62, -H - 88)], tension=0.02), STONE, sh=3, hl=1.5)
+
+
+@prop('cathedral', 440, 470, 220, 430, col=(380, 100, 30), shadow=(8, 0, 200, 30, 0.38))
+def cathedral(ctx):
+    W, H = 170, 180
+    paint(ctx, lambda c: smooth_poly(c, [(-W, 0), (-W, -H), (W, -H), (W, 0)], tension=0.01), CITY_STONE, sh=0, hl=0)
+    for row in range(11):
+        y = -8 - row * 16
+        for i in range(14):
+            x = -W + (12 if row % 2 else 0) + i * 26
+            stroke(ctx, lambda c, x=x, y=y: (c.move_to(x, y), c.line_to(x, y - 16)), CITY_STONE.shadow, 1.1, 0.7)
+    flat(ctx, lambda c: smooth_poly(c, [(-W, -H), (W, -H), (W, -H + 18), (-W, -H + 12)], tension=0.01), CITY_STONE.shadow, 0.9)
+    door(ctx, 0, -2, 64, 100, pal=Pal('#6a3a2a', '#4a2418', '#8e5a44', '#1e0c06'))
+    for x in (-110, -60, 60, 110):
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 11, -60), (x - 11, -118), (x, -136), (x + 11, -118), (x + 11, -60)], tension=0.02),
+              Pal('#6a8ae0', '#3e58b0', '#a8c0ff', '#14204a'), sh=3, hl=0, line=1.2)
+        stroke(ctx, lambda c, x=x: (c.move_to(x, -136), c.line_to(x, -60)), CITY_STONE.shadow, 2)
+    paint(ctx, lambda c: ellipse(c, 0, -150, 26, 26), Pal('#ffd27a', '#e0a040', '#fff4c0', '#5a3a10'), sh=3, hl=1.5, line=1.4)
+    for k in range(8):
+        a = k / 8 * math.tau
+        stroke(ctx, lambda c, a=a: (c.move_to(0, -150), c.line_to(math.cos(a) * 24, -150 + math.sin(a) * 24)), CITY_STONE.shadow, 1.4)
+    for sx in (-1, 1):   # twin spires
+        px = sx * 140
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px - 36, -H + 10), (px - 36, -H - 110), (px + 36, -H - 110), (px + 36, -H + 10)], tension=0.01), CITY_STONE, sh=5, hl=2)
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px - 44, -H - 108), (px, -H - 230), (px + 44, -H - 108)], tension=0.0), ROOF_TEAL, sh=5, hl=2)
+        roof_tiles(ctx, ((px - 4, -H - 230), (px + 4, -H - 230), (px + 44, -H - 108), (px - 44, -H - 108)), ROOF_TEAL, rows=6, cols=6)
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px - 9, -H - 60), (px - 9, -H - 92), (px, -H - 100), (px + 9, -H - 92), (px + 9, -H - 60)], tension=0.2),
+              Pal('#2a2a3a', '#14141e', '#4a4a5e', '#06060a'), sh=1, hl=0)
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px - 2, -H - 230), (px - 2, -H - 252), (px + 2, -H - 252), (px + 2, -H - 230)], tension=0.1), METAL, sh=0.6, hl=0.4, line=0.7)
+    quad = ((-W + 20, -H - 70), (W - 20, -H - 70), (W + 14, -H + 6), (-W - 14, -H + 6))
+    paint(ctx, lambda c: smooth_poly(c, list(quad), tension=0.0), ROOF_S, sh=0, hl=0)
+    roof_tiles(ctx, quad, ROOF_S, rows=5, cols=14)
+    paint(ctx, lambda c: smooth_poly(c, [(-60, -H - 70), (0, -H - 150), (60, -H - 70)], tension=0.0), CITY_STONE, sh=4, hl=1.5)
+    paint(ctx, lambda c: ellipse(c, 0, -H - 94, 14, 14), Pal('#ffd27a', '#e0a040', '#fff4c0', '#5a3a10'), sh=2, hl=1, line=1.2)
+    radial_glow(ctx, 0, -150, 40, hx('#ffd27a'), 0.18)
+
+
+@prop('banner_pole', 50, 190, 25, 176, col=(12, 8, 0), shadow=(2, 0, 14, 5, 0.3))
+def banner_pole(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-3, 0), (-3, -150), (3, -150), (3, 0)], tension=0.02), WOOD_DK, sh=1.2, hl=0.5)
+    stroke(ctx, lambda c: (c.move_to(0, -148), c.line_to(18, -148)), WOOD_DK.base, 3)
+    paint(ctx, lambda c: smooth_poly(c, [(2, -146), (22, -146), (22, -92), (12, -100), (2, -92)], tension=0.05), CLOTH_R, sh=3, hl=1.2)
+    paint(ctx, lambda c: smooth_poly(c, [(12, -134), (17, -124), (12, -114), (7, -124)], tension=0.1), METAL, sh=0.8, hl=0.6, line=0.7)
+
+
 # ------------------------------------------------------------------ render
 def render_prop(name):
     p = PROPS[name]

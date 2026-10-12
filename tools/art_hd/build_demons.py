@@ -26,7 +26,7 @@ def build_demon(d):
 
 
 # --- humanoid demons reuse the hero animation set under enemy anim names
-from oni import oni_look, oni_variant, dryad_look
+from oni import oni_look, oni_variant, dryad_look, assassin_look
 from build_hero import draw as hero_draw, FW as HFW, FH as HFH, OX as HOX, OY as HOY
 from anims import ANIMS as HANIMS
 
@@ -34,6 +34,7 @@ HUMANOID = {'oni': oni_look()}
 for _k in ('oni_lancer', 'oni_shielder', 'oni_executioner', 'morgash_ironhorn', 'krull_chainlord'):
     HUMANOID[_k] = oni_variant(_k)
 HUMANOID['dryad_profane'] = dryad_look()
+HUMANOID['assassin_shadow'] = assassin_look()
 REMAP = [('idle', 'idle'), ('move', 'walk'), ('attack', 'attack3'), ('cast', 'attack1'), ('hurt', 'hurt'), ('death', 'death')]
 
 

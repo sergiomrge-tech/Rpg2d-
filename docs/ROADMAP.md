@@ -37,7 +37,10 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Espírito Corrompido, Treant-Demônio; chefe **Dríade Profanada** (fase 2: invoca espíritos a 50% de vida)
 - ✅ Missões: portal (exige Rank E) → Sylra → Dríade → Rank D
 - ✅ Texturas com compressão BC7 (≈ ¼ da memória)
-- ⬜ Cidade de Valemont (mapa grande, Guilda principal, lojas)
+- ✅ Cidade de Valemont (72×64): muralhas, torres, portão, catedral, fonte, Guilda, feira, casas nobres, beco sombrio
+- ✅ NPCs de Valemont (mestre da Guilda, guarda, nobre, clériga, criança, lojista) com retratos; compra de poções/éter
+- ✅ Chefe **Assassino Sombrio**: teleporta para as suas costas, invoca batedores a 50% de vida
+- ✅ Missões: Velmoor → Valemont (exige Rank D) → Assassino → Rank C
 - ⬜ Evolução Centelha II + Corte Crescente
 - ⬜ Equipamentos com atributos e forja
 

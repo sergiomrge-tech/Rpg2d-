@@ -24,6 +24,12 @@ namespace Aetheria
                 case "villager": return "Tia Marta";
                 case "lumia": return "Deusa Lumia";
                 case "sylra": return "Sylra";
+                case "guildmaster": return "Mestre Aldric";
+                case "guard": return "Guarda do Portão";
+                case "noble": return "Lady Seraphine";
+                case "cleric": return "Irmã Maelis";
+                case "child": return "Pip";
+                case "shopkeeper": return "Dorna, a Lojista";
                 default: return id;
             }
         }
@@ -129,6 +135,56 @@ namespace Aetheria
                         };
                     }
                     return new[] { new Line(npc, "Fique perto. Eu cuido dos que vierem pelos flancos.") };
+                case "guildmaster":
+                    if (!g.flags.Contains("val_started"))
+                    {
+                        g.flags.Add("val_started");
+                        return new[]
+                        {
+                            new Line(npc, "Então você é o novato que purificou Velmoor. Aldric, Mestre da Guilda de Valemont."),
+                            new Line(npc, "Há três noites, um assassino encapuzado mata nobres e some em fumaça. Chamam-no de Sombra."),
+                            new Line(npc, "Ele se esconde no beco ao sul da cidade, atrás da praça. Cuidado: ele aparece nas suas costas."),
+                            new Line(npc, "Role no instante em que ele surgir. E leve poções — a lojista Dorna vende perto da fonte."),
+                        };
+                    }
+                    if (g.flags.Contains("assassin_shadow_dead") && !g.flags.Contains("rank_c"))
+                    {
+                        g.flags.Add("rank_c");
+                        gs.gold += 600;
+                        gs.guildRank = "C";
+                        gs.Add("spark_tome", 1);
+                        gs.Add("ether", 3);
+                        return new[]
+                        {
+                            new Line(npc, "A Sombra... caiu. Valemont dorme em paz pela primeira vez em semanas."),
+                            new Line(npc, "Rank C, 600 de ouro e um Tomo que ele carregava. O capuz tinha o selo do Rei Demônio."),
+                            new Line(npc, "Malgrath já tem espiões na capital. O deserto de Kharis guarda a próxima pista."),
+                        };
+                    }
+                    if (g.flags.Contains("rank_c"))
+                        return new[] { new Line(npc, "Kharis fica a leste. Os Capítulos seguintes chegam em breve, Ren.") };
+                    return new[] { new Line(npc, "A Sombra ainda está solta. Beco ao sul, atrás da praça.") };
+                case "shopkeeper":
+                    if (gs.gold >= 25)
+                    {
+                        bool eth = gs.Count("potion") >= 5 && gs.gold >= 30;
+                        gs.gold -= eth ? 30 : 25;
+                        gs.Add(eth ? "ether" : "potion", 1);
+                        return new[] { new Line(npc, eth ? "Já tem poções de sobra. Leve um Éter Azul: 30 de ouro." : "Uma Poção de Vida, 25 de ouro. Fale de novo para comprar mais.") };
+                    }
+                    return new[] { new Line(npc, "Poção custa 25 de ouro. Volte quando tiver moedas dos demônios.") };
+                case "guard":
+                    return new[] { new Line(npc, "Cuidado depois do anoitecer. A Sombra ataca quem anda sozinho perto do beco sul.") };
+                case "noble":
+                    return new[]
+                    {
+                        new Line(npc, "Três condes assassinados em uma semana. E a Guilda manda um garoto de espada velha?"),
+                        new Line(npc, "...Perdão. Dizem que você derrotou Grakk e a Dríade. Talvez haja esperança."),
+                    };
+                case "cleric":
+                    return new[] { new Line(npc, "A deusa Lumia abençoa quem enfrenta as trevas. Sinta a centelha em suas mãos, filho.") };
+                case "child":
+                    return new[] { new Line(npc, "Moço! Eu vi o homem de capuz entrar no beco! Ele sumiu na fumaça roxa!") };
                 case "villager":
                     return new[]
                     {

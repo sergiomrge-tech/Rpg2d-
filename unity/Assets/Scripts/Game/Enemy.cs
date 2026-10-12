@@ -23,6 +23,7 @@ namespace Aetheria
         bool hitDone;
         bool nextIsCast;
         bool summoned;
+        float tpCd = 3f;
 
         public static Enemy Spawn(string kind, Vector2 pos, int level)
         {
@@ -111,6 +112,21 @@ namespace Aetheria
                 {
                     if (!playerOk || dist > def.aggro * 1.8f) { Go(St.Idle); break; }
                     Face(Util.FacingFrom(toP, facing));
+                    tpCd -= dt;
+                    if (def.id == "assassin_shadow" && tpCd <= 0 && dist > 1.8f)
+                    {
+                        // shadow step: vanish and reappear behind the hero, then strike after a short tell
+                        tpCd = Random.Range(3.6f, 5f);
+                        Fx.DemonPoof(Pos + Vector2.up * 0.7f);
+                        Vector2 behind = p.Pos - Util.FacingVec(p.facing) * 1.3f;
+                        transform.position = behind;
+                        Fx.DemonPoof(behind + Vector2.up * 0.7f);
+                        Sfx.Play("roll", 0.4f, 0.7f);
+                        nextIsCast = false;
+                        attackCd = 0;
+                        Go(St.Telegraph);
+                        break;
+                    }
                     // casters keep mid range and throw fire, melee when cornered
                     if (def.caster && castCd <= 0 && dist > 2.6f && dist < 7.5f) { nextIsCast = true; Go(St.Telegraph); break; }
                     if (dist < 1.55f && attackCd <= 0) { nextIsCast = false; Go(St.Telegraph); break; }
@@ -224,7 +240,7 @@ namespace Aetheria
             if (def.boss && !summoned && hp < maxHp * 0.5f && hp > 0)
             {
                 summoned = true;
-                string minion = def.id == "dryad_profane" ? "spirit_corrupt" : def.id == "grakk" ? "imp" : null;
+                string minion = def.id == "dryad_profane" ? "spirit_corrupt" : def.id == "grakk" ? "imp" : def.id == "assassin_shadow" ? "imp_scout" : null;
                 if (minion != null)
                 {
                     Hud.I?.Banner(def.name + " se enfurece", "Reforços demoníacos!");

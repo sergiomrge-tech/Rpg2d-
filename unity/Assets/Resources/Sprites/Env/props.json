@@ -299,6 +299,76 @@
    "colW": 0,
    "colH": 0,
    "colY": 0
+  },
+  {
+   "name": "city_wall",
+   "w": 256,
+   "h": 170,
+   "pivotX": 128,
+   "pivotY": 20,
+   "colW": 256,
+   "colH": 40,
+   "colY": 0
+  },
+  {
+   "name": "city_tower",
+   "w": 130,
+   "h": 260,
+   "pivotX": 65,
+   "pivotY": 20,
+   "colW": 100,
+   "colH": 50,
+   "colY": 0
+  },
+  {
+   "name": "city_gate",
+   "w": 300,
+   "h": 240,
+   "pivotX": 150,
+   "pivotY": 20,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "fountain",
+   "w": 180,
+   "h": 170,
+   "pivotX": 90,
+   "pivotY": 20,
+   "colW": 130,
+   "colH": 34,
+   "colY": 0
+  },
+  {
+   "name": "house_c",
+   "w": 250,
+   "h": 310,
+   "pivotX": 125,
+   "pivotY": 36,
+   "colW": 200,
+   "colH": 66,
+   "colY": 26
+  },
+  {
+   "name": "cathedral",
+   "w": 440,
+   "h": 470,
+   "pivotX": 220,
+   "pivotY": 40,
+   "colW": 380,
+   "colH": 100,
+   "colY": 30
+  },
+  {
+   "name": "banner_pole",
+   "w": 50,
+   "h": 190,
+   "pivotX": 25,
+   "pivotY": 14,
+   "colW": 12,
+   "colH": 8,
+   "colY": 0
   }
  ]
 }
