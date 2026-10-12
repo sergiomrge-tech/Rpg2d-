@@ -1,6 +1,6 @@
 # Sistema de Classes — Crônicas de Aetheria
 
-**Status:** protótipo funcional em código GDScript, seleção entre **Novo Jogo** e o prólogo. As regras de combate estão programadas, mas a aprovação final depende de execução, equilíbrio e visual dos equipamentos reais no Godot/Android.
+**Status em 12/10/2026:** sistema das seis classes implementado e validado em Godot 4.3 via CI, com assets HD animados originais e prerelease APK de teste compilada. A aprovação final ainda depende de teste visual e jogabilidade em aparelho Android. [Arte real e validação](CLASS_ART_IMPLEMENTATION.md) · [APK de teste](https://github.com/sergiomrge-tech/Rpg2d-/releases/tag/aetheria-6-classes-preview).
 
 ## Seis classes, com vantagens e fraquezas obrigatórias
 
@@ -45,10 +45,10 @@ Os valores são parâmetros iniciais de **balanceamento**, sujeitos a ajustes ap
 
 ### Gates ainda obrigatórios
 
-1. Executar a branch de arte `gpt6-class-art-in-game-20261012` no **Godot 4.3+** com testes de sprites reais, seleção por toque, combate e familiar.
-2. **Seis atlases HD já foram produzidos e ligados à Unity/Godot?** Ao projeto **Godot**: arco, duas adagas, magias sem espada, guerreiro e paladino, mais 6 retratos do menu. Verificar fidelidade e leitura visual nos screenshots **verdadeiros do motor** e no Android antes do gate artístico.
+1. ✅ **Godot 4.3**: compilação/import e smoke test de sprites reais, seleção por toque, combate e familiar aprovados em [CI #38292474839](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38292474839). **Pendente:** testar instalação e comandos em dispositivo Android real.
+2. ✅ Seis atlases HD já estão integrados **ao projeto Godot** (não à Unity): arco, duas adagas, magias sem espada, guerreiro, paladino, invocador e 6 retratos. ✅ [14 screenshots reais do motor](asset_catalog/captures/classes/) já produzidos; **pendente** a aprovação artística e inspeção no aparelho.
 3. Confirmar IA, duração, quantidade e alvo dos pets em combate; equilibrar dano, proteção e mobilidade.
 4. Garantir que não exista regressão no Grimório (X), nas cutscenes, na música de flauta ou na remoção do fôlego.
-5. Gerar APK somente após a validação. O PR permanece isolado da branch principal até aprovação.
+5. ✅ APK de teste gerado em [CI #38293183086](https://github.com/sergiomrge-tech/Rpg2d-/actions/runs/38293183086) e disponível na [prerelease](https://github.com/sergiomrge-tech/Rpg2d-/releases/tag/aetheria-6-classes-preview). **Pendente:** testar APK no celular, aprovar arte e balanceamento; PR permanece isolado da branch principal.
 
 **Regra permanente:** classe não pode ser apenas cor, nome, conceito ou ícone. Restrições, ataque, equipamento, status e animação devem funcionar no jogo; screenshots somente se forem capturas reais do motor Godot.
