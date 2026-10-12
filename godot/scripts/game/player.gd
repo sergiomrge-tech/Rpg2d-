@@ -25,6 +25,7 @@ var sonic := 0.0
 var cast_action := ""
 var special_strike := false
 var special_cd := 0.0
+var arrow_n := 0
 var skill_cd := {"r": 0.0, "f": 0.0}
 var skill_cd_max := {"r": 1.0, "f": 1.0}
 
@@ -106,6 +107,9 @@ func _physics_process(dt: float) -> void:
 	for k in skill_cd:
 		skill_cd[k] = maxf(0.0, float(skill_cd[k]) - dt)
 	gs.tick_buffs(dt)
+	gs.hp_frac = hp / maxf(1.0, gs.hp_max())
+	if gs.class_id == "paladin":
+		hp = minf(gs.hp_max(), hp + gs.hp_max() * float(SkillTree.passive_v("paladin", gs.level)[0]) / 100.0 * dt)
 	if venom > 0.0:
 		venom = maxf(0.0, venom - dt)
 		venom_tick -= dt
@@ -180,6 +184,18 @@ func ci_attack() -> void: _try_attack()
 func ci_cast() -> void: _try_cast()
 
 
+## Tiro Certeiro (archer passive): every Nth arrow volley hits much harder.
+func _arrow_mult() -> float:
+	if gs.class_id != "archer":
+		return 1.0
+	arrow_n += 1
+	if arrow_n >= int(SkillTree.passive_v("archer", gs.level)[0]):
+		arrow_n = 0
+		Fx.toast("Tiro Certeiro!", Color(0.7, 1.0, 0.6), pos() + Vector2.UP * 1.6 * T)
+		return 1.8
+	return 1.0
+
+
 func _try_attack() -> void:
 	# Hard restrictions: Mages never strike with weapons; Archers fire bows;
 	# Summoners may command pets but cannot attack directly.
@@ -242,9 +258,15 @@ func _on_anim_hit(a: String) -> void:
 			if d.length() > r + 0.35 * T:
 				continue
 			var crit := randf() < gs.crit_chance()
+			var sneak: bool = gs.class_id == "assassin" and e.hp >= e.max_hp - 0.5
+			if sneak:
+				crit = true
 			var base_mult := 2.55 if special_strike else (1.9 if combo == 3 else (1.15 if combo == 2 else 1.0))
 			var dagger_mult := 1.23 if gs.class_id == "assassin" else 1.0
 			var dmg := gs.total_atk() * base_mult * dagger_mult * randf_range(0.9, 1.1) * (1.8 if crit else 1.0)
+			if sneak:
+				dmg *= 1.0 + float(SkillTree.passive_v("assassin", gs.level)[0]) / 100.0
+				Fx.toast("Golpe Furtivo!", Color(0.8, 0.75, 1.0), e.pos() + Vector2.UP * 1.6 * T)
 			if e.hurt(roundf(dmg), pos(), 9.0 if combo == 3 else 5.0, 30.0 if combo == 3 else 12.0, crit):
 				hits += 1
 				if gs.lifesteal() > 0.0:
@@ -263,14 +285,15 @@ func _on_anim_hit(a: String) -> void:
 		match cast_action:
 			"arrow_basic":
 				if gs.class_id == "archer":
-					Projectile.arrow(origin, dir, gs.total_atk() * 1.0)
+					Projectile.arrow(origin, dir, gs.total_atk() * 1.0 * _arrow_mult())
 					Sfx.play("swing", .46, 1.35)
 			"arrow_burst":
 				if gs.class_id == "archer":
+					var mult := _arrow_mult()
 					for k in [-1, 0, 1]:
 						var angle: float = k * .16
 						var spread := dir.rotated(angle)
-						Projectile.arrow(origin + spread * 12.0, spread, gs.total_atk() * .80)
+						Projectile.arrow(origin + spread * 12.0, spread, gs.total_atk() * .80 * mult)
 					Sfx.play("swing", .62, 1.25)
 			"magic_basic":
 				if gs.class_id == "mage":

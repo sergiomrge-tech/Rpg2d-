@@ -116,7 +116,7 @@ func _on_visual_hit(track: String) -> void:
 	var source := global_position + Vector2.UP * .75 * T
 	var dir := (desired_target.chest(.6) - source).normalized()
 	# Pet fires on the keyframe (never the summoner), from a real animated body.
-	Projectile.spark(source + dir * .25 * T, dir, summoner.gs.total_mag() * .62, 1, true)
+	Projectile.spark(source + dir * .25 * T, dir, summoner.gs.total_mag() * .62 * (1.0 + float(SkillTree.passive_v("summoner", summoner.gs.level)[0]) / 100.0), 1, true)
 	Fx.ember(source, Color(.48, 1.0, .88))
 
 

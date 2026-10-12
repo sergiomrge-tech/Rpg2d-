@@ -39,6 +39,7 @@ var hud: Hud
 var grimoire: Grimoire
 var shop: ShopMenu
 var skills: SkillsMenu
+var board: GuildBoard
 var options: OptionsMenu
 var marker: ObjectiveMarker
 var main: Node2D
@@ -55,6 +56,7 @@ var class_select: ClassSelect
 var in_menu := false
 
 var _time := 0.0
+var daily := {"day": -1, "quests": [], "bonus": false}   # guild daily board (see DailyBoard)
 var clock := 0.0               # world clock in seconds (day length = World.DAY_LENGTH); starts at midday
 var _hit_until := 0
 var _slowmo := false
@@ -142,6 +144,9 @@ func start(m: Node2D) -> void:
 	skills = SkillsMenu.new()
 	hud.add_child(skills)
 	skills.setup(hud)
+	board = GuildBoard.new()
+	hud.add_child(board)
+	board.setup(hud)
 	options = OptionsMenu.new()
 	hud.add_child(options)
 	options.setup(hud)
@@ -313,11 +318,11 @@ func _process(dt: float) -> void:
 		return
 	# Modal-first input: never consume Esc/Tab before the open overlay sees it.
 	# These keys used to be stolen from Grimoire/Options during pause.
-	if not in_menu and not grimoire.open and not shop.open and not skills.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
+	if not in_menu and not grimoire.open and not shop.open and not skills.open and not board.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
 		options.toggle()
-	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
+	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not board.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
 		grimoire.toggle()
-	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_P):
+	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not board.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_P):
 		skills.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
@@ -415,12 +420,15 @@ func interact(p: Player) -> void:
 	if best == null:
 		return
 	var npc := best
+	var was_member := flags.has("guild_joined")
 	npc.talking = true
 	p.input_locked = true
 	p.velocity = Vector2.ZERO
 	hud.show_dialogue(Story.talk(npc.id), func():
 		npc.talking = false
 		p.input_locked = false
+		if (npc.id == "receptionist" or npc.id == "guildmaster") and was_member and not board.open:
+			board.open_board()
 		if (npc.id == "blacksmith" or npc.id == "smith_v") and not shop.open:
 			shop.open_for(npc.id)
 		if npc.id == "guard_captain" and (flags.has("game_complete") or state.ng_plus > 0) and not Abyss.active:
@@ -453,6 +461,7 @@ func side_lines() -> Array:
 		out.append("Levar o hidromel ao Capitão Brandt")
 	if flags.has("sq_relics_on") and not flags.has("sq_relics_done"):
 		out.append("Orrin: Baús %d/3" % mini(cache_count() - quest_progress("q_relic_base"), 3))
+	out.append_array(DailyBoard.lines())
 	return out
 
 
@@ -664,7 +673,14 @@ func on_enemy_killed(e: Enemy) -> void:
 	if sp == "heal" and not player.dead:
 		player.hp = minf(state.hp_max(), player.hp + state.hp_max() * 0.04)
 		Fx.heal(player.pos())
+	if state.class_id == "mage" and not player.dead:
+		player.mp = minf(state.max_mp, player.mp + state.max_mp * float(SkillTree.passive_v("mage", state.level)[0]) / 100.0)
 	Fx.toast("+%d EXP" % xp, Color(0.75, 0.95, 1.0), e.global_position + Vector2.UP * 2.6 * 64.0)
+	award_xp(xp)
+	DailyBoard.on_kill(e)
+
+
+func award_xp(xp: int) -> void:
 	if state.gain_xp(xp):
 		player.max_hp = state.hp_max()
 		player.hp = player.max_hp
@@ -948,7 +964,7 @@ func _ui_smoke_test() -> void:
 func save() -> void:
 	if ci_dir != "":
 		return
-	var d := {"state": state.to_dict(), "flags": flags.keys(), "quests": quests, "map": map_name, "clock": clock}
+	var d := {"state": state.to_dict(), "flags": flags.keys(), "quests": quests, "map": map_name, "clock": clock, "daily": daily}
 	if player:
 		d["px"] = player.global_position.x
 		d["py"] = player.global_position.y
@@ -990,6 +1006,7 @@ func _load() -> void:
 		return
 	state.from_dict(d["state"])
 	clock = float(d.get("clock", 0.0))
+	daily = DailyBoard.normalise(d.get("daily", {}))
 	for k in d.get("flags", []):
 		flags[k] = true
 	for k in d.get("quests", {}):
@@ -1161,6 +1178,7 @@ func _ci_shots() -> void:
 	await _ci_gear()
 	await _ci_endgame()
 	await _ci_stats()
+	await _ci_passives()
 	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")
@@ -1686,4 +1704,70 @@ func _ci_stats() -> void:
 	state.class_id = "warrior"
 	state.skills = []
 	state.attrs = {}
+	player.input_locked = true
+
+
+## Class passives, guild daily board, shop selling.
+func _ci_passives() -> void:
+	for c in HeroClasses.CLASSES:
+		for lv in [1, 10, 20]:
+			if SkillTree.passive_text(c, lv).length() < 10 or SkillTree.passive_text(c, lv).contains("%"):
+				print("[ci] passive text problem ", c, " ", lv, ": ", SkillTree.passive_text(c, lv))
+	print("[ci] passives: ", SkillTree.passive_text("warrior", 1), " | ", SkillTree.passive_text("paladin", 20))
+	# warrior: low life boosts attack
+	var gs := GameState.new()
+	HeroClasses.apply_new_game(gs, "warrior")
+	var a_full := gs.total_atk()
+	gs.hp_frac = 0.2
+	print("[ci] Sangue de Ferro atk ", a_full, " -> ", gs.total_atk(), " dmg_taken ", gs.damage_taken_mult())
+	# daily board
+	DailyBoard.refresh(1000)
+	print("[ci] daily: ", Game.daily["quests"].map(func(q): return DailyBoard.title(q) + " [" + DailyBoard.reward_text(q) + "]"))
+	print("[ci] daily regions for imp: ", DailyBoard.regions_of("imp"), " seconds left ", DailyBoard.seconds_left() > 0)
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	state.class_id = "warrior"
+	state.level = 4
+	DailyBoard.refresh(1001)
+	for i in 3:
+		DailyBoard.accept(i)
+	var q0: Dictionary = daily["quests"][0]
+	var q1: Dictionary = daily["quests"][1]
+	var q2: Dictionary = daily["quests"][2]
+	var imp := Enemy.spawn("imp", player.global_position + Vector2(200, 0), 1)
+	for i in int(q0["need"]):
+		DailyBoard.on_kill(imp)
+	print("[ci] hunt any progress ", DailyBoard.progress(q0), "/", q0["need"], " ready ", DailyBoard.ready(q0))
+	state.add(str(q2["item"]), int(q2["need"]))
+	print("[ci] deliver ready ", DailyBoard.ready(q2))
+	var g0 := state.gold
+	var xp0 := state.xp
+	print("[ci] claim hunt: ", DailyBoard.claim(0), " claim deliver: ", DailyBoard.claim(2), " gold ", g0, " -> ", state.gold, " bag left ", state.count(str(q2["item"])))
+	var js := JSON.stringify(daily)
+	daily = DailyBoard.normalise(JSON.parse_string(js))
+	print("[ci] daily save roundtrip: done ", DailyBoard.done_count(), " bonus ", daily["bonus"])
+	board.open_board()
+	board.sel = 1
+	board._refresh()
+	await _wait(0.4)
+	await shot("78_quadro_guilda")
+	board.close()
+	# shop: sell tab
+	state.add("sw_0", 2)
+	state.add("ar_1", 1)
+	state.add("ch_3", 1)
+	shop.open_for("blacksmith")
+	shop._set_mode(1)
+	await _wait(0.4)
+	await shot("79_loja_vender")
+	var gold_before := state.gold
+	shop._sell_one(true)
+	shop._sell_junk()
+	print("[ci] shop sell: gold ", gold_before, " -> ", state.gold, " sell list ", shop.sell_list.size())
+	shop.close()
+	skills.toggle()
+	await _wait(0.3)
+	await shot("80_passiva")
+	skills.toggle()
 	player.input_locked = true

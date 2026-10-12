@@ -117,6 +117,35 @@ const TREES := {
 }
 
 
+# One signature passive per class; it strengthens at levels 10 and 20 (ranks I, II, III).
+const PASSIVES := {
+	"warrior": {"name": "Sangue de Ferro", "desc": "Abaixo de 40%% de vida: +%d%% de ataque e -%d%% de dano recebido", "v": [[20, 10], [30, 15], [40, 20]]},
+	"mage": {"name": "Fluxo Arcano", "desc": "Ao abater um inimigo, recupera %d%% da mana", "v": [[6], [9], [12]]},
+	"archer": {"name": "Tiro Certeiro", "desc": "A cada %d flechas, a próxima causa +80%% de dano", "v": [[5], [4], [3]]},
+	"paladin": {"name": "Aura Sagrada", "desc": "Regenera %.1f%% da vida por segundo", "v": [[0.6], [0.9], [1.2]]},
+	"assassin": {"name": "Golpe Furtivo", "desc": "O primeiro golpe em um inimigo ileso causa +%d%% de dano", "v": [[50], [80], [110]]},
+	"summoner": {"name": "Laço Espiritual", "desc": "Familiares causam +%d%% de dano; +%.1f mana/s para você", "v": [[20, 0.8], [35, 1.2], [50, 1.6]]},
+}
+
+
+static func passive_rank(level: int) -> int:
+	return 1 + (1 if level >= 10 else 0) + (1 if level >= 20 else 0)
+
+
+static func passive_v(class_id: String, level: int) -> Array:
+	return PASSIVES[class_id]["v"][passive_rank(level) - 1]
+
+
+static func passive_text(class_id: String, level: int) -> String:
+	var p: Dictionary = PASSIVES[class_id]
+	var v: Array = passive_v(class_id, level)
+	var d: String = p["desc"]
+	match v.size():
+		1: d = d % v[0]
+		2: d = d % [v[0], v[1]]
+	return "%s %s — %s" % [p["name"], ["I", "II", "III"][passive_rank(level) - 1], d]
+
+
 static func base(class_id: String) -> Dictionary:
 	return BASE.get(class_id, BASE["warrior"])
 

@@ -27,6 +27,7 @@ var skill_pts := 0             # unspent skill-tree points
 var attrs := {}                # attribute -> points invested above the class base
 var skills: Array = []         # learned tree nodes ("branch_tier")
 var buffs := {}                # transient: name -> {"t": seconds, "eff": {...}}
+var hp_frac := 1.0             # transient: current life fraction (set by the Player; drives Sangue de Ferro)
 var enh := {}                  # item id -> forge level (+0..+5)
 var ng_plus := 0               # completed playthroughs (Novo Jogo+)
 
@@ -152,6 +153,12 @@ func bonus(key: String) -> float:
 		"aspd": t += attr_inv("agi") * 1.0
 		"mspd": t += attr_inv("agi") * 0.4
 		"crit": t += attr_inv("sor") * 0.5
+	var pv: Array = SkillTree.passive_v(class_id, level)
+	if class_id == "warrior" and hp_frac < 0.4:
+		if key == "atk_pct": t += pv[0]
+		elif key == "dmg_red": t += pv[1]
+	elif class_id == "summoner" and key == "regen":
+		t += pv[1]
 	for sid in skills:
 		var eff := _node_eff(sid)
 		if eff.has(key):

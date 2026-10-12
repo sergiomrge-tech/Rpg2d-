@@ -232,8 +232,10 @@ func _refresh() -> void:
 	sum += "Esquiva %d%% · Crítico %d%% · Vel. ataque +%d%%" % [roundi(gs.dodge_chance() * 100.0), roundi(gs.crit_chance() * 100.0), roundi((gs.attack_speed() - 1.0) * 100.0)]
 	var sm := hud.txt(page, sum, sans, 16, ink, C, Vector2(-335, -178), Vector2(560, 90), M, false)
 	sm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var pas := hud.txt(page, "Passiva da classe: " + SkillTree.passive_text(gs.class_id, gs.level), bold, 15, Color(0.3, 0.5, 0.2), C, Vector2(-335, -246), Vector2(560, 44), M, false)
+	pas.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var cost := gs.respec_cost()
-	_btn(page, "Redefinir tudo · %d ouro" % cost, Vector2(-335, -285), Vector2(360, 46), _reset, Color(0.4, 0.14, 0.1, 0.95) if gs.gold >= cost else Color(0.3, 0.25, 0.2, 0.7), 20)
+	_btn(page, "Redefinir tudo · %d ouro" % cost, Vector2(-335, -298), Vector2(360, 46), _reset, Color(0.4, 0.14, 0.1, 0.95) if gs.gold >= cost else Color(0.3, 0.25, 0.2, 0.7), 20)
 
 	# ---------------------------------------------------------------- right page: skill tree
 	var cname: String = str(HeroClasses.info(gs.class_id)["name"])
