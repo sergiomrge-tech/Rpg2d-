@@ -5,7 +5,7 @@
   "engine": "Unity 2022.3 LTS",
   "visual_guard": "Maintain existing HD cartoon quality, coloured outlines, Cairo palettes, smooth shading, original silhouettes. Preserve previously approved sprites and environments.",
   "naming": "SpriteAnim.Play uses directional names such as cast_down; 'cast' is skill 1, bosses need NEW skill_2 tracks; left uses mirrored _side.",
-  "note": "Production specification only. Oni and Grakk have generated six-state sheets but are not gameplay-registered; Grakk skill_2 is not generated yet. No other creatures or effects are implemented.",
+  "note": "All 15 creatures have generated PNG/JSON sheets with 3-direction base animations. Grakk skill_2 is still pending. Artwork still requires visual approval; no new combat AI/VFX/spawns integrated.",
   "roster": [
     {
       "id": "imp_scout",
@@ -99,8 +99,15 @@
       ],
       "production": {
         "priority": 1,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -198,8 +205,15 @@
       ],
       "production": {
         "priority": 3,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -297,8 +311,15 @@
       ],
       "production": {
         "priority": 1,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -396,8 +417,15 @@
       ],
       "production": {
         "priority": 2,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -495,8 +523,15 @@
       ],
       "production": {
         "priority": 3,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -594,8 +629,15 @@
       ],
       "production": {
         "priority": 2,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -799,8 +841,15 @@
       ],
       "production": {
         "priority": 2,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -898,8 +947,15 @@
       ],
       "production": {
         "priority": 2,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -997,8 +1053,15 @@
       ],
       "production": {
         "priority": 3,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -1234,8 +1297,16 @@
       ],
       "production": {
         "priority": 2,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death",
+          "skill_2"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -1349,8 +1420,16 @@
       ],
       "production": {
         "priority": 3,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death",
+          "skill_2"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -1464,8 +1543,16 @@
       ],
       "production": {
         "priority": 3,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death",
+          "skill_2"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
@@ -1579,12 +1666,21 @@
       ],
       "production": {
         "priority": 3,
-        "art_status": "not_generated",
-        "generated_tracks": [],
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death",
+          "skill_2"
+        ],
         "gameplay_registered": false,
         "unity_visual_approved": false,
         "skill_effects_implemented": false
       }
     }
-  ]
+  ],
+  "visual_approval": "pending_real_Unity_screenshots_and_playtest"
 }
