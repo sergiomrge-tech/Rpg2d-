@@ -8,7 +8,7 @@ const T := 64.0
 const MAX_ACTIVE := 2
 static var active_pets: Array[SpiritPet] = []
 
-var owner: Node2D
+var summoner: Node2D
 var life := 38.0
 var attack_cd := 0.5
 var desired_target: Enemy
@@ -21,7 +21,7 @@ var casting := false
 static func count_for(p: Node2D) -> int:
 	var total := 0
 	for spirit in active_pets:
-		if is_instance_valid(spirit) and spirit.owner == p and not spirit.is_queued_for_deletion():
+		if is_instance_valid(spirit) and spirit.summoner == p and not spirit.is_queued_for_deletion():
 			total += 1
 	return total
 
@@ -33,7 +33,7 @@ static func summon(p: Node2D) -> bool:
 		Fx.toast("Máximo de 2 familiares", Color(.76, .92, 1.0))
 		return false
 	var pet := SpiritPet.new()
-	pet.owner = p
+	pet.summoner = p
 	pet.orbit_phase = count_for(p) * PI
 	Game.world.fx_layer.add_child(pet)
 	pet.global_position = p.pos() + Vector2(60.0 if count_for(p) == 0 else -60.0, -50.0)
@@ -51,7 +51,7 @@ static func command(p: Node2D) -> void:
 	if target == null:
 		return
 	for spirit in active_pets:
-		if is_instance_valid(spirit) and spirit.owner == p:
+		if is_instance_valid(spirit) and spirit.summoner == p:
 			spirit.desired_target = target
 			spirit.attack_cd = minf(spirit.attack_cd, .1)
 	Fx.toast("Atacar!", Color(.66, 1.0, .87), p.pos() + Vector2.UP * 1.9 * T)
@@ -73,7 +73,7 @@ func _ready() -> void:
 
 
 func _process(dt: float) -> void:
-	if owner == null or not is_instance_valid(owner) or owner.dead or owner.gs.class_id != "summoner":
+	if summoner == null or not is_instance_valid(summoner) or summoner.dead or summoner.gs.class_id != "summoner":
 		queue_free()
 		return
 	life -= dt
@@ -84,14 +84,14 @@ func _process(dt: float) -> void:
 	orbit_phase += dt * 2.0
 	visual.position.y = -8.0 + sin(orbit_phase * 2.5) * 7.0
 	glow.modulate.a = .37 + .15 * sin(orbit_phase * 3.0)
-	var target := desired_target
+	var target: Enemy = desired_target
 	if target == null or not is_instance_valid(target) or target.dead or target.is_queued_for_deletion():
 		target = Enemy.nearest(global_position, 8.0 * T)
 		desired_target = target
-	var destination := owner.pos() + Vector2(cos(orbit_phase * .6) * 72, -54 + sin(orbit_phase * .6) * 48)
+	var destination: Vector2 = summoner.pos() + Vector2(cos(orbit_phase * .6) * 72, -54 + sin(orbit_phase * .6) * 48)
 	if target != null:
 		destination = target.pos() + Vector2(0, -50)
-	var delta_pos := destination - global_position
+	var delta_pos: Vector2 = destination - global_position
 	var speed := (390.0 if target != null else 315.0) * dt
 	if not casting:
 		if delta_pos.length() > (2.5 * T if target != null else 40.0):
@@ -109,14 +109,14 @@ func _process(dt: float) -> void:
 
 
 func _on_visual_hit(track: String) -> void:
-	if track != "cast" or not casting or owner == null or not is_instance_valid(owner):
+	if track != "cast" or not casting or summoner == null or not is_instance_valid(summoner):
 		return
 	if desired_target == null or not is_instance_valid(desired_target) or desired_target.dead:
 		return
 	var source := global_position + Vector2.UP * .75 * T
 	var dir := (desired_target.chest(.6) - source).normalized()
 	# Pet fires on the keyframe (never the summoner), from a real animated body.
-	Projectile.spark(source + dir * .25 * T, dir, owner.gs.total_mag() * .62, 1, true)
+	Projectile.spark(source + dir * .25 * T, dir, summoner.gs.total_mag() * .62, 1, true)
 	Fx.ember(source, Color(.48, 1.0, .88))
 
 
