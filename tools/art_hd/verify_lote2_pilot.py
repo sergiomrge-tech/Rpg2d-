@@ -27,6 +27,21 @@ def main():
             im.load();assert im.mode=='RGBA'
             assert im.width==obj['cols']*288 and im.width<=4096 and im.height<=8192
             assert im.height%288==0
+            # Frames must actually move; not recolored still images.
+            stage_frames={}
+            for a in anims:
+                frameid=lambda offset: a['start']+offset
+                def frame_at(offset):
+                    k=frameid(offset)
+                    x=(k%obj['cols'])*288;y=(k//obj['cols'])*288
+                    return im.crop((x,y,x+288,y+288))
+                first=frame_at(0)
+                middle=frame_at(a['count']//2)
+                assert ImageChops.difference(first,middle).getbbox() is not None, (id_,a['name'],'static animation')
+                stage_frames[a['name']]=middle
+            for state in STATES:
+                assert ImageChops.difference(stage_frames[state+'_down'],stage_frames[state+'_up']).getbbox() is not None, (id_,state,'no back view')
+                assert ImageChops.difference(stage_frames[state+'_down'],stage_frames[state+'_side']).getbbox() is not None, (id_,state,'no side view')
             for a in anims:
                 assert a['start']==total
                 assert a['count']>=6 and a['fps']>0
