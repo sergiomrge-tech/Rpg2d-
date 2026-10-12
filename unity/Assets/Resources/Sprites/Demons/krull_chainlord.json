@@ -1,0 +1,177 @@
+{
+ "frameW": 256,
+ "frameH": 256,
+ "pivotX": 128,
+ "pivotY": 32,
+ "cols": 16,
+ "anims": [
+  {
+   "name": "idle_down",
+   "start": 0,
+   "count": 12,
+   "fps": 10,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_up",
+   "start": 12,
+   "count": 12,
+   "fps": 10,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_side",
+   "start": 24,
+   "count": 12,
+   "fps": 10,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "move_down",
+   "start": 36,
+   "count": 12,
+   "fps": 12,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "move_up",
+   "start": 48,
+   "count": 12,
+   "fps": 12,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "move_side",
+   "start": 60,
+   "count": 12,
+   "fps": 12,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "attack_down",
+   "start": 72,
+   "count": 14,
+   "fps": 16,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "attack_up",
+   "start": 86,
+   "count": 14,
+   "fps": 16,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "attack_side",
+   "start": 100,
+   "count": 14,
+   "fps": 16,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "cast_down",
+   "start": 114,
+   "count": 15,
+   "fps": 14,
+   "loop": false,
+   "hit": 9
+  },
+  {
+   "name": "cast_up",
+   "start": 129,
+   "count": 15,
+   "fps": 14,
+   "loop": false,
+   "hit": 9
+  },
+  {
+   "name": "cast_side",
+   "start": 144,
+   "count": 15,
+   "fps": 14,
+   "loop": false,
+   "hit": 9
+  },
+  {
+   "name": "hurt_down",
+   "start": 159,
+   "count": 6,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hurt_up",
+   "start": 165,
+   "count": 6,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hurt_side",
+   "start": 171,
+   "count": 6,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "death_down",
+   "start": 177,
+   "count": 15,
+   "fps": 12,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "death_up",
+   "start": 192,
+   "count": 15,
+   "fps": 12,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "death_side",
+   "start": 207,
+   "count": 15,
+   "fps": 12,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "skill_2_down",
+   "start": 222,
+   "count": 17,
+   "fps": 16,
+   "loop": false,
+   "hit": 10
+  },
+  {
+   "name": "skill_2_up",
+   "start": 239,
+   "count": 17,
+   "fps": 16,
+   "loop": false,
+   "hit": 10
+  },
+  {
+   "name": "skill_2_side",
+   "start": 256,
+   "count": 17,
+   "fps": 16,
+   "loop": false,
+   "hit": 10
+  }
+ ]
+}

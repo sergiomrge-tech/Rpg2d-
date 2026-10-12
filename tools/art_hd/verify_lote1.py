@@ -1,7 +1,7 @@
-"""Validate Lote 1 specs and compare existing Oni/Grakk against REAL sprite JSON.
+"""Validate Lote 1 specs against 15 rendered PNG and animation JSON files.
 
 Standard library only. Does not run Unity, inspect render quality or claim that
-not-yet-generated creatures have sprites or gameplay AI.
+creatures have been integrated in gameplay AI or tested in Unity.
 """
 from __future__ import annotations
 
@@ -14,7 +14,6 @@ SPEC = ROOT / "docs/asset_catalog/lote1_spec.json"
 ATLAS = ROOT / "unity/Assets/Resources/Sprites/Demons"
 BASE_TRACKS = ("idle", "move", "attack", "cast", "hurt", "death")
 DIRECTIONS = ("down", "up", "side")
-GENERATED = ("oni_soldier", "grakk")
 EXPECTED_ENEMIES = (
     "imp_scout", "imp_raider", "imp_pyro", "imp_hexer", "imp_bomber",
     "imp_howler", "oni_soldier", "oni_lancer", "oni_shielder", "oni_executioner"
@@ -81,17 +80,18 @@ def main() -> None:
             tracks_total += 3
             frames_total += track["frames_per_direction"] * 3
 
-        if id_ in GENERATED:
+        if record["production"]["art_status"] == "generated_pending_visual_gate":
             assert record["production"]["art_status"] == "generated_pending_visual_gate"
-            assert tuple(record["production"]["generated_tracks"]) == BASE_TRACKS
+            expected_generated = BASE_TRACKS + (("skill_2",) if is_boss else ())
+            assert tuple(record["production"]["generated_tracks"]) == expected_generated
             data = json.loads((ATLAS / (id_ + ".json")).read_text(encoding="utf-8"))
             assert (data["frameW"], data["frameH"], data["pivotX"], data["pivotY"]) == (
                 w, h, v["pivotX"], v["pivotY"]
             )
             real = {anim["name"]: anim for anim in data["anims"]}
-            assert len(real) == 18
+            assert len(real) == 3 * len(expected_generated)
             for state in a:
-                if state["id"] == "skill_2":
+                if state["id"] not in expected_generated:
                     assert not any("skill_2_" + dr in real for dr in DIRECTIONS)
                     continue
                 for dr in DIRECTIONS:
@@ -109,7 +109,7 @@ def main() -> None:
 
     assert tracks_total == 285 and frames_total == 3024, (tracks_total, frames_total)
     print("LOTE 1 VALIDADO: 10 demonios + 5 chefes; 285 trilhas propostas / 3024 frames planejados.")
-    print("Oni/Grakk: JSONs e dimensoes PNG existentes conferidos. Demais sprites e habilidades pendentes.")
+    print("15 atlas PNG + JSON direcionais conferidos. Habilidades de gameplay ainda pendentes; Grakk skill_2 sem sprite.")
     print("Estilo existente intocado; ainda nao houve validacao do jogo Unity.")
 
 

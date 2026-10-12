@@ -148,6 +148,30 @@
    "fps": 12,
    "loop": false,
    "hit": -1
+  },
+  {
+   "name": "skill_2_down",
+   "start": 180,
+   "count": 13,
+   "fps": 16,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "skill_2_up",
+   "start": 193,
+   "count": 13,
+   "fps": 16,
+   "loop": false,
+   "hit": 8
+  },
+  {
+   "name": "skill_2_side",
+   "start": 206,
+   "count": 13,
+   "fps": 16,
+   "loop": false,
+   "hit": 8
   }
  ]
 }

@@ -4,7 +4,7 @@
 
 Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este documento cobre **10 demônios e 5 chefes**, em Unity 2022.3 LTS. A estética oficial **HD cartoon** é obrigatória: as mesmas técnicas de sombreamento Cairo, contornos coloridos, proporções e nível de detalhe. **Não substituir nenhum sprite aprovado.**
 
-**Status real:** apenas **Oni Soldado** e **Grakk** já possuem folhas PNG e JSON gerados, ainda pendentes de aprovação visual no Unity. Para Grakk, a animação de segunda habilidade está *planejada*, não renderizada. As outras 13 criaturas são fichas de produção — suas imagens, VFX, IA e habilidades ainda não estão implementados.
+**Status real:** os **15 inimigos/chefes** agora possuem folhas PNG, JSON de animação e pranchas de prévia extraídas dos quadros reais. A segunda habilidade de Grakk também foi renderizada nas três direções. VFX individuais, IA, spawn, habilidades de gameplay, aprovação visual e runtime Unity continuam pendentes.
 
 ## Contrato de animação
 
@@ -18,21 +18,21 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 
 | ID | Papel | Sprite (px) | Estados × direções | Quadros previstos | Prioridade | Arte atual |
 |---|---|---:|---:|---:|---|---|
-| `imp_scout` | recon_melee | 144×144 | 6 × 3 | 150 | 1 | Falta gerar |
-| `imp_raider` | aggressive_melee | 144×144 | 6 × 3 | 162 | 3 | Falta gerar |
-| `imp_pyro` | ranged_fire | 144×144 | 6 × 3 | 159 | 1 | Falta gerar |
-| `imp_hexer` | ranged_hex | 160×160 | 6 × 3 | 171 | 2 | Falta gerar |
-| `imp_bomber` | area_denial | 160×160 | 6 × 3 | 171 | 3 | Falta gerar |
-| `imp_howler` | support | 160×160 | 6 × 3 | 165 | 2 | Falta gerar |
+| `imp_scout` | recon_melee | 144×144 | 6 × 3 | 150 | 1 | Gerada, sob revisão |
+| `imp_raider` | aggressive_melee | 144×144 | 6 × 3 | 162 | 3 | Gerada, sob revisão |
+| `imp_pyro` | ranged_fire | 144×144 | 6 × 3 | 159 | 1 | Gerada, sob revisão |
+| `imp_hexer` | ranged_hex | 160×160 | 6 × 3 | 171 | 2 | Gerada, sob revisão |
+| `imp_bomber` | area_denial | 160×160 | 6 × 3 | 171 | 3 | Gerada, sob revisão |
+| `imp_howler` | support | 160×160 | 6 × 3 | 165 | 2 | Gerada, sob revisão |
 | `oni_soldier` | armored_melee | 192×192 | 6 × 3 | 174 | 1 | Gerada, sob revisão |
-| `oni_lancer` | spacing_elite | 192×192 | 6 × 3 | 180 | 2 | Falta gerar |
-| `oni_shielder` | front_guard | 208×192 | 6 × 3 | 177 | 2 | Falta gerar |
-| `oni_executioner` | heavy_elite | 224×224 | 6 × 3 | 198 | 3 | Falta gerar |
+| `oni_lancer` | spacing_elite | 192×192 | 6 × 3 | 180 | 2 | Gerada, sob revisão |
+| `oni_shielder` | front_guard | 208×192 | 6 × 3 | 177 | 2 | Gerada, sob revisão |
+| `oni_executioner` | heavy_elite | 224×224 | 6 × 3 | 198 | 3 | Gerada, sob revisão |
 | `grakk` | chapter_1_boss | 192×192 | 7 × 3 | 219 | 1 | Gerada, sob revisão |
-| `morgash_ironhorn` | optional_boss | 256×256 | 7 × 3 | 279 | 2 | Falta gerar |
-| `velka_flamebeak` | optional_boss | 256×224 | 7 × 3 | 273 | 3 | Falta gerar |
-| `krull_chainlord` | optional_boss | 256×256 | 7 × 3 | 273 | 3 | Falta gerar |
-| `thornmaw_alpha` | optional_boss | 288×256 | 7 × 3 | 273 | 3 | Falta gerar |
+| `morgash_ironhorn` | optional_boss | 256×256 | 7 × 3 | 279 | 2 | Gerada, sob revisão |
+| `velka_flamebeak` | optional_boss | 256×224 | 7 × 3 | 273 | 3 | Gerada, sob revisão |
+| `krull_chainlord` | optional_boss | 256×256 | 7 × 3 | 273 | 3 | Gerada, sob revisão |
+| `thornmaw_alpha` | optional_boss | 288×256 | 7 × 3 | 273 | 3 | Gerada, sob revisão |
 
 ## Fichas individuais
 
@@ -42,7 +42,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `circle_strafe`; três ângulos, espelhamento lateral. **Quadro:** 144×144; pivô (72, 16).
 **Animações por direção:** `idle` 10q/12FPS · `move` 8q/16FPS · `attack` 8q/18FPS [evento 4] · `cast` 9q/17FPS [evento 5] · `hurt` 5q/14FPS · `death` 10q/12FPS.
 **Ataques e habilidades:** Corte de adaga (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `imp_scout_attack_fx`); Dash lateral (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `imp_scout_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Diabrete Saqueador — `imp_raider`
 **Função:** aggressive_melee · **Região candidata:** Bosque dos Chifres · **Rig:** imp.
@@ -50,7 +50,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `direct_chase`; três ângulos, espelhamento lateral. **Quadro:** 144×144; pivô (72, 16).
 **Animações por direção:** `idle` 10q/11FPS · `move` 9q/14FPS · `attack` 10q/17FPS [evento 5] · `cast` 10q/16FPS [evento 5] · `hurt` 5q/14FPS · `death` 10q/12FPS.
 **Ataques e habilidades:** Combo serrilhado (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `imp_raider_attack_fx`); Investida brutal (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `imp_raider_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Diabrete Piromaníaco — `imp_pyro`
 **Função:** ranged_fire · **Região candidata:** Clareiras queimadas · **Rig:** imp.
@@ -58,7 +58,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `kite`; três ângulos, espelhamento lateral. **Quadro:** 144×144; pivô (72, 16).
 **Animações por direção:** `idle` 10q/12FPS · `move` 8q/14FPS · `attack` 9q/16FPS [evento 4] · `cast` 11q/14FPS [evento 7] · `hurt` 5q/14FPS · `death` 10q/12FPS.
 **Ataques e habilidades:** Garra flamejante (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `imp_pyro_attack_fx`); Bola de fogo (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `imp_pyro_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Diabrete Ocultista — `imp_hexer`
 **Função:** ranged_hex · **Região candidata:** Ruínas corrompidas · **Rig:** imp.
@@ -66,7 +66,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `ranged_cover`; três ângulos, espelhamento lateral. **Quadro:** 160×160; pivô (80, 18).
 **Animações por direção:** `idle` 10q/10FPS · `move` 10q/13FPS · `attack` 9q/14FPS [evento 4] · `cast` 12q/14FPS [evento 7] · `hurt` 5q/14FPS · `death` 11q/12FPS.
 **Ataques e habilidades:** Toque amaldiçoado (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `imp_hexer_attack_fx`); Orbe de maldição que reduz velocidade (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `imp_hexer_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Diabrete Bombardeiro — `imp_bomber`
 **Função:** area_denial · **Região candidata:** Trilhas demoníacas · **Rig:** imp.
@@ -74,7 +74,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `kite_cover`; três ângulos, espelhamento lateral. **Quadro:** 160×160; pivô (80, 18).
 **Animações por direção:** `idle` 10q/11FPS · `move` 9q/13FPS · `attack` 9q/15FPS [evento 5] · `cast` 13q/14FPS [evento 9] · `hurt` 5q/14FPS · `death` 11q/12FPS.
 **Ataques e habilidades:** Golpe de bomba curta (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `imp_bomber_attack_fx`); Arremesso explosivo com área marcada (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `imp_bomber_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Diabrete Uivador — `imp_howler`
 **Função:** support · **Região candidata:** Bosque dos Chifres · **Rig:** imp.
@@ -82,7 +82,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `support_distance`; três ângulos, espelhamento lateral. **Quadro:** 160×160; pivô (80, 18).
 **Animações por direção:** `idle` 10q/10FPS · `move` 8q/12FPS · `attack` 9q/15FPS [evento 4] · `cast` 12q/14FPS [evento 8] · `hurt` 5q/14FPS · `death` 11q/12FPS.
 **Ataques e habilidades:** Arranhão de defesa (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `imp_howler_attack_fx`); Uivo que fortalece aliados próximos (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `imp_howler_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Oni Soldado de Ferro — `oni_soldier`
 **Função:** armored_melee · **Região candidata:** Acampamento demoníaco · **Rig:** humanoid.
@@ -90,7 +90,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `slow_chase`; três ângulos, espelhamento lateral. **Quadro:** 192×192; pivô (96, 26).
 **Animações por direção:** `idle` 10q/10FPS · `move` 10q/13FPS · `attack` 11q/17FPS [evento 6] · `cast` 10q/14FPS [evento 6] · `hurt` 5q/14FPS · `death` 12q/12FPS.
 **Ataques e habilidades:** Pancada de clava (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `oni_soldier_attack_fx`); Esmagamento com knockback (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `oni_soldier_skill1_fx`).
-**Situação:** sprites dos seis estados-base gerados; aguardando aprovação da qualidade em execução real.
+**Situação:** sprites dos seis estados-base gerados; aguardando aprovação da qualidade em execução real (Grakk também possui skill_2 renderizada).
 
 ### Oni Lanceiro — `oni_lancer`
 **Função:** spacing_elite · **Região candidata:** Patrulhas demoníacas · **Rig:** humanoid.
@@ -98,7 +98,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `spacing_strafe`; três ângulos, espelhamento lateral. **Quadro:** 192×192; pivô (96, 26).
 **Animações por direção:** `idle` 10q/10FPS · `move` 10q/13FPS · `attack` 11q/17FPS [evento 6] · `cast` 12q/15FPS [evento 7] · `hurt` 5q/14FPS · `death` 12q/12FPS.
 **Ataques e habilidades:** Estocada longa (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `oni_lancer_attack_fx`); Investida perfurante com linha de aviso (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `oni_lancer_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Oni Escudeiro — `oni_shielder`
 **Função:** front_guard · **Região candidata:** Fortificações demoníacas · **Rig:** humanoid.
@@ -106,7 +106,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `block_approach`; três ângulos, espelhamento lateral. **Quadro:** 208×192; pivô (104, 26).
 **Animações por direção:** `idle` 10q/9FPS · `move` 10q/12FPS · `attack` 10q/15FPS [evento 6] · `cast` 12q/14FPS [evento 7] · `hurt` 5q/14FPS · `death` 12q/12FPS.
 **Ataques e habilidades:** Golpe de escudo (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `oni_shielder_attack_fx`); Escudada com postura reforçada (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `oni_shielder_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Oni Carrasco — `oni_executioner`
 **Função:** heavy_elite · **Região candidata:** Clareiras de execução · **Rig:** humanoid.
@@ -114,7 +114,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `heavy_pursuit`; três ângulos, espelhamento lateral. **Quadro:** 224×224; pivô (112, 30).
 **Animações por direção:** `idle` 10q/8FPS · `move` 10q/11FPS · `attack` 13q/16FPS [evento 8] · `cast` 14q/14FPS [evento 10] · `hurt` 6q/14FPS · `death` 13q/12FPS.
 **Ataques e habilidades:** Golpe amplo de machado (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `oni_executioner_attack_fx`); Esmagamento carregado no solo (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `oni_executioner_skill1_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Grakk, Diabrete-Chefe — `grakk`
 **Função:** chapter_1_boss · **Região candidata:** Bosque dos Chifres · **Rig:** imp_boss.
@@ -130,7 +130,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `heavy_boss`; três ângulos, espelhamento lateral. **Quadro:** 256×256; pivô (128, 34).
 **Animações por direção:** `idle` 12q/8FPS · `move` 12q/11FPS · `attack` 14q/16FPS [evento 8] · `cast` 16q/14FPS [evento 10] · `hurt` 7q/14FPS · `death` 16q/12FPS · `skill_2` 16q/14FPS [evento 9].
 **Ataques e habilidades:** Marretada frontal (`attack`, aviso 0.48s, recarga 1.9s, FX previsto `morgash_ironhorn_attack_fx`); Salto com onda de impacto (`cast`, aviso 0.7s, recarga 6s, FX previsto `morgash_ironhorn_skill1_fx`); Rugido com fortalecimento de golpes (`skill_2`, aviso 0.85s, recarga 8.5s, FX previsto `morgash_ironhorn_skill2_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Velka Bico de Chama — `velka_flamebeak`
 **Função:** optional_boss · **Região candidata:** Penhascos corrompidos · **Rig:** harpy_custom.
@@ -138,7 +138,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `flight_orbit`; três ângulos, espelhamento lateral. **Quadro:** 256×224; pivô (128, 32).
 **Animações por direção:** `idle` 12q/12FPS · `move` 12q/15FPS · `attack` 14q/19FPS [evento 7] · `cast` 16q/15FPS [evento 10] · `hurt` 7q/14FPS · `death` 15q/12FPS · `skill_2` 15q/15FPS [evento 9].
 **Ataques e habilidades:** Rasante com garras (`attack`, aviso 0.48s, recarga 1.9s, FX previsto `velka_flamebeak_attack_fx`); Chuva de chamas com círculos de aviso (`cast`, aviso 0.7s, recarga 6s, FX previsto `velka_flamebeak_skill1_fx`); Grito flamejante em cone (`skill_2`, aviso 0.85s, recarga 8.5s, FX previsto `velka_flamebeak_skill2_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Krull Senhor das Correntes — `krull_chainlord`
 **Função:** optional_boss · **Região candidata:** Prisão demoníaca · **Rig:** humanoid_boss.
@@ -146,7 +146,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `control_spacing`; três ângulos, espelhamento lateral. **Quadro:** 256×256; pivô (128, 32).
 **Animações por direção:** `idle` 12q/10FPS · `move` 12q/12FPS · `attack` 14q/16FPS [evento 8] · `cast` 15q/14FPS [evento 9] · `hurt` 6q/14FPS · `death` 15q/12FPS · `skill_2` 17q/16FPS [evento 10].
 **Ataques e habilidades:** Chicote de corrente (`attack`, aviso 0.48s, recarga 1.9s, FX previsto `krull_chainlord_attack_fx`); Laço puxador com aviso de trajetória (`cast`, aviso 0.7s, recarga 6s, FX previsto `krull_chainlord_skill1_fx`); Giro circular de correntes (`skill_2`, aviso 0.85s, recarga 8.5s, FX previsto `krull_chainlord_skill2_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ### Alfa Espinhagorja — `thornmaw_alpha`
 **Função:** optional_boss · **Região candidata:** Clareiras corrompidas · **Rig:** quadruped_custom.
@@ -154,7 +154,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `predator_ambush`; três ângulos, espelhamento lateral. **Quadro:** 288×256; pivô (144, 42).
 **Animações por direção:** `idle` 12q/9FPS · `move` 12q/14FPS · `attack` 13q/16FPS [evento 7] · `cast` 15q/14FPS [evento 9] · `hurt` 7q/14FPS · `death` 17q/12FPS · `skill_2` 15q/16FPS [evento 10].
 **Ataques e habilidades:** Mordida brutal (`attack`, aviso 0.48s, recarga 1.9s, FX previsto `thornmaw_alpha_attack_fx`); Rajada de espinhos (`cast`, aviso 0.7s, recarga 6s, FX previsto `thornmaw_alpha_skill1_fx`); Carga bestial em linha (`skill_2`, aviso 0.85s, recarga 8.5s, FX previsto `thornmaw_alpha_skill2_fx`).
-**Situação:** ficha aprovada para produção técnica; sprites ainda não gerados.
+**Situação:** folha de sprites e animações geradas; fidelidade HD e execução Unity aguardam avaliação.
 
 ## QA antes da integração
 
