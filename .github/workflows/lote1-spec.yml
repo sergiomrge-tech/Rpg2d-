@@ -1,0 +1,24 @@
+name: Lote 1 animation contract QA
+
+on:
+  push:
+    branches: [gpt6-demon-catalog-20261012]
+    paths:
+      - 'docs/asset_catalog/lote1_spec.json'
+      - 'tools/art_hd/verify_lote1.py'
+      - '.github/workflows/lote1-spec.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate 15 creatures, 3-direction animations and actual Oni/Grakk sheets
+        run: python tools/art_hd/verify_lote1.py
