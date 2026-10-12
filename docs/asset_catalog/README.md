@@ -23,3 +23,10 @@ Sprites/Demons/oni_soldier e Sprites/Demons/grakk.
 
 O workflow demon-art.yml executa estas etapas automaticamente e versiona os PNGs.
 Status: arte candidata; Unity runtime, screenshots reais e integração estão pendentes.
+
+## Lote 1 — 10 demônios e 5 chefes
+
+- [Fichas individuais (quadros, FPS, evento de ataque e habilidade)](LOTE1_FICHAS.md)
+- [Contrato JSON versionado](lote1_spec.json)
+- Validação sem licença Unity: `python tools/art_hd/verify_lote1.py`
+- Status: **285 trilhas/3.024 quadros especificados**, não significa sprites produzidos. Apenas Oni e Grakk têm PNG/JSON dos estados-base; Grakk ainda precisa de `skill_2`. Os demais 13 aguardam desenho/animação e revisão HD cartoon.
