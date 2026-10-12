@@ -603,6 +603,35 @@ func _ui_smoke_test() -> void:
 		return
 	hud._finish_dialogue()
 	print("[ui-smoke] PASS cutscenes hide controls after prologue")
+	# Gameplay regression: zero-valued legacy stamina must NEVER prevent
+	# running, consecutive melee combos, or dodge rolls.
+	player.input_locked = false
+	player.gs.max_st = 0.0
+	for i in 16:
+		player._to_free()
+		player._try_attack()
+		if player.state != Player.St.ATTACK:
+			push_error("[ui-smoke] attack blocked by removed stamina mechanic")
+			get_tree().quit(1)
+			return
+		player._to_free()
+		player._try_roll()
+		if player.state != Player.St.ROLL:
+			push_error("[ui-smoke] roll blocked by removed stamina mechanic")
+			get_tree().quit(1)
+			return
+	player._to_free()
+	print("[ui-smoke] PASS unlimited attack and dodge with zero legacy stamina")
+	touch_run = true
+	touch_move = Vector2.RIGHT
+	await _wait(0.13)
+	if player.anim.base != "run":
+		push_error("[ui-smoke] sprint is not available without stamina")
+		get_tree().quit(1)
+		return
+	touch_move = Vector2.ZERO
+	touch_run = false
+	print("[ui-smoke] PASS unlimited sprint animation at zero legacy stamina")
 	print("[ui-smoke] PASS all tests")
 	get_tree().quit(0)
 
