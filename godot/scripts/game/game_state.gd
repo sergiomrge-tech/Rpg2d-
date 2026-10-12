@@ -69,6 +69,21 @@ func set_bonus() -> Dictionary:
 	return {"name": SET_NAMES[best] if best >= 0 else "", "count": n, "tier": best, "stats": stats}
 
 
+## Special power of a complete (3-piece) set.
+const SET_POWERS := ["xp", "gold", "bolt", "heal", "meteor"]
+const SET_POWER_TEXT := {
+	"xp": "+10% EXP", "gold": "+15% ouro", "bolt": "12% de chance de raio ao acertar",
+	"heal": "cura 4% da vida ao abater", "meteor": "10% de chance de meteoro ao acertar",
+}
+
+
+func set_power() -> String:
+	var sb := set_bonus()
+	if int(sb["count"]) >= 3 and int(sb["tier"]) >= 0:
+		return SET_POWERS[int(sb["tier"])]
+	return ""
+
+
 ## Blacksmith: gold (+ embers from +4) to raise a piece one forge level.
 func forge_cost(id: String) -> Dictionary:
 	var lv := enh_level(id)

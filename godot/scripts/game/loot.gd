@@ -12,6 +12,8 @@ static func drop(def: Dictionary, level: int, at: Vector2) -> void:
 		var n := randi_range(int(d[2]), int(d[3]))
 		if item == "gold":
 			n = roundi(n * (1.0 + 0.6 * (level - 1)))
+			if Game.state.set_power() == "gold":
+				n = roundi(n * 1.15)
 		Pickup.spawn(item, n, at)
 	var boss := bool(def.get("boss", false))
 	gear_drop(level, boss, at)

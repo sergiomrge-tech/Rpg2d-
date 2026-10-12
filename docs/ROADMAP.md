@@ -81,6 +81,11 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ **Drops Épicos/Lendários** com feixe de luz e som próprio
 - ✅ **Comparação na bolsa** (▲ verde / ▼ vermelho contra a peça equipada)
 - ✅ **Novo Jogo+** (após o final): mantém nível, equipamentos e forja; monstros +6 níveis por ciclo; chefes dropam mais e melhor
+- ✅ **Cajado inicial** (Carvalho) para Mago e Invocador
+- ✅ **Poderes de conjunto (3 peças):** Aventureiro +10% EXP · Veterano +15% ouro · Rúnico raio ao acertar · Alvorecer cura ao abater · Lendário meteoro ao acertar
+- ✅ **Loja do ferreiro** (Aurora: peças comuns/incomuns; Valemont: até Épico + Brasa Infernal) abre após falar com o ferreiro (`ShopMenu`)
+- ✅ **Ferreiro na bússola:** botão de forja longe do ferreiro marca o caminho por 40 s
+- ✅ **Desafio do Abismo** (após o final / Novo Jogo+): fale com o Capitão Brandt; 5 ondas com general na última, recompensa em ouro e 3 drops de chefe (`Abyss`)
 - ✅ **Valemont urbanizada:** taverna (descanso 40 ouro: cura + salva), ferraria (forja), estábulo, boticário, armaria, padaria, quartel, biblioteca, 4 tipos novos de casa, estátuas do herói, bancos, vasos, carroça de feno, bebedouro, bancas coloridas e postes ornamentais com brilho noturno; NPCs e diálogos para cada serviço; prédios ficam translúcidos quando o herói passa atrás
 - ✅ **Vegetação:** 13 novas plantas (bétula, cerejeira, salgueiro, cerca-viva, topiaria, samambaia, canteiro de flores, arbusto de frutas, capim alto, tronco caído, arbusto seco, arbusto de gelo, samambaia luminosa), plantio em bosques por região, junco à beira d'água, alamedas e jardins na capital
 - ✅ **Mapas ampliados (~2× a área):** anel de terra nova ao redor de cada região (`tools/art_hd/expand_maps.py`), estradas e rios prolongados até as novas bordas, mesma densidade de objetos e inimigos, pontos de interesse (acampamentos com elite, círculos de pedra, ruínas, bosques) ligados por trilhas e **baús de tesouro** (`TreasureCache`) que só abrem uma vez

@@ -12,6 +12,7 @@ var _t := 0.0
 var _dur := 2.8
 var _next := 0.0
 var _cloud: Sprite2D
+var _sk := ""
 
 
 ## Densest enemy cluster in range of the hero; falls back to a spot ahead of the hero.
@@ -43,6 +44,12 @@ static func lightning_storm(at: Vector2, damage: float, crit_chance: float) -> A
 	return _spawn("storm", at, damage, crit_chance, 4.0 * T, 3.4)
 
 
+## One-shot bolt / meteor on a point (set powers).
+static func strike(k: String, at: Vector2, damage: float) -> void:
+	var s := _spawn("strike", at, damage, 0.1, 1.6 * T, 0.2)
+	s._sk = k
+
+
 static func _spawn(k: String, at: Vector2, d: float, c: float, r: float, dur: float) -> AreaSpell:
 	var s := AreaSpell.new()
 	s.kind = k
@@ -58,6 +65,9 @@ static func _spawn(k: String, at: Vector2, d: float, c: float, r: float, dur: fl
 
 
 func _ready() -> void:
+	if kind == "strike":
+		_fire.call_deferred()
+		return
 	if kind == "storm":
 		_cloud = Sprite2D.new()
 		_cloud.texture = Util.soft_circle()
@@ -71,8 +81,29 @@ func _ready() -> void:
 		Sfx.play("charge", 0.55, 0.6)
 
 
+func _fire() -> void:
+	if _sk == "storm":
+		var b := Bolt.new()
+		b.target = center
+		Game.world.fx_layer.add_child(b)
+		b.global_position = center
+		blast(center, 1.3 * T, dmg, 7.0, 45.0, true)
+		Sfx.play("spark", 0.6, 0.8)
+		Game.camera.shake(0.06, 0.1)
+	else:
+		var m := Meteor.new()
+		m.target = center
+		m.owner_spell = self
+		Game.world.fx_layer.add_child(m)
+		m.global_position = center + Vector2(-5.5 * T, -10.5 * T)
+
+
 func _process(dt: float) -> void:
 	_t += dt
+	if kind == "strike":
+		if _t > 1.6:
+			queue_free()
+		return
 	if kind == "storm":
 		var a := clampf(minf(_t / 0.5, (_dur + 0.4 - _t) / 0.6), 0.0, 1.0)
 		_cloud.modulate.a = 0.62 * a
@@ -100,6 +131,8 @@ func _target_point() -> Vector2:
 
 
 func _draw() -> void:
+	if kind == "strike":
+		return
 	var col := Color(1.0, 0.45, 0.15) if kind == "meteor" else Color(0.55, 0.75, 1.0)
 	var fade := clampf(minf(_t / 0.3, (_dur + 0.6 - _t) / 0.5), 0.0, 1.0)
 	var pulse := 0.55 + 0.45 * sin(_t * 8.0)

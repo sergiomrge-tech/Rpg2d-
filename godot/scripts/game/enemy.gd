@@ -25,6 +25,7 @@ var wander := Vector2.ZERO
 var hit_done := false
 var next_is_cast := false
 var summoned := false
+var arena := false            # spawned by the Abyss challenge
 var tp_cd := 3.0
 var phase := 1
 var _seed := 0.0
@@ -273,6 +274,8 @@ func hurt(d: float, from: Vector2, knockback: float, poise_dmg: float, crit: boo
 	if not super.hurt(d, from, knockback, poise_dmg, crit):
 		return false
 	last_hurt = Game.time()
+	if not dead:
+		Game.set_proc(self)
 	if def["boss"] and not summoned and hp < max_hp * 0.5 and hp > 0.0:
 		summoned = true
 		var minion = MINIONS.get(def["id"], null)
@@ -280,7 +283,8 @@ func hurt(d: float, from: Vector2, knockback: float, poise_dmg: float, crit: boo
 			Game.hud.banner(def["name"] + " se enfurece", "Reforços demoníacos!")
 			Game.camera.shake(0.3, 0.5)
 			for k in 3:
-				Enemy.spawn(minion, pos() + Vector2.RIGHT.rotated(deg_to_rad(k * 120.0)) * 2.2 * T, maxi(1, level - 2))
+				var mn := Enemy.spawn(minion, pos() + Vector2.RIGHT.rotated(deg_to_rad(k * 120.0)) * 2.2 * T, maxi(1, level - 2))
+				mn.arena = arena
 			speed *= 1.25
 	if def["id"] == "malgrath" and not dead:
 		_update_malgrath_phase()

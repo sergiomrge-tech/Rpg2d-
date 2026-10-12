@@ -90,7 +90,7 @@ static func apply_new_game(gs, id: String) -> void:
 		"assassin":
 			gs.eq_weapon = "twin_daggers"
 		"mage", "summoner":
-			gs.eq_weapon = ""
+			gs.eq_weapon = "st_0"
 		_:
 			gs.eq_weapon = "rusty_sword"
 

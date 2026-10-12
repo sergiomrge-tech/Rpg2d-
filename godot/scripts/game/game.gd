@@ -37,6 +37,7 @@ var world: World
 var camera: CameraRig
 var hud: Hud
 var grimoire: Grimoire
+var shop: ShopMenu
 var options: OptionsMenu
 var marker: ObjectiveMarker
 var main: Node2D
@@ -134,6 +135,9 @@ func start(m: Node2D) -> void:
 	grimoire = Grimoire.new()
 	hud.add_child(grimoire)
 	grimoire.setup(hud)
+	shop = ShopMenu.new()
+	hud.add_child(shop)
+	shop.setup(hud)
 	options = OptionsMenu.new()
 	hud.add_child(options)
 	options.setup(hud)
@@ -305,9 +309,9 @@ func _process(dt: float) -> void:
 		return
 	# Modal-first input: never consume Esc/Tab before the open overlay sees it.
 	# These keys used to be stolen from Grimoire/Options during pause.
-	if not in_menu and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
+	if not in_menu and not grimoire.open and not shop.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
 		options.toggle()
-	if not in_menu and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
+	if not in_menu and not options.open and not grimoire.open and not shop.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
 		grimoire.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
@@ -411,6 +415,10 @@ func interact(p: Player) -> void:
 	hud.show_dialogue(Story.talk(npc.id), func():
 		npc.talking = false
 		p.input_locked = false
+		if (npc.id == "blacksmith" or npc.id == "smith_v") and not shop.open:
+			shop.open_for(npc.id)
+		if npc.id == "guard_captain" and (flags.has("game_complete") or state.ng_plus > 0) and not Abyss.active:
+			Abyss.start()
 		if npc.id == "sylra" and flags.has("sylra_joined") and Companion.I == null:
 			Companion.spawn(npc.global_position)
 			npc.queue_free()
@@ -456,7 +464,29 @@ func _o(head: String, detail: String, map: String = "", kind: String = "", id: S
 	return [head, detail, map, kind, id]
 
 
+var smith_until := 0.0
+var smith_obj: Array = []
+
+
+## Points the compass at the nearest blacksmith for a while (used by the forge buttons).
+func smith_hint() -> void:
+	var here := ""
+	for n in world.data["npcs"]:
+		if n["id"] == "blacksmith" or n["id"] == "smith_v":
+			here = str(n["id"])
+	if here != "":
+		smith_obj = _o("Visite o ferreiro", "forjar e comprar equipamentos", map_name, "npc", here)
+	else:
+		var to_valemont := map_name in ["valemont", "kharis", "mines", "mirewail", "peaks", "castle", "wastelands", "citadel"]
+		smith_obj = _o("Visite o ferreiro de %s" % ("Valemont" if to_valemont else "Aurora"), "forjar e comprar equipamentos",
+			"valemont" if to_valemont else "village", "npc", "smith_v" if to_valemont else "blacksmith")
+	smith_until = time() + 40.0
+	hud.banner("Ferreiro marcado", "siga a bússola · 40 s")
+
+
 func objective() -> Array:
+	if time() < smith_until:
+		return smith_obj
 	if not flags.has("guild_joined"):
 		return _o("Procure a Guilda dos Aventureiros", "ao norte da praça", "village", "npc", "receptionist")
 	if not flags.has("q_imps_done"):
@@ -494,7 +524,7 @@ func objective() -> Array:
 			return _o("Derrote %s" % r["bossName"], r["title"], r["map"], "boss", next_boss)
 		return _o("Volte a %s" % Story.name_of(r["npc"]), r["title"], r["map"], "npc", r["npc"])
 	if flags.has("game_complete"):
-		return _o("Aetheria está em paz", "explore livremente · F5 salva")
+		return _o("Desafie o Abismo", "fale com o Capitão Brandt, em Valemont · ou explore livremente", "valemont", "npc", "guard_captain")
 	if not flags.has("lumia_blessed"):
 		return _o("Entre na Cidadela de Malgrath", "leste das Terras Devastadas — fale com Lumia", "citadel", "npc", "lumia")
 	return _o("Derrote Malgrath, o Rei Demônio", "salão do trono, ao norte da Cidadela", "citadel", "boss", "malgrath")
@@ -593,6 +623,22 @@ func _watch_quest_flags() -> void:
 
 
 # ------------------------------------------------------------------ combat callbacks
+var _proc_cd := 0.0
+
+
+## Set powers that trigger when the hero (or an ally) lands a hit.
+func set_proc(e: Enemy) -> void:
+	if player == null or time() < _proc_cd:
+		return
+	var sp := state.set_power()
+	if sp == "bolt" and randf() < 0.12:
+		_proc_cd = time() + 1.5
+		AreaSpell.strike("storm", e.global_position, state.total_atk() * 1.2 + state.total_mag() * 0.8)
+	elif sp == "meteor" and randf() < 0.10:
+		_proc_cd = time() + 2.5
+		AreaSpell.strike("meteor", e.global_position, state.total_atk() * 1.4 + state.total_mag() * 1.4)
+
+
 func on_enemy_killed(e: Enemy) -> void:
 	if quests.has(Story.QUEST_IMPS) and e.def["id"] == "imp":
 		quests[Story.QUEST_IMPS] = int(quests[Story.QUEST_IMPS]) + 1
@@ -603,11 +649,15 @@ func on_enemy_killed(e: Enemy) -> void:
 		save()
 		_ending()
 		return
-	if e.def["boss"]:
+	if e.def["boss"] and not e.arena:
 		flags[str(e.def["id"]) + "_dead"] = true
 		hud.banner(str(e.def["name"]) + " foi derrotado", "Volte à Guilda")
 		save()
-	var xp := roundi(float(e.def["xp"]) * Data.hp_scale(e.level))
+	var sp := state.set_power()
+	var xp := roundi(float(e.def["xp"]) * Data.hp_scale(e.level) * (1.1 if sp == "xp" else 1.0))
+	if sp == "heal" and not player.dead:
+		player.hp = minf(state.hp_max(), player.hp + state.hp_max() * 0.04)
+		Fx.heal(player.pos())
 	Fx.toast("+%d EXP" % xp, Color(0.75, 0.95, 1.0), e.global_position + Vector2.UP * 2.6 * 64.0)
 	if state.gain_xp(xp):
 		player.max_hp = state.hp_max()
@@ -1103,6 +1153,7 @@ func _ci_shots() -> void:
 	await _ci_mage()
 	await _ci_life()
 	await _ci_gear()
+	await _ci_endgame()
 	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")
@@ -1360,6 +1411,58 @@ func _ci_mage() -> void:
 
 
 ## Side quests and the day/night routine.
+func _ci_endgame() -> void:
+	var tmp := GameState.new()
+	HeroClasses.apply_new_game(tmp, "mage")
+	print("[ci] mage starts with: ", tmp.eq_weapon)
+	for t in 5:
+		for i in 3:
+			pass
+	var saved_w := state.eq_weapon
+	var saved_a := state.eq_armor
+	var saved_c := state.eq_charm
+	for t in 5:
+		state.eq_weapon = "sw_%d" % t
+		state.eq_armor = "ar_%d" % t
+		state.eq_charm = "ch_%d" % t
+		print("[ci] set power tier ", t, ": ", state.set_power())
+	state.eq_weapon = "sw_2"
+	state.eq_armor = "ar_2"
+	state.eq_charm = "ch_2"
+	_tour_to("valemont")
+	_travel_cd = 999.0
+	player.input_locked = false
+	smith_hint()
+	var ob := objective()
+	print("[ci] smith hint: ", ob[0], " / ", ob[2], " / ", ob[4])
+	await _wait(0.6)
+	await shot("73_ferreiro_bussola")
+	smith_until = 0.0
+	shop.open_for("smith_v")
+	state.gold = 3000
+	shop._refresh()
+	await _wait(0.4)
+	await shot("74_loja_ferreiro")
+	var g0 := state.gold
+	shop.sel = 1
+	shop._buy()
+	print("[ci] shop buy: gold ", g0, " -> ", state.gold)
+	shop.close()
+	flags["game_complete"] = true
+	Story.talk("guard_captain")
+	Abyss.start()
+	await _wait(6.5)
+	print("[ci] abyss wave ", Abyss.wave, " alive ", Abyss.alive())
+	await shot("75_abismo_onda")
+	Abyss.cancel("teste")
+	print("[ci] abyss cancelled, alive ", Abyss.alive(), " active ", Abyss.active)
+	flags.erase("game_complete")
+	state.eq_weapon = saved_w
+	state.eq_armor = saved_a
+	state.eq_charm = saved_c
+	player.input_locked = true
+
+
 func _ci_gear() -> void:
 	var dist := [0, 0, 0, 0, 0]
 	for i in 600:

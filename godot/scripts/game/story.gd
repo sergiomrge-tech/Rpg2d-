@@ -289,6 +289,14 @@ func talk(npc: String) -> Array:
 				_l(npc, "E guarde isto: os demônios insetoides das ruínas protegem tesouros. Mate-os com cuidado."),
 			]
 		"guard_captain":
+			if g.flags.has("game_complete") or gs.ng_plus > 0:
+				if Abyss.active:
+					return [_l(npc, "Aguente firme, herói! A onda ainda não acabou!")]
+				return [
+					_l(npc, "Herói de Aetheria! Os pergaminhos falam de um Abismo sob Valemont, onde a escuridão nunca morreu."),
+					_l(npc, "Cinco ondas de demônios, cada uma pior que a anterior. A última traz um general. Quem sobrevive leva tesouros lendários."),
+					_l(npc, "Se cair, o Abismo se fecha e nada se perde — só o orgulho. Prepare-se: começa agora!"),
+				]
 			return [
 				_l(npc, "Capitão Brandt, guarda de Valemont. As muralhas aguentam exércitos, mas não uma lâmina na escuridão."),
 				_l(npc, "Se for caçar a Sombra, vá preparado. Ela ataca por trás."),

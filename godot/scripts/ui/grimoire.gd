@@ -233,7 +233,8 @@ func _forge(slot: int) -> void:
 		return
 	if not _blacksmith_near():
 		Sfx.play("ui", 0.2, 0.6)
-		Fx.toast("Procure um ferreiro para forjar", Color(1.0, .66, .51))
+		Fx.toast("Procure um ferreiro para forjar — marcado na bússola", Color(1.0, .66, .51))
+		Game.smith_hint()
 		return
 	var c := gs.forge_cost(id)
 	if not gs.can_forge(id):
@@ -371,10 +372,13 @@ func _refresh() -> void:
 		var parts := PackedStringArray()
 		for key in sbn["stats"]:
 			parts.append("%s +%d" % [{"hp": "PV", "atk": "ATQ", "mag": "MAG", "defense": "DEF"}[key], roundi(sbn["stats"][key])])
-		hud.txt(page, "Conjunto %s (%d/3): %s" % [sbn["name"], sbn["count"], ", ".join(parts)], bold, 18, Color(0.3, 0.5, 0.2), C, Vector2(-335, -88), Vector2(520, 24), M, false)
+		var set_txt := "Conjunto %s (%d/3): %s" % [sbn["name"], sbn["count"], ", ".join(parts)]
+		if gs.set_power() != "":
+			set_txt += "\nPoder: " + str(GameState.SET_POWER_TEXT[gs.set_power()])
+		hud.txt(page, set_txt, bold, 17, Color(0.3, 0.5, 0.2), C, Vector2(-335, -92), Vector2(540, 46), M, false)
 	var class_info := HeroClasses.info(gs.class_id)
-	hud.txt(page, "Habilidades de " + str(class_info["name"]), serif, 29, ink, C, Vector2(-335, -118), Vector2(500, 40), M, false)
-	hud.txt(page, str(class_info["skill"]), bold, 26, ink, C, Vector2(-335, -170), Vector2(485, 40), M, false)
+	hud.txt(page, "Habilidades de " + str(class_info["name"]), serif, 29, ink, C, Vector2(-335, -132), Vector2(500, 40), M, false)
+	hud.txt(page, str(class_info["skill"]), bold, 26, ink, C, Vector2(-335, -182), Vector2(485, 40), M, false)
 	var benefit := hud.txt(page, "FORTE: " + str(class_info["strong"]), sans, 22, Color(.25, .42, .22), C, Vector2(-335, -228), Vector2(485, 46), M, false)
 	benefit.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var frailty := hud.txt(page, "FRACO: " + str(class_info["weak"]), sans, 22, faint, C, Vector2(-335, -295), Vector2(485, 56), M, false)
