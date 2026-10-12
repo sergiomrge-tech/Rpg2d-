@@ -1,0 +1,31 @@
+name: Lote 2 Set B - Gameplay / Unity C# QA
+on:
+  push:
+    branches: [gpt6-lote2-set-b-20261012]
+    paths:
+      - 'unity/Assets/Scripts/**'
+      - 'unity/Assets/Resources/Maps/village.json'
+      - 'tools/art_hd/verify_lote2_set_b_gameplay.py'
+      - '.github/workflows/lote2-set-b-gameplay.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Assert all ten insects are animated and integrated on map
+        run: python tools/art_hd/verify_lote2_set_b_gameplay.py
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Compile Unity C# with module reference assemblies
+        run: bash tools/unity_check.sh
