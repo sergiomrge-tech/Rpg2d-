@@ -32,6 +32,7 @@ func setup(h: Hud) -> void:
 	hud.gold_icon.position = Vector2(300, 30)
 	hud.gold_text.position = Vector2(356, 28)
 	hud.clock_label.position = Vector2(300, 74)
+	hud.pts_label.position = Vector2(300, 104)
 	layer = Control.new()
 	layer.size = Hud.SIZE
 	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -61,6 +62,7 @@ func setup(h: Hud) -> void:
 		elif b["id"] == "storm":
 			b["c"].get_child(0).modulate = Color(0.55, 0.8, 1.0)
 	_add_btn("book", Vector2(560, 62), 46, KEY_TAB, "", 0.8)
+	_add_btn("skills", Vector2(455, 62), 46, KEY_P, "", 0.8)
 	_add_btn("menu", Vector2(665, 62), 46, KEY_ESCAPE, "", 0.8)
 	# menu navigation pad (grimoire / options)
 	menu_pad = Control.new()
@@ -75,6 +77,7 @@ func setup(h: Hud) -> void:
 	# letters on the game buttons without an icon
 	_label_for("talk", "E")
 	_label_for("book", "Livro")
+	_label_for("skills", "★")
 	_label_for("menu", "Menu")
 
 
@@ -107,7 +110,7 @@ func _stick_idle() -> void:
 
 
 func _menu_open() -> bool:
-	return Game.grimoire.open or Game.options.open
+	return Game.grimoire.open or Game.options.open or Game.shop.open or Game.skills.open
 
 
 func _process(_dt: float) -> void:
@@ -126,12 +129,17 @@ func _process(_dt: float) -> void:
 		_stick_id = -1
 		_stick_idle()
 	var talking := hud.in_dialogue()
-	var mage: bool = Game.player != null and Game.player.gs.class_id == "mage"
 	for b in _buttons:
 		if b["id"] == "talk":
 			b["c"].modulate.a = 1.0 if _near_npc() else 0.35
-		elif b["id"] == "meteor" or b["id"] == "storm":
-			b["c"].visible = mage
+		elif (b["id"] == "meteor" or b["id"] == "storm") and Game.player != null:
+			# R / F: the class active skills; dimmed until learned in the skill tree
+			var which := "r" if b["id"] == "meteor" else "f"
+			var a: Dictionary = SkillTree.ACTIVES[Game.player.gs.class_id][which]
+			var ic: TextureRect = b["c"].get_child(0)
+			ic.texture = Sheets.icon(a["icon"])
+			ic.modulate = a["color"]
+			b["c"].modulate.a = 1.0 if Game.player.gs.has_unlock(which) else 0.35
 
 
 func _near_npc() -> bool:

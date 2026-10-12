@@ -173,7 +173,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 120
+    "value": 120,
+    "req": {
+      "str": 8
+    }
   },
   "velmoor_blade": {
     "id": "velmoor_blade",
@@ -189,7 +192,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 320
+    "value": 320,
+    "req": {
+      "str": 12
+    }
   },
   "ember_blade": {
     "id": "ember_blade",
@@ -205,7 +211,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 320
+    "value": 320,
+    "req": {
+      "str": 14
+    }
   },
   "oni_cleaver": {
     "id": "oni_cleaver",
@@ -221,7 +230,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 900
+    "value": 900,
+    "req": {
+      "str": 20
+    }
   },
   "leather_vest": {
     "id": "leather_vest",
@@ -253,7 +265,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 120
+    "value": 120,
+    "req": {
+      "con": 10
+    }
   },
   "elven_robe": {
     "id": "elven_robe",
@@ -269,7 +284,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 320
+    "value": 320,
+    "req": {
+      "int": 12
+    }
   },
   "sand_blade": {
     "id": "sand_blade",
@@ -285,7 +303,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 900
+    "value": 900,
+    "req": {
+      "str": 18
+    }
   },
   "dwarf_plate": {
     "id": "dwarf_plate",
@@ -301,7 +322,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 900
+    "value": 900,
+    "req": {
+      "con": 18
+    }
   },
   "swamp_charm": {
     "id": "swamp_charm",
@@ -317,7 +341,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 900
+    "value": 900,
+    "req": {
+      "man": 15
+    }
   },
   "frost_blade": {
     "id": "frost_blade",
@@ -333,7 +360,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "req": {
+      "str": 24
+    }
   },
   "ice_mail": {
     "id": "ice_mail",
@@ -349,7 +379,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "req": {
+      "con": 22
+    }
   },
   "vorath_blade": {
     "id": "vorath_blade",
@@ -365,7 +398,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "req": {
+      "str": 26
+    }
   },
   "royal_plate": {
     "id": "royal_plate",
@@ -381,7 +417,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "req": {
+      "con": 25
+    }
   },
   "lumia_pendant": {
     "id": "lumia_pendant",
@@ -397,7 +436,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "req": {
+      "man": 18
+    }
   },
   "luma_charm": {
     "id": "luma_charm",
@@ -429,7 +471,10 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 320
+    "value": 320,
+    "req": {
+      "int": 12
+    }
   },
   "hunter_bow": {
     "id": "hunter_bow",
@@ -573,7 +618,10 @@
     "consumable": false,
     "value": 120,
     "set": "Veterano",
-    "set_tier": 1
+    "set_tier": 1,
+    "req": {
+      "str": 10
+    }
   },
   "bw_1": {
     "id": "bw_1",
@@ -592,7 +640,10 @@
     "value": 120,
     "weapon_type": "bow",
     "set": "Veterano",
-    "set_tier": 1
+    "set_tier": 1,
+    "req": {
+      "agi": 10
+    }
   },
   "dg_1": {
     "id": "dg_1",
@@ -611,7 +662,10 @@
     "value": 120,
     "weapon_type": "dual_daggers",
     "set": "Veterano",
-    "set_tier": 1
+    "set_tier": 1,
+    "req": {
+      "agi": 10
+    }
   },
   "ar_1": {
     "id": "ar_1",
@@ -629,7 +683,10 @@
     "consumable": false,
     "value": 120,
     "set": "Veterano",
-    "set_tier": 1
+    "set_tier": 1,
+    "req": {
+      "con": 9
+    }
   },
   "ch_1": {
     "id": "ch_1",
@@ -665,7 +722,10 @@
     "consumable": false,
     "value": 320,
     "set": "Rúnico",
-    "set_tier": 2
+    "set_tier": 2,
+    "req": {
+      "str": 14
+    }
   },
   "bw_2": {
     "id": "bw_2",
@@ -684,7 +744,10 @@
     "value": 320,
     "weapon_type": "bow",
     "set": "Rúnico",
-    "set_tier": 2
+    "set_tier": 2,
+    "req": {
+      "agi": 14
+    }
   },
   "dg_2": {
     "id": "dg_2",
@@ -703,7 +766,10 @@
     "value": 320,
     "weapon_type": "dual_daggers",
     "set": "Rúnico",
-    "set_tier": 2
+    "set_tier": 2,
+    "req": {
+      "agi": 14
+    }
   },
   "ar_2": {
     "id": "ar_2",
@@ -721,7 +787,10 @@
     "consumable": false,
     "value": 320,
     "set": "Rúnico",
-    "set_tier": 2
+    "set_tier": 2,
+    "req": {
+      "con": 13
+    }
   },
   "ch_2": {
     "id": "ch_2",
@@ -739,7 +808,10 @@
     "consumable": false,
     "value": 320,
     "set": "Rúnico",
-    "set_tier": 2
+    "set_tier": 2,
+    "req": {
+      "man": 12
+    }
   },
   "sw_3": {
     "id": "sw_3",
@@ -757,7 +829,10 @@
     "consumable": false,
     "value": 900,
     "set": "Alvorecer",
-    "set_tier": 3
+    "set_tier": 3,
+    "req": {
+      "str": 20
+    }
   },
   "bw_3": {
     "id": "bw_3",
@@ -776,7 +851,10 @@
     "value": 900,
     "weapon_type": "bow",
     "set": "Alvorecer",
-    "set_tier": 3
+    "set_tier": 3,
+    "req": {
+      "agi": 20
+    }
   },
   "dg_3": {
     "id": "dg_3",
@@ -795,7 +873,10 @@
     "value": 900,
     "weapon_type": "dual_daggers",
     "set": "Alvorecer",
-    "set_tier": 3
+    "set_tier": 3,
+    "req": {
+      "agi": 20
+    }
   },
   "ar_3": {
     "id": "ar_3",
@@ -813,7 +894,10 @@
     "consumable": false,
     "value": 900,
     "set": "Alvorecer",
-    "set_tier": 3
+    "set_tier": 3,
+    "req": {
+      "con": 19
+    }
   },
   "ch_3": {
     "id": "ch_3",
@@ -831,7 +915,10 @@
     "consumable": false,
     "value": 900,
     "set": "Alvorecer",
-    "set_tier": 3
+    "set_tier": 3,
+    "req": {
+      "man": 18
+    }
   },
   "sw_4": {
     "id": "sw_4",
@@ -849,7 +936,10 @@
     "consumable": false,
     "value": 2400,
     "set": "Lendário",
-    "set_tier": 4
+    "set_tier": 4,
+    "req": {
+      "str": 28
+    }
   },
   "bw_4": {
     "id": "bw_4",
@@ -868,7 +958,10 @@
     "value": 2400,
     "weapon_type": "bow",
     "set": "Lendário",
-    "set_tier": 4
+    "set_tier": 4,
+    "req": {
+      "agi": 28
+    }
   },
   "dg_4": {
     "id": "dg_4",
@@ -887,7 +980,10 @@
     "value": 2400,
     "weapon_type": "dual_daggers",
     "set": "Lendário",
-    "set_tier": 4
+    "set_tier": 4,
+    "req": {
+      "agi": 28
+    }
   },
   "ar_4": {
     "id": "ar_4",
@@ -905,7 +1001,10 @@
     "consumable": false,
     "value": 2400,
     "set": "Lendário",
-    "set_tier": 4
+    "set_tier": 4,
+    "req": {
+      "con": 27
+    }
   },
   "ch_4": {
     "id": "ch_4",
@@ -923,7 +1022,10 @@
     "consumable": false,
     "value": 2400,
     "set": "Lendário",
-    "set_tier": 4
+    "set_tier": 4,
+    "req": {
+      "man": 25
+    }
   },
   "st_0": {
     "id": "st_0",
@@ -961,7 +1063,10 @@
     "value": 120,
     "weapon_type": "staff",
     "set": "Veterano",
-    "set_tier": 1
+    "set_tier": 1,
+    "req": {
+      "int": 10
+    }
   },
   "st_2": {
     "id": "st_2",
@@ -980,7 +1085,10 @@
     "value": 320,
     "weapon_type": "staff",
     "set": "Rúnico",
-    "set_tier": 2
+    "set_tier": 2,
+    "req": {
+      "int": 14
+    }
   },
   "st_3": {
     "id": "st_3",
@@ -999,7 +1107,10 @@
     "value": 900,
     "weapon_type": "staff",
     "set": "Alvorecer",
-    "set_tier": 3
+    "set_tier": 3,
+    "req": {
+      "int": 20
+    }
   },
   "st_4": {
     "id": "st_4",
@@ -1018,6 +1129,9 @@
     "value": 2400,
     "weapon_type": "staff",
     "set": "Lendário",
-    "set_tier": 4
+    "set_tier": 4,
+    "req": {
+      "int": 28
+    }
   }
 }

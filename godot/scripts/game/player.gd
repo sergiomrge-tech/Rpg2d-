@@ -25,8 +25,8 @@ var sonic := 0.0
 var cast_action := ""
 var special_strike := false
 var special_cd := 0.0
-var meteor_cd := 0.0
-var storm_cd := 0.0
+var skill_cd := {"r": 0.0, "f": 0.0}
+var skill_cd_max := {"r": 1.0, "f": 1.0}
 
 const WALK := 4.0 * T
 const RUN := 6.4 * T
@@ -103,8 +103,9 @@ func _physics_process(dt: float) -> void:
 	hex_slow = maxf(0.0, hex_slow - dt)
 	sonic = maxf(0.0, sonic - dt)
 	special_cd = maxf(0.0, special_cd - dt)
-	meteor_cd = maxf(0.0, meteor_cd - dt)
-	storm_cd = maxf(0.0, storm_cd - dt)
+	for k in skill_cd:
+		skill_cd[k] = maxf(0.0, float(skill_cd[k]) - dt)
+	gs.tick_buffs(dt)
 	if venom > 0.0:
 		venom = maxf(0.0, venom - dt)
 		venom_tick -= dt
@@ -117,14 +118,14 @@ func _physics_process(dt: float) -> void:
 	move_dir = _read_move()
 	var run := (not input_locked) and (Input.is_physical_key_pressed(KEY_SHIFT) or Game.touch_run)
 
-	mp = minf(gs.max_mp, mp + 1.2 * dt)
+	mp = minf(gs.max_mp, mp + gs.mp_regen() * dt)
 
 	if _pressed([KEY_J, -MOUSE_BUTTON_LEFT]): _try_attack()
 	if _pressed([KEY_K, -MOUSE_BUTTON_RIGHT]): _try_cast()
 	if _pressed([KEY_SPACE]): _try_roll()
 	if _pressed([KEY_Q]): _use_potion()
-	if _pressed([KEY_R]): _try_area("meteor")
-	if _pressed([KEY_F]): _try_area("storm")
+	if _pressed([KEY_R]): _try_skill("r")
+	if _pressed([KEY_F]): _try_skill("f")
 	if _pressed([KEY_E]): Game.interact(self)
 
 	match state:
@@ -133,7 +134,7 @@ func _physics_process(dt: float) -> void:
 				var can_run := run
 				face(Util.facing_from(move_dir, facing))
 				anim.play("run" if can_run else "walk")
-				var move_factor: float = HeroClasses.info(gs.class_id)["move"]
+				var move_factor: float = float(HeroClasses.info(gs.class_id)["move"]) * gs.move_mult()
 				velocity = move_dir * (RUN if can_run else WALK) * move_factor * (0.52 if hex_slow > 0.0 else 1.0) + knock
 				step_t -= dt * (1.5 if can_run else 1.0)
 				if step_t <= 0.0:
@@ -169,6 +170,7 @@ func _physics_process(dt: float) -> void:
 
 
 func _to_free() -> void:
+	anim.speed = 1.0
 	state = St.FREE
 	state_t = 0.0
 	anim.play("idle", true)
@@ -208,6 +210,7 @@ func _start_attack(n: int) -> void:
 	combo = n
 	state = St.ATTACK
 	state_t = 0.0
+	anim.speed = gs.attack_speed()
 	var target := Enemy.nearest(pos(), 2.6 * T)
 	if target != null and move_dir.length_squared() < 0.01:
 		face(Util.facing_from(target.pos() - pos(), facing))
@@ -238,12 +241,14 @@ func _on_anim_hit(a: String) -> void:
 			var d: Vector2 = e.pos() + Vector2.UP * 0.4 * T - c
 			if d.length() > r + 0.35 * T:
 				continue
-			var crit := randf() < float(HeroClasses.info(gs.class_id)["crit"])
+			var crit := randf() < gs.crit_chance()
 			var base_mult := 2.55 if special_strike else (1.9 if combo == 3 else (1.15 if combo == 2 else 1.0))
 			var dagger_mult := 1.23 if gs.class_id == "assassin" else 1.0
 			var dmg := gs.total_atk() * base_mult * dagger_mult * randf_range(0.9, 1.1) * (1.8 if crit else 1.0)
 			if e.hurt(roundf(dmg), pos(), 9.0 if combo == 3 else 5.0, 30.0 if combo == 3 else 12.0, crit):
 				hits += 1
+				if gs.lifesteal() > 0.0:
+					hp = minf(gs.hp_max(), hp + dmg * gs.lifesteal())
 		if hits > 0:
 			Game.hit_stop(0.09 if combo == 3 else 0.05)
 			Sfx.play("hit", 0.7, randf_range(0.92, 1.06))
@@ -271,12 +276,10 @@ func _on_anim_hit(a: String) -> void:
 				if gs.class_id == "mage":
 					Projectile.spark(origin, dir, gs.total_mag() * .74, mini(gs.spark_tier, 3), true)
 					Sfx.play("spark", .5, 1.05)
-			"meteor_rain":
-				if gs.class_id == "mage":
-					AreaSpell.meteor_rain(AreaSpell.pick_center(self, 9.0), gs.total_mag() * (1.0 + 0.2 * (gs.spark_tier - 1)), float(HeroClasses.info(gs.class_id)["crit"]))
-			"lightning_storm":
-				if gs.class_id == "mage":
-					AreaSpell.lightning_storm(AreaSpell.pick_center(self, 9.0), gs.total_mag() * (1.0 + 0.2 * (gs.spark_tier - 1)), float(HeroClasses.info(gs.class_id)["crit"]))
+			"skill_r":
+				SkillActions.cast(self, "r")
+			"skill_f":
+				SkillActions.cast(self, "f")
 			"magic_burst":
 				if gs.class_id == "mage":
 					Projectile.spark(origin, dir, gs.total_mag() * (1.55 + .24 * (gs.spark_tier - 1)), mini(gs.spark_tier + 1, 3), true)
@@ -320,17 +323,18 @@ func _begin_cast(action: String, cost: float, cooldown: float = 0.0) -> void:
 		return
 	mp -= cost
 	if cooldown > 0.0:
-		special_cd = cooldown
+		special_cd = cooldown * gs.cooldown_mult()
 	cast_action = action
 	state = St.CAST
 	state_t = 0.0
+	anim.speed = gs.attack_speed()
 	var target := Enemy.nearest(pos(), 9.0 * T)
 	if target != null and move_dir.length_squared() < .01:
 		face(Util.facing_from(target.pos() - pos(), facing))
 	elif move_dir.length_squared() > .01:
 		face(Util.facing_from(move_dir, facing))
 	anim.play("cast", true)
-	if action in ["magic_basic", "magic_burst", "paladin_heal", "pet_summon", "meteor_rain", "lightning_storm"]:
+	if action in ["magic_basic", "magic_burst", "paladin_heal", "pet_summon", "skill_r", "skill_f"]:
 		Fx.magic_circle(pos(), gs.spark_tier if gs.class_id == "mage" else 1)
 		Sfx.play("charge", .38, 1.0)
 
@@ -342,7 +346,7 @@ func _try_cast() -> void:
 		"warrior":
 			if special_cd > 0.0:
 				return
-			special_cd = 2.7
+			special_cd = 2.7 * gs.cooldown_mult()
 			special_strike = true
 			_start_attack(3)  # strong physical weapon hit; absolutely no magic
 		"mage":
@@ -354,35 +358,31 @@ func _try_cast() -> void:
 		"assassin":
 			if special_cd > 0.0:
 				return
-			special_cd = 2.3
+			special_cd = 2.3 * gs.cooldown_mult()
 			special_strike = true
 			_start_attack(3)  # dual-dagger finisher, no mana and no spell
 		"summoner":
 			_begin_cast("pet_summon", 22.0, 1.6)
 
 
-## Mage-only area spells: R = Chuva de Meteoros, F = Tempestade de Raios.
-func _try_area(which: String) -> void:
-	if gs.class_id != "mage" or state != St.FREE:
+## R / F: class active skills, unlocked in the skill tree (P).
+func _try_skill(which: String) -> void:
+	if state != St.FREE or dead:
 		return
-	if which == "meteor":
-		if meteor_cd > 0.0:
-			Fx.toast("Meteoros recarregando %.0fs" % meteor_cd, Color(1, 0.7, 0.4))
-			return
-		if mp < 38.0:
-			Fx.toast("Mana insuficiente", Color(.5, .75, 1.0))
-			return
-		meteor_cd = 11.0
-		_begin_cast("meteor_rain", 38.0)
-	else:
-		if storm_cd > 0.0:
-			Fx.toast("Tempestade recarregando %.0fs" % storm_cd, Color(0.6, 0.8, 1.0))
-			return
-		if mp < 30.0:
-			Fx.toast("Mana insuficiente", Color(.5, .75, 1.0))
-			return
-		storm_cd = 9.0
-		_begin_cast("lightning_storm", 30.0)
+	if not gs.has_unlock(which):
+		Fx.toast("Habilidade bloqueada — aprenda na árvore (P)", Color(1, 0.8, 0.5))
+		return
+	var a: Dictionary = SkillTree.ACTIVES[gs.class_id][which]
+	if float(skill_cd[which]) > 0.0:
+		Fx.toast("%s recarregando %.0fs" % [a["name"], float(skill_cd[which])], Color(1, 0.7, 0.4))
+		return
+	if mp < float(a["mp"]):
+		Fx.toast("Mana insuficiente", Color(.5, .75, 1.0))
+		return
+	var cd := float(a["cd"]) * gs.cooldown_mult()
+	skill_cd[which] = cd
+	skill_cd_max[which] = cd
+	_begin_cast("skill_" + which, float(a["mp"]))
 
 
 func _try_roll() -> void:
@@ -392,6 +392,7 @@ func _try_roll() -> void:
 		return
 	roll_dir = move_dir.normalized() if move_dir.length_squared() > 0.01 else Util.facing_vec(facing)
 	face(Util.facing_from(roll_dir, facing))
+	anim.speed = 1.0
 	state = St.ROLL
 	state_t = 0.0
 	invuln = 0.36
@@ -408,7 +409,7 @@ func _use_potion() -> void:
 	if not gs.take("potion"):
 		Fx.toast("Sem poções", Color(1, 0.5, 0.5))
 		return
-	hp = minf(gs.hp_max(), hp + maxf(float(Data.items["potion"]["heal"]), 0.35 * gs.hp_max()))
+	hp = minf(gs.hp_max(), hp + maxf(float(Data.items["potion"]["heal"]), 0.35 * gs.hp_max()) * gs.heal_mult())
 	Fx.heal(pos())
 	Sfx.play("potion", 0.5, 1.0)
 
@@ -417,7 +418,10 @@ func hurt(dmg: float, from: Vector2, knockback: float, poise_dmg: float, crit: b
 	if state == St.ROLL and invuln > 0.0:
 		Fx.toast("Esquiva!", Color(0.7, 0.95, 1.0))
 		return false
-	dmg *= float(HeroClasses.info(gs.class_id)["damage_taken"])
+	if randf() < gs.dodge_chance():
+		Fx.toast("Esquiva!", Color(0.7, 0.95, 1.0))
+		return false
+	dmg *= float(HeroClasses.info(gs.class_id)["damage_taken"]) * gs.damage_taken_mult()
 	dmg = maxf(1.0, roundf(dmg * 100.0 / (100.0 + gs.total_def() * 3.0)))
 	var ok := super.hurt(dmg, from, knockback, poise_dmg, crit)
 	if not ok:

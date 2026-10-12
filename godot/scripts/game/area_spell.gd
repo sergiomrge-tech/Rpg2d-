@@ -13,6 +13,9 @@ var _dur := 2.8
 var _next := 0.0
 var _cloud: Sprite2D
 var _sk := ""
+var _knock := 8.0
+var _poise := 50.0
+var _col := Color.WHITE
 
 
 ## Densest enemy cluster in range of the hero; falls back to a spot ahead of the hero.
@@ -50,6 +53,15 @@ static func strike(k: String, at: Vector2, damage: float) -> void:
 	s._sk = k
 
 
+## Expanding ring that damages everything around a point (class active skills).
+static func nova(at: Vector2, rad: float, damage: float, crit_chance: float, knock: float, poise: float, color: Color) -> void:
+	var s := _spawn("strike", at, damage, crit_chance, rad, 0.2)
+	s._sk = "nova"
+	s._knock = knock
+	s._poise = poise
+	s._col = color
+
+
 static func _spawn(k: String, at: Vector2, d: float, c: float, r: float, dur: float) -> AreaSpell:
 	var s := AreaSpell.new()
 	s.kind = k
@@ -82,6 +94,17 @@ func _ready() -> void:
 
 
 func _fire() -> void:
+	if _sk == "nova":
+		var ring := Ring.new()
+		ring.r_max = radius
+		ring.col = _col
+		Game.world.fx_layer.add_child(ring)
+		ring.global_position = center
+		blast(center, radius, dmg, _knock, _poise, true)
+		Fx.shockwave(center, radius / T * 0.5)
+		Sfx.play("boom", 0.5, 0.7)
+		Game.camera.shake(0.14, 0.2)
+		return
 	if _sk == "storm":
 		var b := Bolt.new()
 		b.target = center
@@ -268,3 +291,27 @@ class Bolt extends Node2D:
 		draw_polyline(_pts, Color(0.5, 0.7, 1.0, 0.45 * a), 16.0)
 		draw_polyline(_pts, Color(0.8, 0.9, 1.0, 0.8 * a), 7.0)
 		draw_polyline(_pts, Color(1, 1, 1, a), 3.0)
+
+
+class Ring extends Node2D:
+	var r_max := 200.0
+	var col := Color.WHITE
+	var t := 0.0
+
+	func _ready() -> void:
+		material = Util.additive()
+		z_index = 90
+
+	func _process(dt: float) -> void:
+		t += dt
+		queue_redraw()
+		if t > 0.55:
+			queue_free()
+
+	func _draw() -> void:
+		var u := clampf(t / 0.45, 0.0, 1.0)
+		var r := r_max * (1.0 - pow(1.0 - u, 3.0))
+		var a := 1.0 - u
+		draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(col, 0.9 * a), 10.0 * a + 2.0)
+		draw_arc(Vector2.ZERO, r * 0.82, 0.0, TAU, 64, Color(1, 1, 1, 0.5 * a), 4.0)
+		draw_circle(Vector2.ZERO, r, Color(col, 0.12 * a))

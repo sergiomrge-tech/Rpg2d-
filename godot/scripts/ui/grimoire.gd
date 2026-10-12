@@ -15,6 +15,7 @@ var hud: Hud
 var root: Control
 var page: Control
 var close_button: Button
+var skills_button: Button
 var sel := 0
 var top := 0                       # first visible bag row
 const ROWS := 7
@@ -57,6 +58,19 @@ func setup(h: Hud) -> void:
 	pressed.bg_color = Color(0.2, 0.08, 0.07)
 	close_button.add_theme_stylebox_override("pressed", pressed)
 	close_button.pressed.connect(_on_close_pressed)
+	skills_button = Button.new()
+	skills_button.text = "★ Atributos (P)"
+	skills_button.focus_mode = Control.FOCUS_NONE
+	hud.ctl(root, C, Vector2(-470, 352), Vector2(250, 52), skills_button)
+	skills_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	skills_button.process_mode = Node.PROCESS_MODE_ALWAYS
+	skills_button.add_theme_font_override("font", Util.font_bold)
+	skills_button.add_theme_font_size_override("font_size", 24)
+	skills_button.add_theme_color_override("font_color", Color(1.0, 0.93, 0.76))
+	skills_button.add_theme_stylebox_override("normal", normal)
+	skills_button.add_theme_stylebox_override("hover", hover)
+	skills_button.add_theme_stylebox_override("pressed", pressed)
+	skills_button.pressed.connect(_open_skills)
 	root.visible = false
 
 
@@ -72,6 +86,12 @@ func toggle() -> void:
 	Sfx.play("ui", 0.3, 0.8)
 	if Player.I != null:
 		Player.I.input_locked = get_tree().paused
+
+
+func _open_skills() -> void:
+	if open:
+		toggle()
+		Game.skills.toggle()
 
 
 func _on_close_pressed() -> void:
@@ -92,6 +112,10 @@ func _input(event: InputEvent) -> void:
 				return
 		if Game.ui_smoke:
 			print("[ui-smoke] book touch position=", event.position, " X rect=", close_button.get_global_rect(), " open=", open)
+		if skills_button.get_global_rect().grow(6.0).has_point(event.position):
+			_open_skills()
+			get_viewport().set_input_as_handled()
+			return
 		if close_button.get_global_rect().grow(10.0).has_point(event.position):
 			_on_close_pressed()
 			get_viewport().set_input_as_handled()
@@ -104,6 +128,10 @@ func _process(_dt: float) -> void:
 	var n := gs.inv_ids.size()
 	if Game.consume(KEY_TAB) or Game.consume(KEY_ESCAPE):
 		toggle()
+		return
+	if Game.consume(KEY_P):
+		toggle()
+		Game.skills.toggle()
 		return
 	if n > 0 and (Game.consume(KEY_S) or Game.consume(KEY_DOWN)):
 		sel = (sel + 1) % n
@@ -303,8 +331,13 @@ func _use(id: String) -> void:
 		hud.banner("Corte Crescente", "O 3º golpe lança uma lâmina de energia")
 		return
 	if int(d["slot"]) > 0:
-		if not gs.equip(id):
-			Fx.toast("Equipamento incompatível com sua classe!", Color(1.0, 0.65, 0.52))
+		var blk := ""
+		if not HeroClasses.can_equip(gs.class_id, d):
+			blk = "Equipamento incompatível com sua classe!"
+		elif gs.req_block(id) != "":
+			blk = gs.req_block(id) + " (suba atributos com P)"
+		if blk != "" or not gs.equip(id):
+			Fx.toast(blk if blk != "" else "Não foi possível equipar", Color(1.0, 0.65, 0.52))
 			return
 		Sfx.play("pickup", 0.5, 0.9)
 		p.hp = minf(p.hp, gs.hp_max())
@@ -415,7 +448,15 @@ func _refresh() -> void:
 		var rar := int(d["rarity"])
 		hud.img(page, Sheets.ui("flourish"), C, Vector2(335, -138), Vector2(380, 30))
 		var kind := "Equipamento" if int(d["slot"]) > 0 else ("Consumível" if d["consumable"] else "Material")
-		var rl := hud.txt(page, "%s · %s" % [Data.RARITY_NAMES[rar].to_upper(), kind], bold, 23, (Data.RARITY_COLORS[rar] as Color).lerp(ink, 0.35), C, Vector2(335, -166), Vector2(520, 30), M, false)
+		var req_txt := ""
+		var req_bad := false
+		if d.has("req"):
+			var parts := PackedStringArray()
+			for ra in d["req"]:
+				parts.append("%s %d" % [SkillTree.ATTR_ABBR[ra], int(d["req"][ra])])
+			req_txt = " · " + " ".join(parts)
+			req_bad = gs.req_block(gs.inv_ids[sel]) != ""
+		var rl := hud.txt(page, "%s · %s%s" % [Data.RARITY_NAMES[rar].to_upper(), kind, req_txt], bold, 23 if req_txt == "" else 20, Color(0.75, 0.2, 0.15) if req_bad else (Data.RARITY_COLORS[rar] as Color).lerp(ink, 0.35), C, Vector2(335, -166), Vector2(540, 30), M, false)
 		rl.name = "RarityLabel"
 		if int(d["slot"]) > 0:
 			# comparison with the piece currently worn in that slot (green = better, red = worse)

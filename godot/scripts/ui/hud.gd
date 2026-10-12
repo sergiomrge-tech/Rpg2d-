@@ -19,6 +19,7 @@ var hp_text: Label
 var level_text: Label
 var gold_text: Label
 var clock_label: Label
+var pts_label: Label
 var side_label: Label
 var quest_head: Label
 var quest_sub: Label
@@ -186,6 +187,7 @@ func _build() -> void:
 	gold_text = txt(root, "0", serif, 30, Color(1, 0.88, 0.45), Vector2(0, 1), Vector2(170, -52), Vector2(160, 40), HORIZONTAL_ALIGNMENT_LEFT)
 
 	clock_label = txt(root, "", sans, 22, Color(1, 0.95, 0.75), Vector2(0, 1), Vector2(170, -92), Vector2(220, 30), HORIZONTAL_ALIGNMENT_LEFT)
+	pts_label = txt(root, "", bold, 22, Color(1, 0.88, 0.35), Vector2(0, 1), Vector2(240, -128), Vector2(420, 30), HORIZONTAL_ALIGNMENT_LEFT)
 
 	# ---- quest tracker (top-right)
 	var q := ctl(root, Vector2(1, 1), Vector2(-250, -90), Vector2(460, 140))
@@ -264,7 +266,7 @@ func _build() -> void:
 		cd2.scale = Vector2.ONE * 96.0 * 0.8 / nat2.x
 		cd2.value = 0.0
 		txt(o2, "R" if j == 0 else "F", bold, 20, Color(1, 0.95, 0.8), Vector2(0.5, 0), Vector2(0, -6), Vector2(60, 24))
-		area_orbs.append({"orb": o2, "cd": cd2})
+		area_orbs.append({"orb": o2, "cd": cd2, "icon": ic2})
 	txt(root, "WASD mover · Shift correr · E falar · Tab grimório · Esc opções", sans, 20, Color(1, 1, 1, 0.7), Vector2(1, 0), Vector2(-250, 26), Vector2(520, 28))
 
 	# ---- cutscene backdrop
@@ -485,12 +487,22 @@ func _process(delta: float) -> void:
 		orb_cd[1].value = 1.0 - p.mp / 12.0 if p.mp < 12.0 else 0.0
 		# Melee and dodge have no stamina requirement; the orbs stay ready.
 		orb_cd[2].value = 0.0
-		var is_mage := p.gs.class_id == "mage"
 		for i in area_orbs.size():
-			area_orbs[i]["orb"].visible = is_mage
-			var cdv: float = p.meteor_cd if i == 0 else p.storm_cd
-			var cmax := 11.0 if i == 0 else 9.0
-			area_orbs[i]["cd"].value = clampf(cdv / cmax, 0.0, 1.0) if p.mp >= (38.0 if i == 0 else 30.0) else 1.0
+			var which := "r" if i == 0 else "f"
+			var a: Dictionary = SkillTree.ACTIVES[gs.class_id][which]
+			var unlocked := gs.has_unlock(which)
+			area_orbs[i]["orb"].visible = true
+			area_orbs[i]["orb"].modulate = Color(1, 1, 1, 1) if unlocked else Color(0.5, 0.5, 0.55, 0.65)
+			area_orbs[i]["icon"].texture = Sheets.icon(a["icon"])
+			area_orbs[i]["icon"].modulate = a["color"]
+			var cdv: float = float(p.skill_cd[which])
+			var cmax: float = maxf(0.1, float(p.skill_cd_max[which]))
+			area_orbs[i]["cd"].value = 1.0 if (not unlocked or p.mp < float(a["mp"])) else clampf(cdv / cmax, 0.0, 1.0)
+		var pts_txt := ""
+		if gs.attr_pts > 0 or gs.skill_pts > 0:
+			pts_txt = "★ P: %d atributos · %d habilidades" % [gs.attr_pts, gs.skill_pts]
+		pts_label.text = pts_txt
+		pts_label.modulate.a = 0.75 + 0.25 * sin(now * 4.0)
 		orb_cd[0].value = 0.0
 	var sl: Array = Game.side_lines()
 	side_label.text = "\n".join(sl.map(func(x): return "◇ " + str(x)))

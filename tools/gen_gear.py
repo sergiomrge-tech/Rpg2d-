@@ -32,6 +32,22 @@ for fam in ('sw', 'bw', 'dg', 'st', 'ar', 'ch'):
     for i in range(5):
         d[f'{fam}_{i}']['set'] = SETS[i]
         d[f'{fam}_{i}']['set_tier'] = i
+# attribute requirements (Força/Constituição/Agilidade/Inteligência/Mana): special gear needs trained attributes
+REQ = [0, 10, 14, 20, 28]
+for i in range(5):
+    for fam, a in (('sw', 'str'), ('dg', 'agi'), ('bw', 'agi'), ('st', 'int'), ('ar', 'con'), ('ch', 'man')):
+        v = REQ[i] if fam != 'ch' else [0, 0, 12, 18, 25][i]
+        if fam == 'ar':
+            v = [0, 9, 13, 19, 27][i]
+        if v:
+            d[f'{fam}_{i}']['req'] = {a: v}
+OLD = {'horn_blade': {'str': 8}, 'velmoor_blade': {'str': 12}, 'ember_blade': {'str': 14}, 'oni_cleaver': {'str': 20},
+       'sand_blade': {'str': 18}, 'frost_blade': {'str': 24}, 'vorath_blade': {'str': 26},
+       'iron_mail': {'con': 10}, 'elven_robe': {'int': 12}, 'dwarf_plate': {'con': 18}, 'ice_mail': {'con': 22}, 'royal_plate': {'con': 25},
+       'swamp_charm': {'man': 15}, 'lumia_pendant': {'man': 18}, 'ember_charm': {'int': 12}}
+for k, r in OLD.items():
+    if k in d:
+        d[k]['req'] = r
 # plain values for the older gear / materials so everything can be sold
 for k, it in d.items():
     it.setdefault('value', [40, 120, 320, 900, 2400][it['rarity']] if it['slot'] else 1)

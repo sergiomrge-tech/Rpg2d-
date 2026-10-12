@@ -43,7 +43,7 @@ static func rarity_for(level: int, boss: bool) -> int:
 
 static func gear_drop(level: int, boss: bool, at: Vector2, chance := -1.0) -> void:
 	if chance < 0.0:
-		chance = 1.0 if boss else 0.06 + 0.004 * level
+		chance = 1.0 if boss else (0.06 + 0.004 * level) * (1.0 + 0.02 * Game.state.attr_inv("sor"))
 	if randf() > chance:
 		return
 	var id := roll_gear(level, boss)

@@ -7,7 +7,10 @@ var class_id := "warrior"  # legacy saves default to Ren's original style
 var xp := 0
 var gold := 10
 var max_hp := 100.0
-var max_mp := 50.0
+var base_mp := 50.0
+var max_mp: float:
+	get: return base_mp + bonus("mp")
+	set(v): base_mp = v
 var max_st := 100.0
 var atk := 11.0
 var mag := 14.0
@@ -19,6 +22,11 @@ var eq_armor := ""
 var eq_charm := ""
 var inv_ids: Array = ["potion"]
 var inv_counts: Array = [2]
+var attr_pts := 0              # unspent attribute points
+var skill_pts := 0             # unspent skill-tree points
+var attrs := {}                # attribute -> points invested above the class base
+var skills: Array = []         # learned tree nodes ("branch_tier")
+var buffs := {}                # transient: name -> {"t": seconds, "eff": {...}}
 var enh := {}                  # item id -> forge level (+0..+5)
 var ng_plus := 0               # completed playthroughs (Novo Jogo+)
 
@@ -109,10 +117,147 @@ func forge(id: String) -> bool:
 	return true
 
 
-func total_atk() -> float: return atk + _gear("atk")
-func total_mag() -> float: return mag + _gear("mag")
-func total_def() -> float: return float(HeroClasses.info(class_id)["defense"]) + _gear("defense")
-func hp_max() -> float: return max_hp + _gear("hp")
+func total_atk() -> float: return (atk + _gear("atk")) * (1.0 + bonus("atk_pct") / 100.0) + bonus("atk")
+func total_mag() -> float: return (mag + _gear("mag")) * (1.0 + bonus("mag_pct") / 100.0) + bonus("mag")
+func total_def() -> float: return float(HeroClasses.info(class_id)["defense"]) + _gear("defense") + bonus("def")
+func hp_max() -> float: return max_hp + _gear("hp") + bonus("hp")
+
+
+# ---------------------------------------------------------------- attributes and skill tree
+func attr_inv(a: String) -> int:
+	return int(attrs.get(a, 0))
+
+
+func attr(a: String) -> int:
+	return int(SkillTree.base(class_id)[a]) + attr_inv(a)
+
+
+func _node_eff(sid: String) -> Dictionary:
+	var parts := sid.split("_")
+	return SkillTree.node(class_id, int(parts[0]), int(parts[1]))[1]
+
+
+## Sum of one bonus key from attributes, learned skills and active buffs.
+## Percent keys (atk_pct, crit, dodge, aspd...) are in percent points.
+func bonus(key: String) -> float:
+	var t := 0.0
+	match key:
+		"atk": t += attr_inv("str") * 1.6
+		"mag": t += attr_inv("int") * 1.6
+		"def": t += attr_inv("con") * 1.2
+		"hp": t += attr_inv("con") * 7.0
+		"mp": t += attr_inv("man") * 5.0
+		"regen": t += attr_inv("int") * 0.06
+		"dodge": t += attr_inv("agi") * 0.6
+		"aspd": t += attr_inv("agi") * 1.0
+		"mspd": t += attr_inv("agi") * 0.4
+		"crit": t += attr_inv("sor") * 0.5
+	for sid in skills:
+		var eff := _node_eff(sid)
+		if eff.has(key):
+			t += float(eff[key])
+	for b in buffs.values():
+		if b["eff"].has(key):
+			t += float(b["eff"][key])
+	return t
+
+
+func has_unlock(which: String) -> bool:
+	for sid in skills:
+		if _node_eff(sid).get("unlock", "") == which:
+			return true
+	return false
+
+
+func crit_chance() -> float: return float(HeroClasses.info(class_id)["crit"]) + bonus("crit") / 100.0
+func dodge_chance() -> float: return minf(0.35, bonus("dodge") / 100.0)
+func attack_speed() -> float: return 1.0 + minf(0.8, bonus("aspd") / 100.0)
+func move_mult() -> float: return 1.0 + minf(0.4, bonus("mspd") / 100.0)
+func mp_regen() -> float: return 1.2 + bonus("regen")
+func cooldown_mult() -> float: return 1.0 - minf(0.5, bonus("cdr") / 100.0)
+func lifesteal() -> float: return bonus("lifesteal") / 100.0
+func damage_taken_mult() -> float: return 1.0 - minf(0.6, bonus("dmg_red") / 100.0)
+func xp_mult() -> float: return 1.0 + bonus("xp_pct") / 100.0
+func heal_mult() -> float: return 1.0 + bonus("heal_pct") / 100.0
+
+
+func add_attr(a: String) -> bool:
+	if attr_pts <= 0:
+		return false
+	attr_pts -= 1
+	attrs[a] = attr_inv(a) + 1
+	return true
+
+
+func skill_known(branch: int, tier: int) -> bool:
+	return skills.has(SkillTree.node_id(branch, tier))
+
+
+## "" when the node can be learned now, otherwise the reason.
+func skill_block(branch: int, tier: int) -> String:
+	if skill_known(branch, tier):
+		return "Já aprendida"
+	if level < int(SkillTree.TIER_LEVELS[tier]):
+		return "Requer nível %d" % int(SkillTree.TIER_LEVELS[tier])
+	if tier > 0 and not skill_known(branch, tier - 1):
+		return "Aprenda a habilidade anterior"
+	if skill_pts < int(SkillTree.TIER_COST[tier]):
+		return "Faltam pontos de habilidade"
+	return ""
+
+
+func learn_skill(branch: int, tier: int) -> bool:
+	if skill_block(branch, tier) != "":
+		return false
+	skill_pts -= int(SkillTree.TIER_COST[tier])
+	skills.append(SkillTree.node_id(branch, tier))
+	return true
+
+
+func respec_cost() -> int:
+	return 100 * level
+
+
+## Refund every attribute and skill point (costs gold); gear that no longer fits is taken off.
+func respec() -> bool:
+	if gold < respec_cost():
+		return false
+	gold -= respec_cost()
+	attrs = {}
+	skills = []
+	buffs = {}
+	attr_pts = (level - 1) * SkillTree.ATTR_PER_LEVEL
+	skill_pts = level - 1
+	for slot in [1, 2, 3]:
+		var id := equipped(slot)
+		if id != "" and req_block(id) != "":
+			unequip(slot)
+	return true
+
+
+func req_of(id: String) -> Dictionary:
+	return Data.items[id].get("req", {}) if Data.items.has(id) else {}
+
+
+## "" when the hero meets the item's attribute requirements, else e.g. "Requer FOR 20, CON 14".
+func req_block(id: String) -> String:
+	var miss := PackedStringArray()
+	var r := req_of(id)
+	for a in r:
+		if attr(a) < int(r[a]):
+			miss.append("%s %d" % [SkillTree.ATTR_ABBR[a], int(r[a])])
+	return "" if miss.is_empty() else "Requer " + ", ".join(miss)
+
+
+func add_buff(name: String, secs: float, eff: Dictionary) -> void:
+	buffs[name] = {"t": secs, "eff": eff}
+
+
+func tick_buffs(dt: float) -> void:
+	for k in buffs.keys():
+		buffs[k]["t"] = float(buffs[k]["t"]) - dt
+		if float(buffs[k]["t"]) <= 0.0:
+			buffs.erase(k)
 
 
 func equipped(slot: int) -> String:
@@ -154,7 +299,7 @@ func take(id: String) -> bool:
 func equip(id: String) -> bool:
 	if not Data.items.has(id) or int(Data.items[id]["slot"]) == 0:
 		return false
-	if not HeroClasses.can_equip(class_id, Data.items[id]):
+	if not HeroClasses.can_equip(class_id, Data.items[id]) or req_block(id) != "":
 		return false
 	if not take(id):
 		return false
@@ -206,7 +351,9 @@ func gain_xp(amount: int) -> bool:
 		level += 1
 		var growth := HeroClasses.info(class_id)
 		max_hp += float(growth["hp_gain"])
-		max_mp += float(growth["mp_gain"])
+		base_mp += float(growth["mp_gain"])
+		attr_pts += SkillTree.ATTR_PER_LEVEL
+		skill_pts += 1
 		# Legacy max_st is retained solely for backwards-compatible save files.
 		atk += float(growth["atk_gain"])
 		mag += float(growth["mag_gain"])
@@ -215,9 +362,10 @@ func gain_xp(amount: int) -> bool:
 
 
 func to_dict() -> Dictionary:
-	return {"level": level, "class_id": class_id, "xp": xp, "gold": gold, "max_hp": max_hp, "max_mp": max_mp, "max_st": max_st, "atk": atk, "mag": mag,
+	return {"level": level, "class_id": class_id, "xp": xp, "gold": gold, "max_hp": max_hp, "max_mp": base_mp, "max_st": max_st, "atk": atk, "mag": mag,
 		"spark_tier": spark_tier, "sword_tier": sword_tier, "guild_rank": guild_rank, "eq_weapon": eq_weapon, "eq_armor": eq_armor,
-		"eq_charm": eq_charm, "inv_ids": inv_ids, "inv_counts": inv_counts, "enh": enh, "ng_plus": ng_plus}
+		"eq_charm": eq_charm, "inv_ids": inv_ids, "inv_counts": inv_counts, "enh": enh, "ng_plus": ng_plus,
+		"attr_pts": attr_pts, "skill_pts": skill_pts, "attrs": attrs, "skills": skills, "stats_v": 1}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -230,5 +378,15 @@ func from_dict(d: Dictionary) -> void:
 	for k in d.get("enh", {}):
 		enh[k] = int(d["enh"][k])
 	ng_plus = int(d.get("ng_plus", 0))
+	attrs = {}
+	for k in d.get("attrs", {}):
+		attrs[k] = int(d["attrs"][k])
+	skills = []
+	for k in d.get("skills", []):
+		skills.append(str(k))
+	buffs = {}
+	if not d.has("stats_v"):      # save from before attributes/skills: grant what the levels would have given
+		attr_pts = (level - 1) * SkillTree.ATTR_PER_LEVEL
+		skill_pts = level - 1
 	if not HeroClasses.valid(class_id):
 		class_id = "warrior"

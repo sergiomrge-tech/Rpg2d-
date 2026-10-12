@@ -38,6 +38,7 @@ var camera: CameraRig
 var hud: Hud
 var grimoire: Grimoire
 var shop: ShopMenu
+var skills: SkillsMenu
 var options: OptionsMenu
 var marker: ObjectiveMarker
 var main: Node2D
@@ -138,6 +139,9 @@ func start(m: Node2D) -> void:
 	shop = ShopMenu.new()
 	hud.add_child(shop)
 	shop.setup(hud)
+	skills = SkillsMenu.new()
+	hud.add_child(skills)
+	skills.setup(hud)
 	options = OptionsMenu.new()
 	hud.add_child(options)
 	options.setup(hud)
@@ -309,10 +313,12 @@ func _process(dt: float) -> void:
 		return
 	# Modal-first input: never consume Esc/Tab before the open overlay sees it.
 	# These keys used to be stolen from Grimoire/Options during pause.
-	if not in_menu and not grimoire.open and not shop.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
+	if not in_menu and not grimoire.open and not shop.open and not skills.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
 		options.toggle()
-	if not in_menu and not options.open and not grimoire.open and not shop.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
+	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
 		grimoire.toggle()
+	if not in_menu and not options.open and not grimoire.open and not shop.open and not skills.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_P):
+		skills.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
 	_update_objective()
@@ -654,7 +660,7 @@ func on_enemy_killed(e: Enemy) -> void:
 		hud.banner(str(e.def["name"]) + " foi derrotado", "Volte à Guilda")
 		save()
 	var sp := state.set_power()
-	var xp := roundi(float(e.def["xp"]) * Data.hp_scale(e.level) * (1.1 if sp == "xp" else 1.0))
+	var xp := roundi(float(e.def["xp"]) * Data.hp_scale(e.level) * (1.1 if sp == "xp" else 1.0) * state.xp_mult())
 	if sp == "heal" and not player.dead:
 		player.hp = minf(state.hp_max(), player.hp + state.hp_max() * 0.04)
 		Fx.heal(player.pos())
@@ -665,7 +671,7 @@ func on_enemy_killed(e: Enemy) -> void:
 		player.mp = state.max_mp
 		Fx.heal(player.pos())
 		Sfx.play("levelup", 0.6, 1.0)
-		hud.banner("Nível %d" % state.level, "Sua centelha arde mais forte")
+		hud.banner("Nível %d" % state.level, "+%d atributos · +1 habilidade — abra com P" % SkillTree.ATTR_PER_LEVEL)
 
 
 func _wait(sec: float) -> void:
@@ -1154,6 +1160,7 @@ func _ci_shots() -> void:
 	await _ci_life()
 	await _ci_gear()
 	await _ci_endgame()
+	await _ci_stats()
 	await _ci_insects()
 	await _ci_bosses()
 	print("[ci] done")
@@ -1350,6 +1357,7 @@ func _ci_mage() -> void:
 	_tour_to("village")
 	_travel_cd = 999.0
 	state.class_id = "mage"
+	state.skills = ["0_1", "1_1"]       # Chuva de Meteoros + Tempestade de Raios
 	state.max_mp = 999.0
 	player.mp = 999.0
 	player.anim.setup(HeroClasses.sheet_for("mage"))
@@ -1365,7 +1373,7 @@ func _ci_mage() -> void:
 	var hp0 := 0.0
 	for e in pack:
 		hp0 += e.hp
-	player._try_area("meteor")
+	player._try_skill("r")
 	await _wait(1.6)
 	await shot("50_mage_meteor_a")
 	await _wait(1.2)
@@ -1389,7 +1397,7 @@ func _ci_mage() -> void:
 	var hp2 := 0.0
 	for e in pack2:
 		hp2 += e.hp
-	player._try_area("storm")
+	player._try_skill("f")
 	await _wait(1.5)
 	await shot("52_mage_storm_a")
 	await _wait(1.0)
@@ -1480,6 +1488,7 @@ func _ci_gear() -> void:
 	for id in ["sw_0", "sw_2", "sw_4", "ar_1", "ar_3", "ch_2", "ch_4", "bw_3", "dg_1", "potion"]:
 		state.add(id, 1)
 	print("[ci] staff: mage ", HeroClasses.can_equip("mage", Data.items["st_2"]), " summoner ", HeroClasses.can_equip("summoner", Data.items["st_2"]), " warrior ", HeroClasses.can_equip("warrior", Data.items["st_2"]))
+	state.attrs = {"str": 20, "con": 20, "man": 20}      # meet the gear requirements
 	state.add("ar_2", 1)
 	state.add("ch_2", 1)
 	state.equip("sw_2")
@@ -1562,4 +1571,119 @@ func _ci_life() -> void:
 	await shot("60_valemont_noite")
 	clock = 0.0
 	await _wait(1.0)
+	player.input_locked = true
+
+
+## Attributes, skill tree, requirements and class actives (run late in the tour).
+func _ci_stats() -> void:
+	var gs := GameState.new()
+	HeroClasses.apply_new_game(gs, "warrior")
+	var atk0 := gs.total_atk()
+	gs.attr_pts = 10
+	for i in 5:
+		gs.add_attr("str")
+	for i in 3:
+		gs.add_attr("agi")
+	gs.add_attr("sor")
+	print("[ci] str+5 agi+3: atk ", atk0, " -> ", gs.total_atk(), " dodge ", gs.dodge_chance(), " aspd ", gs.attack_speed(), " crit ", gs.crit_chance())
+	var h0 := gs.hp_max()
+	var mp0 := gs.max_mp
+	gs.attr_pts = 4
+	gs.add_attr("con")
+	gs.add_attr("con")
+	gs.add_attr("man")
+	gs.add_attr("int")
+	print("[ci] con+2 man+1 int+1: hp ", h0, " -> ", gs.hp_max(), " mp ", mp0, " -> ", gs.max_mp, " regen ", gs.mp_regen())
+	# requirements
+	gs.gold = 0
+	print("[ci] req legendary sword (str 28) with str ", gs.attr("str"), ": '", gs.req_block("sw_4"), "' equip: ", gs.equip("sw_4"))
+	gs.add("sw_1", 1)
+	print("[ci] req sw_1 (str 10) ok: ", gs.req_block("sw_1") == "", " equip: ", gs.equip("sw_1"))
+	# tree
+	gs.level = 6
+	gs.skill_pts = 3
+	print("[ci] tree: tier0 ", gs.skill_block(0, 0) == "", " tier1 w/o tier0: ", gs.skill_block(0, 1), " tier3 lvl: ", gs.skill_block(0, 3))
+	gs.learn_skill(0, 0)
+	gs.learn_skill(0, 1)
+	print("[ci] learned ", gs.skills, " unlock r: ", gs.has_unlock("r"), " f: ", gs.has_unlock("f"), " pts left ", gs.skill_pts)
+	gs.gold = 5000
+	print("[ci] respec: ", gs.respec(), " attrs ", gs.attrs, " skills ", gs.skills, " attr_pts ", gs.attr_pts, " skill_pts ", gs.skill_pts)
+	# every class tree is well-formed
+	var bad := 0
+	for c in HeroClasses.CLASSES:
+		for b in 3:
+			for t in 4:
+				var n := SkillTree.node(c, b, t)
+				if SkillTree.describe(n[1]) == "" and not (n[1] as Dictionary).has("unlock"):
+					bad += 1
+		for w in ["r", "f"]:
+			var found := false
+			for b in 3:
+				for t in 4:
+					if SkillTree.node(c, b, t)[1].get("unlock", "") == w:
+						found = true
+			if not found:
+				bad += 1
+	print("[ci] trees malformed: ", bad)
+	# live hero: unlock everything, cast every class active
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	var classes := ["warrior", "paladin", "archer", "assassin", "summoner"]
+	for c in classes:
+		state.class_id = c
+		state.skills = []
+		for b in 3:
+			for t in 4:
+				state.skills.append(SkillTree.node_id(b, t))
+		state.base_mp = 999.0
+		player.mp = 999.0
+		player.anim.setup(HeroClasses.sheet_for(c))
+		player.state = Player.St.FREE
+		var pack: Array = []
+		for i in 4:
+			pack.append(Enemy.spawn("imp", player.global_position + Vector2(randf_range(-110, 110), randf_range(-90, 90)), 6))
+		await _wait(0.3)
+		player.skill_cd["r"] = 0.0
+		player.skill_cd["f"] = 0.0
+		player._try_skill("r")
+		await _wait(0.9)
+		player.skill_cd["f"] = 0.0
+		player.state = Player.St.FREE
+		var hp_before := 0.0
+		for e in pack:
+			if is_instance_valid(e):
+				hp_before += e.hp
+		player._try_skill("f")
+		await _wait(1.0)
+		var hp_after := 0.0
+		for e in pack:
+			if is_instance_valid(e) and not e.dead:
+				hp_after += e.hp
+		print("[ci] active skills ", c, ": enemy hp ", hp_before, " -> ", hp_after, " buffs ", state.buffs.keys())
+		if c == "paladin" or c == "summoner":
+			await shot("76_skill_" + c)
+		for e in pack:
+			if is_instance_valid(e):
+				e.queue_free()
+		player.state = Player.St.FREE
+		state.buffs = {}
+	# skill menu screenshots
+	state.class_id = "mage"
+	state.level = 9
+	state.attr_pts = 5
+	state.skill_pts = 2
+	state.attrs = {"int": 4, "man": 2}
+	state.skills = ["0_0", "1_0"]
+	skills.toggle()
+	skills.sel_b = 0
+	skills.sel_t = 1
+	skills._refresh()
+	await _wait(0.5)
+	await shot("77_arvore_habilidades")
+	skills.toggle()
+	state.class_id = "warrior"
+	state.skills = []
+	state.attrs = {}
 	player.input_locked = true
