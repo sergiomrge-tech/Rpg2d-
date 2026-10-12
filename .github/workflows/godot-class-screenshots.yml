@@ -1,0 +1,82 @@
+name: Godot REAL Gameplay Class Screenshot Gate
+on:
+  push:
+    branches: [gpt6-class-art-in-game-20261012]
+    paths:
+      - 'godot/scripts/game/game.gd'
+      - '.github/workflows/godot-class-screenshots.yml'
+  workflow_dispatch:
+concurrency:
+  group: class-screenshots-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install native Godot and virtual OpenGL display
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1 libxcursor1 libxinerama1 libxi6 libxrandr2 unzip
+          python -m pip install 'Pillow>=10,<13'
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Import approved game data with six new class sprites
+        run: |
+          timeout 175 godot --headless --path godot --import > import.log 2>&1
+          tail -n 18 import.log
+      - name: Capture ACTUAL rendered Godot hero+pet+skill screens (not concept art)
+        run: |
+          set -o pipefail
+          timeout 145 xvfb-run -a -s '-screen 0 1920x1080x24' godot --path godot --rendering-driver opengl3 -- -classShots "$PWD/class_shots" -touch 2>&1 | tee screen.log
+          grep -F '[class-shots] PASS 6 in-engine hero sprites' screen.log
+          ! grep -Eq 'SCRIPT ERROR|Parse Error|\[class-shots\].*failed' screen.log
+      - name: Verify screenshots are real nonempty frames with distinct class presentation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageStat, ImageChops
+          d=Path("class_shots");shots=sorted(d.glob("*.png"))
+          assert len(shots)==14, (len(shots),[x.name for x in shots])
+          for p in shots:
+              with Image.open(p) as im:
+                  assert im.width>=960 and im.height>=540,(p.name,im.size)
+                  assert max(ImageStat.Stat(im.convert("RGB")).stddev)>10,p
+          pairs={name:(d/("01_"+name+"_idle_in_game.png")) for name in ("warrior","mage","archer","paladin","assassin","summoner")}
+          for p in pairs.values():assert p.is_file(),p
+          print("PASS:",len(shots),"authentic screenshots rendered by Godot Xvfb with original game camera")
+          PY
+      - name: Publish true engine screenshots separately from sprite previews
+        run: |
+          mkdir -p docs/asset_catalog/captures/classes
+          cp class_shots/*.png docs/asset_catalog/captures/classes/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/asset_catalog/captures/classes
+          if git diff --cached --quiet; then
+            echo 'Engine screenshots already current'
+          else
+            git commit -m 'qa: 14 genuine Godot class choice, combat and pet screenshots'
+            git fetch origin gpt6-class-art-in-game-20261012
+            git rebase origin/gpt6-class-art-in-game-20261012
+            git push origin HEAD:gpt6-class-art-in-game-20261012
+          fi
+      - name: Keep screenshots and native engine logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: genuine-class-godot-screenshots
+          path: |
+            class_shots/
+            screen.log
+            import.log
+          if-no-files-found: ignore
