@@ -28,7 +28,8 @@ for expected in [
     "func _try_roll() -> void:",
     "if state == St.ATTACK and anim.normalized() < 0.5:",
     "invuln = 0.36",
-    "if mp < CAST_COST:",
+    # Costs are class-specific now; mana must still gate magical abilities.
+    "if mp < cost:",
 ]:
     assert expected in player, ("lost essential combat behaviour",expected)
 assert "arc_st_track" not in hud
