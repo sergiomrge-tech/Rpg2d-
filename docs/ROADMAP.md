@@ -76,5 +76,12 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Set A (3): térmita escavadora, vespa perfuradora e cigarra sônica — atlas, colisões/dano temporizado, status de veneno e efeito sônico.
 - ✅ Set B (4): formiga sentinela, barata pestilenta, besouro ouriço e libélula caçadora — atlas, armadura temporária, zona tóxica persistente, rolagem e disparos rápidos.
 - ✅ Testes independentes: renderização GitHub Actions; verificadores de imagens e 180 trilhas de animação; compilação Unity C# via arquivos de referência.
-- ⬜ **Cinco chefes insetoides**: modelos realmente próprios e duas habilidades animadas cada (não usar escalonamento dos demônios comuns).
+- ✅ **Cinco chefes insetoides**: rigs inéditos (não escalonados dos demônios comuns), 21 trilhas cada, duas habilidades animadas, cinco encounters opcionais, IA/skill hit frames e QA automática. ⬜ Aprovação visual e execução real Unity.
 - ⬜ Unity Editor 2022.3 LTS: inspeção de animações/qualidade, screenshot real, colisão, IA, balanceamento, FPS e build jogável. A execução automatizada ainda não substitui esse teste.
+
+## Lote 2 — chefes e combate (12/10/2026)
+- ✅ Cinco chefes insetoides com PNG/JSON HD cartoon reais, importação de altas texturas, identidade anatômica exclusiva, sete animações × três direções e duas habilidades por chefe.
+- ✅ `Enemy.cs` com 2 skills temporizadas por frames, cooldowns diferentes, defesa e movimento; `InsectBossSkills.cs` com dez habilidades jogáveis codificadas (projetéis, área, invocações, veneno, escudo e salto).
+- ✅ Bar de vida e nome de chefe adaptados no HUD existente. Nenhum sprite previamente aprovado foi alterado.
+- ✅ CI do GitHub: atlas/quadros/direções/corte aprovados e compilação C#/contrato gameplay aprovados.
+- ⬜ **Pendente:** abrir projeto no Editor Unity 2022.3 e inspecionar fidelidade visual em escala, gameplay, animações, FPS, colisões e impactos. Não afirmar que o jogo foi executado nem anunciar screenshot de engine sem arquivo gerado pela Unity.
