@@ -1,0 +1,61 @@
+name: Lote 2 pilot – playable insect enemies
+
+on:
+  push:
+    branches: [gpt6-lote2-injogo-piloto-20261012]
+    paths:
+      - 'tools/art_hd/lote2_pilot.py'
+      - 'tools/art_hd/verify_lote2_pilot.py'
+      - 'unity/Assets/Scripts/Game/Enemy.cs'
+      - 'unity/Assets/Scripts/Game/Data.cs'
+      - 'unity/Assets/Scripts/Game/InsectCombat.cs'
+      - 'unity/Assets/Resources/Maps/village.json'
+      - '.github/workflows/lote2-playable.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lote2-pilot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  make-real-sprites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install original Cairo HD asset dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libcairo2-dev pkg-config python3-dev
+          python -m pip install 'Pillow>=10,<13' numpy scipy pycairo
+      - name: Generate THREE uniquely rigged animated insectoids
+        run: python -u tools/art_hd/lote2_pilot.py
+      - name: Verify actual image frames, Unity metadata, reachable spawn and ability code
+        run: python tools/art_hd/verify_lote2_pilot.py
+      - name: Check Unity C# sources without editor license
+        run: bash tools/unity_check.sh
+      - name: Store game-ready sprites in the project branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for id in mantis_reaver scarab_brute moth_hexer; do
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.png"
+            git add "unity/Assets/Resources/Sprites/Demons/${id}.json"
+            git add "docs/asset_catalog/previews/${id}.png"
+          done
+          if git diff --cached --quiet; then
+            echo 'Sprite data unchanged'
+          else
+            git commit -m 'art: integrate animated Lote2 mantis, scarab and moth atlas files'
+            git fetch origin gpt6-lote2-injogo-piloto-20261012
+            git rebase origin/gpt6-lote2-injogo-piloto-20261012
+            git push origin HEAD:gpt6-lote2-injogo-piloto-20261012
+          fi
