@@ -1,0 +1,56 @@
+name: Godot gameplay regression - no stamina
+on:
+  push:
+    branches: [gpt6-remove-stamina-20261012]
+    paths:
+      - 'godot/scripts/game/player.gd'
+      - 'godot/scripts/game/game.gd'
+      - 'godot/scripts/game/game_state.gd'
+      - 'godot/scripts/ui/hud.gd'
+      - 'godot/scripts/ui/grimoire.gd'
+      - 'tools/test_no_stamina.py'
+      - '.github/workflows/godot-no-stamina.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  full-gameplay-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Assert stamina removed without breaking old saves
+        run: |
+          python tools/test_no_stamina.py
+          python tools/test_ui_contract.py
+      - name: Install Godot 4.3 and virtual display
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1 libxcursor1 libxinerama1 libxi6 libxrandr2 unzip
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Import project and validate GDScript
+        run: |
+          timeout 135 godot --headless --path godot --import > import.log 2>&1
+          tail -n 20 import.log
+      - name: Real Godot input + combat tests at zero legacy stamina
+        run: |
+          set -o pipefail
+          timeout 120 xvfb-run -a -s '-screen 0 1920x1080x24' godot --path godot --rendering-driver opengl3 -- -uiSmoke -touch 2>&1 | tee runtime.log
+          grep -F '[ui-smoke] PASS unlimited attack and dodge with zero legacy stamina' runtime.log
+          grep -F '[ui-smoke] PASS unlimited sprint animation at zero legacy stamina' runtime.log
+          grep -F '[ui-smoke] PASS all tests' runtime.log
+          ! grep -Eq 'SCRIPT ERROR|Parse Error|\[ui-smoke\].*failed' runtime.log
+      - name: Preserve native test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: no-stamina-regression
+          path: |
+            runtime.log
+            import.log
+          if-no-files-found: ignore
