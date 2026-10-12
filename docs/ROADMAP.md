@@ -19,8 +19,8 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - 🔄 **Texturas do HUD** (medalhão, arcos, orbes, faixa de diálogo, fitas, pílulas, vinheta) — código pronto, falta gerar `Sprites/Ui/*`
 - ⬜ Ícones de itens/habilidades (`Sprites/Ui/icons`)
 - ⬜ Retratos (herói, Elina, Borin, Marta, Lumia)
-- ⬜ Chefe do capítulo: Diabrete-Chefe Grakk
-- ⬜ Oni soldado (2º demônio)
+- 🔄 Chefe do capítulo: Diabrete-Chefe Grakk — sprite HD novo com 18 trilhas de animação e prévia gerados no catálogo; **não foi integrado ao combate** e precisa de gate visual/Unity.
+- 🔄 Oni soldado (2º demônio) — sprite HD novo com clava, armadura e 18 trilhas de animação; **não foi registrado nos spawns** e precisa de gate visual/Unity.
 - ⬜ Menus: inventário/grimório (livro aberto), forja, quadro de missões
 - ⬜ Música e ambiência por região
 
@@ -50,3 +50,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 1. Gerar texturas do HUD + ícones + retratos (`tools/art_hd/ui.py`).
 2. Assim que a licença estiver nos segredos: rodar o CI, ver screenshots e corrigir.
 3. Chefe Grakk + Oni soldado para fechar o Capítulo 1.
+
+## Catálogo expandido — Lote 1 (especificação técnica)
+- ✅ Fichas técnicas de **10 demônios + 5 chefes** em `docs/asset_catalog/LOTE1_FICHAS.md`, com 285 trilhas e 3.024 quadros **planejados**, FPS, quadro de evento, rig, região e habilidades individuais.
+- ✅ Validador estático `tools/art_hd/verify_lote1.py` compara o contrato com os JSONs reais de Oni e Grakk sem depender da licença Unity.
+- ⬜ Gerar 13 sprites restantes; produzir a segunda habilidade animada de Grakk e os VFX únicos. Nenhum novo inimigo foi registrado no combate ainda.
+- ⬜ Aprovar a fidelidade HD cartoon via capturas **reais** do Unity, depois integrar IA, spawns e chefes opcionais. Preservar os chefes narrativos oficiais definidos no GDD.

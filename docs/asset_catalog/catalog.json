@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "game": "Crônicas de Aetheria: A Centelha",
+  "engine": "Unity 2022.3 LTS",
+  "visual_contract": "Keep original Cairo HD cartoon cel shading, saturated gem glows, soft outlines, same rigs and three directional views. Never overwrite existing approved sprites.",
+  "assets": [
+    {
+      "id": "oni_soldier",
+      "name_pt": "Oni Soldado de Ferro",
+      "type": "enemy",
+      "chapter": 1,
+      "region": "Bosque dos Chifres",
+      "role": "elite_melee",
+      "tier": "rank E-D",
+      "lore": "Ex-sentinela das forjas abissais, escolta o avanço das hordas através do bosque.",
+      "silhouette": "Guerreiro chifrudo de ombreiras em ferro, armadura rúnica e clava cravejada",
+      "anim_set": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "views": [
+        "down",
+        "up",
+        "side"
+      ],
+      "sheet": "Sprites/Demons/oni_soldier",
+      "preview": "docs/asset_catalog/previews/oni_soldier.png",
+      "suggested_mechanics": [
+        "telegraphed_club_slam",
+        "poise_break",
+        "short_charge"
+      ],
+      "possible_drops": [
+        "iron_fang",
+        "demon_iron"
+      ],
+      "pipeline_status": "generated_pending_visual_gate",
+      "gameplay_status": "not_registered"
+    },
+    {
+      "id": "grakk",
+      "name_pt": "Grakk, o Diabrete-Chefe",
+      "type": "boss",
+      "chapter": 1,
+      "region": "Bosque dos Chifres",
+      "role": "chapter_boss",
+      "tier": "rank E",
+      "lore": "Líder da primeira investida demoníaca contra Aurora; ostenta uma coroa quebrada e um cristal de comando roubado.",
+      "silhouette": "Diabrete de asas violáceas, coroa irregular, ombreiras de bronze e runa azulada",
+      "anim_set": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "views": [
+        "down",
+        "up",
+        "side"
+      ],
+      "sheet": "Sprites/Demons/grakk",
+      "preview": "docs/asset_catalog/previews/grakk.png",
+      "suggested_mechanics": [
+        "telegraphed_claw_combo",
+        "soulfire_orb",
+        "enrage_phase"
+      ],
+      "possible_drops": [
+        "grakk_crest",
+        "hell_ember",
+        "spark_tome"
+      ],
+      "pipeline_status": "generated_pending_visual_gate",
+      "gameplay_status": "not_registered"
+    }
+  ]
+}

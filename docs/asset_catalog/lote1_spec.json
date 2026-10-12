@@ -1,0 +1,1590 @@
+{
+  "schema_version": 1,
+  "lot_id": "LOTE_01",
+  "game": "Crônicas de Aetheria: A Centelha",
+  "engine": "Unity 2022.3 LTS",
+  "visual_guard": "Maintain existing HD cartoon quality, coloured outlines, Cairo palettes, smooth shading, original silhouettes. Preserve previously approved sprites and environments.",
+  "naming": "SpriteAnim.Play uses directional names such as cast_down; 'cast' is skill 1, bosses need NEW skill_2 tracks; left uses mirrored _side.",
+  "note": "Production specification only. Oni and Grakk have generated six-state sheets but are not gameplay-registered; Grakk skill_2 is not generated yet. No other creatures or effects are implemented.",
+  "roster": [
+    {
+      "id": "imp_scout",
+      "display_name_pt": "Diabrete Batedor",
+      "kind": "demon",
+      "role": "recon_melee",
+      "region": "Bosque dos Chifres",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Corpo estreito, asas finas, chifres curtos, adaga curva e olhos âmbar",
+        "rig_family": "imp",
+        "frameW": 144,
+        "frameH": 144,
+        "pivotX": 72,
+        "pivotY": 16,
+        "sheet": "Sprites/Demons/imp_scout",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "circle_strafe",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 12,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 8,
+            "fps": 16,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 8,
+            "fps": 18,
+            "loop": false,
+            "event_frame": 4
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 9,
+            "fps": 17,
+            "loop": false,
+            "event_frame": 5
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 10,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Corte de adaga",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "imp_scout_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Dash lateral",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "imp_scout_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 1,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "imp_raider",
+      "display_name_pt": "Diabrete Saqueador",
+      "kind": "demon",
+      "role": "aggressive_melee",
+      "region": "Bosque dos Chifres",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Pele vinho, dentes proeminentes, sucata no ombro e faca serrilhada",
+        "rig_family": "imp",
+        "frameW": 144,
+        "frameH": 144,
+        "pivotX": 72,
+        "pivotY": 16,
+        "sheet": "Sprites/Demons/imp_raider",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "direct_chase",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 11,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 9,
+            "fps": 14,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 10,
+            "fps": 17,
+            "loop": false,
+            "event_frame": 5
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 10,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 5
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 10,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Combo serrilhado",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "imp_raider_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Investida brutal",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "imp_raider_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 3,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "imp_pyro",
+      "display_name_pt": "Diabrete Piromaníaco",
+      "kind": "demon",
+      "role": "ranged_fire",
+      "region": "Clareiras queimadas",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Pele de brasa, mãos incandescentes, membranas chamuscadas e cauda em chama",
+        "rig_family": "imp",
+        "frameW": 144,
+        "frameH": 144,
+        "pivotX": 72,
+        "pivotY": 16,
+        "sheet": "Sprites/Demons/imp_pyro",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "kite",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 12,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 8,
+            "fps": 14,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 9,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 4
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 11,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 7
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 10,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Garra flamejante",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "imp_pyro_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Bola de fogo",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "imp_pyro_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 1,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "imp_hexer",
+      "display_name_pt": "Diabrete Ocultista",
+      "kind": "demon",
+      "role": "ranged_hex",
+      "region": "Ruínas corrompidas",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Marcas arcanas violetas, bastão com cristal e halo sombrio translúcido",
+        "rig_family": "imp",
+        "frameW": 160,
+        "frameH": 160,
+        "pivotX": 80,
+        "pivotY": 18,
+        "sheet": "Sprites/Demons/imp_hexer",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "ranged_cover",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 10,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 10,
+            "fps": 13,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 9,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 4
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 12,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 7
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 11,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Toque amaldiçoado",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "imp_hexer_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Orbe de maldição que reduz velocidade",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "imp_hexer_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 2,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "imp_bomber",
+      "display_name_pt": "Diabrete Bombardeiro",
+      "kind": "demon",
+      "role": "area_denial",
+      "region": "Trilhas demoníacas",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Alforjes repletos de bombas, cintos de couro e pavios brilhantes",
+        "rig_family": "imp",
+        "frameW": 160,
+        "frameH": 160,
+        "pivotX": 80,
+        "pivotY": 18,
+        "sheet": "Sprites/Demons/imp_bomber",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "kite_cover",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 11,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 9,
+            "fps": 13,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 9,
+            "fps": 15,
+            "loop": false,
+            "event_frame": 5
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 13,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 9
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 11,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Golpe de bomba curta",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "imp_bomber_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Arremesso explosivo com área marcada",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "imp_bomber_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 3,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "imp_howler",
+      "display_name_pt": "Diabrete Uivador",
+      "kind": "demon",
+      "role": "support",
+      "region": "Bosque dos Chifres",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Garganta e peito expandidos, espinhos cervicais com runas e olhos dourados",
+        "rig_family": "imp",
+        "frameW": 160,
+        "frameH": 160,
+        "pivotX": 80,
+        "pivotY": 18,
+        "sheet": "Sprites/Demons/imp_howler",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "support_distance",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 10,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 8,
+            "fps": 12,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 9,
+            "fps": 15,
+            "loop": false,
+            "event_frame": 4
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 12,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 8
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 11,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Arranhão de defesa",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "imp_howler_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Uivo que fortalece aliados próximos",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "imp_howler_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 2,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "oni_soldier",
+      "display_name_pt": "Oni Soldado de Ferro",
+      "kind": "demon",
+      "role": "armored_melee",
+      "region": "Acampamento demoníaco",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Armadura de ferro, clava cravejada, chifres e runa no peito",
+        "rig_family": "humanoid",
+        "frameW": 192,
+        "frameH": 192,
+        "pivotX": 96,
+        "pivotY": 26,
+        "sheet": "Sprites/Demons/oni_soldier",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "slow_chase",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 10,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 10,
+            "fps": 13,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 11,
+            "fps": 17,
+            "loop": false,
+            "event_frame": 6
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 10,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 6
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 12,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Pancada de clava",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "oni_soldier_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Esmagamento com knockback",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "oni_soldier_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 1,
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "oni_lancer",
+      "display_name_pt": "Oni Lanceiro",
+      "kind": "demon",
+      "role": "spacing_elite",
+      "region": "Patrulhas demoníacas",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Lança bifurcada, armadura estreita e chifres reclinados",
+        "rig_family": "humanoid",
+        "frameW": 192,
+        "frameH": 192,
+        "pivotX": 96,
+        "pivotY": 26,
+        "sheet": "Sprites/Demons/oni_lancer",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "spacing_strafe",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 10,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 10,
+            "fps": 13,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 11,
+            "fps": 17,
+            "loop": false,
+            "event_frame": 6
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 12,
+            "fps": 15,
+            "loop": false,
+            "event_frame": 7
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 12,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Estocada longa",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "oni_lancer_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Investida perfurante com linha de aviso",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "oni_lancer_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 2,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "oni_shielder",
+      "display_name_pt": "Oni Escudeiro",
+      "kind": "demon",
+      "role": "front_guard",
+      "region": "Fortificações demoníacas",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Escudo infernal alto, chifre quebrado, elmo parcial e peito blindado",
+        "rig_family": "humanoid",
+        "frameW": 208,
+        "frameH": 192,
+        "pivotX": 104,
+        "pivotY": 26,
+        "sheet": "Sprites/Demons/oni_shielder",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "block_approach",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 9,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 10,
+            "fps": 12,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 10,
+            "fps": 15,
+            "loop": false,
+            "event_frame": 6
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 12,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 7
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 5,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 12,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Golpe de escudo",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "oni_shielder_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Escudada com postura reforçada",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "oni_shielder_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 2,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "oni_executioner",
+      "display_name_pt": "Oni Carrasco",
+      "kind": "demon",
+      "role": "heavy_elite",
+      "region": "Clareiras de execução",
+      "placement": "candidate_spawn",
+      "visual": {
+        "silhouette": "Machado colossal, máscara de ferro, chifres largos e avental de batalha",
+        "rig_family": "humanoid",
+        "frameW": 224,
+        "frameH": 224,
+        "pivotX": 112,
+        "pivotY": 30,
+        "sheet": "Sprites/Demons/oni_executioner",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "heavy_pursuit",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 8,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 10,
+            "fps": 11,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 13,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 8
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 14,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 10
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 6,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 13,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Golpe amplo de machado",
+          "animation": "attack",
+          "telegraph_s": 0.34,
+          "cooldown_s": 1.3,
+          "visual_effect_id": "oni_executioner_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Esmagamento carregado no solo",
+          "animation": "cast",
+          "telegraph_s": 0.5,
+          "cooldown_s": 4.4,
+          "visual_effect_id": "oni_executioner_skill1_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 3,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "grakk",
+      "display_name_pt": "Grakk, Diabrete-Chefe",
+      "kind": "boss",
+      "role": "chapter_1_boss",
+      "region": "Bosque dos Chifres",
+      "placement": "chapter_1_story_boss",
+      "visual": {
+        "silhouette": "Asas violáceas, coroa irregular, armadura de bronze e runa azul no peito",
+        "rig_family": "imp_boss",
+        "frameW": 192,
+        "frameH": 192,
+        "pivotX": 96,
+        "pivotY": 32,
+        "sheet": "Sprites/Demons/grakk",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "hybrid_boss",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 10,
+            "fps": 11,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 10,
+            "fps": 13,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 11,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 6
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 11,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 7
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 6,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 12,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "skill_2",
+            "frames_per_direction": 13,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 8
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Combo feroz de garras",
+          "animation": "attack",
+          "telegraph_s": 0.48,
+          "cooldown_s": 1.9,
+          "visual_effect_id": "grakk_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Orbe ígneo rúnico",
+          "animation": "cast",
+          "telegraph_s": 0.7,
+          "cooldown_s": 6,
+          "visual_effect_id": "grakk_skill1_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_2",
+          "name_pt": "Investida alada com impacto",
+          "animation": "skill_2",
+          "telegraph_s": 0.85,
+          "cooldown_s": 8.5,
+          "visual_effect_id": "grakk_skill2_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 1,
+        "art_status": "generated_pending_visual_gate",
+        "generated_tracks": [
+          "idle",
+          "move",
+          "attack",
+          "cast",
+          "hurt",
+          "death"
+        ],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "morgash_ironhorn",
+      "display_name_pt": "Morgash Chifre de Ferro",
+      "kind": "boss",
+      "role": "optional_boss",
+      "region": "Posto fortificado demoníaco",
+      "placement": "optional_not_part_of_story_boss_roster",
+      "visual": {
+        "silhouette": "Oni colossal com chifres de metal, marreta de cerco e armadura em brasa",
+        "rig_family": "humanoid_boss",
+        "frameW": 256,
+        "frameH": 256,
+        "pivotX": 128,
+        "pivotY": 34,
+        "sheet": "Sprites/Demons/morgash_ironhorn",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "heavy_boss",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 12,
+            "fps": 8,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 12,
+            "fps": 11,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 14,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 8
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 16,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 10
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 7,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 16,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "skill_2",
+            "frames_per_direction": 16,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 9
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Marretada frontal",
+          "animation": "attack",
+          "telegraph_s": 0.48,
+          "cooldown_s": 1.9,
+          "visual_effect_id": "morgash_ironhorn_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Salto com onda de impacto",
+          "animation": "cast",
+          "telegraph_s": 0.7,
+          "cooldown_s": 6,
+          "visual_effect_id": "morgash_ironhorn_skill1_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_2",
+          "name_pt": "Rugido com fortalecimento de golpes",
+          "animation": "skill_2",
+          "telegraph_s": 0.85,
+          "cooldown_s": 8.5,
+          "visual_effect_id": "morgash_ironhorn_skill2_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 2,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "velka_flamebeak",
+      "display_name_pt": "Velka Bico de Chama",
+      "kind": "boss",
+      "role": "optional_boss",
+      "region": "Penhascos corrompidos",
+      "placement": "optional_not_part_of_story_boss_roster",
+      "visual": {
+        "silhouette": "Harpia de asas largas em forma de leque, bico incandescente e penas de fogo",
+        "rig_family": "harpy_custom",
+        "frameW": 256,
+        "frameH": 224,
+        "pivotX": 128,
+        "pivotY": 32,
+        "sheet": "Sprites/Demons/velka_flamebeak",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "flight_orbit",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 12,
+            "fps": 12,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 12,
+            "fps": 15,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 14,
+            "fps": 19,
+            "loop": false,
+            "event_frame": 7
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 16,
+            "fps": 15,
+            "loop": false,
+            "event_frame": 10
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 7,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 15,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "skill_2",
+            "frames_per_direction": 15,
+            "fps": 15,
+            "loop": false,
+            "event_frame": 9
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Rasante com garras",
+          "animation": "attack",
+          "telegraph_s": 0.48,
+          "cooldown_s": 1.9,
+          "visual_effect_id": "velka_flamebeak_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Chuva de chamas com círculos de aviso",
+          "animation": "cast",
+          "telegraph_s": 0.7,
+          "cooldown_s": 6,
+          "visual_effect_id": "velka_flamebeak_skill1_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_2",
+          "name_pt": "Grito flamejante em cone",
+          "animation": "skill_2",
+          "telegraph_s": 0.85,
+          "cooldown_s": 8.5,
+          "visual_effect_id": "velka_flamebeak_skill2_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 3,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "krull_chainlord",
+      "display_name_pt": "Krull Senhor das Correntes",
+      "kind": "boss",
+      "role": "optional_boss",
+      "region": "Prisão demoníaca",
+      "placement": "optional_not_part_of_story_boss_roster",
+      "visual": {
+        "silhouette": "Correntes encantadas articuladas, máscara fraturada e brilho azul-esverdeado",
+        "rig_family": "humanoid_boss",
+        "frameW": 256,
+        "frameH": 256,
+        "pivotX": 128,
+        "pivotY": 32,
+        "sheet": "Sprites/Demons/krull_chainlord",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "control_spacing",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 12,
+            "fps": 10,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 12,
+            "fps": 12,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 14,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 8
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 15,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 9
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 6,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 15,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "skill_2",
+            "frames_per_direction": 17,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 10
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Chicote de corrente",
+          "animation": "attack",
+          "telegraph_s": 0.48,
+          "cooldown_s": 1.9,
+          "visual_effect_id": "krull_chainlord_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Laço puxador com aviso de trajetória",
+          "animation": "cast",
+          "telegraph_s": 0.7,
+          "cooldown_s": 6,
+          "visual_effect_id": "krull_chainlord_skill1_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_2",
+          "name_pt": "Giro circular de correntes",
+          "animation": "skill_2",
+          "telegraph_s": 0.85,
+          "cooldown_s": 8.5,
+          "visual_effect_id": "krull_chainlord_skill2_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 3,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    },
+    {
+      "id": "thornmaw_alpha",
+      "display_name_pt": "Alfa Espinhagorja",
+      "kind": "boss",
+      "role": "optional_boss",
+      "region": "Clareiras corrompidas",
+      "placement": "optional_not_part_of_story_boss_roster",
+      "visual": {
+        "silhouette": "Quadrúpede volumoso, espinhos dorsais, placas ósseas e mandíbula pesada",
+        "rig_family": "quadruped_custom",
+        "frameW": 288,
+        "frameH": 256,
+        "pivotX": 144,
+        "pivotY": 42,
+        "sheet": "Sprites/Demons/thornmaw_alpha",
+        "style": "approved_HD_cartoon_Cairo_cel_shading"
+      },
+      "ai_profile": "predator_ambush",
+      "animations": {
+        "directions": [
+          "down",
+          "up",
+          "side"
+        ],
+        "mirror_left_from_side": true,
+        "tracks": [
+          {
+            "id": "idle",
+            "frames_per_direction": 12,
+            "fps": 9,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "move",
+            "frames_per_direction": 12,
+            "fps": 14,
+            "loop": true,
+            "event_frame": -1
+          },
+          {
+            "id": "attack",
+            "frames_per_direction": 13,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 7
+          },
+          {
+            "id": "cast",
+            "frames_per_direction": 15,
+            "fps": 14,
+            "loop": false,
+            "event_frame": 9
+          },
+          {
+            "id": "hurt",
+            "frames_per_direction": 7,
+            "fps": 14,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "death",
+            "frames_per_direction": 17,
+            "fps": 12,
+            "loop": false,
+            "event_frame": -1
+          },
+          {
+            "id": "skill_2",
+            "frames_per_direction": 15,
+            "fps": 16,
+            "loop": false,
+            "event_frame": 10
+          }
+        ]
+      },
+      "moves": [
+        {
+          "id": "basic_attack",
+          "name_pt": "Mordida brutal",
+          "animation": "attack",
+          "telegraph_s": 0.48,
+          "cooldown_s": 1.9,
+          "visual_effect_id": "thornmaw_alpha_attack_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_1",
+          "name_pt": "Rajada de espinhos",
+          "animation": "cast",
+          "telegraph_s": 0.7,
+          "cooldown_s": 6,
+          "visual_effect_id": "thornmaw_alpha_skill1_fx",
+          "status": "design_only"
+        },
+        {
+          "id": "skill_2",
+          "name_pt": "Carga bestial em linha",
+          "animation": "skill_2",
+          "telegraph_s": 0.85,
+          "cooldown_s": 8.5,
+          "visual_effect_id": "thornmaw_alpha_skill2_fx",
+          "status": "design_only"
+        }
+      ],
+      "production": {
+        "priority": 3,
+        "art_status": "not_generated",
+        "generated_tracks": [],
+        "gameplay_registered": false,
+        "unity_visual_approved": false,
+        "skill_effects_implemented": false
+      }
+    }
+  ]
+}
