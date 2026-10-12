@@ -42,6 +42,7 @@ var marker: ObjectiveMarker
 var main: Node2D
 var map_name := "village"
 var ci_dir := ""
+var ui_smoke := false
 var touch_mode := false
 var touch_move := Vector2.ZERO
 var touch_run := false
@@ -67,6 +68,7 @@ func _ready() -> void:
 	for i in args.size() - 1:
 		if args[i] == "-ciShots":
 			ci_dir = args[i + 1]
+	ui_smoke = "-uiSmoke" in args
 	touch_mode = OS.has_feature("mobile") or "-touch" in args
 	if touch_mode:
 		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP   # keep 16:9 layout on tall/wide phones
@@ -101,7 +103,7 @@ func consume(k: int) -> bool:
 # ------------------------------------------------------------------ start
 func start(m: Node2D) -> void:
 	main = m
-	if ci_dir == "":
+	if ci_dir == "" and not ui_smoke:
 		_load()
 	world = World.load_map(map_name)
 	main.add_child(world)
@@ -137,8 +139,12 @@ func start(m: Node2D) -> void:
 		touch = TouchControls.new()
 		hud.add_child(touch)
 		touch.setup(hud)
-	Sfx.loop("ambience", 0.2)
+	# Lower environmental hiss: leave room for the new soft-flute soundtrack.
+	Sfx.loop("ambience", 0.12)
 	Music.play(map_name)
+	if ui_smoke:
+		_ui_smoke_test()
+		return
 	if ci_dir != "":
 		_ci_shots()
 		return
@@ -209,9 +215,11 @@ func _process(dt: float) -> void:
 		Engine.time_scale = want
 	if player == null:
 		return
-	if consume(KEY_ESCAPE) and not in_menu and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead:
+	# Modal-first input: never consume Esc/Tab before the open overlay sees it.
+	# These keys used to be stolen from Grimoire/Options during pause.
+	if not in_menu and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead and consume(KEY_ESCAPE):
 		options.toggle()
-	if consume(KEY_TAB) and not in_menu and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked:
+	if not in_menu and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked and consume(KEY_TAB):
 		grimoire.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
@@ -515,6 +523,89 @@ func on_player_died() -> void:
 	camera.snap()
 	world.respawn_enemies()
 	save()
+
+
+# ------------------------------------------------------------------ fast Godot native regression (no mockups)
+## Launch with -- -uiSmoke -touch. Exercises actual dialogue/UI/touch input.
+func _ui_smoke_test() -> void:
+	if touch == null:
+		push_error("[ui-smoke] touch controls missing")
+		get_tree().quit(1)
+		return
+	# Opening cutscene: nothing playable is on screen yet.
+	player.input_locked = true
+	hud.show_dialogue(Story.prologue, Callable())
+	await _wait(0.12)
+	if touch.layer.visible or touch.game_buttons.visible or touch.stick_base.visible:
+		push_error("[ui-smoke] gameplay controls visible during prologue")
+		get_tree().quit(1)
+		return
+	print("[ui-smoke] PASS controls hidden in prologue")
+	# Simulate completion without consuming the entire narrative in the test.
+	hud._finish_dialogue()
+	await _wait(0.62)  # allow the illustrated cutscene fade to finish
+	flags["prologue"] = true
+	player.input_locked = false
+	await _wait(0.09)
+	if not touch.layer.visible or not touch.game_buttons.visible or not touch.stick_base.visible:
+		push_error("[ui-smoke] controls did not appear after prologue")
+		get_tree().quit(1)
+		return
+	print("[ui-smoke] PASS controls appear when gameplay begins")
+	grimoire.toggle()
+	await _wait(0.07)
+	if not grimoire.open or not touch.menu_pad.visible or not get_tree().paused:
+		push_error("[ui-smoke] grimoire did not open with paused touch navigation")
+		get_tree().quit(1)
+		return
+	# Real Godot virtual touch on the X, without emulating a mouse click.
+	var ev := InputEventScreenTouch.new()
+	ev.index = 23
+	ev.pressed = true
+	# parse_input_event expects device/window pixels; Godot scales to the
+	# logical 1920x1080 canvas before delivering InputEventScreenTouch.
+	# Passing global_rect directly here double-scaled the synthetic tap.
+	var logical_pos := grimoire.close_button.get_global_rect().get_center()
+	ev.position = logical_pos * (Vector2(get_window().size) / Hud.SIZE)
+	print("[ui-smoke] dispatch X device touch at ", ev.position, " for canvas rect ", grimoire.close_button.get_global_rect())
+	Input.parse_input_event(ev)
+	await _wait(0.10)
+	print("[ui-smoke] after tap open=", grimoire.open, " paused=", get_tree().paused, " locked=", player.input_locked)
+	if grimoire.open or get_tree().paused or player.input_locked:
+		push_error("[ui-smoke] X tap failed to close and unpause the book")
+		get_tree().quit(1)
+		return
+	print("[ui-smoke] PASS X touchscreen closes and unpauses grimoire")
+	ev.pressed = false
+	Input.parse_input_event(ev)
+	grimoire.toggle()
+	press_key(KEY_ESCAPE)
+	await _wait(0.10)
+	if grimoire.open or get_tree().paused:
+		push_error("[ui-smoke] Escape key swallowed while book open")
+		get_tree().quit(1)
+		return
+	print("[ui-smoke] PASS Escape closes book")
+	grimoire.toggle()
+	press_key(KEY_TAB)
+	await _wait(0.10)
+	if grimoire.open or get_tree().paused:
+		push_error("[ui-smoke] Tab key swallowed while book open")
+		get_tree().quit(1)
+		return
+	print("[ui-smoke] PASS Tab closes book")
+	# Subsequent cinematic dialogues must also hide controls.
+	player.input_locked = true
+	hud.show_dialogue(Story.prologue, Callable())
+	await _wait(0.06)
+	if touch.layer.visible:
+		push_error("[ui-smoke] controls visible during later cinematic")
+		get_tree().quit(1)
+		return
+	hud._finish_dialogue()
+	print("[ui-smoke] PASS cutscenes hide controls after prologue")
+	print("[ui-smoke] PASS all tests")
+	get_tree().quit(0)
 
 
 # ------------------------------------------------------------------ save / load

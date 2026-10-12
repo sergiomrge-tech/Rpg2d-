@@ -14,6 +14,7 @@ var open := false
 var hud: Hud
 var root: Control
 var page: Control
+var close_button: Button
 var sel := 0
 
 
@@ -25,19 +26,66 @@ func setup(h: Hud) -> void:
 	var dim := hud.img(root, Util.soft_circle(), C, Vector2.ZERO, Vector2(2600, 1800))
 	dim.modulate = Color(0.02, 0.01, 0.04, 0.75)
 	hud.img(root, Sheets.ui("book"), C, Vector2.ZERO, Vector2(1400, 860))
+	# Real clickable X: the leather-book texture previously had no close control.
+	# Inherit ALWAYS processing from Hud so the button still works while paused.
+	close_button = Button.new()
+	close_button.name = "CloseGrimoire"
+	close_button.text = "X"
+	close_button.tooltip_text = "Fechar grimório (Esc ou Tab)"
+	close_button.focus_mode = Control.FOCUS_NONE
+	hud.ctl(root, C, Vector2(620, 354), Vector2(88, 88), close_button)
+	close_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	close_button.process_mode = Node.PROCESS_MODE_ALWAYS
+	close_button.add_theme_font_override("font", Util.font_serif)
+	close_button.add_theme_font_size_override("font_size", 45)
+	close_button.add_theme_color_override("font_color", Color(1.0, 0.93, 0.76))
+	close_button.add_theme_color_override("font_hover_color", Color.WHITE)
+	close_button.add_theme_color_override("font_pressed_color", Color(1.0, 0.86, 0.47))
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.32, 0.12, 0.1, 0.94)
+	normal.border_color = Color(0.87, 0.67, 0.37)
+	normal.set_border_width_all(3)
+	normal.set_corner_radius_all(22)
+	close_button.add_theme_stylebox_override("normal", normal)
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.49, 0.18, 0.12, 1.0)
+	close_button.add_theme_stylebox_override("hover", hover)
+	var pressed := normal.duplicate() as StyleBoxFlat
+	pressed.bg_color = Color(0.2, 0.08, 0.07)
+	close_button.add_theme_stylebox_override("pressed", pressed)
+	close_button.pressed.connect(_on_close_pressed)
 	root.visible = false
 
 
 func toggle() -> void:
 	open = not open
 	root.visible = open
-	get_tree().paused = open
+	# When closing, preserve any other modal/menu pause state.
+	get_tree().paused = open or Game.in_menu or (Game.options != null and Game.options.open)
 	if open:
 		sel = 0
 		_refresh()
-		Sfx.play("ui", 0.3, 0.8)
+	Sfx.play("ui", 0.3, 0.8)
 	if Player.I != null:
-		Player.I.input_locked = open
+		Player.I.input_locked = get_tree().paused
+
+
+func _on_close_pressed() -> void:
+	if open:
+		toggle()
+
+
+func _input(event: InputEvent) -> void:
+	# Android has mouse emulation disabled. Handle touch directly as well as
+	# the native Button.pressed signal used by mouse clicks.
+	if not open or close_button == null:
+		return
+	if event is InputEventScreenTouch and event.pressed:
+		if Game.ui_smoke:
+			print("[ui-smoke] book touch position=", event.position, " X rect=", close_button.get_global_rect(), " open=", open)
+		if close_button.get_global_rect().grow(10.0).has_point(event.position):
+			_on_close_pressed()
+			get_viewport().set_input_as_handled()
 
 
 func _process(_dt: float) -> void:
@@ -176,3 +224,5 @@ func _refresh() -> void:
 		var desc := hud.txt(page, str(d["desc"]) + stat, sans, 22, ink, C, Vector2(335, -292), Vector2(520, 60), M, false, VERTICAL_ALIGNMENT_TOP)
 		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hud.txt(page, "W/S escolher  ·  Enter usar  ·  Tab fechar", sans, 21, faint, C, Vector2(335, -340), Vector2(560, 30), M, false)
+	# The information page is rebuilt after item use; keep X above it.
+	root.move_child(close_button, root.get_child_count() - 1)

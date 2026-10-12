@@ -1,10 +1,10 @@
 extends Node
 ## Procedurally composed background music (no audio files). Each track is a seeded 8-bar loop
-## (pads + bass + melody + optional drums) rendered on a worker thread, then cross-faded in.
+## (soft flute melody, quiet pads + bass and thematic percussion for danger) rendered on a worker thread and cross-faded in.
 
 const RATE := 16000
 const SPECS := {
-	"village":    {"root": 293.66, "scale": [0, 2, 4, 7, 9], "bpm": 96, "prog": [[0, 2, 4], [4, 6, 8], [5, 7, 9], [3, 5, 7]], "melody": 0.55, "drums": 0, "seed": 11, "bright": 1.0},
+	"village":    {"root": 293.66, "scale": [0, 2, 4, 7, 9], "bpm": 76, "prog": [[0, 2, 4], [4, 6, 8], [5, 7, 9], [3, 5, 7]], "melody": 0.38, "drums": 0, "seed": 11, "bright": 0.7},
 	"velmoor":    {"root": 220.0, "scale": [0, 2, 3, 5, 7, 9, 10], "bpm": 70, "prog": [[0, 2, 4], [3, 5, 7], [4, 6, 8], [0, 2, 4]], "melody": 0.4, "drums": 0, "seed": 23, "bright": 0.8},
 	"valemont":   {"root": 174.61, "scale": [0, 2, 4, 5, 7, 9, 11], "bpm": 84, "prog": [[0, 2, 4], [3, 5, 7], [4, 6, 8], [0, 2, 4]], "melody": 0.5, "drums": 0, "seed": 31, "bright": 0.9},
 	"kharis":     {"root": 293.66, "scale": [0, 1, 4, 5, 7, 8, 10], "bpm": 100, "prog": [[0, 2, 4], [0, 2, 4], [1, 3, 5], [0, 2, 4]], "melody": 0.45, "drums": 1, "seed": 47, "bright": 0.9},
@@ -18,7 +18,7 @@ const SPECS := {
 }
 
 var enabled := true
-var volume := 0.3
+var volume := 0.23
 var _tracks := {}
 var _threads := {}
 var _want := ""
@@ -93,7 +93,15 @@ func _note(buf: PackedFloat32Array, start: float, dur: float, f: float, vol: flo
 		var t := float(i) / RATE
 		var env: float
 		var v: float
-		if kind == "pad":
+		if kind == "flute":
+			# Soft breathy flute: slow tongued attack, subtle vibrato and a tiny
+			# second harmonic. No pluck or synthetic percussive decay.
+			var attack := smoothstep(0.0, 0.11, t)
+			var release := 1.0 if t < dur else exp(-(t - dur) * 8.0)
+			env = attack * release
+			var ph := w * i + 0.028 * sin(TAU * 5.2 * t)
+			v = sin(ph) + 0.17 * bright * sin(ph * 2.0) + 0.035 * sin(ph * 3.0)
+		elif kind == "pad":
 			env = minf(t / 0.5, 1.0) * (1.0 if t < dur else exp(-(t - dur) * 5.0))
 			var ph := w * i
 			v = sin(ph) + 0.5 * sin(ph * 1.004) + 0.25 * sin(ph * 2.0) * bright
@@ -143,10 +151,10 @@ func _render(spec: Dictionary) -> AudioStreamWAV:
 		var chord: Array = prog[bar % prog.size()]
 		var t0 := bar * beat * 4.0
 		for c in chord:
-			_note(buf, t0, beat * 4.0, _hz(spec, int(c)), 0.16, "pad", bright)
+			_note(buf, t0, beat * 4.0, _hz(spec, int(c)), 0.10, "pad", bright)
 		var rootd := int(chord[0]) - n_sc
 		for h in 4:
-			_note(buf, t0 + h * beat, beat * 0.9, _hz(spec, rootd), 0.3, "bass", bright)
+			_note(buf, t0 + h * beat, beat * 0.9, _hz(spec, rootd), 0.18, "bass", bright)
 		var steps := 8
 		for st in steps:
 			if rng.randf() < float(spec["melody"]):
@@ -154,7 +162,9 @@ func _render(spec: Dictionary) -> AudioStreamWAV:
 				if st % 4 == 0:
 					deg = int(chord[rng.randi_range(0, 2)]) + n_sc * (1 if int(chord[0]) < n_sc else 0)
 					deg = clampi(deg, n_sc, n_sc * 2 + 3)
-				_note(buf, t0 + st * beat * 0.5, beat * 0.5, _hz(spec, deg), 0.2, "pluck", bright)
+				var lead := "pluck" if int(spec["drums"]) == 2 else "flute"
+				var duration := beat * 0.95 if lead == "flute" else beat * 0.5
+				_note(buf, t0 + st * beat * 0.5, duration, _hz(spec, deg), 0.16 if lead == "flute" else 0.2, lead, bright)
 		var dr: int = spec["drums"]
 		if dr > 0:
 			for b in 4:
