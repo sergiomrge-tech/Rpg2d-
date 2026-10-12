@@ -19,7 +19,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - 🔄 **Texturas do HUD** (medalhão, arcos, orbes, faixa de diálogo, fitas, pílulas, vinheta) — código pronto, falta gerar `Sprites/Ui/*`
 - ⬜ Ícones de itens/habilidades (`Sprites/Ui/icons`)
 - ⬜ Retratos (herói, Elina, Borin, Marta, Lumia)
-- 🔄 Chefe do capítulo: Diabrete-Chefe Grakk — sprite HD novo com 18 trilhas de animação e prévia gerados no catálogo; **não foi integrado ao combate** e precisa de gate visual/Unity.
+- 🔄 Chefe do capítulo: Diabrete-Chefe Grakk — sprite HD novo com 21 trilhas de animação e prévia gerados no catálogo; **não foi integrado ao combate** e precisa de gate visual/Unity.
 - 🔄 Oni soldado (2º demônio) — sprite HD novo com clava, armadura e 18 trilhas de animação; **não foi registrado nos spawns** e precisa de gate visual/Unity.
 - ⬜ Menus: inventário/grimório (livro aberto), forja, quadro de missões
 - ⬜ Música e ambiência por região
@@ -52,8 +52,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 3. Chefe Grakk + Oni soldado para fechar o Capítulo 1.
 
 ## Catálogo expandido — Lote 1 (especificação técnica)
-- ✅ Fichas técnicas de **10 demônios + 5 chefes** em `docs/asset_catalog/LOTE1_FICHAS.md`, com 285 trilhas e 3.024 quadros **planejados**, FPS, quadro de evento, rig, região e habilidades individuais.
-- ✅ Validador estático `tools/art_hd/verify_lote1.py` compara o contrato com os JSONs reais de Oni e Grakk sem depender da licença Unity.
+- ✅ Fichas técnicas de **10 demônios + 5 chefes** em `docs/asset_catalog/LOTE1_FICHAS.md`, com 285 trilhas e 3.024 quadros **especificados e agora renderizados**, FPS, quadro de evento, rig, região e habilidades individuais.
+- ✅ Validador estático `tools/art_hd/verify_lote1.py` compara o contrato com os JSONs reais das 15 criaturas sem depender da licença Unity.
 - ✅ 13 novas folhas de sprites produzidas (todos os 10 demônios e 5 chefes do Lote 1 possuem PNG/JSON e prévia); gerador em `tools/art_hd/build_lote1_art.py` e QA automática. **Ainda requer aprovação visual e testes reais Unity.**
-- ⬜ Renderizar `skill_2` de Grakk e criar VFX de habilidades individuais; integrar IA e spawns. Nenhum novo inimigo do Lote 1 foi registrado no combate.
+- ✅ `skill_2` de Grakk renderizada nas três direções, assim como as duas habilidades animadas dos outros quatro chefes.
+- ⬜ Criar VFX específicos das habilidades; implementar AI, hitboxes, loot e spawns. Nenhum novo inimigo do Lote 1 foi integrado ao combate.
 - ⬜ Aprovar fidelidade HD cartoon de todos os 15 via capturas **reais** do Unity, corrigir clipping/escala e só então integrar IA, spawns e chefes opcionais, preservando os chefes narrativos do GDD.
