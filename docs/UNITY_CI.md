@@ -19,3 +19,13 @@ Pronto: a cada push na pasta `unity/`, o build roda sozinho.
 
 Para jogar no seu PC: abra a pasta `unity/` no Unity Hub (Unity 2022.3 LTS), abra a cena `Assets/Scenes/Main`
 (ou qualquer cena vazia) e aperte Play. O jogo se monta sozinho via código.
+
+
+## Caminho sem instalar nada (ativação manual pelo navegador)
+1. O push de `docs/request-license.txt` roda o workflow **"Unity - pedir arquivo de ativação"** (aba *Actions*).
+2. Abra essa execução, baixe o artefato **Unity_v2022.3.45f1.alf** (seção *Artifacts*, no fim da página).
+3. Acesse https://license.unity3d.com/manual , envie o `.alf`, escolha **Unity Personal** e baixe o arquivo **.ulf**.
+4. Em *Settings → Secrets and variables → Actions* crie:
+   - `UNITY_LICENSE` = conteúdo completo do `.ulf`
+   - `UNITY_EMAIL` e `UNITY_PASSWORD` = login da sua conta Unity
+5. Um novo push em `unity/**` dispara o build + screenshots (`ci-shots`).
