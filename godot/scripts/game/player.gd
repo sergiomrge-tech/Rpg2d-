@@ -37,7 +37,7 @@ static func spawn(at: Vector2, state_: GameState) -> Player:
 	p.gs = state_
 	p.collision_layer = 2
 	p.collision_mask = 1 | 4 | 8
-	p.build("Sprites/Chars/hero", 1.25, 0.42, 0.32)
+	p.build(HeroClasses.sheet_for(state_.class_id), 1.25, 0.42, 0.32)
 	p.max_hp = state_.hp_max()
 	p.hp = p.max_hp
 	p.mp = state_.max_mp
