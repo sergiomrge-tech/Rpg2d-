@@ -55,5 +55,8 @@ jobs:
             echo 'No sprite changes'
           else
             git commit -m 'art: eight distinct anatomy silhouettes with real before-after previews'
+            # Rebase only this independent art commit if documentation was pushed during render.
+            git fetch origin gpt6-lote1-silhouettes-20261012
+            git rebase origin/gpt6-lote1-silhouettes-20261012
             git push origin HEAD:gpt6-lote1-silhouettes-20261012
           fi
