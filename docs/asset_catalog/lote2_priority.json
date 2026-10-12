@@ -1,0 +1,539 @@
+{
+  "schema_version": 1,
+  "game": "Crônicas de Aetheria — A Centelha",
+  "lot": "LOTE_02",
+  "status": "ordered_for_production_no_art_generated",
+  "style_guard": "Official existing HD cartoon Cairo shading and outlines; NEVER lower quality, pixelate, use low-poly, or replace approved graphics. Each insectoid has unique anatomy and pose cycle.",
+  "morphology_rules": {
+    "max_same_body_archetype": 1,
+    "unique_rig_per_insect": true,
+    "prohibit_weapon_only_variants": true,
+    "silhouette_blackout_review_required": true,
+    "minimum_gesture_difference_attack_and_skill": "clear independent movement, not reusing idle with tint",
+    "three_directions": [
+      "down",
+      "up",
+      "side"
+    ],
+    "left_mirrors_side": true,
+    "metadata_compatible_with": "unity/Assets/Scripts/Core/SpriteAnim.cs"
+  },
+  "stages": [
+    {
+      "id": "pilot",
+      "priority": 1,
+      "ids": [
+        "mantis_reaver",
+        "scarab_brute",
+        "moth_hexer"
+      ],
+      "gate": "approve three genuinely different silhouettes, poses, coloring and shadow depth before the rest"
+    },
+    {
+      "id": "set_a",
+      "priority": 2,
+      "ids": [
+        "termite_burrower",
+        "vespa_lancer",
+        "cicada_screecher"
+      ],
+      "gate": "new geometry per species, air/ground locomotion distinct and readable"
+    },
+    {
+      "id": "set_b",
+      "priority": 3,
+      "ids": [
+        "ant_guard",
+        "roach_plaguebearer",
+        "spike_beetle",
+        "dragonfly_skirmisher"
+      ],
+      "gate": "10/10 distinct silhouettes blacked out; no repeated anatomy"
+    },
+    {
+      "id": "boss_a",
+      "priority": 4,
+      "ids": [
+        "mantis_high_reaper",
+        "scarab_colossus",
+        "moth_oracle"
+      ],
+      "gate": "bespoke boss skeletons (not scaled normal mobs), distinct attack and two skill animations"
+    },
+    {
+      "id": "boss_b",
+      "priority": 5,
+      "ids": [
+        "queen_vespara",
+        "brood_tyrant"
+      ],
+      "gate": "signature bosses with multi-phase telegraphs and unique body plans"
+    }
+  ],
+  "artifacts": [
+    "PNG_rgba_transparency",
+    "sprite_atlas_JSON_with_hit_frames",
+    "three_direction_poses",
+    "idle_and_move",
+    "attack_and_cast",
+    "skill_2_for_bosses",
+    "hurt_and_death",
+    "real_sprite_contact_sheet",
+    "blackout_silhouette_gate",
+    "Unity_in_game_screenshot_only_after_runtime_build"
+  ],
+  "demons": [
+    {
+      "id": "mantis_reaver",
+      "name_pt": "Ceifador Mantídeo",
+      "reference_insect": "louva-deus",
+      "rig_type": "bipede_inverso_foices",
+      "silhouette_requirement": "Cabeça triangular em cunha, quatro patas posteriores angulares, dois braços-foice biomateriais sem arma externa",
+      "attack_animation": "corte_cisora",
+      "skill_1_animation": "salto_cortante",
+      "production_priority": 1,
+      "batch": "pilot",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "scarab_brute",
+      "name_pt": "Escaravelho Blindado",
+      "reference_insect": "besouro escaravelho",
+      "rig_type": "seis_patas_casco_domo",
+      "silhouette_requirement": "Domo quitinoso muito largo sobre seis pernas baixas, chifre frontal em U e ausência de mãos humanoides",
+      "attack_animation": "chifrada_pesada",
+      "skill_1_animation": "rolamento_chitinizado",
+      "production_priority": 2,
+      "batch": "pilot",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "moth_hexer",
+      "name_pt": "Mariposa Oracular",
+      "reference_insect": "mariposa",
+      "rig_type": "asas_manto_antenas_plumosas",
+      "silhouette_requirement": "Silhueta de asas enormes em manto e antenas plumosas, tronco fino sem pernas visíveis, brilho de pó noturno",
+      "attack_animation": "pancada_de_asa",
+      "skill_1_animation": "po_de_esquecimento",
+      "production_priority": 3,
+      "batch": "pilot",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "termite_burrower",
+      "name_pt": "Térmita Escavadora",
+      "reference_insect": "cupim",
+      "rig_type": "escavador_baixo_duplo_furador",
+      "silhouette_requirement": "Abdome em gota horizontal e escudos terrosos, seis patas escavadoras e mandíbulas de broca",
+      "attack_animation": "mordida_do_subsolo",
+      "skill_1_animation": "emergencia_do_solo",
+      "production_priority": 4,
+      "batch": "set_a",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "vespa_lancer",
+      "name_pt": "Vespa Perfuradora",
+      "reference_insect": "vespa",
+      "rig_type": "voo_cintura_fina_ferrao",
+      "silhouette_requirement": "Cabeça poligonal, tórax pequeno, quatro asas translúcidas, cintura finíssima, abdome pontudo e ferrão móvel",
+      "attack_animation": "estocada_de_ferrao",
+      "skill_1_animation": "mergulho_perfurante",
+      "production_priority": 5,
+      "batch": "set_a",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "cicada_screecher",
+      "name_pt": "Cigarra Estridente",
+      "reference_insect": "cigarra",
+      "rig_type": "torax_resonador_asas_vidro",
+      "silhouette_requirement": "Cabeça de olhos laterais, corpo volumoso de caixa de ressonância e asas transparentes nervuradas",
+      "attack_animation": "impacto_vibratorio",
+      "skill_1_animation": "grito_sonico_conico",
+      "production_priority": 6,
+      "batch": "set_a",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "ant_guard",
+      "name_pt": "Formiga Sentinela",
+      "reference_insect": "formiga",
+      "rig_type": "trissegmentada_seis_patas_mandibula",
+      "silhouette_requirement": "Três segmentos corporais bem destacados, mandíbulas de defesa em meia-lua e seis pernas de marcha",
+      "attack_animation": "mandibula_de_guarda",
+      "skill_1_animation": "parede_de_acido",
+      "production_priority": 7,
+      "batch": "set_b",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "roach_plaguebearer",
+      "name_pt": "Barata da Pestilência",
+      "reference_insect": "barata",
+      "rig_type": "elipse_achatada_pernas_nervosas",
+      "silhouette_requirement": "Corpo achatado e oval, duas antenas longuíssimas, seis pernas espinhosas que se movimentam por pares",
+      "attack_animation": "mordida_contaminante",
+      "skill_1_animation": "nuvem_pestilenta",
+      "production_priority": 8,
+      "batch": "set_b",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "spike_beetle",
+      "name_pt": "Besouro Ouriço",
+      "reference_insect": "tatuzinho espinhudo",
+      "rig_type": "disco_articulado_rolante",
+      "silhouette_requirement": "Armadura segmentada circular em roseta, muitas pernas curtas escondidas, espinhos radiais e rolagem total",
+      "attack_animation": "colisao_radial",
+      "skill_1_animation": "giro_de_espinhos",
+      "production_priority": 9,
+      "batch": "set_b",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "dragonfly_skirmisher",
+      "name_pt": "Libélula Caçadora",
+      "reference_insect": "libélula",
+      "rig_type": "cruz_quatro_asas_caudalongas",
+      "silhouette_requirement": "Quatro asas finas independentes em cruz, tórax pequeno, cabeça esférica larga e cauda muito longa articulada",
+      "attack_animation": "lanceta_aerea",
+      "skill_1_animation": "ziguezague_supersonico",
+      "production_priority": 10,
+      "batch": "set_b",
+      "anatomy_source": "new_independent_rig_not_recolored_imp_or_humanoid",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        192,
+        192
+      ],
+      "art_status": "not_started"
+    }
+  ],
+  "bosses": [
+    {
+      "id": "mantis_high_reaper",
+      "name_pt": "Alto Ceifador Mantídeo",
+      "rig_type": "quadrupede_erguido_quatro_foices",
+      "silhouette_requirement": "Quatro braços-facão biológicos articulados, torso torre magro, quatro pernas em compasso; não ampliar o mantídeo comum",
+      "skill_1_animation": "tempestade_de_foices",
+      "skill_2_animation": "salto_de_execucao",
+      "production_priority": 11,
+      "batch": "boss_a",
+      "anatomy_source": "new_unique_boss_rig_not_scaled_common_enemy",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        256,
+        256
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "scarab_colossus",
+      "name_pt": "Colosso do Escaravelho",
+      "rig_type": "fortaleza_oitopatas_carapaca_bipartida",
+      "silhouette_requirement": "Oito apoios grossos como pilares, carapaça dupla móvel que abre em duas metades, núcleo de cristal central; não é escaravelho bruto ampliado",
+      "skill_1_animation": "onda_de_pisoteio",
+      "skill_2_animation": "fortaleza_de_carapaca",
+      "production_priority": 12,
+      "batch": "boss_a",
+      "anatomy_source": "new_unique_boss_rig_not_scaled_common_enemy",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        256,
+        256
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "moth_oracle",
+      "name_pt": "Oráculo da Mariposa",
+      "rig_type": "mascara_ritual_anel_de_asas",
+      "silhouette_requirement": "Asas em roseta multicamada como vitral, seis olhos no padrão das asas, corpo de sacerdotisa etérea e antenas em coroa",
+      "skill_1_animation": "esporos_alucinogenos",
+      "skill_2_animation": "mandala_do_vazio",
+      "production_priority": 13,
+      "batch": "boss_a",
+      "anatomy_source": "new_unique_boss_rig_not_scaled_common_enemy",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        256,
+        256
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "queen_vespara",
+      "name_pt": "Rainha Vespara",
+      "rig_type": "rainha_quatro_asas_abdome_segmentado",
+      "silhouette_requirement": "Corpo de rainha inclinada, seis membros longos, quatro asas com nervuras, abdome em anéis maior que tórax, ferrão tridente",
+      "skill_1_animation": "enxame_perfurante",
+      "skill_2_animation": "mergulho_de_veneno",
+      "production_priority": 14,
+      "batch": "boss_b",
+      "anatomy_source": "new_unique_boss_rig_not_scaled_common_enemy",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        256,
+        256
+      ],
+      "art_status": "not_started"
+    },
+    {
+      "id": "brood_tyrant",
+      "name_pt": "Tirano da Ninhada",
+      "rig_type": "colmeia_asimetrica_dez_membros",
+      "silhouette_requirement": "Colmeia móvel assimétrica, dez patas de tamanhos diferentes, sacos de ovos semitranslúcidos e dois conjuntos de mandíbulas",
+      "skill_1_animation": "evocar_prole",
+      "skill_2_animation": "ruptura_da_ninhada",
+      "production_priority": 15,
+      "batch": "boss_b",
+      "anatomy_source": "new_unique_boss_rig_not_scaled_common_enemy",
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directions": [
+        "down",
+        "up",
+        "side"
+      ],
+      "frame_pixels": [
+        256,
+        256
+      ],
+      "art_status": "not_started"
+    }
+  ]
+}
