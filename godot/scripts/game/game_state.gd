@@ -3,6 +3,7 @@ extends RefCounted
 ## Persistent player progress (serialised to the save file).
 
 var level := 1
+var class_id := "warrior"  # legacy saves default to Ren's original style
 var xp := 0
 var gold := 10
 var max_hp := 100.0
@@ -107,23 +108,27 @@ func gain_xp(amount: int) -> bool:
 	while xp >= Data.xp_to_next(level):
 		xp -= Data.xp_to_next(level)
 		level += 1
-		max_hp += 14.0
-		max_mp += 6.0
-		# Legacy max_st is retained in save files for backwards compatibility,
-		# but no longer increases or affects movement, attacks or dodge.
-		atk += 2.2
-		mag += 2.6
+		var growth := HeroClasses.info(class_id)
+		max_hp += float(growth["hp_gain"])
+		max_mp += float(growth["mp_gain"])
+		# Legacy max_st is retained solely for backwards-compatible save files.
+		atk += float(growth["atk_gain"])
+		mag += float(growth["mag_gain"])
 		up = true
 	return up
 
 
 func to_dict() -> Dictionary:
-	return {"level": level, "xp": xp, "gold": gold, "max_hp": max_hp, "max_mp": max_mp, "max_st": max_st, "atk": atk, "mag": mag,
+	return {"level": level, "class_id": class_id, "xp": xp, "gold": gold, "max_hp": max_hp, "max_mp": max_mp, "max_st": max_st, "atk": atk, "mag": mag,
 		"spark_tier": spark_tier, "sword_tier": sword_tier, "guild_rank": guild_rank, "eq_weapon": eq_weapon, "eq_armor": eq_armor,
 		"eq_charm": eq_charm, "inv_ids": inv_ids, "inv_counts": inv_counts}
 
 
 func from_dict(d: Dictionary) -> void:
+	# Old saves have no class_id. They continue as the original Warrior.
+	class_id = "warrior"
 	for k in d:
 		if k in self:
 			set(k, d[k])
+	if not HeroClasses.valid(class_id):
+		class_id = "warrior"
