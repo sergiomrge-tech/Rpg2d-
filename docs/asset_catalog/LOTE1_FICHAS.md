@@ -4,7 +4,7 @@
 
 Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este documento cobre **10 demônios e 5 chefes**, em Unity 2022.3 LTS. A estética oficial **HD cartoon** é obrigatória: as mesmas técnicas de sombreamento Cairo, contornos coloridos, proporções e nível de detalhe. **Não substituir nenhum sprite aprovado.**
 
-**Status real:** os **15 inimigos/chefes** agora possuem folhas PNG, JSON de animação e pranchas de prévia extraídas dos quadros reais. A segunda habilidade de Grakk permanece planejada (não renderizada). VFX individuais, IA, spawn, habilidades de gameplay, aprovação visual e runtime Unity continuam pendentes.
+**Status real:** os **15 inimigos/chefes** agora possuem folhas PNG, JSON de animação e pranchas de prévia extraídas dos quadros reais. A segunda habilidade de Grakk também foi renderizada nas três direções. VFX individuais, IA, spawn, habilidades de gameplay, aprovação visual e runtime Unity continuam pendentes.
 
 ## Contrato de animação
 
@@ -90,7 +90,7 @@ Primeira etapa do repertório maior de **30 demônios + 20 chefes**. Este docume
 **Movimentação:** `slow_chase`; três ângulos, espelhamento lateral. **Quadro:** 192×192; pivô (96, 26).
 **Animações por direção:** `idle` 10q/10FPS · `move` 10q/13FPS · `attack` 11q/17FPS [evento 6] · `cast` 10q/14FPS [evento 6] · `hurt` 5q/14FPS · `death` 12q/12FPS.
 **Ataques e habilidades:** Pancada de clava (`attack`, aviso 0.34s, recarga 1.3s, FX previsto `oni_soldier_attack_fx`); Esmagamento com knockback (`cast`, aviso 0.5s, recarga 4.4s, FX previsto `oni_soldier_skill1_fx`).
-**Situação:** sprites dos seis estados-base gerados; aguardando aprovação da qualidade em execução real (Grakk ainda precisa de skill_2).
+**Situação:** sprites dos seis estados-base gerados; aguardando aprovação da qualidade em execução real (Grakk também possui skill_2 renderizada).
 
 ### Oni Lanceiro — `oni_lancer`
 **Função:** spacing_elite · **Região candidata:** Patrulhas demoníacas · **Rig:** humanoid.
