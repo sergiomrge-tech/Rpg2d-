@@ -23,6 +23,7 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e carregad
 | Falar | E |
 | Grimório (bolsa, magias) | Tab |
 | Salvar | F5 |
+| Bestiário (gera o próximo demônio para testar) | F9 |
 
 ## Estrutura
 ```

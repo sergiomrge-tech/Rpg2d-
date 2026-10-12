@@ -205,6 +205,8 @@ def village():
         m.spawns.append(dict(kind='imp', x=x * T, y=y * T, level=1 + (i % 3)))
     for i, (x, y) in enumerate([(33, 47), (18, 44), (38, 51)]):
         m.spawns.append(dict(kind='oni', x=x * T, y=y * T, level=2 + i % 2))
+    for k, x, y, lv in [('imp_scout', 14, 38, 2), ('imp_raider', 30, 40, 2), ('imp_pyro', 8, 48, 2), ('imp_hexer', 36, 44, 3), ('imp_bomber', 25, 46, 2), ('imp_howler', 42, 46, 3), ('oni_lancer', 16, 52, 3), ('oni_shielder', 31, 52, 3), ('oni_executioner', 44, 52, 4)]:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
     m.spawns.append(dict(kind='grakk', x=22 * T, y=51.5 * T, level=4))
     m.exits = [dict(to='forest', x=27 * T, y=53.5 * T, w=3 * T, h=T)]
     return m

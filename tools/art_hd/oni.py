@@ -51,3 +51,151 @@ def oni_look(boss=False):
         weapon=club,
         hat=horns,
     )
+
+
+# ---------------------------------------------------------------- Lote 1 variants
+GOLD = Pal('#f0c860', '#b8862c', '#fff2b0', '#4a300c')
+STEEL = Pal('#c8d0e0', '#8a94ac', '#ffffff', '#1e2434')
+SHAFT = Pal('#6a4030', '#4a2a1e', '#8a5a40', '#1e0c06')
+
+
+def _xf(ctx, hand, ang, scale):
+    ctx.save()
+    ctx.translate(*hand)
+    ctx.rotate(math.radians(-ang))
+    ctx.scale(1, scale)
+
+
+def spear(ctx, L, hand, ang, scale=1.0):
+    _xf(ctx, hand, ang, scale)
+    paint(ctx, lambda c: capsule(c, (0, -22), (0, 40), 1.8), SHAFT, sh=0.8, hl=0.4, line=0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-4, 38), (0, 56), (4, 38), (0, 34)], tension=0.3), STEEL, sh=1.5, hl=1, line=0.9)
+    paint(ctx, lambda c: smooth_poly(c, [(-4, 32), (4, 32), (3, 36), (-3, 36)], tension=0.1), GOLD, sh=0.6, hl=0.4, line=0.7)
+    ctx.restore()
+
+
+def axe(ctx, L, hand, ang, scale=1.0):
+    _xf(ctx, hand, ang, scale)
+    paint(ctx, lambda c: capsule(c, (0, -8), (0, 38), 2.2), SHAFT, sh=0.8, hl=0.4, line=0.8)
+
+    def blade(c):
+        c.move_to(1, 22)
+        c.curve_to(14, 16, 22, 26, 20, 42)
+        c.curve_to(14, 38, 8, 38, 1, 40)
+        c.close_path()
+    paint(ctx, blade, STEEL, sh=2.5, hl=1.5, line=1.0)
+    stroke(ctx, lambda c: (c.move_to(19, 26), c.curve_to(21, 32, 21, 36, 20, 41)), (1, 1, 1, 1), 1.2, 0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-2, 34), (-7, 30), (-2, 26)], tension=0.1), STEEL, sh=0.8, hl=0.5, line=0.8)
+    ctx.restore()
+
+
+def hammer(ctx, L, hand, ang, scale=1.0):
+    _xf(ctx, hand, ang, scale)
+    paint(ctx, lambda c: capsule(c, (0, -6), (0, 30), 2.4), SHAFT, sh=0.8, hl=0.4, line=0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-13, 26), (13, 26), (14, 44), (-14, 44)], tension=0.12), IRON, sh=3, hl=1.5, line=1.1)
+    for x in (-8, 0, 8):
+        paint(ctx, lambda c, x=x: ellipse(c, x, 35, 2.2, 2.2), GOLD, sh=0.6, hl=0.4, line=0.6)
+    ctx.restore()
+
+
+def flail(ctx, L, hand, ang, scale=1.0):
+    _xf(ctx, hand, ang, scale)
+    paint(ctx, lambda c: capsule(c, (0, -4), (0, 12), 2.2), SHAFT, sh=0.8, hl=0.4, line=0.8)
+    ctx.restore()
+    # chain hangs with gravity, ball lags behind the swing
+    r = math.radians(ang)
+    tip = (hand[0] + math.sin(r) * 12, hand[1] + math.cos(r) * 12)
+    ball = (tip[0] + math.sin(r) * 16, tip[1] + math.cos(r) * 16 + 8)
+    for i in range(1, 6):
+        u = i / 6
+        p = (tip[0] + (ball[0] - tip[0]) * u, tip[1] + (ball[1] - tip[1]) * u + math.sin(u * math.pi) * 3)
+        paint(ctx, lambda c, p=p: ellipse(c, p[0], p[1], 1.8, 1.8), STEEL, sh=0.4, hl=0.3, line=0.6)
+    for k in range(8):
+        a = k / 8 * math.tau
+        paint(ctx, lambda c, a=a: smooth_poly(c, [(ball[0] + math.cos(a - 0.3) * 6, ball[1] + math.sin(a - 0.3) * 6),
+                                                  (ball[0] + math.cos(a) * 11, ball[1] + math.sin(a) * 11),
+                                                  (ball[0] + math.cos(a + 0.3) * 6, ball[1] + math.sin(a + 0.3) * 6)], tension=0),
+              STEEL, sh=0, hl=0, line=0.6)
+    paint(ctx, lambda c: ellipse(c, ball[0], ball[1], 7.5, 7.5), IRON, sh=2, hl=1.2, line=0.9)
+
+
+def shield_mace(ctx, L, hand, ang, scale=1.0):
+    # tower shield carried in front of the weapon hand, angled with the swing
+    ctx.save()
+    ctx.translate(*hand)
+    ctx.rotate(math.radians(-ang * 0.25))
+    paint(ctx, lambda c: smooth_poly(c, [(-13, -16), (13, -16), (14, 8), (0, 22), (-14, 8)], tension=0.3), IRON, sh=3, hl=1.5, line=1.1)
+    paint(ctx, lambda c: smooth_poly(c, [(-9, -11), (9, -11), (10, 6), (0, 16), (-10, 6)], tension=0.3),
+          Pal('#8a2a2a', '#5a1616', '#b84a4a', '#2a0606'), sh=2, hl=1, line=0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(0, -6), (6, 2), (0, 10), (-6, 2)], tension=0.1), GOLD, sh=1, hl=0.8, line=0.8)
+    ctx.restore()
+
+
+class make_horns:
+    """Picklable horn/helmet drawer (Look.hat)."""
+
+    def __init__(self, size=1.0, count=2, curve=0.0, pal=HORN, helmet=None):
+        self.size, self.count, self.curve, self.pal, self.helmet = size, count, curve, pal, helmet
+
+    def __call__(self, ctx, view):
+        size, count, curve, pal, helmet = self.size, self.count, self.curve, self.pal, self.helmet
+        if helmet is not None:
+            if view == 'side':
+                paint(ctx, lambda c: smooth_poly(c, [(-20, -2), (-18, -18), (0, -24), (16, -16), (18, -4), (6, -6), (-6, -4)],
+                                                 tension=0.4), helmet, sh=2.5, hl=1.5, line=1.0)
+            else:
+                paint(ctx, lambda c: smooth_poly(c, [(-21, -2), (-19, -18), (0, -25), (19, -18), (21, -2), (10, -5), (-10, -5)],
+                                                 tension=0.4), helmet, sh=2.5, hl=1.5, line=1.0)
+                if view == 'down':
+                    stroke(ctx, lambda c: (c.move_to(0, -24), c.line_to(0, -6)), helmet.light, 1.4, 0.8)
+        sides = (-1, 1) if (view != 'side' and count == 2) else ((0,) if count == 1 else (1,))
+        for sx in sides:
+            if view == 'side':
+                b = (-2, -14)
+                d = 1
+            else:
+                b = (sx * 8, -14) if sx else (0, -18)
+                d = sx if sx else 1
+            l = 22 * size
+            tip = (b[0] + d * (8 + curve * 10) * size, b[1] - l)
+            mid = (b[0] + d * (16 * curve + 4) * size, b[1] - l * 0.55)
+            paint(ctx, lambda c, b=b, tip=tip, mid=mid, d=d: smooth_poly(
+                c, [(b[0] - 3.5 * size, b[1] + 1), mid, tip, (mid[0] + d * 3, mid[1] + 3), (b[0] + 4 * size, b[1] + 1)], tension=0.4),
+                pal, sh=1.5, hl=1, line=1.0)
+
+
+def oni_variant(kind):
+    L = oni_look()
+    if kind == 'oni_lancer':
+        L.skin = Pal('#3a8a8a', '#266666', '#6ab8b0', '#0a2424')
+        L.shirt = L.glove = L.skin
+        L.tunic = Pal('#2a3a4a', '#1a2634', '#46586a', '#08101a')
+        L.weapon = spear
+        L.hat = make_horns(0.8, 2, 0.6)
+    elif kind == 'oni_shielder':
+        L.skin = Pal('#7a6a8a', '#5a4a6a', '#a090b0', '#1a1424')
+        L.shirt = L.glove = L.skin
+        L.tunic = IRON
+        L.weapon = shield_mace
+        L.hat = make_horns(0.9, 2, 0.0, helmet=IRON)
+    elif kind == 'oni_executioner':
+        L.skin = Pal('#3a2a3a', '#241824', '#5a465a', '#0a060a')
+        L.shirt = L.glove = L.skin
+        L.tunic = Pal('#2a1a1a', '#180c0c', '#4a2e2e', '#060202')
+        L.eye = hx('#ff4a3a')
+        L.weapon = axe
+        L.hat = make_horns(1.25, 1, 0.3)
+    elif kind == 'morgash_ironhorn':
+        L.skin = Pal('#8a4a6a', '#6a2e4c', '#b87a98', '#24081a')
+        L.shirt = L.glove = L.skin
+        L.tunic = Pal('#4a3a3a', '#2e2222', '#6a5656', '#100808')
+        L.weapon = hammer
+        L.hat = make_horns(1.5, 2, 1.0, pal=GOLD)
+    elif kind == 'krull_chainlord':
+        L.skin = Pal('#4a5a7a', '#34405a', '#72829e', '#0c1220')
+        L.shirt = L.glove = L.skin
+        L.tunic = IRON
+        L.eye = hx('#7ae8ff')
+        L.weapon = flail
+        L.hat = make_horns(1.0, 2, 0.4, helmet=STEEL)
+    return L

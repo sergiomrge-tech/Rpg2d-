@@ -42,6 +42,12 @@ class Imp:
     horn = Pal('#f2e2c0', '#c9ab84', '#ffffff', '#5b4127')
     claw = Pal('#2e1a2e', '#1a0d1a', '#5a3c5a', '#0c040c')
     eye = hx('#ffd23f')
+    wing_span = 1.0          # 0 = wingless
+    hover = 46
+    fire = ('#ffd25a', '#ff8a2a', '#fff6c8', '#b23a10')
+    fire_glow = '#ff8a2a'
+    body_scale = 1.0         # chunkier body/head
+    FW, FH, OX, OY = 144, 144, 72, 128
     ANIMS = {
         'idle': (10, 12, True, -1),
         'move': (8, 14, True, -1),
@@ -264,15 +270,17 @@ class Imp:
         if P['alpha'] < 1:
             ctx.push_group()
         ctx.save()
-        ctx.translate(P['x'], P['y'] - 46)
+        ctx.translate(P['x'], P['y'] - self.hover)
         ctx.rotate(math.radians(P['rot'] + P['lean']))
         ctx.scale(1 / math.sqrt(P['sq']), P['sq'])
+        ctx.scale(self.body_scale, self.body_scale)
         flap = P['flap']
+        self.extra_back(ctx, view, P)
         hc = (0, -16)
         body_c = (0, 2)
         sk = self.skin
         if view == 'side':
-            self.draw_wing(ctx, (-3, -4), -1, flap, far=True, span=0.95)
+            self.wing_span and self.draw_wing(ctx, (-3, -4), -1, flap, far=True, span=0.95 * self.wing_span)
             self.draw_tail(ctx, (-6, 10), -1, P['tail'])
             self.draw_arm(ctx, (-2, -3), P['arm_a'], 1, far=True)
             # legs
@@ -288,9 +296,10 @@ class Imp:
             paint(ctx, body, sk, sh=2.0, hl=1.0)
             paint(ctx, lambda c: smooth_poly(c, [(1, -4), (6, -2), (6, 8), (1, 12), (-2, 6)], tension=0.5), self.belly,
                   sh=1.0, hl=0.5, line=0)
-            self.draw_wing(ctx, (-5, -2), -1, flap * 0.9 + 0.1, span=0.9)
+            self.wing_span and self.draw_wing(ctx, (-5, -2), -1, flap * 0.9 + 0.1, span=0.9 * self.wing_span)
             self.draw_head(ctx, view, P, (2, -16))
             hd = self.draw_arm(ctx, (2, -2), P['arm_b'], 1)
+            self.extra_front(ctx, view, P, hd, (2, -16))
             if P['glow'] > 0.02:
                 self.fireball(ctx, add(hd, (6, -2)), P['glow'])
         else:
@@ -298,7 +307,7 @@ class Imp:
             if not back:
                 self.draw_tail(ctx, (3, 10), 1, P['tail'])
                 for sx in (-1, 1):
-                    self.draw_wing(ctx, (sx * 5, -4), sx, flap)
+                    self.wing_span and self.draw_wing(ctx, (sx * 5, -4), sx, flap, span=self.wing_span)
             # legs
             for sx in (-1, 1):
                 a = sx * (12 + 10 * math.sin(P['legs'] + sx))
@@ -320,10 +329,11 @@ class Imp:
                     a1, a2 = -a1, -a2
                 arms.append(self.draw_arm(ctx, (sx * 8, -4), (a1, a2), sx))
             self.draw_head(ctx, view, P, hc)
+            self.extra_front(ctx, view, P, arms[1], hc)
             if back:
                 self.draw_tail(ctx, (-2, 10), -1, P['tail'])
                 for sx in (-1, 1):
-                    self.draw_wing(ctx, (sx * 5, -4), sx, flap)
+                    self.wing_span and self.draw_wing(ctx, (sx * 5, -4), sx, flap, span=self.wing_span)
             if P['glow'] > 0.02 and not back:
                 mid = ((arms[0][0] + arms[1][0]) / 2, (arms[0][1] + arms[1][1]) / 2 + 3)
                 self.fireball(ctx, mid, P['glow'])
@@ -332,10 +342,15 @@ class Imp:
             ctx.pop_group_to_source()
             ctx.paint_with_alpha(P['alpha'])
 
+    def extra_back(self, ctx, view, P):
+        pass
+
+    def extra_front(self, ctx, view, P, hand, hc):
+        pass
+
     def fireball(self, ctx, p, g):
-        radial_glow(ctx, p[0], p[1], 14 * g + 4, hx('#ff8a2a'), 0.7 * g)
-        paint(ctx, lambda c: ellipse(c, p[0], p[1], 4.5 * g + 1, 4.5 * g + 1), Pal('#ffd25a', '#ff8a2a', '#fff6c8',
-                                                                                   '#b23a10'), sh=1.2, hl=1.0, line=0.6)
+        radial_glow(ctx, p[0], p[1], 14 * g + 4, hx(self.fire_glow), 0.7 * g)
+        paint(ctx, lambda c: ellipse(c, p[0], p[1], 4.5 * g + 1, 4.5 * g + 1), Pal(*self.fire), sh=1.2, hl=1.0, line=0.6)
 
 
 class Grakk(Imp):
@@ -350,3 +365,8 @@ class Grakk(Imp):
 
 
 DEMONS = [Imp(), Grakk()]
+
+
+def _late():
+    from demons_lote1 import LOTE1_IMPS
+    DEMONS.extend(LOTE1_IMPS)

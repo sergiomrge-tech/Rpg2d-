@@ -22,6 +22,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Chefe do capítulo: Grakk, Chefe dos Diabretes (leque de 3 bolas de fogo, banner de chefe, drop garantido do Tomo)
 - ✅ Oni Soldado (clava com espinhos, golpe pesado, alta postura)
 - ✅ Missão em cadeia: 5 diabretes → Grakk → Rank E
+- ✅ Lote 1 refeito no rig animado (conceitos do catálogo GPT): 6 diabretes (batedor, saqueador, piromante, feiticeiro,
+  bombardeiro, uivador), 3 onis (lanceiro, escudeiro, carrasco) e 4 chefes futuros (Morgash, Velka, Krull, Thornmaw)
+- ✅ Assets do GPT importados como entregues (`Sprites/DemonsGpt`, resolução reduzida à metade) — Bestiário **F9**
 - ✅ Grimório em livro aberto (Tab): atributos, magias, bolsa; usar poções/éter/Tomo (evolui a Centelha)
 - ✅ Forja do Borin: 5 Chifres + 80 ouro → Lâmina de Chifre (+6 ATQ)
 - ⬜ Quadro de missões interativo, lojas

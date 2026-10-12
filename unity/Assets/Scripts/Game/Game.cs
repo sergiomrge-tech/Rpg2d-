@@ -75,7 +75,21 @@ namespace Aetheria
             }
             if (Input.GetKeyDown(KeyCode.Tab) && Grimoire.I != null && !Grimoire.I.open && !hud.InDialogue && player != null && !player.dead && !player.inputLocked)
                 Grimoire.I.Toggle();
+            if (Input.GetKeyDown(KeyCode.F9) && player != null && !player.dead) SpawnBestiary();
             if (Input.GetKeyDown(KeyCode.F5)) { Save(); Fx.Toast("Jogo salvo", Color.white); }
+        }
+
+        // Bestiary: F9 spawns the next demon (ours + the GPT-delivered assets) next to the hero for review.
+        List<string> bestiary;
+        int bestiaryIdx;
+
+        void SpawnBestiary()
+        {
+            if (bestiary == null) { bestiary = new List<string>(Data.Demons.Keys); bestiary.Sort(); }
+            var id = bestiary[bestiaryIdx % bestiary.Count];
+            bestiaryIdx++;
+            var e = Enemy.Spawn(id, player.Pos + Util.FacingVec(player.facing) * 3.5f, Mathf.Max(1, state.level));
+            Fx.Toast($"Bestiário {bestiaryIdx}/{bestiary.Count}: {e.def.name}", new Color(1f, 0.9f, 0.6f), e.Pos + Vector2.up * 2.8f);
         }
 
         public static void HitStop(float t)

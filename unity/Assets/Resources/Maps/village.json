@@ -2188,6 +2188,60 @@
 "x": 1408,
 "y": 3296.0,
 "level": 4
+},
+{
+"kind": "imp_scout",
+"x": 896,
+"y": 2432,
+"level": 2
+},
+{
+"kind": "imp_raider",
+"x": 1920,
+"y": 2560,
+"level": 2
+},
+{
+"kind": "imp_pyro",
+"x": 512,
+"y": 3072,
+"level": 2
+},
+{
+"kind": "imp_hexer",
+"x": 2304,
+"y": 2816,
+"level": 3
+},
+{
+"kind": "imp_bomber",
+"x": 1600,
+"y": 2944,
+"level": 2
+},
+{
+"kind": "imp_howler",
+"x": 2688,
+"y": 2944,
+"level": 3
+},
+{
+"kind": "oni_lancer",
+"x": 1024,
+"y": 3328,
+"level": 3
+},
+{
+"kind": "oni_shielder",
+"x": 1984,
+"y": 3328,
+"level": 3
+},
+{
+"kind": "oni_executioner",
+"x": 2816,
+"y": 3328,
+"level": 4
 }
 ],
 "npcs": [
