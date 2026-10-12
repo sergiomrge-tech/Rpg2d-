@@ -563,8 +563,10 @@ func _ui_smoke_test() -> void:
 	ev.index = 23
 	ev.pressed = true
 	ev.position = grimoire.close_button.get_global_rect().get_center()
+	print("[ui-smoke] dispatch X touch at ", ev.position, " for rect ", grimoire.close_button.get_global_rect())
 	Input.parse_input_event(ev)
 	await _wait(0.10)
+	print("[ui-smoke] after tap open=", grimoire.open, " paused=", get_tree().paused, " locked=", player.input_locked)
 	if grimoire.open or get_tree().paused or player.input_locked:
 		push_error("[ui-smoke] X tap failed to close and unpause the book")
 		get_tree().quit(1)
