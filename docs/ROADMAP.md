@@ -58,9 +58,15 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Árvores de habilidade completas (nível III de espada, escudo de luz, passos)
 
 ## Etapa 4 — Capítulos 8–10 e final
-- ⬜ Castelo sitiado, Terras Devastadas, Cidadela
-- ⬜ 4 Generais + Rei Demônio Malgrath (3 fases)
-- ⬜ Finais, créditos, Novo Jogo+
+- ✅ **Castelo de Valemont** (Cap. 8): pátio pavimentado, torres, fortaleza, braseiros; cavaleiros demoníacos e o **General Vorath** (montante negra)
+- ✅ **Terras Devastadas** (Cap. 9): ruínas em brasa, rios de lava, quatro arenas com os **4 Generais** (Thornmaw, Velka, Krull, Morgash) — todos precisam cair para abrir a Cidadela · Rank S
+- ✅ **Cidadela de Malgrath** (Cap. 10): fortaleza de obsidiana, portão do inferno, salão do trono; Lumia dá a bênção final
+- ✅ **Malgrath, o Rei Demônio — 3 fases:** F1 leque de 3 fogos · F2 (<66 %) passos sombrios + 4 reforços + leque de 5 · F3 (<33 %) fúria, leque de 7 e anéis de fogo
+- ✅ Final: epílogo com Lumia e Sylra, créditos rolantes e modo de exploração livre
+- ✅ Barra de vida de chefe (nome + título), save guarda mapa e posição
+- ✅ **Rebalanceamento:** HP do inimigo ∝ dano do jogador (×(1+0,28·(nv−1))), dano do inimigo ∝ vida do jogador (×(1+0,14·(nv−1))); XP linear; poções curam 35 % da vida máxima
+- ⬜ Cutscenes ilustradas (prólogo e final com arte própria)
+- ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento
 - ⬜ Gamepad, opções, legendas/idiomas
@@ -68,5 +74,6 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Builds Windows/Mac, página do jogo
 
 ## Próximo passo imediato
+0. **Concluir a Unity:** cadastrar licença (`docs/UNITY_CI.md`), rodar o build na nuvem, corrigir erros, validar screenshots e balancear de verdade.
 1. Assim que a licença estiver nos segredos: rodar o CI, ver screenshots e corrigir.
 2. Floresta de Velmoor (Capítulo 2).

@@ -14,10 +14,12 @@ LOOKS = {
     'villager': Look(hair_style='long', hair=Pal('#b8b0a8', '#8e8680', '#e0dad4', '#3a3632'),
                      tunic=Pal('#4e8a4a', '#386a36', '#72ae6a', '#163016'), scarf_on=False, weapon=None),
 }
-from oni import sylra_look, valemont_look, region_npc
+from oni import sylra_look, valemont_look, region_npc, final_npc
 
 if __name__ == '__main__':
     from anims import ANIMS as _A
+    for _k in ('knight', 'veteran', 'lumia'):
+        build('x_' + _k, 'Chars', FW, FH, OX, OY, jobs_for(final_npc(_k), SUB), draw)
     for _k in ('nomad', 'dwarf', 'witch', 'monk'):
         build('r_' + _k, 'Chars', FW, FH, OX, OY, jobs_for(region_npc(_k), SUB), draw)
     for _k in ('guard', 'noble', 'cleric', 'child', 'guildmaster'):

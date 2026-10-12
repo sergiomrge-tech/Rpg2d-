@@ -312,3 +312,16 @@ GRASS_SNOW = dict(dark='#d4e0ee', mid='#e4eef8', light='#f6fbff', warm='#cfdcf0'
                   flowers=False, dirt=('#9a8e86', '#b0a49a', '#7e7268', '#6a5e54'), dirt_shadow='#3a3028',
                   water=('#a8e8f8', '#6ac0e0', '#3a88b8', '#e8fbff'), shore='#f0f8ff', foam='#ffffff',
                   stone=('#a8b4c8', '#7a869c', 0.84))
+
+GRASS_CASTLE = dict(dark='#6a6e7a', mid='#7c808c', light='#8e929e', warm='#76707e', blade_l=(0.58, 0.6, 0.66), blade_d=(0.32, 0.34, 0.4),
+                    flowers=False, dirt=('#6a5a52', '#80706a', '#54463e', '#483c34'), dirt_shadow='#201814',
+                    water=('#6a3a5a', '#4a2442', '#2a1228', '#a0607a'), shore='#4a4048', foam='#c08aa0',
+                    stone=('#6a6672', '#4a4658', 0.68))
+GRASS_ASH = dict(dark='#3a2e30', mid='#4a3a3a', light='#5e4a46', warm='#6a3a2a', blade_l=(0.5, 0.36, 0.3), blade_d=(0.2, 0.14, 0.14),
+                 flowers=False, dirt=('#5a3a2a', '#744a34', '#44281c', '#341c12'), dirt_shadow='#140804',
+                 water=('#ffb340', '#ff6a1a', '#c8280a', '#fff0a0'), shore='#3a1a10', foam='#ffe08a',
+                 stone=('#4a3a40', '#2e2228', 0.46))
+GRASS_CITADEL = dict(dark='#241a30', mid='#30243e', light='#443456', warm='#3a2040', blade_l=(0.34, 0.26, 0.46), blade_d=(0.12, 0.08, 0.2),
+                     flowers=False, dirt=('#3a2a40', '#4a3652', '#2a1c30', '#201428'), dirt_shadow='#0c0610',
+                     water=('#e84a8a', '#a0205a', '#5a0a34', '#ff9ac0'), shore='#1c1226', foam='#ffc0d8',
+                     stone=('#3a3048', '#241c30', 0.5))

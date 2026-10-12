@@ -15,6 +15,11 @@ namespace Aetheria
         public class Region
         {
             public string map, title, npc, boss, bossName, intro, start, done, rank;
+            public bool AllDead(System.Collections.Generic.HashSet<string> flags)
+            {
+                foreach (var b in boss.Split(',')) if (!flags.Contains(b + "_dead")) return false;
+                return true;
+            }
             public int gold;
             public string[] reward;
             public Line[] hello, back, thanks;
@@ -91,6 +96,42 @@ namespace Aetheria
                     new Line("monk", "O Capítulo seguinte o levará ao Castelo tomado. A Guilda o aguarda como Rank A. Que a centelha o guie."),
                 },
             },
+            new Region
+            {
+                map = "castle", title = "Castelo de Valemont", npc = "elowen", boss = "vorath", bossName = "o General Vorath", start = "rq_elowen", done = "castle_done",
+                rank = "A", gold = 4000, reward = new[] { "royal_plate:1", "potion:5", "ether:3" },
+                hello = new[]
+                {
+                    new Line("elowen", "Alto! ...Você é Ren? O herói de Velmoor? Sou a capitã Elowen, última da Guarda Real."),
+                    new Line("elowen", "Malgrath mandou o General Vorath tomar o castelo. A rainha foi levada. Os cavaleiros demoníacos patrulham o pátio."),
+                    new Line("elowen", "Vorath luta com uma montante negra: golpes lentos, mas devastadores, e um impacto no chão. Aguarde o brilho vermelho e role."),
+                },
+                back = new[] { new Line("elowen", "Vorath guarda a porta do salão do trono, ao norte do pátio. Que Lumia o proteja.") },
+                thanks = new[]
+                {
+                    new Line("elowen", "Vorath caiu... o castelo é nosso! A rainha foi levada para as Terras Devastadas, a leste."),
+                    new Line("elowen", "Esta armadura real é sua, Ren. 4000 de ouro também. Salve-a. Salve Aetheria."),
+                },
+            },
+            new Region
+            {
+                map = "wastelands", title = "Terras Devastadas", npc = "cedric", boss = "thornmaw_alpha,velka_flamebeak,krull_chainlord,morgash_ironhorn",
+                bossName = "os quatro Generais", start = "rq_cedric", done = "wastelands_done",
+                rank = "S", gold = 6000, reward = new[] { "lumia_pendant:1", "potion:6", "ether:6" },
+                hello = new[]
+                {
+                    new Line("cedric", "Ren! Então os boatos eram verdade. Cedric, veterano da Resistência. Estamos escondidos aqui há anos."),
+                    new Line("cedric", "A Cidadela de Malgrath fica a leste, selada por quatro generais: Thornmaw ao noroeste, Velka ao nordeste, Krull ao sudoeste e Morgash ao sudeste."),
+                    new Line("cedric", "Cada um guarda um selo. Derrube os quatro e o portão do inferno se abrirá. Não há outro caminho."),
+                    new Line("cedric", "Cada general luta diferente: espinhos, fogo em leque, correntes e martelo. Estude o padrão antes de atacar."),
+                },
+                back = new[] { new Line("cedric", "Faltam selos, Ren. Os quatro generais ficam nos cantos do mapa.") },
+                thanks = new[]
+                {
+                    new Line("cedric", "Os quatro selos caíram! O portão a leste vai abrir. Você é a lenda que esperávamos."),
+                    new Line("cedric", "Rank S, o mais alto da Guilda. Leve este pingente, ele pertenceu a um sacerdote de Lumia. Boa sorte, herói."),
+                },
+            },
         };
 
         public const string QuestImps = "q_imps";
@@ -105,6 +146,8 @@ namespace Aetheria
                 case "villager": return "Tia Marta";
                 case "lumia": return "Deusa Lumia";
                 case "sylra": return "Sylra";
+                case "elowen": return "Capitã Elowen";
+                case "cedric": return "Cedric, o Veterano";
                 case "nomad": return "Hasim, Guia do Deserto";
                 case "dwarf": return "Durnok, Mestre Minerador";
                 case "witch": return "Bruxa Morgana";
@@ -118,6 +161,32 @@ namespace Aetheria
                 default: return id;
             }
         }
+
+        public static readonly Line[] FinalBlessing =
+        {
+            new Line("lumia", "Ren. Você chegou ao fim da estrada. Daqui em diante, nem eu posso segui-lo."),
+            new Line("lumia", "Malgrath espera no salão do trono. Ele muda a cada vez que cai um pouco — não se apresse."),
+            new Line("lumia", "Leve estas poções. E lembre-se: você nunca foi fraco. Só ainda não tinha crescido."),
+            new Line("lumia", "Vá. Salve o meu mundo."),
+        };
+
+        public static readonly Line[] Ending =
+        {
+            new Line("", "Malgrath cai de joelhos. A coroa de chifres racha, e a escuridão que cobria Aetheria se desfaz em cinzas douradas."),
+            new Line("lumia", "Está feito. O Rei Demônio caiu. O sol voltou a nascer sobre Aetheria."),
+            new Line("sylra", "Eu sempre soube que você chegaria até aqui. Velmoor já floresce de novo, Ren."),
+            new Line("lumia", "Ren Takamura. Você deu a sua vida por uma criança e, em outro mundo, por todo um povo."),
+            new Line("lumia", "Posso lhe oferecer um último presente: voltar para casa. Ou ficar."),
+            new Line("", "Ren olha o amanhecer sobre as montanhas. Pela primeira vez desde que chegou, não tem pressa."),
+            new Line("", "Ele decide ficar. Há uma Guilda a visitar, uma elfa que precisa de um companheiro de aventuras, e um mundo inteiro por explorar."),
+        };
+
+        public const string Credits =
+            "CRÔNICAS DE AETHERIA\nA Centelha\n\n\n" +
+            "— Elenco —\n\nRen Takamura — o herói\nDeusa Lumia\nSylra, arqueira de Velmoor\nMestre Aldric\nCapitã Elowen\nCedric, o Veterano\n\n" +
+            "— Os Generais —\n\nGrakk · Dríade Profanada · Assassino Sombrio\nEscorpião de Kharis · Golem de Brasa · Mirael\nDemônio de Gelo · General Vorath\n\nMalgrath, o Rei Demônio\n\n\n" +
+            "— Feito com —\n\nUnity · Python + Cairo (toda a arte gerada por código)\nClaude Code\n\n\n" +
+            "Obrigado por jogar.\n\n\nFIM";
 
         public static readonly Line[] Prologue =
         {
@@ -136,7 +205,7 @@ namespace Aetheria
             {
                 if (r.npc != npc) continue;
                 if (g.flags.Contains(r.done)) return new[] { new Line(npc, "Vá em frente, Ren. A próxima luta é sua.") };
-                if (g.flags.Contains(r.boss + "_dead"))
+                if (r.AllDead(g.flags))
                 {
                     g.flags.Add(r.done);
                     gs.gold += r.gold;
@@ -235,6 +304,16 @@ namespace Aetheria
                     }
                     return new[] { new Line(npc, "Já forjei tudo que sei. Os mestres de Valemont e Kharis têm mais segredos.") };
                 }
+                case "lumia":
+                    if (g.flags.Contains("game_complete")) return new[] { new Line(npc, "Aetheria está em paz graças a você, Ren. Descanse. Explore. Viva.") };
+                    if (!g.flags.Contains("lumia_blessed"))
+                    {
+                        g.flags.Add("lumia_blessed");
+                        gs.Add("potion", 5);
+                        gs.Add("ether", 3);
+                        return FinalBlessing;
+                    }
+                    return new[] { new Line(npc, "A porta do salão do trono fica ao norte. Eu acredito em você.") };
                 case "sylra":
                     if (!g.flags.Contains("sylra_joined"))
                     {

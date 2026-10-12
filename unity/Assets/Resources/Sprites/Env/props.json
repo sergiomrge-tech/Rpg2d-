@@ -619,6 +619,66 @@
    "colW": 30,
    "colH": 14,
    "colY": 0
+  },
+  {
+   "name": "castle_keep",
+   "w": 520,
+   "h": 520,
+   "pivotX": 260,
+   "pivotY": 40,
+   "colW": 440,
+   "colH": 100,
+   "colY": 30
+  },
+  {
+   "name": "brazier",
+   "w": 70,
+   "h": 110,
+   "pivotX": 35,
+   "pivotY": 10,
+   "colW": 18,
+   "colH": 10,
+   "colY": 0
+  },
+  {
+   "name": "obsidian_spire",
+   "w": 100,
+   "h": 230,
+   "pivotX": 50,
+   "pivotY": 16,
+   "colW": 30,
+   "colH": 14,
+   "colY": 0
+  },
+  {
+   "name": "demon_banner",
+   "w": 70,
+   "h": 220,
+   "pivotX": 35,
+   "pivotY": 14,
+   "colW": 14,
+   "colH": 8,
+   "colY": 0
+  },
+  {
+   "name": "hell_gate",
+   "w": 360,
+   "h": 320,
+   "pivotX": 180,
+   "pivotY": 30,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0
+  },
+  {
+   "name": "throne",
+   "w": 200,
+   "h": 280,
+   "pivotX": 100,
+   "pivotY": 30,
+   "colW": 120,
+   "colH": 36,
+   "colY": 0
   }
  ]
 }

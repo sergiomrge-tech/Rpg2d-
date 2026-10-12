@@ -10,19 +10,19 @@ HUD sem caixas: arcos, medalhões, orbes, faixas cinematográficas.
 A deusa **Lumia** o leva para **Aetheria**, mundo sendo devorado pelo Rei Demônio **Malgrath**.
 Ela não pode lhe dar poder — apenas uma **centelha** de magia. Ren começa fraco, entra na **Guilda dos Aventureiros** no Rank F e cresce até enfrentar Malgrath.
 
-### Capítulos (~3 h cada)
-| # | Região | Rank | Resumo | Chefe |
-|---|---|---|---|---|
-| 1 | Vila de Aurora + Bosque dos Chifres | F→E | Despertar, Guilda, primeiros diabretes | Diabrete-Chefe Grakk |
-| 2 | Floresta de Velmoor | E→D | Árvores corrompidas, companheira elfa **Sylra** | Dríade Profanada |
-| 3 | Cidade de Valemont | D | Guilda principal, intriga política, mercado | Assassino Sombrio |
-| 4 | Deserto de Kharis | D→C | Ruínas, segunda evolução da Centelha | Escorpião-Demônio |
-| 5 | Minas de Durnhold | C | Anões, forja de armas demoníacas, companheiro **Borin** | Golem de Brasa |
-| 6 | Pântano de Mirewail | C→B | Bruxas, venenos, magia sombria | Súcuba Mirael |
-| 7 | Picos Gelados | B | Templo de Lumia, verdade sobre a centelha | Demônio de Gelo |
-| 8 | Castelo de Valemont tomado | B→A | Invasão demoníaca, cerco | General Demoníaco Vorath |
-| 9 | Terras Devastadas | A→S | Portal do inferno, 4 generais | Os 4 Generais |
-| 10 | Cidadela de Malgrath | S | Final | **Rei Demônio Malgrath** (3 fases) |
+### Capítulos (implementados)
+| # | Região | Rank ao concluir | Chefe |
+|---|---|---|---|
+| 1 | Vila de Aurora + Bosque dos Chifres | E | Grakk, Chefe dos Diabretes |
+| 2 | Floresta de Velmoor (companheira **Sylra**) | D | Dríade Profanada |
+| 3 | Cidade de Valemont | C | Assassino Sombrio |
+| 4 | Deserto de Kharis | B | Demônio Escorpião |
+| 5 | Minas de Durnhold | B | Golem de Brasa |
+| 6 | Pântano de Mirewail | A | Mirael, a Súcubo |
+| 7 | Picos Gelados (Templo de Lumia) | A | Demônio de Gelo |
+| 8 | Castelo de Valemont tomado | A | General Vorath |
+| 9 | Terras Devastadas | S | Os 4 Generais (Thornmaw, Velka, Krull, Morgash) |
+| 10 | Cidadela de Malgrath | — | **Malgrath, o Rei Demônio** (3 fases) |
 
 ## Combate
 - **Stamina:** atacar, rolar e correr gastam; sem fôlego = vulnerável.

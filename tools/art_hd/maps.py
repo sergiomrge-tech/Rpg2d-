@@ -477,7 +477,127 @@ def peaks():
     for k, x, y, lv in sp:
         m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
     m.spawns.append(dict(kind='ice_demon', x=30 * T, y=44 * T, level=17))
-    _edge_exits(m, 'mirewail', None, 30)
+    _edge_exits(m, 'mirewail', 'castle', 30)
+    return m
+
+
+def castle():
+    """Castelo de Valemont (Cap. 8): the royal keep overrun by demons; General Vorath holds the courtyard."""
+    from env_ground import GRASS_CASTLE
+    m = Map('castle', 64, 56, seed=88)
+    m.grass = GRASS_CASTLE
+    m.disk(32, 31, 13.0, 's')
+    m.path([(0, 28), (20, 30), (32, 31)], 3.0, 's')
+    m.path([(32, 31), (63, 30)], 3.0, 's')
+    m.path([(32, 31), (32, 18)], 3.4, 's')
+    m.disk(2, 28, 3, 'd')
+    for x in range(4, 62, 4):
+        m.put('city_wall', x, 2.6)
+        m.put('city_wall', x, 53.6)
+    for x, y in [(2, 3), (62, 3), (2, 54), (62, 54)] + [(1.2, v) for v in range(9, 52, 6) if not 24 < v < 34] + [(62.8, v) for v in range(9, 52, 6) if not 24 < v < 34]:
+        m.put('city_tower', x, y)
+    m.reserve(0, 0, 64, 5)
+    m.reserve(0, 51, 64, 56)
+    m.put('castle_keep', 32, 14.2)
+    m.reserve(18, 3, 46, 16)
+    for x, y in [(22, 20), (42, 20), (22, 40), (42, 40), (14, 30), (50, 30), (32, 44)]:
+        m.put('brazier', x, y)
+    for x, y in [(26, 20), (38, 20), (16, 24), (48, 24), (16, 36), (48, 36)]:
+        m.put('demon_banner', x, y)
+    m.put('sign', 5.4, 30.4)
+    m.put('sign', 58, 32.4)
+    m.scatter(['rock_small', 'stump', 'tuft', 'ruin_pillar'], 40, (3, 6, 61, 50), pad=0, min_d=2.0)
+    m.scatter(['crate', 'barrel', 'skull_pile'], 24, (3, 6, 61, 50), pad=0, min_d=2.4)
+    m.player = (4 * T, 28 * T)
+    m.npcs = [dict(id='elowen', x=6.6 * T, y=29 * T, look='x_knight', facing='right')]
+    sp = [('demon_knight', 20, 24, 17), ('demon_knight', 20, 38, 17), ('demon_knight', 44, 24, 18), ('demon_knight', 44, 38, 18),
+          ('oni_executioner', 28, 26, 18), ('oni_executioner', 36, 36, 18), ('ash_wraith', 12, 40, 17), ('ash_wraith', 52, 20, 18),
+          ('imp_howler', 14, 20, 17), ('imp_bomber', 50, 42, 18), ('oni_shielder', 32, 24, 18)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='vorath', x=32 * T, y=21 * T, level=20))
+    _edge_exits(m, 'peaks', 'wastelands', 30)
+    return m
+
+
+def wastelands():
+    """Terras Devastadas (Cap. 9): scorched hellscape - four generals guard four corners."""
+    from env_ground import GRASS_ASH
+    m = Map('wastelands', 72, 60, seed=99)
+    m.grass = GRASS_ASH
+    for cx, cy, r in [(36, 8, 4.0), (36, 52, 4.0), (24, 30, 3.4), (50, 30, 3.4), (6, 28, 2.6), (66, 36, 3.0)]:
+        m.disk(cx, cy, r, 'w')
+    m.path([(0, 30), (20, 30), (36, 30)], 3.0)
+    m.path([(36, 30), (71, 30)], 3.0)
+    m.path([(36, 30), (24, 20), (14, 12)], 2.6)
+    m.path([(36, 30), (48, 20), (58, 12)], 2.6)
+    m.path([(36, 30), (24, 40), (14, 48)], 2.6)
+    m.path([(36, 30), (48, 40), (58, 48)], 2.6)
+    for cx, cy in [(14, 12), (58, 12), (14, 48), (58, 48)]:
+        m.disk(cx, cy, 6.4, 's')
+    m.disk(36, 30, 4.6, 's')
+    for cx, cy in [(14, 12), (58, 12), (14, 48), (58, 48)]:
+        for a in range(0, 360, 60):
+            import math as _m
+            m.put('obsidian_spire', cx + _m.cos(_m.radians(a)) * 8.0, cy + _m.sin(_m.radians(a)) * 6.0 + 1.5)
+        m.reserve(cx - 7, cy - 7, cx + 7, cy + 7)
+    for x, y in [(33, 27), (39, 27), (33, 34), (39, 34)]:
+        m.put('brazier', x, y)
+    m.put('demon_banner', 36, 26)
+    m.put('sign', 3.6, 31.4)
+    m.put('sign', 68, 32)
+    m.scatter(['tree_dead', 'obsidian_spire', 'crystal_red'], 50, (0, 0, 72, 60), pad=1, min_d=3.0)
+    m.scatter(['skull_pile', 'rock_small', 'stalagmite', 'ruin_pillar'], 50, (0, 0, 72, 60), pad=0, min_d=2.0)
+    m.scatter(['tuft', 'roots'], 60, (0, 0, 72, 60), pad=0, min_d=1.2)
+    m.player = (4 * T, 30 * T)
+    m.npcs = [dict(id='cedric', x=35 * T, y=31.4 * T, look='x_veteran', facing='down')]
+    gens = [('thornmaw_alpha', 14, 12, 21), ('velka_flamebeak', 58, 12, 21), ('krull_chainlord', 14, 48, 22), ('morgash_ironhorn', 58, 48, 22)]
+    for k, x, y, lv in gens:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    sp = [('demon_knight', 26, 24, 19), ('demon_knight', 46, 24, 19), ('demon_knight', 26, 38, 20), ('demon_knight', 46, 38, 20),
+          ('ash_wraith', 10, 22, 19), ('ash_wraith', 62, 22, 19), ('ash_wraith', 10, 38, 20), ('ash_wraith', 62, 38, 20),
+          ('oni_executioner', 30, 14, 20), ('oni_executioner', 42, 46, 20), ('imp_pyro', 20, 30, 19), ('imp_pyro', 52, 30, 19)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    _edge_exits(m, 'castle', 'citadel', 30)
+    return m
+
+
+def citadel():
+    """Cidadela de Malgrath (Cap. 10): obsidian fortress, the throne hall of the Demon King."""
+    from env_ground import GRASS_CITADEL
+    m = Map('citadel', 60, 64, seed=111)
+    m.grass = GRASS_CITADEL
+    m.path([(30, 64), (30, 40)], 4.0, 's')
+    m.path([(30, 40), (30, 22)], 5.0, 's')
+    m.disk(30, 16, 10.0, 's')
+    m.disk(30, 52, 5.0, 's')
+    for cx, cy, r in [(8, 20, 4.4), (52, 20, 4.4), (8, 48, 4.0), (52, 48, 4.0), (10, 8, 3.0), (50, 8, 3.0)]:
+        m.disk(cx, cy, r, 'w')
+    m.put('hell_gate', 30, 60.4)
+    m.reserve(22, 56, 38, 64)
+    m.put('throne', 30, 10.4)
+    m.reserve(24, 2, 36, 12)
+    import math as _m
+    for i in range(7):
+        y = 22 + i * 5
+        m.put('brazier', 24, y)
+        m.put('brazier', 36, y)
+    for x, y in [(22, 12), (38, 12), (18, 18), (42, 18)]:
+        m.put('demon_banner', x, y)
+    for a in range(0, 360, 45):
+        m.put('obsidian_spire', 30 + _m.cos(_m.radians(a)) * 12.5, 17 + _m.sin(_m.radians(a)) * 9.0)
+    m.scatter(['obsidian_spire', 'crystal_red', 'stalagmite'], 40, (0, 0, 60, 64), pad=1, min_d=3.0)
+    m.scatter(['skull_pile', 'rock_small', 'ruin_pillar'], 40, (0, 0, 60, 64), pad=0, min_d=2.2)
+    m.player = (30 * T, 61 * T)
+    m.npcs = [dict(id='lumia', x=30 * T, y=54 * T, look='x_lumia', facing='up')]
+    sp = [('demon_knight', 26, 44, 23), ('demon_knight', 34, 44, 23), ('ash_wraith', 20, 38, 23), ('ash_wraith', 40, 38, 23),
+          ('oni_shielder', 26, 32, 23), ('oni_shielder', 34, 32, 23), ('oni_executioner', 22, 28, 24), ('oni_executioner', 38, 28, 24),
+          ('demon_knight', 26, 24, 24), ('demon_knight', 34, 24, 24), ('imp_howler', 18, 16, 23), ('imp_howler', 42, 16, 23)]
+    for k, x, y, lv in sp:
+        m.spawns.append(dict(kind=k, x=x * T, y=y * T, level=lv))
+    m.spawns.append(dict(kind='malgrath', x=30 * T, y=15 * T, level=26))
+    m.exits = [dict(to='wastelands', x=30 * T, y=63.6 * T, w=6 * T, h=T)]
     return m
 
 
@@ -487,6 +607,6 @@ def self_rnd(m, items):
 
 if __name__ == '__main__':
     import sys
-    which = sys.argv[1:] or ['village', 'velmoor', 'valemont', 'kharis', 'mines', 'mirewail', 'peaks']
+    which = sys.argv[1:] or ['village', 'velmoor', 'valemont', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']
     for n in which:
         globals()[n]().export()

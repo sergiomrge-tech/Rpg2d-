@@ -12,6 +12,8 @@ namespace Aetheria
         public GameState state;
         public List<string> flags = new List<string>();
         public List<string> questIds = new List<string>();
+        public string map = "village";
+        public float px, py;
         public List<int> questVals = new List<int>();
     }
 
@@ -42,8 +44,9 @@ namespace Aetheria
         {
             if (ciDir == null) Load();
             var cam = CameraRig.Create();
-            world = World.Load("village");
+            world = World.Load(mapName);
             var spawn = Util.MapToWorld(world.data.playerX, world.data.playerY);
+            if (savedPos.HasValue && world.bounds.Contains(savedPos.Value)) spawn = savedPos.Value;
             player = Player.Spawn(spawn, state);
             world.SpawnActors();
             if (flags.Contains("sylra_joined")) Companion.Spawn(spawn + Vector2.left);
@@ -101,6 +104,7 @@ namespace Aetheria
 
         float travelCd = 1f;
         public string mapName = "village";
+        Vector2? savedPos;
 
         static readonly System.Collections.Generic.Dictionary<string, string[]> MapTitles = new System.Collections.Generic.Dictionary<string, string[]>
         {
@@ -111,6 +115,9 @@ namespace Aetheria
             { "mines", new[] { "Minas de Durnhold", "Capítulo V — O Coração da Forja" } },
             { "mirewail", new[] { "Pântano de Mirewail", "Capítulo VI — A Rainha do Brejo" } },
             { "peaks", new[] { "Picos Gelados", "Capítulo VII — A Nascente Congelada" } },
+            { "castle", new[] { "Castelo de Valemont", "Capítulo VIII — O Castelo Tomado" } },
+            { "wastelands", new[] { "Terras Devastadas", "Capítulo IX — Os Quatro Generais" } },
+            { "citadel", new[] { "Cidadela de Malgrath", "Capítulo X — O Rei Demônio" } },
         };
 
         static readonly System.Collections.Generic.Dictionary<string, (string flag, string msg)> Gates = new System.Collections.Generic.Dictionary<string, (string, string)>
@@ -121,6 +128,9 @@ namespace Aetheria
             { "mines", ("kharis_done", "O túnel está bloqueado. Ajude Hasim contra o Escorpião primeiro.") },
             { "mirewail", ("mines_done", "A bruma repele você. Ajude Durnok contra o Golem primeiro.") },
             { "peaks", ("mirewail_done", "A nevasca é forte demais. Ajude Morgana contra Mirael primeiro.") },
+            { "castle", ("peaks_done", "A estrada para Valemont está bloqueada. Termine a missão nos Picos Gelados primeiro.") },
+            { "wastelands", ("castle_done", "Os portões do castelo estão selados. Fale com Elowen e derrote Vorath.") },
+            { "citadel", ("wastelands_done", "O portão do inferno está selado. Derrote os quatro Generais (Cedric explica).") },
         };
 
         public void Travel(string to)
@@ -216,22 +226,25 @@ namespace Aetheria
             {
                 if (flags.Contains(r.done)) continue;
                 if (!flags.Contains(r.start)) return $"◆ Viaje a {r.title}\n<size=22>fale com {Story.NameOf(r.npc)}</size>";
-                if (!flags.Contains(r.boss + "_dead")) return $"◆ Derrote {r.bossName}\n<size=22>{r.title}</size>";
+                if (!r.AllDead(flags)) return $"◆ Derrote {r.bossName}\n<size=22>{r.title}</size>";
                 return $"◆ Volte a {Story.NameOf(r.npc)}\n<size=22>{r.title}</size>";
             }
-            return "◆ Rank A — Castelo de Valemont tomado\n<size=20>(Capítulo VIII em breve)</size>";
+            if (flags.Contains("game_complete")) return "◆ Aetheria está em paz\n<size=20>explore livremente · F5 salva</size>";
+            if (!flags.Contains("lumia_blessed")) return "◆ Entre na Cidadela de Malgrath\n<size=22>leste das Terras Devastadas — fale com Lumia</size>";
+            return "◆ Derrote Malgrath, o Rei Demônio\n<size=22>salão do trono, ao norte da Cidadela</size>";
         }
 
         public void OnEnemyKilled(Enemy e)
         {
             if (quests.ContainsKey(Story.QuestImps) && e.def.id == "imp") quests[Story.QuestImps]++;
+            if (e.def.id == "malgrath") { flags.Add("malgrath_dead"); Save(); StartCoroutine(EndingRoutine()); return; }
             if (e.def.boss)
             {
                 flags.Add(e.def.id + "_dead");
                 hud.Banner(e.def.name + " foi derrotado", "Volte à Guilda");
                 Save();
             }
-            int xp = Mathf.RoundToInt(e.def.xp * Data.LevelScale(e.level));
+            int xp = Mathf.RoundToInt(e.def.xp * Data.HpScale(e.level));
             Fx.Toast("+" + xp + " EXP", new Color(0.75f, 0.95f, 1f), e.Pos + Vector2.up * 2.6f);
             if (state.GainXp(xp))
             {
@@ -242,6 +255,23 @@ namespace Aetheria
                 Sfx.Play("levelup", 0.6f, 1f);
                 hud.Banner("Nível " + state.level, "Sua centelha arde mais forte");
             }
+        }
+
+        IEnumerator EndingRoutine()
+        {
+            player.inputLocked = true;
+            player.scriptedMove = Vector2.zero;
+            Time.timeScale = 0.35f;
+            yield return new WaitForSecondsRealtime(2.2f);
+            Time.timeScale = 1f;
+            foreach (var e in Enemy.All.ToArray()) if (e != null && !e.dead) e.Hurt(99999, e.Pos + Vector2.down, 0, 999);
+            hud.ShowDialogue(Story.Ending, () => hud.ShowCredits(Story.Credits, () =>
+            {
+                flags.Add("game_complete");
+                player.inputLocked = false;
+                hud.Banner("Aetheria em paz", "Continue explorando — F5 salva");
+                Save();
+            }));
         }
 
         public void OnPlayerDied() { StartCoroutine(DeathRoutine()); }
@@ -262,7 +292,8 @@ namespace Aetheria
             if (ciDir != null) return;
             try
             {
-                var s = new SaveData { state = state, flags = new List<string>(flags) };
+                var s = new SaveData { state = state, flags = new List<string>(flags), map = mapName };
+                if (player != null) { s.px = player.Pos.x; s.py = player.Pos.y; }
                 foreach (var kv in quests) { s.questIds.Add(kv.Key); s.questVals.Add(kv.Value); }
                 File.WriteAllText(SavePath, JsonUtility.ToJson(s));
             }
@@ -279,6 +310,7 @@ namespace Aetheria
                 state = s.state;
                 flags = new HashSet<string>(s.flags);
                 for (int i = 0; i < s.questIds.Count; i++) quests[s.questIds[i]] = s.questVals[i];
+                if (!string.IsNullOrEmpty(s.map) && Resources.Load<TextAsset>("Maps/" + s.map) != null) { mapName = s.map; savedPos = new Vector2(s.px, s.py); }
             }
             catch (Exception ex) { Debug.LogWarning("load failed: " + ex.Message); }
         }

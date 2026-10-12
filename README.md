@@ -3,7 +3,7 @@
 RPG de ação 2D **isekai** em **Unity 2022.3 LTS**, com arte HD cartoon (nível *Happy Harvest*): sombreamento suave, contorno colorido, animações fluidas.
 Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e carregada pela Unity via `Resources`.
 
-> **Estado atual:** Capítulo 1 (Vila de Aurora + Bosque dos Chifres) com combate, IA demoníaca, loot, missão da Guilda e prólogo.
+> **Estado atual:** campanha completa dos Capítulos 1 a 10 (da Vila de Aurora até Malgrath, o Rei Demônio), com final e créditos. Falta validar tudo rodando na Unity (ver `docs/ROADMAP.md`).
 > Planejamento completo: [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md) · Etapas e tarefas: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
 ![Vila de Aurora](docs/previews/vila.png)

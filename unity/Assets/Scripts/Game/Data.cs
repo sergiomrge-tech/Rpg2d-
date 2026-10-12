@@ -68,6 +68,9 @@ namespace Aetheria
             Gear("swamp_charm", "Coração de Mirael", "Pulsa em tom rosado. +16 MAG, +20 PV.", 3, Rarity.Epic, mag: 16, hp: 20);
             Gear("frost_blade", "Lâmina do Inverno Eterno", "Congela o ar ao redor. +26 ATQ, +6 MAG.", 1, Rarity.Legendary, atk: 26, mag: 6);
             Gear("ice_mail", "Manto de Cristal Gélido", "Quase impenetrável. +24 DEF.", 2, Rarity.Legendary, def: 24);
+            Gear("vorath_blade", "Lâmina do General Vorath", "Aço negro com veios rubros. +30 ATQ.", 1, Rarity.Legendary, atk: 30);
+            Gear("royal_plate", "Armadura Real de Valemont", "Forjada para a rainha. +28 DEF.", 2, Rarity.Legendary, def: 28);
+            Gear("lumia_pendant", "Pingente da Deusa", "Brilha com a centelha. +40 PV, +14 MAG.", 3, Rarity.Legendary, hp: 40, mag: 14);
             Gear("luma_charm", "Amuleto de Lumia", "A deusa vigia. +25 PV.", 3, Rarity.Rare, hp: 25);
             Gear("ember_charm", "Brasa Eterna", "Um coração de chama. +10 MAG.", 3, Rarity.Rare, mag: 10);
             Add(new ItemDef { id = "spark_tome", name = "Tomo: Centelha II", desc = "Evolui a Centelha em Lança de Chamas.", icon = "tome", value = 250, rarity = Rarity.Epic });
@@ -94,75 +97,81 @@ namespace Aetheria
             };
 
             // ---- Lote 1 (conceitos do catalogo refeitos no rig animado)
-            D("imp_scout", "Diabrete Batedor", "Demons/imp_scout", 34, 13, 3.7f, 8f, 16, 6, 1.15f, false);
-            D("imp_raider", "Diabrete Saqueador", "Demons/imp_raider", 72, 19, 2.3f, 6f, 22, 26, 1.2f, false);
-            D("imp_pyro", "Diabrete Piromante", "Demons/imp_pyro", 46, 19, 2.4f, 8f, 20, 10, 1.15f, true);
-            D("imp_hexer", "Diabrete Feiticeiro", "Demons/imp_hexer", 40, 17, 2.4f, 8.5f, 20, 8, 1.15f, true);
-            D("imp_bomber", "Diabrete Bombardeiro", "Demons/imp_bomber", 48, 22, 2.5f, 7.5f, 20, 10, 1.15f, true);
-            D("imp_howler", "Diabrete Uivador", "Demons/imp_howler", 58, 16, 2.6f, 9f, 22, 14, 1.2f, true);
-            D("oni_lancer", "Oni Lanceiro", "Demons/oni_lancer", 100, 23, 2.4f, 6.5f, 32, 34, 1.25f, false);
-            D("oni_shielder", "Oni Escudeiro", "Demons/oni_shielder", 165, 18, 1.7f, 5.5f, 38, 80, 1.3f, false);
-            D("oni_executioner", "Oni Carrasco", "Demons/oni_executioner", 135, 34, 1.9f, 6f, 44, 50, 1.35f, false);
-            D("morgash_ironhorn", "Morgash Chifre-de-Ferro", "Demons/morgash_ironhorn", 950, 36, 2.0f, 9f, 400, 140, 2.0f, false, "General Oni das Minas");
-            D("velka_flamebeak", "Velka Bico-de-Fogo", "Demons/velka_flamebeak", 620, 28, 3.2f, 10f, 360, 90, 1.9f, true, "Rainha Harpia do Deserto");
-            D("krull_chainlord", "Krull Senhor-das-Correntes", "Demons/krull_chainlord", 780, 32, 2.3f, 9f, 380, 120, 1.9f, false, "Carcereiro do Pantano");
-            D("thornmaw_alpha", "Thornmaw Alfa", "Demons/thornmaw_alpha", 700, 30, 2.8f, 9f, 360, 110, 1.9f, false, "Fera Espinhosa de Velmoor");
+            D("imp_scout", "Diabrete Batedor", "Demons/imp_scout", 72, 14, 3.7f, 8f, 11, 6, 1.15f, false);
+            D("imp_raider", "Diabrete Saqueador", "Demons/imp_raider", 169, 20, 2.3f, 6f, 22, 26, 1.2f, false);
+            D("imp_pyro", "Diabrete Piromante", "Demons/imp_pyro", 117, 20, 2.4f, 8f, 16, 10, 1.15f, true);
+            D("imp_hexer", "Diabrete Feiticeiro", "Demons/imp_hexer", 104, 18, 2.4f, 8.5f, 15, 8, 1.15f, true);
+            D("imp_bomber", "Diabrete Bombardeiro", "Demons/imp_bomber", 117, 22, 2.5f, 7.5f, 16, 10, 1.15f, true);
+            D("imp_howler", "Diabrete Uivador", "Demons/imp_howler", 130, 16, 2.6f, 9f, 18, 14, 1.2f, true);
+            D("oni_lancer", "Oni Lanceiro", "Demons/oni_lancer", 221, 22, 2.4f, 6.5f, 28, 34, 1.25f, false);
+            D("oni_shielder", "Oni Escudeiro", "Demons/oni_shielder", 390, 16, 1.7f, 5.5f, 46, 80, 1.3f, false);
+            D("oni_executioner", "Oni Carrasco", "Demons/oni_executioner", 260, 32, 1.9f, 6f, 32, 50, 1.35f, false);
+            D("morgash_ironhorn", "Morgash Chifre-de-Ferro", "Demons/morgash_ironhorn", 1820, 34, 2.0f, 9f, 170, 140, 2.0f, false, "General Oni das Minas");
+            D("velka_flamebeak", "Velka Bico-de-Fogo", "Demons/velka_flamebeak", 1560, 29, 3.2f, 10f, 149, 90, 1.9f, true, "Rainha Harpia do Deserto");
+            D("krull_chainlord", "Krull Senhor-das-Correntes", "Demons/krull_chainlord", 1690, 31, 2.3f, 9f, 159, 120, 1.9f, false, "Carcereiro do Pantano");
+            D("thornmaw_alpha", "Thornmaw Alfa", "Demons/thornmaw_alpha", 1690, 31, 2.8f, 9f, 159, 110, 1.9f, false, "Fera Espinhosa de Velmoor");
 
             // ---- Etapa 2: Velmoor
-            D("spirit_corrupt", "Espírito Corrompido", "Demons/spirit_corrupt", 58, 20, 3.0f, 8.5f, 26, 12, 1.2f, true);
-            D("treant_demon", "Treant-Demônio", "Demons/treant_demon", 190, 30, 1.6f, 6f, 46, 90, 1.45f, false);
-            D("dryad_profane", "Dríade Profanada", "Demons/dryad_profane", 1100, 30, 2.4f, 10f, 520, 120, 1.9f, true, "Guardiã Corrompida de Velmoor");
+            D("spirit_corrupt", "Espírito Corrompido", "Demons/spirit_corrupt", 117, 18, 3.0f, 8.5f, 16, 12, 1.2f, true);
+            D("treant_demon", "Treant-Demônio", "Demons/treant_demon", 312, 27, 1.6f, 6f, 38, 90, 1.45f, false);
+            D("dryad_profane", "Dríade Profanada", "Demons/dryad_profane", 1560, 27, 2.4f, 10f, 149, 120, 1.9f, true, "Guardiã Corrompida de Velmoor");
 
             // ---- Etapa 3: Valemont
-            D("assassin_shadow", "Assassino Sombrio", "Demons/assassin_shadow", 1450, 40, 3.4f, 9f, 700, 110, 1.45f, false, "Lâmina do Rei Demônio");
+            D("assassin_shadow", "Assassino Sombrio", "Demons/assassin_shadow", 1430, 32, 3.4f, 9f, 138, 110, 1.45f, false, "Lâmina do Rei Demônio");
 
             // ---- Etapa 3: Kharis, Durnhold, Mirewail, Picos
-            D("sand_imp", "Diabrete das Dunas", "Demons/sand_imp", 95, 30, 3.1f, 8f, 36, 14, 1.2f, true);
-            D("sand_wraith", "Espectro de Areia", "Demons/sand_wraith", 115, 32, 3.0f, 8.5f, 40, 14, 1.2f, true);
-            D("oni_nomad", "Oni Nômade", "Demons/oni_nomad", 230, 42, 2.7f, 6.5f, 64, 60, 1.3f, false);
-            D("scorpion_demon", "Demônio Escorpião", "Demons/scorpion_demon", 2600, 60, 3.0f, 10f, 900, 220, 1.9f, false, "Ferrão do Deserto de Kharis");
-            D("mine_imp", "Diabrete Minerador", "Demons/mine_imp", 140, 38, 3.0f, 7.5f, 50, 20, 1.2f, false);
-            D("rock_oni", "Oni de Rocha", "Demons/rock_oni", 340, 54, 2.0f, 6f, 90, 130, 1.4f, false);
-            D("ember_golem", "Golem de Brasa", "Demons/ember_golem", 4300, 72, 2.2f, 10f, 1300, 320, 2.0f, true, "Coração da Forja de Durnhold");
-            D("witch_imp", "Diabrete Bruxo", "Demons/witch_imp", 160, 48, 2.8f, 9f, 76, 20, 1.2f, true);
-            D("bog_wraith", "Espectro do Brejo", "Demons/bog_wraith", 185, 50, 3.0f, 9f, 80, 22, 1.2f, true);
-            D("succubus_mirael", "Mirael, a Súcubo", "Demons/succubus_mirael", 5400, 80, 3.2f, 11f, 1700, 300, 1.8f, true, "Rainha do Pântano de Mirewail");
-            D("frost_imp", "Diabrete Gélido", "Demons/frost_imp", 205, 58, 3.1f, 9f, 98, 24, 1.25f, true);
-            D("ice_oni", "Oni de Gelo", "Demons/ice_oni", 480, 68, 2.4f, 6.5f, 130, 170, 1.4f, false);
-            D("ice_demon", "Demônio de Gelo", "Demons/ice_demon", 7600, 95, 2.8f, 11f, 2400, 380, 2.0f, true, "Senhor dos Picos Gelados");
+            D("sand_imp", "Diabrete das Dunas", "Demons/sand_imp", 110, 20, 3.1f, 8f, 16, 14, 1.2f, true);
+            D("sand_wraith", "Espectro de Areia", "Demons/sand_wraith", 124, 20, 3.0f, 8.5f, 17, 14, 1.2f, true);
+            D("oni_nomad", "Oni Nômade", "Demons/oni_nomad", 234, 23, 2.7f, 6.5f, 30, 60, 1.3f, false);
+            D("scorpion_demon", "Demônio Escorpião", "Demons/scorpion_demon", 1690, 32, 3.0f, 10f, 159, 220, 1.9f, false, "Ferrão do Deserto de Kharis");
+            D("mine_imp", "Diabrete Minerador", "Demons/mine_imp", 130, 22, 3.0f, 7.5f, 18, 20, 1.2f, false);
+            D("rock_oni", "Oni de Rocha", "Demons/rock_oni", 338, 27, 2.0f, 6f, 41, 130, 1.4f, false);
+            D("ember_golem", "Golem de Brasa", "Demons/ember_golem", 1950, 36, 2.2f, 10f, 180, 320, 2.0f, true, "Coração da Forja de Durnhold");
+            D("witch_imp", "Diabrete Bruxo", "Demons/witch_imp", 110, 22, 2.8f, 9f, 16, 20, 1.2f, true);
+            D("bog_wraith", "Espectro do Brejo", "Demons/bog_wraith", 130, 22, 3.0f, 9f, 18, 22, 1.2f, true);
+            D("succubus_mirael", "Mirael, a Súcubo", "Demons/succubus_mirael", 1820, 36, 3.2f, 11f, 170, 300, 1.8f, true, "Rainha do Pântano de Mirewail");
+            D("frost_imp", "Diabrete Gélido", "Demons/frost_imp", 130, 23, 3.1f, 9f, 18, 24, 1.25f, true);
+            D("ice_oni", "Oni de Gelo", "Demons/ice_oni", 312, 29, 2.4f, 6.5f, 38, 170, 1.4f, false);
+            D("ice_demon", "Demônio de Gelo", "Demons/ice_demon", 2080, 40, 2.8f, 11f, 190, 380, 2.0f, true, "Senhor dos Picos Gelados");
+
+            // ---- Capitulos 8-10
+            D("demon_knight", "Cavaleiro Demoníaco", "Demons/demon_knight", 260, 29, 2.5f, 7f, 31, 90, 1.3f, false);
+            D("ash_wraith", "Espectro de Cinzas", "Demons/ash_wraith", 130, 23, 3.0f, 9f, 18, 22, 1.2f, true);
+            D("vorath", "General Vorath", "Demons/vorath", 2210, 43, 2.7f, 10f, 270, 300, 2.1f, false, "General Demoníaco do Castelo Tomado");
+            D("malgrath", "Malgrath, o Rei Demônio", "Demons/malgrath", 3380, 47, 2.9f, 12f, 600, 400, 2.4f, true, "Soberano das Trevas de Aetheria");
 
             // ---- Assets do GPT, como foram entregues (Bestiario F9)
-            D("gpt_ant_guard", "Ant Guard (GPT)", "DemonsGpt/ant_guard", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_brood_tyrant", "Brood Tyrant (GPT)", "DemonsGpt/brood_tyrant", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");
-            D("gpt_cicada_screecher", "Cicada Screecher (GPT)", "DemonsGpt/cicada_screecher", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_dragonfly_skirmisher", "Dragonfly Skirmisher (GPT)", "DemonsGpt/dragonfly_skirmisher", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_grakk", "Grakk (GPT)", "DemonsGpt/grakk", 600, 28, 2.3f, 8f, 200, 90, 2.08f, true, "Asset do GPT");
-            D("gpt_imp", "Imp (GPT)", "DemonsGpt/imp", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_imp_bomber", "Imp Bomber (GPT)", "DemonsGpt/imp_bomber", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_imp_hexer", "Imp Hexer (GPT)", "DemonsGpt/imp_hexer", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_imp_howler", "Imp Howler (GPT)", "DemonsGpt/imp_howler", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_imp_pyro", "Imp Pyro (GPT)", "DemonsGpt/imp_pyro", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_imp_raider", "Imp Raider (GPT)", "DemonsGpt/imp_raider", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_imp_scout", "Imp Scout (GPT)", "DemonsGpt/imp_scout", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_krull_chainlord", "Krull Chainlord (GPT)", "DemonsGpt/krull_chainlord", 600, 28, 2.3f, 8f, 200, 90, 1.56f, true, "Asset do GPT");
-            D("gpt_mantis_high_reaper", "Mantis High Reaper (GPT)", "DemonsGpt/mantis_high_reaper", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");
-            D("gpt_mantis_reaver", "Mantis Reaver (GPT)", "DemonsGpt/mantis_reaver", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_morgash_ironhorn", "Morgash Ironhorn (GPT)", "DemonsGpt/morgash_ironhorn", 600, 28, 2.3f, 8f, 200, 90, 1.56f, true, "Asset do GPT");
-            D("gpt_moth_hexer", "Moth Hexer (GPT)", "DemonsGpt/moth_hexer", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_moth_oracle", "Moth Oracle (GPT)", "DemonsGpt/moth_oracle", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");
-            D("gpt_oni_executioner", "Oni Executioner (GPT)", "DemonsGpt/oni_executioner", 70, 18, 2.3f, 8f, 20, 15, 1.78f, true);
-            D("gpt_oni_lancer", "Oni Lancer (GPT)", "DemonsGpt/oni_lancer", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_oni_shielder", "Oni Shielder (GPT)", "DemonsGpt/oni_shielder", 70, 18, 2.3f, 8f, 20, 15, 1.92f, true);
-            D("gpt_oni_soldier", "Oni Soldier (GPT)", "DemonsGpt/oni_soldier", 70, 18, 2.3f, 8f, 20, 15, 2.08f, true);
-            D("gpt_queen_vespara", "Queen Vespara (GPT)", "DemonsGpt/queen_vespara", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");
-            D("gpt_roach_plaguebearer", "Roach Plaguebearer (GPT)", "DemonsGpt/roach_plaguebearer", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_scarab_brute", "Scarab Brute (GPT)", "DemonsGpt/scarab_brute", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_scarab_colossus", "Scarab Colossus (GPT)", "DemonsGpt/scarab_colossus", 600, 28, 2.3f, 8f, 200, 90, 1.04f, true, "Asset do GPT");
-            D("gpt_spike_beetle", "Spike Beetle (GPT)", "DemonsGpt/spike_beetle", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_termite_burrower", "Termite Burrower (GPT)", "DemonsGpt/termite_burrower", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
-            D("gpt_thornmaw_alpha", "Thornmaw Alpha (GPT)", "DemonsGpt/thornmaw_alpha", 600, 28, 2.3f, 8f, 200, 90, 1.39f, true, "Asset do GPT");
-            D("gpt_velka_flamebeak", "Velka Flamebeak (GPT)", "DemonsGpt/velka_flamebeak", 600, 28, 2.3f, 8f, 200, 90, 1.56f, true, "Asset do GPT");
-            D("gpt_vespa_lancer", "Vespa Lancer (GPT)", "DemonsGpt/vespa_lancer", 70, 18, 2.3f, 8f, 20, 15, 1.39f, true);
+            D("gpt_ant_guard", "Ant Guard (GPT)", "DemonsGpt/ant_guard", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_brood_tyrant", "Brood Tyrant (GPT)", "DemonsGpt/brood_tyrant", 1560, 32, 2.3f, 8f, 149, 90, 1.04f, true, "Asset do GPT");
+            D("gpt_cicada_screecher", "Cicada Screecher (GPT)", "DemonsGpt/cicada_screecher", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_dragonfly_skirmisher", "Dragonfly Skirmisher (GPT)", "DemonsGpt/dragonfly_skirmisher", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_grakk", "Grakk (GPT)", "DemonsGpt/grakk", 1560, 32, 2.3f, 8f, 149, 90, 2.08f, true, "Asset do GPT");
+            D("gpt_imp", "Imp (GPT)", "DemonsGpt/imp", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_imp_bomber", "Imp Bomber (GPT)", "DemonsGpt/imp_bomber", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_imp_hexer", "Imp Hexer (GPT)", "DemonsGpt/imp_hexer", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_imp_howler", "Imp Howler (GPT)", "DemonsGpt/imp_howler", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_imp_pyro", "Imp Pyro (GPT)", "DemonsGpt/imp_pyro", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_imp_raider", "Imp Raider (GPT)", "DemonsGpt/imp_raider", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_imp_scout", "Imp Scout (GPT)", "DemonsGpt/imp_scout", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_krull_chainlord", "Krull Chainlord (GPT)", "DemonsGpt/krull_chainlord", 1560, 32, 2.3f, 8f, 149, 90, 1.56f, true, "Asset do GPT");
+            D("gpt_mantis_high_reaper", "Mantis High Reaper (GPT)", "DemonsGpt/mantis_high_reaper", 1560, 32, 2.3f, 8f, 149, 90, 1.04f, true, "Asset do GPT");
+            D("gpt_mantis_reaver", "Mantis Reaver (GPT)", "DemonsGpt/mantis_reaver", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_morgash_ironhorn", "Morgash Ironhorn (GPT)", "DemonsGpt/morgash_ironhorn", 1560, 32, 2.3f, 8f, 149, 90, 1.56f, true, "Asset do GPT");
+            D("gpt_moth_hexer", "Moth Hexer (GPT)", "DemonsGpt/moth_hexer", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_moth_oracle", "Moth Oracle (GPT)", "DemonsGpt/moth_oracle", 1560, 32, 2.3f, 8f, 149, 90, 1.04f, true, "Asset do GPT");
+            D("gpt_oni_executioner", "Oni Executioner (GPT)", "DemonsGpt/oni_executioner", 130, 18, 2.3f, 8f, 18, 15, 1.78f, true);
+            D("gpt_oni_lancer", "Oni Lancer (GPT)", "DemonsGpt/oni_lancer", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_oni_shielder", "Oni Shielder (GPT)", "DemonsGpt/oni_shielder", 130, 18, 2.3f, 8f, 18, 15, 1.92f, true);
+            D("gpt_oni_soldier", "Oni Soldier (GPT)", "DemonsGpt/oni_soldier", 130, 18, 2.3f, 8f, 18, 15, 2.08f, true);
+            D("gpt_queen_vespara", "Queen Vespara (GPT)", "DemonsGpt/queen_vespara", 1560, 32, 2.3f, 8f, 149, 90, 1.04f, true, "Asset do GPT");
+            D("gpt_roach_plaguebearer", "Roach Plaguebearer (GPT)", "DemonsGpt/roach_plaguebearer", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_scarab_brute", "Scarab Brute (GPT)", "DemonsGpt/scarab_brute", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_scarab_colossus", "Scarab Colossus (GPT)", "DemonsGpt/scarab_colossus", 1560, 32, 2.3f, 8f, 149, 90, 1.04f, true, "Asset do GPT");
+            D("gpt_spike_beetle", "Spike Beetle (GPT)", "DemonsGpt/spike_beetle", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_termite_burrower", "Termite Burrower (GPT)", "DemonsGpt/termite_burrower", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
+            D("gpt_thornmaw_alpha", "Thornmaw Alpha (GPT)", "DemonsGpt/thornmaw_alpha", 1560, 32, 2.3f, 8f, 149, 90, 1.39f, true, "Asset do GPT");
+            D("gpt_velka_flamebeak", "Velka Flamebeak (GPT)", "DemonsGpt/velka_flamebeak", 1560, 32, 2.3f, 8f, 149, 90, 1.56f, true, "Asset do GPT");
+            D("gpt_vespa_lancer", "Vespa Lancer (GPT)", "DemonsGpt/vespa_lancer", 130, 18, 2.3f, 8f, 18, 15, 1.39f, true);
 
             foreach (var k in new List<string>(Demons.Keys))
             {
@@ -176,6 +185,7 @@ namespace Aetheria
             AddDrop("morgash_ironhorn", "sword_tome", 0.6f);
             AddDrop("oni_executioner", "sword_tome", 0.03f);
             AddDrop("assassin_shadow", "sword_tome", 0.5f);
+            AddDrop("vorath", "vorath_blade", 1f);
             AddDrop("scorpion_demon", "sand_blade", 1f);
             AddDrop("ember_golem", "dwarf_plate", 1f);
             AddDrop("succubus_mirael", "swamp_charm", 1f);
@@ -222,8 +232,12 @@ namespace Aetheria
             new Recipe { result = "ember_blade", gold = 260, needs = new[] { ("hell_ember", 4), ("imp_horn", 6) } },
         };
 
-        public static float LevelScale(int lv) => Mathf.Pow(1.22f, lv - 1);
-        public static int XpToNext(int lv) => Mathf.RoundToInt(90 * Mathf.Pow(1.38f, lv - 1));
+        // Balance model: enemy HP grows ~ with the player's damage (atk+gear), enemy damage ~ with the player's max HP.
+        // Def numbers in this file are LEVEL-1-EQUIVALENT (spawn multiplies by HpScale/DmgScale of the spawn level).
+        public static float HpScale(int lv) => 1f + 0.28f * (lv - 1);
+        public static float DmgScale(int lv) => 1f + 0.14f * (lv - 1);
+        public static float LevelScale(int lv) => HpScale(lv);
+        public static int XpToNext(int lv) => Mathf.RoundToInt(90f * lv * (1f + 0.05f * lv));
     }
 
     /// <summary>Persistent player progress.</summary>

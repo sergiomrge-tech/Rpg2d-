@@ -254,7 +254,7 @@ namespace Aetheria
         {
             if (hp >= gs.HpMax) return;
             if (!gs.Take("potion")) { Fx.Toast("Sem poções", new Color(1f, 0.5f, 0.5f)); return; }
-            hp = Mathf.Min(gs.HpMax, hp + Data.Items["potion"].heal);
+            hp = Mathf.Min(gs.HpMax, hp + Mathf.Max(Data.Items["potion"].heal, 0.35f * gs.HpMax));
             Fx.Heal(Pos);
             Sfx.Play("potion", 0.5f, 1f);
         }

@@ -29,6 +29,7 @@ namespace Aetheria
         bool nextIsCast;
         bool summoned;
         float tpCd = 3f;
+        int phase = 1;
 
         public static Enemy Spawn(string kind, Vector2 pos, int level)
         {
@@ -38,14 +39,14 @@ namespace Aetheria
             var e = go.AddComponent<Enemy>();
             e.def = def;
             e.level = level;
-            float s = Data.LevelScale(level);
+            float s = Data.HpScale(level), sd = Data.DmgScale(level);
             e.Build(def.sheet, 0.9f, 0.3f, 0.3f, def.scale + 0.05f * (level - 1));
             e.rb.mass = 0.6f;
             e.rb.drag = 0;
             e.maxHp = e.hp = Mathf.Round(def.hp * s);
-            e.dmg = def.dmg * s;
+            e.dmg = def.dmg * sd;
             e.speed = def.speed;
-            e.maxPoise = e.poise = def.poise * s;
+            e.maxPoise = e.poise = def.poise * Mathf.Sqrt(s);
             e.home = pos;
             e.castCd = Random.Range(1.5f, 3f);
             e.anim.OnHit += e.OnAnimHit;
@@ -118,7 +119,7 @@ namespace Aetheria
                     if (!playerOk || dist > def.aggro * 1.8f) { Go(St.Idle); break; }
                     Face(Util.FacingFrom(toP, facing));
                     tpCd -= dt;
-                    if (def.id == "assassin_shadow" && tpCd <= 0 && dist > 1.8f)
+                    if ((def.id == "assassin_shadow" || (def.id == "malgrath" && phase >= 2)) && tpCd <= 0 && dist > 1.8f)
                     {
                         // shadow step: vanish and reappear behind the hero, then strike after a short tell
                         tpCd = Random.Range(3.6f, 5f);
@@ -218,11 +219,21 @@ namespace Aetheria
                 // lead the target slightly
                 Vector2 aim = (p.Pos + p.rb.velocity * 0.25f + Vector2.up * 0.5f - from).normalized;
                 if (def.boss)
-                    for (int k = -1; k <= 1; k++)
+                {
+                    int fan = def.id == "malgrath" ? (phase == 1 ? 3 : phase == 2 ? 5 : 7) : 3;
+                    int half = fan / 2;
+                    for (int k = -half; k <= half; k++)
                     {
-                        Vector2 a2 = Quaternion.Euler(0, 0, k * 18f) * aim;
+                        Vector2 a2 = Quaternion.Euler(0, 0, k * (fan > 5 ? 12f : 18f)) * aim;
                         Projectile.Fireball(from + a2 * 0.5f, a2, dmg * 0.7f);
                     }
+                    if (def.id == "malgrath" && phase == 3 && Random.value < 0.45f)   // fire ring
+                        for (int k = 0; k < 12; k++)
+                        {
+                            Vector2 a3 = Quaternion.Euler(0, 0, k * 30f + 15f) * Vector2.right;
+                            Projectile.Fireball(from + a3 * 0.7f, a3, dmg * 0.55f);
+                        }
+                }
                 else if (def.caster) Projectile.Fireball(from + aim * 0.4f, aim, dmg * 0.8f);
                 Sfx.Play("fireball", 0.5f, Random.Range(0.95f, 1.1f));
             }
@@ -255,6 +266,7 @@ namespace Aetheria
                     speed *= 1.25f;
                 }
             }
+            if (def.id == "malgrath" && !dead) UpdateMalgrathPhase();
             Sfx.Play("imp_hurt", 0.4f, Random.Range(1.0f, 1.25f));
             if (dead) return true;
             if (state == St.Idle) Go(St.Chase);
@@ -267,6 +279,36 @@ namespace Aetheria
                 Fx.Toast("Quebra!", new Color(1f, 0.9f, 0.5f), Pos + Vector2.up * 2.1f);
             }
             return true;
+        }
+
+        /// <summary>Final boss: 3 phases (66 % / 33 %). P2 = shadow steps + reinforcements, P3 = enrage with 5-way fans and fire rings.</summary>
+        void UpdateMalgrathPhase()
+        {
+            int want = hp < maxHp * 0.33f ? 3 : hp < maxHp * 0.66f ? 2 : 1;
+            if (want <= phase) return;
+            phase = want;
+            CameraRig.Shake(0.4f, 0.6f);
+            Flash(phase == 2 ? new Color(0.7f, 0.3f, 1f) : new Color(1f, 0.2f, 0.2f), 1f);
+            Fx.Shockwave(Pos, 3f);
+            Fx.DemonPoof(Pos + Vector2.up * 1f);
+            Sfx.Play("boom", 0.7f, 0.6f);
+            if (phase == 2)
+            {
+                Hud.I?.Banner("Malgrath — Fase II", "As sombras obedecem ao Rei");
+                string[] kinds = { "demon_knight", "ash_wraith", "demon_knight", "ash_wraith" };
+                for (int k = 0; k < kinds.Length; k++)
+                    Enemy.Spawn(kinds[k], Pos + (Vector2)(Quaternion.Euler(0, 0, k * 90f + 45f) * Vector2.right) * 3.2f, Mathf.Max(1, level - 3));
+                speed *= 1.15f;
+                tpCd = 2f;
+            }
+            else
+            {
+                Hud.I?.Banner("Malgrath — Fase III", "A fúria do Rei Demônio");
+                speed *= 1.2f;
+                dmg *= 1.15f;
+                castCd = 0.5f;
+            }
+            poise = maxPoise;
         }
 
         protected override void Die()

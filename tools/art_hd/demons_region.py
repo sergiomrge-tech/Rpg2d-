@@ -209,3 +209,20 @@ class IceDemon(Imp):
 
 
 REGION_IMPS = [SandImp(), SandWraith(), ScorpionDemon(), MineImp(), EmberGolem(), WitchImp(), BogWraith(), FrostImp(), IceDemon()]
+
+
+class AshWraith(L1.SpiritCorrupt):
+    name = 'ash_wraith'
+    skin = Pal('#6a4a4a', '#4a3030', '#9a7070', '#1e1010')
+    belly = Pal('#d8a090', '#b07868', '#f4d0c0', '#3a1a14')
+    wing = Pal('#ff6a3a', '#c8280a', '#ffb070', '#4a0a04')
+    membrane = Pal('#8a3a2a', '#5a2018', '#b8604a', '#2a0c08')
+    eye = hx('#ffb340')
+    fire = ('#ffd27a', '#ff6a1a', '#ffffff', '#8a1a04')
+    fire_glow = '#ff6a1a'
+
+    def extra_back(self, ctx, view, P):
+        radial_glow(ctx, 0, -4, 36, hx('#ff6a1a'), 0.26)
+
+
+REGION_IMPS.append(AshWraith())

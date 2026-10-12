@@ -48,6 +48,19 @@ namespace Aetheria
         Text bannerTitle, bannerSub;
         float bannerT = -1;
 
+        // boss bar
+        RectTransform bossBar;
+        Image bossFill, bossTrail;
+        Text bossName, bossTitle;
+        float bossShown = 1;
+
+        // credits
+        RectTransform credits;
+        Text creditsText;
+        float creditsY, creditsT;
+        Action creditsDone;
+        public bool InCredits => credits != null && credits.gameObject.activeSelf;
+
         const float ArcSpan = 240f / 360f;
 
         public static Hud Create()
@@ -209,6 +222,54 @@ namespace Aetheria
             bannerTitle = Txt("btitle", banner, "", Serif, 64, new Color(1f, 0.95f, 0.82f), new Vector2(0.5f, 0.5f), new Vector2(0, 20), new Vector2(900, 80));
             bannerSub = Txt("bsub", banner, "", Sans, 28, new Color(1f, 0.9f, 0.7f), new Vector2(0.5f, 0.5f), new Vector2(0, -78), new Vector2(900, 40));
             banner.gameObject.SetActive(false);
+
+            // ---- boss bar (top centre): ornate wide pill, name + title
+            bossBar = Rect("bossbar", root, new Vector2(0.5f, 1), new Vector2(0, -60), new Vector2(900, 90));
+            bossName = Txt("bname", bossBar, "", Serif, 34, new Color(1f, 0.92f, 0.78f), new Vector2(0.5f, 0.5f), new Vector2(0, 26), new Vector2(900, 44));
+            Img("btrack", bossBar, Ui("pill_track"), new Vector2(0.5f, 0.5f), new Vector2(0, -12), new Vector2(760, 30));
+            bossTrail = Img("btrail", bossBar, Ui("pill_fill"), new Vector2(0.5f, 0.5f), new Vector2(0, -12), new Vector2(740, 20));
+            bossTrail.type = Image.Type.Filled; bossTrail.fillMethod = Image.FillMethod.Horizontal; bossTrail.color = new Color(1f, 0.9f, 0.7f);
+            bossFill = Img("bfill", bossBar, Ui("pill_fill"), new Vector2(0.5f, 0.5f), new Vector2(0, -12), new Vector2(740, 20));
+            bossFill.type = Image.Type.Filled; bossFill.fillMethod = Image.FillMethod.Horizontal;
+            bossTitle = Txt("btitle2", bossBar, "", Sans, 22, new Color(1f, 0.85f, 0.6f), new Vector2(0.5f, 0.5f), new Vector2(0, -44), new Vector2(900, 28));
+            bossBar.gameObject.SetActive(false);
+
+            // ---- credits (full-screen black, scrolling text)
+            credits = Rect("credits", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1920, 1080));
+            var bg = credits.gameObject.AddComponent<Image>();
+            bg.color = new Color(0.02f, 0.01f, 0.04f, 1f);
+            creditsText = Txt("ctext", credits, "", Serif, 44, new Color(1f, 0.95f, 0.82f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1500, 3200));
+            creditsText.alignment = TextAnchor.UpperCenter;
+            creditsText.lineSpacing = 1.25f;
+            credits.gameObject.SetActive(false);
+        }
+
+        public void ShowCredits(string text, Action done)
+        {
+            credits.gameObject.SetActive(true);
+            creditsText.text = text;
+            creditsY = -1300f;
+            creditsT = 0;
+            creditsDone = done;
+            creditsText.rectTransform.anchoredPosition = new Vector2(0, creditsY);
+        }
+
+        void UpdateBossBar()
+        {
+            Enemy boss = null;
+            var p = Player.I;
+            if (p != null)
+                foreach (var e in Enemy.All)
+                    if (e != null && !e.dead && e.def.boss && (e.Pos - p.Pos).magnitude < 14f && (Time.time - e.lastHurt < 10f || (e.Pos - p.Pos).magnitude < 9f))
+                    { boss = e; break; }
+            if (boss == null) { bossBar.gameObject.SetActive(false); return; }
+            bossBar.gameObject.SetActive(true);
+            bossName.text = boss.def.name;
+            bossTitle.text = boss.def.title ?? "";
+            float n = boss.hp / boss.maxHp;
+            bossFill.fillAmount = n;
+            bossShown = bossShown < n ? n : Mathf.MoveTowards(bossShown, n, Time.unscaledDeltaTime * 0.35f);
+            bossTrail.fillAmount = bossShown;
         }
 
         public void Banner(string title, string sub)
@@ -366,6 +427,18 @@ namespace Aetheria
                 if (f.t > 3.2f) { Destroy(f.rt.gameObject); feeds.RemoveAt(i); }
             }
             UpdatePlates(cam, scale);
+            UpdateBossBar();
+            if (InCredits)
+            {
+                creditsT += dt;
+                creditsY += dt * 70f * ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.DownArrow)) ? 4f : 1f);
+                creditsText.rectTransform.anchoredPosition = new Vector2(0, creditsY);
+                if ((creditsY > 2600f || (creditsT > 2f && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)))))
+                {
+                    credits.gameObject.SetActive(false);
+                    var d = creditsDone; creditsDone = null; d?.Invoke();
+                }
+            }
 
             if (InDialogue)
             {

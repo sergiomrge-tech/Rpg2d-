@@ -1117,6 +1117,103 @@ def ice_spire(ctx):
     stroke(ctx, lambda c: (c.move_to(-6, -20), c.line_to(-2, -150)), (1, 1, 1, 1), 2, 0.7)
 
 
+
+# ------------------------------------------------------------------ Chapters 8-10: castle, wastelands, citadel
+DARK_STONE = Pal('#7a7a8a', '#54546a', '#a4a4b8', '#1c1c28')
+OBS = Pal('#3a2a4a', '#221630', '#5e4670', '#0a0614')
+HELL = Pal('#c83a3a', '#8a1a22', '#f27a6a', '#3a060a')
+
+
+@prop('castle_keep', 520, 520, 260, 480, col=(440, 100, 30), shadow=(8, 0, 230, 30, 0.4))
+def castle_keep(ctx):
+    W, H = 200, 190
+    paint(ctx, lambda c: smooth_poly(c, [(-W, 0), (-W, -H), (W, -H), (W, 0)], tension=0.01), DARK_STONE, sh=0, hl=0)
+    for row in range(12):
+        y = -8 - row * 16
+        for i in range(16):
+            x = -W + (12 if row % 2 else 0) + i * 26
+            stroke(ctx, lambda c, x=x, y=y: (c.move_to(x, y), c.line_to(x, y - 16)), DARK_STONE.shadow, 1.1, 0.7)
+    flat(ctx, lambda c: smooth_poly(c, [(-W, -H), (W, -H), (W, -H + 20), (-W, -H + 12)], tension=0.01), DARK_STONE.shadow, 0.9)
+    for i in range(12):
+        x = -W + i * 34
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x, -H), (x, -H - 18), (x + 22, -H - 18), (x + 22, -H)], tension=0.02), DARK_STONE, sh=2, hl=1)
+    door(ctx, 0, -2, 70, 110, pal=Pal('#3a2418', '#241408', '#5a3a28', '#0c0604'))
+    stroke(ctx, lambda c: (c.move_to(-34, -6), c.line_to(-34, -90), c.move_to(0, -6), c.line_to(0, -104), c.move_to(34, -6), c.line_to(34, -90)), (0.1, 0.06, 0.04, 1), 2, 0.8)
+    for x in (-130, -70, 70, 130):
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 10, -70), (x - 10, -120), (x, -134), (x + 10, -120), (x + 10, -70)], tension=0.2),
+              Pal('#ff8a3a', '#d04a14', '#ffd27a', '#4a1404'), sh=2, hl=0, line=1.1)
+        radial_glow(ctx, x, -100, 26, hx('#ff8a3a'), 0.35)
+    for sx in (-1, 1):
+        px = sx * 180
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px - 44, 6), (px - 44, -H - 120), (px + 44, -H - 120), (px + 44, 6)], tension=0.01), DARK_STONE, sh=6, hl=2)
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px - 54, -H - 118), (px, -H - 250), (px + 54, -H - 118)], tension=0.0), Pal('#4a2a3a', '#2e1624', '#6e4458', '#140810'), sh=6, hl=2)
+        roof_tiles(ctx, ((px - 4, -H - 250), (px + 4, -H - 250), (px + 54, -H - 118), (px - 54, -H - 118)), Pal('#4a2a3a', '#2e1624', '#6e4458', '#140810'), rows=6, cols=6)
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px - 8, -H - 70), (px - 8, -H - 100), (px, -H - 110), (px + 8, -H - 100), (px + 8, -H - 70)], tension=0.2), Pal('#1a1620', '#0a080e', '#2e2838', '#040206'), sh=0, hl=0)
+        stroke(ctx, lambda c, px=px: (c.move_to(px, -H - 250), c.line_to(px, -H - 282)), hx('#2a2020'), 2.4)
+        paint(ctx, lambda c, px=px: smooth_poly(c, [(px + 1, -H - 282), (px + 30, -H - 274), (px + 1, -H - 264)], tension=0.2), Pal('#6a1a8a', '#46105e', '#9a4ac0', '#1a0426'), sh=1.5, hl=0.8)
+    for x in (-100, 100):
+        paint(ctx, lambda c, x=x: smooth_poly(c, [(x - 7, -H - 6), (x - 7, -H - 48), (x + 7, -H - 48), (x + 7, -H - 6)], tension=0.1), Pal('#4a2a3a', '#2e1624', '#6e4458', '#140810'), sh=1.5, hl=0.8)
+    quad = ((-W + 30, -H - 100), (W - 30, -H - 100), (W + 14, -H + 6), (-W - 14, -H + 6))
+    paint(ctx, lambda c: smooth_poly(c, list(quad), tension=0.0), Pal('#4a2a3a', '#2e1624', '#6e4458', '#140810'), sh=0, hl=0)
+    roof_tiles(ctx, quad, Pal('#4a2a3a', '#2e1624', '#6e4458', '#140810'), rows=6, cols=14)
+    radial_glow(ctx, 0, -H - 40, 70, hx('#c83a8a'), 0.16)
+
+
+@prop('brazier', 70, 110, 35, 100, col=(18, 10, 0), shadow=(2, 0, 22, 6, 0.3))
+def brazier(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-4, 0), (-3, -44), (3, -44), (4, 0)], tension=0.1), Pal('#3a3a4a', '#22222e', '#5a5a70', '#0a0a10'), sh=1, hl=0.5)
+    paint(ctx, lambda c: smooth_poly(c, [(-18, -44), (18, -44), (14, -58), (-14, -58)], tension=0.2), Pal('#3a3a4a', '#22222e', '#5a5a70', '#0a0a10'), sh=2, hl=1)
+    radial_glow(ctx, 0, -78, 44, hx('#ff6a1a'), 0.55)
+    paint(ctx, lambda c: smooth_poly(c, [(-12, -58), (-16, -76), (-4, -94), (0, -108), (6, -92), (16, -76), (12, -58)], tension=0.4),
+          Pal('#ffb340', '#ff6a1a', '#fff0a0', '#5a1404'), sh=2, hl=2, line=0.9)
+
+
+@prop('obsidian_spire', 100, 230, 50, 214, col=(30, 14, 0), shadow=(3, 0, 34, 9, 0.35))
+def obsidian_spire(ctx):
+    radial_glow(ctx, 0, -100, 50, hx('#a050ff'), 0.2)
+    paint(ctx, lambda c: smooth_poly(c, [(-26, 4), (-14, -90), (-6, -170), (0, -200), (8, -150), (18, -80), (28, 4), (0, 8)], tension=0.1), OBS, sh=7, hl=3, deep=12)
+    stroke(ctx, lambda c: (c.move_to(-8, -20), c.line_to(-2, -150)), (0.7, 0.4, 1, 1), 1.8, 0.7)
+    stroke(ctx, lambda c: (c.move_to(8, -30), c.line_to(6, -90)), (1, 0.4, 0.5, 1), 1.4, 0.6)
+
+
+@prop('demon_banner', 70, 220, 35, 206, col=(14, 8, 0), shadow=(2, 0, 16, 5, 0.3))
+def demon_banner(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-3, 0), (-3, -170), (3, -170), (3, 0)], tension=0.02), Pal('#2a2030', '#14101a', '#4a3a58', '#06040a'), sh=1.2, hl=0.5)
+    stroke(ctx, lambda c: (c.move_to(-26, -168), c.line_to(26, -168)), Pal('#2a2030', '#14101a', '#4a3a58', '#06040a').base, 3)
+    paint(ctx, lambda c: smooth_poly(c, [(-24, -166), (24, -166), (24, -100), (0, -116), (-24, -100)], tension=0.05), Pal('#3a1a4a', '#220e2e', '#5e3a74', '#0c0412'), sh=3, hl=1.2)
+    paint(ctx, lambda c: smooth_poly(c, [(0, -150), (10, -134), (0, -120), (-10, -134)], tension=0.1), HELL, sh=1, hl=0.8, line=0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-8, -156), (-4, -164), (0, -156)], tension=0), HELL, sh=0.4, hl=0.2, line=0.5)
+
+
+@prop('hell_gate', 360, 320, 180, 290, col=None, shadow=(0, 0, 160, 14, 0.35))
+def hell_gate(ctx):
+    for sx in (-1, 1):
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 150, 0), (sx * 140, -200), (sx * 90, -200), (sx * 100, 0)], tension=0.02), OBS, sh=6, hl=2)
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 160, -190), (sx * 120, -290), (sx * 86, -200)], tension=0.1), OBS, sh=4, hl=2)
+    paint(ctx, lambda c: smooth_poly(c, [(-150, -200), (0, -250), (150, -200), (150, -230), (0, -280), (-150, -230)], tension=0.1), OBS, sh=4, hl=2)
+    radial_glow(ctx, 0, -110, 90, hx('#ff3a6a'), 0.45)
+    paint(ctx, lambda c: smooth_poly(c, [(-84, 0), (-84, -130), (-40, -190), (0, -204), (40, -190), (84, -130), (84, 0)], tension=0.35), Pal('#a0123a', '#5a0620', '#e0508a', '#1a0208'), sh=0, hl=0, line=1.4)
+    for k in range(7):
+        x = -60 + k * 20
+        stroke(ctx, lambda c, x=x: (c.move_to(x, 0), c.curve_to(x + 8, -50, x - 8, -100, x, -150)), (1, 0.7, 0.8, 1), 2, 0.4)
+    paint(ctx, lambda c: ellipse(c, 0, -246, 14, 14), HELL, sh=2, hl=1.5, line=1.2)
+    for sx in (-1, 1):
+        radial_glow(ctx, sx * 120, -150, 30, hx('#ff3a6a'), 0.5)
+
+
+@prop('throne', 200, 280, 100, 250, col=(120, 36, 0), shadow=(4, 0, 90, 16, 0.38))
+def throne(ctx):
+    paint(ctx, lambda c: smooth_poly(c, [(-84, 4), (-84, -20), (84, -20), (84, 4)], tension=0.02), OBS, sh=3, hl=1.2)
+    paint(ctx, lambda c: smooth_poly(c, [(-62, -20), (-62, -36), (62, -36), (62, -20)], tension=0.02), OBS, sh=3, hl=1.2)
+    paint(ctx, lambda c: smooth_poly(c, [(-44, -36), (-44, -130), (-30, -200), (0, -234), (30, -200), (44, -130), (44, -36)], tension=0.3), OBS, sh=6, hl=3, deep=10)
+    for sx in (-1, 1):
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 44, -90), (sx * 76, -140), (sx * 60, -170), (sx * 44, -130)], tension=0.2), OBS, sh=3, hl=1.5)
+        paint(ctx, lambda c, sx=sx: smooth_poly(c, [(sx * 70, -150), (sx * 82, -196), (sx * 62, -176)], tension=0.1), Pal('#f2e2c0', '#c9ab84', '#ffffff', '#5b4127'), sh=1, hl=0.6, line=0.9)
+    paint(ctx, lambda c: smooth_poly(c, [(-34, -36), (-34, -90), (34, -90), (34, -36)], tension=0.1), Pal('#5a1020', '#340810', '#8a2a3a', '#14040a'), sh=3, hl=1)
+    radial_glow(ctx, 0, -190, 50, hx('#ff3a6a'), 0.5)
+    paint(ctx, lambda c: smooth_poly(c, [(0, -214), (12, -194), (0, -176), (-12, -194)], tension=0.1), HELL, sh=1.5, hl=1, line=1)
+
+
 # ------------------------------------------------------------------ render
 def render_prop(name):
     p = PROPS[name]

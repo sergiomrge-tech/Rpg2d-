@@ -404,3 +404,123 @@ def region_npc(kind):
         return Look(hair=P('#e8e8f0', '#b8b8cc', '#ffffff', '#4a4a5e'), eye=hx('#6a9ae8'), tunic=P('#f4f0e8', '#d0c8b8', '#ffffff', '#6a6050'),
                     shirt=P('#f4f0e8', '#d0c8b8', '#ffffff', '#6a6050'), scarf=P('#3a6ac8', '#264a98', '#6a92e8', '#0c1a3a'), weapon=None)
     raise KeyError(kind)
+
+
+# ---------------------------------------------------------------- Chapters 8-10
+DARK_STEEL = Pal('#2e2a3e', '#1a1624', '#524a6a', '#08060e')
+CRIMSON = Pal('#a01c34', '#6a0e22', '#d84a64', '#2a040c')
+
+
+def greatsword(ctx, L, hand, ang, scale=1.0):
+    _xf(ctx, hand, ang, scale)
+    paint(ctx, lambda c: capsule(c, (0, -6), (0, 6), 2.4), SHAFT, sh=0.6, hl=0.3, line=0.8)
+    paint(ctx, lambda c: smooth_poly(c, [(-11, 5), (11, 5), (9, 10), (-9, 10)], tension=0.1), GOLD, sh=0.8, hl=0.6, line=0.8)
+
+    def blade(c):
+        c.move_to(-5, 10)
+        c.line_to(-6.5, 52)
+        c.line_to(0, 66)
+        c.line_to(6.5, 52)
+        c.line_to(5, 10)
+        c.close_path()
+    radial_glow(ctx, 0, 36, 24, hx('#ff3a6a'), 0.35)
+    paint(ctx, blade, DARK_STEEL, sh=2, hl=1.4, line=1.0)
+    stroke(ctx, lambda c: (c.move_to(0, 12), c.line_to(0, 58)), (1, 0.25, 0.4, 1), 1.6, 0.9)
+    ctx.restore()
+
+
+class CrownHorns:
+    """Crown of horns (Malgrath) / spiked helm; size scales the crown. Picklable Look.hat."""
+
+    def __init__(self, size=1.0, helmet=None, glow=False):
+        self.size, self.helmet, self.glow = size, helmet, glow
+
+    def __call__(self, ctx, view):
+        s = self.size
+        if self.helmet is not None:
+            w = 21 if view != 'side' else 19
+            paint(ctx, lambda c: smooth_poly(c, [(-w, 2), (-w + 1, -16), (0, -25), (w - 1, -16), (w, 2), (w * 0.55, -3), (-w * 0.55, -3)], tension=0.35),
+                  self.helmet, sh=2.5, hl=1.5, line=1.0)
+            if view == 'down':
+                stroke(ctx, lambda c: (c.move_to(0, -24), c.line_to(0, -2)), self.helmet.light, 1.4, 0.8)
+                for sx in (-1, 1):
+                    flat(ctx, lambda c, sx=sx: ellipse(c, sx * 6, 4, 2.4, 1.4), hx('#ff3a5a'))
+                    radial_glow(ctx, sx * 6, 4, 6, hx('#ff3a5a'), 0.55)
+        offs = [(-1, 10), (1, 10), (-1, 3), (1, 3)] if view != 'side' else [(1, 8), (1, 2)]
+        for k, (sx, dx) in enumerate(offs):
+            big = k < 2
+            b = (sx * (dx if view != 'side' else 0) + (0 if view != 'side' else -2), -13)
+            d = sx if view != 'side' else 1
+            l = (26 if big else 16) * s
+            tip = (b[0] + d * (10 if big else 6) * s, b[1] - l)
+            mid = (b[0] + d * (18 if big else 8) * s, b[1] - l * 0.5)
+            paint(ctx, lambda c, b=b, tip=tip, mid=mid, d=d: smooth_poly(
+                c, [(b[0] - 3.5 * s, b[1] + 1), mid, tip, (mid[0] + d * 3, mid[1] + 3), (b[0] + 4 * s, b[1] + 1)], tension=0.4),
+                Pal('#3a2a3a', '#220e22', '#5e3a5e', '#0c040c') if not self.glow else Pal('#f2e2c0', '#c9ab84', '#ffffff', '#5b4127'), sh=1.5, hl=1, line=1.0)
+        if self.glow and view != 'up':
+            radial_glow(ctx, 0, -20, 24, hx('#ff3a6a'), 0.35)
+
+
+def final_look(kind):
+    L = oni_look()
+    if kind == 'demon_knight':
+        L.skin = Pal('#6a3a4a', '#4a2432', '#8e5a6c', '#1e0c14')
+        L.shirt = L.glove = L.skin
+        L.tunic = DARK_STEEL
+        L.pants = Pal('#1c1626', '#100c18', '#322a42', '#040208')
+        L.boots = Pal('#1c1626', '#100c18', '#322a42', '#040208')
+        L.belt = CRIMSON
+        L.eye = hx('#ff4a5a')
+        L.weapon = 'sword'
+        L.blade = Pal('#5a526e', '#34304a', '#8a82a4', '#0c0a14')
+        L.hat = CrownHorns(0.6, helmet=DARK_STEEL)
+    elif kind == 'vorath':
+        L.skin = Pal('#8a2a3a', '#5e1624', '#b85064', '#2a060e')
+        L.shirt = L.glove = L.skin
+        L.tunic = Pal('#2a1a2e', '#160c1a', '#4a3250', '#08040a')
+        L.pants = Pal('#1c1626', '#100c18', '#322a42', '#040208')
+        L.boots = Pal('#2a1a2e', '#160c1a', '#4a3250', '#08040a')
+        L.belt = GOLD
+        L.eye = hx('#ffd23f')
+        L.scarf = CRIMSON
+        L.scarf_on = True
+        L.weapon = greatsword
+        L.hat = CrownHorns(1.25, helmet=Pal('#2a1a2e', '#160c1a', '#4a3250', '#08040a'))
+    elif kind == 'malgrath':
+        from humanoid import Look
+        black = Pal('#1a1020', '#0c0610', '#382a48', '#04020a')
+        L = Look(skin=Pal('#7a1a3a', '#500e26', '#a8406a', '#240410'), hair=Pal('#2a1a3a', '#160c20', '#4a3262', '#08040e'), hair_style='spiky',
+                 eye=hx('#ffffff'), tunic=black, shirt=Pal('#7a1a3a', '#500e26', '#a8406a', '#240410'), glove=black,
+                 pants=black, boots=black, belt=GOLD, scarf=Pal('#5a1a8a', '#36105a', '#8a4ac0', '#16062a'), scarf_on=True,
+                 weapon=greatsword)
+        L.hat = CrownHorns(1.7, glow=True)
+    return L
+
+
+class Halo:
+    """Golden halo above the head (Lumia). Picklable Look.hat."""
+
+    def __call__(self, ctx, view):
+        radial_glow(ctx, 0, -34, 36, hx('#ffe08a'), 0.5)
+        stroke(ctx, lambda c: ellipse(c, 0, -34, 18, 5), hx('#ffd27a'), 3.4, 0.95)
+        stroke(ctx, lambda c: ellipse(c, 0, -34, 18, 5), hx('#fffbe0'), 1.4, 1)
+
+
+def final_npc(kind):
+    from humanoid import Look
+    P = Pal
+    if kind == 'knight':
+        return Look(hair_style='long', hair=P('#a8502e', '#7e3820', '#d47a4a', '#3a160a'), eye=hx('#3a7ac8'),
+                    tunic=P('#8a98b8', '#5a688a', '#b8c6e0', '#1a2236'), shirt=P('#c8d0e0', '#8a94ac', '#ffffff', '#1e2434'),
+                    scarf=P('#2a4a8a', '#1a3266', '#4a72c0', '#08122a'), weapon=None)
+    if kind == 'veteran':
+        return Look(hair=P('#9a9aa8', '#70707e', '#c8c8d4', '#2a2a34'), hair_style='spiky', eye=hx('#6a5a3a'),
+                    tunic=P('#4a5a3a', '#32402a', '#6a7e52', '#121a0c'), shirt=P('#d8c8a8', '#b0a080', '#f4e8cc', '#4a3c24'),
+                    scarf=P('#c8402a', '#962a18', '#f07a5a', '#3a0c04'), weapon=None)
+    if kind == 'lumia':
+        L = Look(hair_style='long', hair=P('#fff0c8', '#e0c890', '#ffffff', '#8a6a30'), eye=hx('#f0b030'),
+                 tunic=P('#f8f4ff', '#d4ccec', '#ffffff', '#6a6090'), shirt=P('#f8f4ff', '#d4ccec', '#ffffff', '#6a6090'),
+                 scarf=P('#f0c860', '#b8862c', '#fff2b0', '#4a300c'), scarf_on=True, weapon=None)
+        L.hat = Halo()
+        return L
+    raise KeyError(kind)

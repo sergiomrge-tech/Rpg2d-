@@ -1,0 +1,57 @@
+{
+ "frameW": 192,
+ "frameH": 176,
+ "pivotX": 96,
+ "pivotY": 26,
+ "cols": 21,
+ "anims": [
+  {
+   "name": "idle_down",
+   "start": 0,
+   "count": 10,
+   "fps": 8,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_up",
+   "start": 10,
+   "count": 10,
+   "fps": 8,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "idle_side",
+   "start": 20,
+   "count": 10,
+   "fps": 8,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "walk_down",
+   "start": 30,
+   "count": 10,
+   "fps": 13,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "walk_up",
+   "start": 40,
+   "count": 10,
+   "fps": 13,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "walk_side",
+   "start": 50,
+   "count": 10,
+   "fps": 13,
+   "loop": true,
+   "hit": -1
+  }
+ ]
+}

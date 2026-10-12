@@ -101,8 +101,8 @@ namespace Aetheria
             if (d.heal > 0 && p.hp >= gs.HpMax) return;
             if (d.mana > 0 && p.mp >= gs.maxMp) return;
             gs.Take(id);
-            p.hp = Mathf.Min(gs.HpMax, p.hp + d.heal);
-            p.mp = Mathf.Min(gs.maxMp, p.mp + d.mana);
+            p.hp = Mathf.Min(gs.HpMax, p.hp + (d.heal > 0 ? Mathf.Max(d.heal, 0.35f * gs.HpMax) : 0));
+            p.mp = Mathf.Min(gs.maxMp, p.mp + (d.mana > 0 ? Mathf.Max(d.mana, 0.4f * gs.maxMp) : 0));
             Sfx.Play("potion", 0.5f, 1f);
         }
 
