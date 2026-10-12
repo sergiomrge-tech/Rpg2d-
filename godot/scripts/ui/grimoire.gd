@@ -81,6 +81,8 @@ func _input(event: InputEvent) -> void:
 	if not open or close_button == null:
 		return
 	if event is InputEventScreenTouch and event.pressed:
+		if Game.ui_smoke:
+			print("[ui-smoke] book touch position=", event.position, " X rect=", close_button.get_global_rect(), " open=", open)
 		if close_button.get_global_rect().grow(10.0).has_point(event.position):
 			_on_close_pressed()
 			get_viewport().set_input_as_handled()
