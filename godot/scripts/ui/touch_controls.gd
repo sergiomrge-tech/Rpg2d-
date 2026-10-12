@@ -103,13 +103,18 @@ func _menu_open() -> bool:
 
 
 func _process(_dt: float) -> void:
-	layer.visible = not Game.in_menu
 	var menu := _menu_open()
-	menu_pad.visible = menu
-	game_buttons.visible = not menu
-	stick_base.visible = not menu
-	stick_knob.visible = not menu
-	if menu and _stick_id >= 0:
+	# Keep all gameplay controls hidden through the opening cinematic and
+	# prologue. Later story dialogue/cutscenes also take visual priority.
+	# Modal navigation remains usable while the Grimoire/Options is paused.
+	var playing := Game.flags.has("prologue") and Game.player != null and not Game.player.input_locked
+	var cinematic := hud.in_dialogue() or hud.in_credits() or hud.scene_img.visible
+	layer.visible = not Game.in_menu and not cinematic and (menu or playing)
+	menu_pad.visible = menu and layer.visible
+	game_buttons.visible = playing and not menu and layer.visible
+	stick_base.visible = game_buttons.visible
+	stick_knob.visible = game_buttons.visible
+	if (not game_buttons.visible) and _stick_id >= 0:
 		_stick_id = -1
 		_stick_idle()
 	var talking := hud.in_dialogue()
@@ -144,13 +149,15 @@ func _button_at(v: Vector2) -> Dictionary:
 
 
 func _input(ev: InputEvent) -> void:
-	if Game.in_menu:
+	if Game.in_menu or hud.in_dialogue() or hud.in_credits():
+		# Only tap-to-advance should be accepted inside cinematic dialogue.
+		if ev is InputEventScreenTouch and ev.pressed and hud.in_dialogue():
+			Game.press_key(KEY_ENTER)
 		return
 	if ev is InputEventScreenTouch:
 		var v := _virtual(ev.position)
 		if ev.pressed:
-			if hud.in_dialogue() or hud.in_credits():
-				Game.press_key(KEY_ENTER)
+			if not layer.visible:
 				return
 			var b := _button_at(v)
 			if not b.is_empty():
