@@ -6,3 +6,4 @@ godot/.godot/
 godot/*.import
 __pycache__/
 node_modules
+tools/art_hd/_*_ground_small.png

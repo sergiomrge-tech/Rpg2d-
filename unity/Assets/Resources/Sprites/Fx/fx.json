@@ -1,0 +1,161 @@
+{
+ "frameW": 192,
+ "frameH": 192,
+ "pivotX": 96,
+ "pivotY": 96,
+ "cols": 21,
+ "anims": [
+  {
+   "name": "slash",
+   "start": 0,
+   "count": 7,
+   "fps": 26,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "slash_heavy",
+   "start": 7,
+   "count": 9,
+   "fps": 24,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "claw",
+   "start": 16,
+   "count": 6,
+   "fps": 22,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hit",
+   "start": 22,
+   "count": 6,
+   "fps": 24,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hit_crit",
+   "start": 28,
+   "count": 8,
+   "fps": 24,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hit_spark",
+   "start": 36,
+   "count": 7,
+   "fps": 22,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "hit_fire",
+   "start": 43,
+   "count": 9,
+   "fps": 22,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "dust",
+   "start": 52,
+   "count": 7,
+   "fps": 16,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "shock",
+   "start": 59,
+   "count": 8,
+   "fps": 22,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "circle1",
+   "start": 67,
+   "count": 12,
+   "fps": 20,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "circle2",
+   "start": 79,
+   "count": 12,
+   "fps": 20,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "circle3",
+   "start": 91,
+   "count": 12,
+   "fps": 20,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "heal",
+   "start": 103,
+   "count": 12,
+   "fps": 16,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "poof",
+   "start": 115,
+   "count": 10,
+   "fps": 16,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "alert",
+   "start": 125,
+   "count": 10,
+   "fps": 14,
+   "loop": false,
+   "hit": -1
+  },
+  {
+   "name": "spark1",
+   "start": 135,
+   "count": 6,
+   "fps": 20,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "spark2",
+   "start": 141,
+   "count": 6,
+   "fps": 20,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "spark3",
+   "start": 147,
+   "count": 6,
+   "fps": 20,
+   "loop": true,
+   "hit": -1
+  },
+  {
+   "name": "fireball",
+   "start": 153,
+   "count": 6,
+   "fps": 18,
+   "loop": true,
+   "hit": -1
+  }
+ ]
+}
