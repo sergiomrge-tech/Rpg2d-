@@ -78,6 +78,13 @@ static func apply_new_game(gs: GameState, id: String) -> void:
 	gs.max_mp = float(d["mp"])
 	gs.atk = float(d["atk"])
 	gs.mag = float(d["mag"])
+	# Starting loadout follows the selected class, never the former
+	# Warrior sword for a bow-only/magic-only/pet-only hero.
+	match gs.class_id:
+		"archer": gs.eq_weapon = "hunter_bow"
+		"assassin": gs.eq_weapon = "twin_daggers"
+		"mage", "summoner": gs.eq_weapon = ""
+		_: gs.eq_weapon = "rusty_sword"
 	# The starting equipment is part of the class rules, not a cosmetic name.
 	match gs.class_id:
 		"archer":
