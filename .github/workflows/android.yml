@@ -1,10 +1,14 @@
 name: android-apk
 on:
   workflow_dispatch:
+  push:
+    branches: ['ccr-*']
 permissions:
   contents: write
 jobs:
   apk:
+    # on pushes, only commits whose message contains [apk] build the APK
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[apk]')
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
