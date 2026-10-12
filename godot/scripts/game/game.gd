@@ -42,6 +42,7 @@ var marker: ObjectiveMarker
 var main: Node2D
 var map_name := "village"
 var ci_dir := ""
+var class_shots := false
 var ui_smoke := false
 var touch_mode := false
 var touch_move := Vector2.ZERO
@@ -69,6 +70,9 @@ func _ready() -> void:
 	for i in args.size() - 1:
 		if args[i] == "-ciShots":
 			ci_dir = args[i + 1]
+		if args[i] == "-classShots":
+			ci_dir = args[i + 1]
+			class_shots = true
 	ui_smoke = "-uiSmoke" in args
 	touch_mode = OS.has_feature("mobile") or "-touch" in args
 	if touch_mode:
@@ -145,6 +149,9 @@ func start(m: Node2D) -> void:
 	Music.play(map_name)
 	if ui_smoke:
 		_ui_smoke_test()
+		return
+	if class_shots:
+		_ci_class_shots()
 		return
 	if ci_dir != "":
 		_ci_shots()
@@ -850,6 +857,60 @@ func _load() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED:
 		save()
+
+
+# ------------------------------------------------------------------ real Godot class presentation (never mockups)
+## -classShots <output_dir>: captures the actual viewport, live actors and real
+## ability keyframes for all six class rigs and the original summoned pet.
+func _ci_class_shots() -> void:
+	# The screenshots come directly from RenderingServer.frame_post_draw.
+	# Keep the existing map/camera and true user HUD art intact.
+	var selector := ClassSelect.new()
+	hud.add_child(selector)
+	selector.setup(hud, func(_id): pass, func(): pass)
+	await _wait(.40)
+	await shot("00_class_selection_in_game")
+	selector.close()
+	flags["prologue"] = true
+	player.input_locked = true
+	player.invuln = 60.0
+	for foe in Enemy.all.duplicate():
+		if is_instance_valid(foe):
+			foe.queue_free()
+	player.global_position = Vector2(1728, 1250)
+	camera.snap()
+	await _wait(.22)
+	for class_id in HeroClasses.ORDER:
+		HeroClasses.apply_new_game(state, class_id)
+		player.anim.setup(HeroClasses.sheet_for(class_id))
+		player.max_hp = state.hp_max()
+		player.hp = player.max_hp
+		player.mp = state.max_mp
+		player.special_cd = 0.0
+		player.special_strike = false
+		player._to_free()
+		player.anim.set_facing(Util.Face.DOWN)
+		await _wait(.26)
+		await shot("01_" + class_id + "_idle_in_game")
+		player._try_cast()
+		await _wait(.42)
+		await shot("02_" + class_id + "_skill_in_game")
+		if class_id == "summoner":
+			await _wait(.36)
+			if SpiritPet.count_for(player) < 1:
+				push_error("[class-shots] summoner failed to create physical animated familiar")
+				get_tree().quit(1)
+				return
+			var pet: SpiritPet = SpiritPet.active_pets.back()
+			pet.global_position = player.global_position + Vector2(62,-12)
+			await _wait(.36)
+			await shot("03_astral_lynx_in_game")
+		player._to_free()
+	for pet in SpiritPet.active_pets.duplicate():
+		if is_instance_valid(pet):
+			pet.queue_free()
+	print("[class-shots] PASS 6 in-engine hero sprites, 6 real skill screenshots, original spirit.")
+	get_tree().quit(0)
 
 
 # ------------------------------------------------------------------ CI: scripted tour + screenshots
