@@ -13,6 +13,42 @@ var walls: StaticBody2D
 var _blocked := PackedByteArray()
 var _swaying: Array[Node2D] = []
 var _t := 0.0
+var _lights: Array = []
+var _mod: CanvasModulate
+var _base_tint := Color.WHITE
+var _outdoor := false
+
+# kind -> [color, size (tiles), alpha, height above feet (tiles), flicker]
+const LIGHTS := {
+	"lamp": [Color(1, 0.82, 0.45), 2.8, 0.24, 1.55, 0.05],
+	"torch_post": [Color(1, 0.65, 0.3), 3.2, 0.3, 1.3, 0.25],
+	"brazier": [Color(1, 0.55, 0.2), 3.6, 0.34, 0.9, 0.3],
+	"crystal_blue": [Color(0.4, 0.75, 1), 3.0, 0.3, 0.7, 0.08],
+	"crystal_red": [Color(1, 0.4, 0.35), 3.0, 0.3, 0.7, 0.08],
+	"bog_light": [Color(0.5, 1, 0.6), 2.6, 0.32, 1.0, 0.2],
+	"mushrooms": [Color(0.5, 0.9, 1), 1.8, 0.2, 0.3, 0.1],
+	"portal": [Color(0.6, 0.55, 1), 4.5, 0.35, 1.2, 0.1],
+	"hell_gate": [Color(1, 0.3, 0.2), 6.0, 0.4, 1.5, 0.2],
+	"mine_entrance": [Color(1, 0.7, 0.4), 3.4, 0.25, 1.0, 0.1],
+	"cauldron": [Color(0.5, 1, 0.5), 2.4, 0.3, 0.7, 0.2],
+	"anvil": [Color(1, 0.6, 0.3), 1.8, 0.2, 0.5, 0.2],
+	"fountain": [Color(0.6, 0.85, 1), 3.0, 0.1, 1.0, 0.05],
+}
+# map -> [ambient tint, outdoor (follows the day/night cycle)]
+const AMBIENT := {
+	"village": [Color(1, 0.98, 0.93), true],
+	"velmoor": [Color(0.8, 0.88, 0.98), true],
+	"valemont": [Color(0.97, 0.97, 1.0), true],
+	"kharis": [Color(1.0, 0.94, 0.82), true],
+	"mines": [Color(0.55, 0.57, 0.72), false],
+	"mirewail": [Color(0.72, 0.84, 0.78), false],
+	"peaks": [Color(0.9, 0.95, 1.0), true],
+	"castle": [Color(0.78, 0.78, 0.92), false],
+	"wastelands": [Color(0.92, 0.66, 0.58), false],
+	"citadel": [Color(0.56, 0.46, 0.74), false],
+}
+const DAY_LENGTH := 360.0
+const NIGHT_TINT := Color(0.42, 0.5, 0.85)
 
 
 static func load_map(name: String) -> World:
@@ -68,6 +104,12 @@ func build() -> void:
 
 	for p in d["props"]:
 		_spawn_prop(p, flat_layer)
+	var am: Array = AMBIENT.get(d["name"], [Color.WHITE, false])
+	_base_tint = am[0]
+	_outdoor = am[1]
+	_mod = CanvasModulate.new()
+	_mod.color = _base_tint
+	add_child(_mod)
 
 
 func _box(center: Vector2, size: Vector2) -> void:
@@ -119,9 +161,11 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 			_box(pos + Vector2(0, -(ch * 0.5 - cy)), Vector2(cw, ch))
 	if kind.begins_with("tree") or kind.begins_with("bush") or kind == "tuft" or kind == "swamp_tree" or kind == "snow_pine":
 		_swaying.append(s)
-	if kind == "lamp":
-		var g := Util.glow(s, Color(1, 0.82, 0.45), 2.6, 0.22)
-		g.position = Vector2(0, -1.55 * T)
+	if LIGHTS.has(kind):
+		var L: Array = LIGHTS[kind]
+		var g := Util.glow(s, L[0], L[1], L[2])
+		g.position = Vector2(0, -float(L[3]) * T)
+		_lights.append({"g": g, "a": L[2], "flick": L[4], "ph": randf() * 20.0})
 
 
 func add_entity(n: Node2D, at: Vector2) -> void:
@@ -129,8 +173,20 @@ func add_entity(n: Node2D, at: Vector2) -> void:
 	n.global_position = at
 
 
+## 0 = full day, 1 = deep night. Starts at day.
+func night_amount() -> float:
+	if not _outdoor:
+		return 0.0
+	return 0.5 - 0.5 * cos(Game.time() / DAY_LENGTH * TAU)
+
+
 func _process(dt: float) -> void:
 	_t += dt
+	var n := night_amount()
+	_mod.color = _base_tint.lerp(_base_tint * NIGHT_TINT, n * 0.85)
+	for l in _lights:
+		var fl := 1.0 + float(l["flick"]) * (sin(_t * 9.0 + l["ph"]) * 0.5 + sin(_t * 23.0 + l["ph"] * 2.0) * 0.5)
+		l["g"].modulate.a = float(l["a"]) * fl * (1.0 + 1.6 * n)
 	for s in _swaying:
 		var ph := s.position.x * 0.0055 + s.position.y * 0.003
 		var a := sin(_t * 1.3 + ph) * 0.9 + sin(_t * 2.9 + ph * 1.7) * 0.35

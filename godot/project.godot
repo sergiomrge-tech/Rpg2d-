@@ -14,6 +14,7 @@ Util="*res://scripts/core/util.gd"
 Sheets="*res://scripts/core/sheets.gd"
 Data="*res://scripts/game/data.gd"
 Sfx="*res://scripts/core/sfx.gd"
+Music="*res://scripts/core/music.gd"
 Story="*res://scripts/game/story.gd"
 Game="*res://scripts/game/game.gd"
 

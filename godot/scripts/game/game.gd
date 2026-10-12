@@ -105,7 +105,8 @@ func start(m: Node2D) -> void:
 	grimoire = Grimoire.new()
 	hud.add_child(grimoire)
 	grimoire.setup(hud)
-	Sfx.loop("ambience", 0.25)
+	Sfx.loop("ambience", 0.2)
+	Music.play(map_name)
 	if ci_dir != "":
 		_ci_shots()
 		return
@@ -136,6 +137,7 @@ func _process(dt: float) -> void:
 	if consume(KEY_TAB) and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked:
 		grimoire.toggle()
 	_travel_cd -= dt
+	Music.play("boss" if hud.boss_bar.visible else map_name)
 	if not player.dead and _travel_cd <= 0.0:
 		var ex := world.exit_at(player.global_position)
 		if not ex.is_empty():
@@ -327,6 +329,7 @@ func on_player_died() -> void:
 	player.revive(Vector2(float(world.data["playerX"]), float(world.data["playerY"])))
 	camera.snap()
 	world.respawn_enemies()
+	save()
 
 
 # ------------------------------------------------------------------ save / load
@@ -337,19 +340,41 @@ func save() -> void:
 	if player:
 		d["px"] = player.global_position.x
 		d["py"] = player.global_position.y
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var text := JSON.stringify(d)
+	# write to a temp file first, validate it, keep the previous save as .bak, then promote
+	var tmp := SAVE_PATH + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
 		push_warning("save failed")
 		return
-	f.store_string(JSON.stringify(d))
+	f.store_string(text)
+	f.close()
+	if _read_save(tmp).is_empty():
+		push_warning("save validation failed; keeping previous save")
+		DirAccess.remove_absolute(tmp)
+		return
+	if FileAccess.file_exists(SAVE_PATH):
+		DirAccess.rename_absolute(SAVE_PATH, SAVE_PATH + ".bak")
+	DirAccess.rename_absolute(tmp, SAVE_PATH)
+
+
+func _read_save(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return {}
+	var d = JSON.parse_string(f.get_as_text())
+	if typeof(d) != TYPE_DICTIONARY or not d.has("state") or typeof(d["state"]) != TYPE_DICTIONARY:
+		return {}
+	return d
 
 
 func _load() -> void:
-	if not FileAccess.file_exists(SAVE_PATH):
-		return
-	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
-	var d = JSON.parse_string(f.get_as_text())
-	if typeof(d) != TYPE_DICTIONARY or not d.has("state"):
+	var d := _read_save(SAVE_PATH)
+	if d.is_empty():
+		d = _read_save(SAVE_PATH + ".bak")   # main save missing or corrupt: recover the backup
+	if d.is_empty():
 		return
 	state.from_dict(d["state"])
 	for k in d.get("flags", []):
@@ -361,6 +386,11 @@ func _load() -> void:
 		map_name = m
 		_saved_pos = Vector2(float(d.get("px", 0)), float(d.get("py", 0)))
 		_has_saved_pos = d.has("px")
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED:
+		save()
 
 
 # ------------------------------------------------------------------ CI: scripted tour + screenshots
@@ -413,6 +443,7 @@ func _ci_shots() -> void:
 		_tour_to(m)
 		await _wait(1.0)
 		await shot("10_" + m)
+	await _ci_bosses()
 	print("[ci] done")
 	await _wait(0.3)
 	get_tree().quit()
@@ -431,3 +462,84 @@ func _tour_to(m: String) -> void:
 	world.spawn_actors()
 	camera.snap()
 	hud.banner(MAP_TITLES[m][0], MAP_TITLES[m][1])
+
+
+const BOSS_TOUR := [
+	["village", "grakk"], ["velmoor", "dryad_profane"], ["valemont", "assassin_shadow"], ["kharis", "scorpion_demon"],
+	["mines", "ember_golem"], ["mirewail", "succubus_mirael"], ["peaks", "ice_demon"], ["castle", "vorath"],
+	["wastelands", "thornmaw_alpha"], ["citadel", "malgrath"],
+]
+
+
+func _find_boss(id: String) -> Enemy:
+	for e in Enemy.all:
+		if is_instance_valid(e) and e.def["id"] == id and not e.dead:
+			return e
+	return null
+
+
+## Long tour: fights (auto-played) and kills every boss, with Sylra in the party, then the ending.
+func _ci_bosses() -> void:
+	_travel_cd = 999.0
+	for entry in BOSS_TOUR:
+		var m: String = entry[0]
+		var id: String = entry[1]
+		if m != map_name:
+			_tour_to(m)
+			_travel_cd = 999.0
+			await _wait(0.5)
+		var boss := _find_boss(id)
+		if boss == null:
+			print("[ci] boss not found ", id)
+			continue
+		while state.level < boss.level - 1:
+			state.gain_xp(Data.xp_to_next(state.level))
+		player.max_hp = state.hp_max()
+		player.hp = player.max_hp
+		player.mp = state.max_mp
+		if m == "velmoor":
+			flags["sylra_joined"] = true
+			if Companion.I == null:
+				Companion.spawn(player.global_position)
+		player.global_position = boss.global_position + Vector2(0, 3.4 * 64.0)
+		if Companion.I:
+			Companion.I.global_position = player.global_position + Vector2(-64, 30)
+		camera.snap()
+		player.input_locked = true
+		await _wait(0.9)
+		var t := 0.0
+		while t < 3.0:
+			player.invuln = 99.0
+			var to := boss.global_position - player.global_position
+			player.scripted_move = to.normalized() if to.length() > 2.2 * 64.0 else Vector2.ZERO
+			player.face(Util.facing_from(to, player.facing))
+			player.ci_attack()
+			if int(t * 2.0) % 3 == 2:
+				player.ci_cast()
+			await _wait(0.35)
+			t += 0.35
+		await shot("20_boss_" + id)
+		boss.hp = boss.max_hp * 0.3
+		boss.hurt(1.0, player.global_position, 0, 0)
+		await _wait(0.8)
+		await shot("21_boss_phase_" + id)
+		player.scripted_move = Vector2.ZERO
+		boss.hurt(99999, player.global_position, 0, 999)
+		await _wait(1.4)
+		if id != "malgrath":
+			await shot("22_boss_dead_" + id)
+	# ending: dialogue then credits
+	await _wait(1.0)
+	await shot("30_ending_dialogue")
+	var guard := 0
+	while hud.in_dialogue() and guard < 200:
+		hud.advance()
+		hud.advance()
+		guard += 1
+		if guard == 3:
+			await _wait(1.2)
+			await shot("31_ending_scene")
+		await _wait(0.1)
+	await _wait(2.0)
+	await shot("32_credits")
+	print("[ci] credits visible: ", hud.in_credits())

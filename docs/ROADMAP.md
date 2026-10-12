@@ -26,7 +26,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Grimório em livro aberto (Tab): atributos, magias, bolsa; usar poções/éter/Tomo (evolui a Centelha)
 - ✅ Forja do Borin: 5 Chifres + 80 ouro → Lâmina de Chifre (+6 ATQ)
 - ⬜ Quadro de missões interativo, lojas
-- ⬜ Música e ambiência por região
+- ✅ Música procedural por região + tema de chefe (`core/music.gd`, loops de 8 compassos com crossfade)
 
 ## Etapa 2 — Capítulos 2–3
 - ✅ Floresta de Velmoor: mapa (chão sombrio, rio, ruínas élficas, cogumelos luminosos, árvores corrompidas), portal no fim do bosque
@@ -42,7 +42,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Evolução das habilidades: Tomo da Centelha (I→II Lança de Chamas→III Cometa Arcano que atravessa inimigos) e **Tomo do Corte Crescente** (3º golpe lança lâmina de energia)
 - ✅ Equipamentos: 3 slots (arma/armadura/amuleto), 11 peças com ATQ/DEF/MAG/PV, defesa reduz dano (100/(100+3×DEF)), equipar no Grimório
 - ✅ Forja do Borin com 5 receitas (chifres, couro demoníaco, brasas, pó de espírito); drops de chefes (Espada de Velmoor, Cutelo do General Oni)
-- ⬜ Dificuldade/economia: rodada de balanceamento quando o jogo rodar na nuvem
+- ✅ Balanceamento: vida dos chefes cortada pela metade (de ~110 para ~55 golpes), Grakk mantido; tabela de golpes-para-matar revisada
 
 ## Etapa 3 — Capítulos 4–7
 - ✅ **Deserto de Kharis** (Cap. 4): oásis, acampamento nômade, obeliscos, arena do **Demônio Escorpião** · NPC Hasim · Rank B
@@ -52,7 +52,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ 13 novos demônios animados (3 vistas × 6 estados): diabretes das dunas/mineiro/bruxo/gélido, espectros de areia e do brejo, onis nômade/de rocha/de gelo + 4 chefes
 - ✅ Chefes com fase 2 (invocam reforços a 50 %); drops garantidos de equipamento épico/lendário por chefe
 - ✅ Portões de viagem por progresso (Rank/chefe derrotado), título de região, missões de região em tabela (`Story.Regions`)
-- ⬜ Iluminação 2D (dia/noite, tochas, cavernas)
+- ✅ Iluminação 2D: tom ambiente por mapa, ciclo dia/noite nas regiões externas, brilho de tochas/lâmpadas/cristais/portais com tremulação
 - ⬜ Árvores de habilidade completas (nível III de espada, escudo de luz, passos)
 
 ## Etapa 4 — Capítulos 8–10 e final
@@ -67,11 +67,14 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento
+- ✅ Save resiliente (arquivo temporário validado + `.bak` + recuperação automática; salva ao morrer/fechar) — ideia do PR #1
+- ✅ Tour automático longo no CI: todos os 10 chefes (com Sylra), fases, final e créditos
+- ⬜ Integrar os insetoides do GPT (PRs #5–#10): PNG/JSON já servem no Godot; falta IA/habilidades em GDScript
 - ⬜ Gamepad, opções, legendas/idiomas
 - ⬜ Balanceamento (alvo ~30 h)
 - ⬜ Builds Windows/Mac, página do jogo
 
 ## Próximo passo imediato
 1. Jogar de verdade (clique/teclado) e anotar o que está estranho: combate, balanceamento, câmera.
-2. Música, iluminação 2D, Novo Jogo+, árvores de habilidade.
+2. Novo Jogo+, árvores de habilidade, insetoides do GPT.
 3. Exportar builds (Windows/Linux/Web) pelo Godot.
