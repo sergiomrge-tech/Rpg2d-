@@ -29,4 +29,4 @@
 4. `python tools/art_hd/verify_lote2_bosses.py` — rejeita quadros estáticos, recortes nas bordas, frames vazios e direções idênticas.
 5. **Ainda necessário:** executar o Editor Unity 2022.3 LTS, percorrer os cinco encontros, conferir colisões, FPS, escala, hitbox, loot e a qualidade artística na tela. Somente prints reais do Editor podem ser chamados de screenshots do jogo.
 
-**Status:** implementação no branch de desenvolvimento. O PR permanece em rascunho enquanto faltar renderização completa aprovada, execução real do jogo e aprovação do diretor.
+**Status:** cinco folhas PNG/JSON e 105 trilhas direcionais renderizadas, verificadas e versionadas no GitHub. O compile check do C# e a QA de gameplay passaram. **A execução real no Editor Unity e a aprovação artística do diretor continuam pendentes**, portanto o PR permanece em rascunho.
