@@ -41,6 +41,10 @@ var marker: ObjectiveMarker
 var main: Node2D
 var map_name := "village"
 var ci_dir := ""
+var touch_mode := false
+var touch_move := Vector2.ZERO
+var touch_run := false
+var touch: TouchControls
 
 var _time := 0.0
 var _hit_until := 0
@@ -60,6 +64,9 @@ func _ready() -> void:
 	for i in args.size() - 1:
 		if args[i] == "-ciShots":
 			ci_dir = args[i + 1]
+	touch_mode = OS.has_feature("mobile") or "-touch" in args
+	if touch_mode:
+		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP   # keep 16:9 layout on tall/wide phones
 
 
 func time() -> float:
@@ -73,6 +80,11 @@ func _input(ev: InputEvent) -> void:
 		_keys[ev.keycode] = Time.get_ticks_msec()
 	elif ev is InputEventMouseButton and ev.pressed:
 		_keys[-ev.button_index] = Time.get_ticks_msec()
+
+
+## Virtual key press (touch buttons): queued exactly like a keyboard press.
+func press_key(k: int) -> void:
+	_keys[k] = Time.get_ticks_msec()
 
 
 ## True once per key press (within 180 ms); removes it from the queue.
@@ -116,6 +128,10 @@ func start(m: Node2D) -> void:
 		if flags.has(k):
 			_announced[k] = true
 	_announced["__init"] = true
+	if touch_mode:
+		touch = TouchControls.new()
+		hud.add_child(touch)
+		touch.setup(hud)
 	Sfx.loop("ambience", 0.2)
 	Music.play(map_name)
 	if ci_dir != "":

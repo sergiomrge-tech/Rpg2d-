@@ -8,6 +8,7 @@ const SIZE := Vector2(1920, 1080)
 const ARC_SPAN := 240.0
 
 var root: Control
+var fan_node: Control
 
 var hp_fill: TextureProgressBar
 var hp_trail: TextureProgressBar
@@ -216,6 +217,7 @@ func _build() -> void:
 
 	# ---- skill orbs fanned along an arc (bottom-right)
 	var fan := ctl(root, Vector2(1, 0), Vector2(-170, 150), Vector2(10, 10))
+	fan_node = fan
 	var icons := ["skill_sword", "skill_spark", "skill_roll", "potion"]
 	var keys := ["J", "K", "Espaço", "Q"]
 	for i in 4:
@@ -502,7 +504,7 @@ func _process(delta: float) -> void:
 
 	if credits.visible:
 		credits_t += dt
-		var fast := Input.is_physical_key_pressed(KEY_SPACE) or Input.is_physical_key_pressed(KEY_DOWN)
+		var fast := Input.is_physical_key_pressed(KEY_SPACE) or Input.is_physical_key_pressed(KEY_DOWN) or Game.touch_run
 		credits_y -= dt * 70.0 * (4.0 if fast else 1.0)
 		credits_text.position = Vector2(210, credits_y)
 		var skip := credits_t > 2.0 and (Game.consume(KEY_ESCAPE) or Game.consume(KEY_ENTER))

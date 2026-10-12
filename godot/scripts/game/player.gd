@@ -84,6 +84,7 @@ func _read_move() -> Vector2:
 	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT): v.x += 1
 	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP): v.y -= 1
 	if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN): v.y += 1
+	v += Game.touch_move
 	return v.normalized() if v.length_squared() > 1.0 else v
 
 
@@ -112,7 +113,7 @@ func _physics_process(dt: float) -> void:
 			if dead:
 				return
 	move_dir = _read_move()
-	var run := (not input_locked) and Input.is_physical_key_pressed(KEY_SHIFT)
+	var run := (not input_locked) and (Input.is_physical_key_pressed(KEY_SHIFT) or Game.touch_run)
 
 	st_regen_delay -= dt
 	if st_regen_delay <= 0.0 and state != St.ROLL:
