@@ -19,14 +19,79 @@ var eq_armor := ""
 var eq_charm := ""
 var inv_ids: Array = ["potion"]
 var inv_counts: Array = [2]
+var enh := {}                  # item id -> forge level (+0..+5)
+var ng_plus := 0               # completed playthroughs (Novo Jogo+)
+
+const MAX_ENH := 5
+const ENH_BONUS := 0.12
+const SET_NAMES := ["Aventureiro", "Veterano", "Rúnico", "Alvorecer", "Lendário"]
+
+
+func enh_level(id: String) -> int:
+	return int(enh.get(id, 0))
+
+
+## Stat of one item including its forge level.
+func item_stat(id: String, key: String) -> float:
+	if id == "" or not Data.items.has(id):
+		return 0.0
+	return float(Data.items[id].get(key, 0)) * (1.0 + ENH_BONUS * enh_level(id))
 
 
 func _gear(key: String) -> float:
 	var t := 0.0
 	for id in [eq_weapon, eq_armor, eq_charm]:
-		if id != "" and Data.items.has(id):
-			t += float(Data.items[id].get(key, 0))
-	return t
+		t += item_stat(id, key)
+	var sb := set_bonus()
+	return t + float(sb["stats"].get(key, 0.0))
+
+
+## Equipped pieces from the same family (same rarity tier): 2 pieces +PV, 3 pieces +ATQ/MAG/DEF.
+func set_bonus() -> Dictionary:
+	var counts := {}
+	for id in [eq_weapon, eq_armor, eq_charm]:
+		if id != "" and Data.items.has(id) and Data.items[id].has("set_tier"):
+			var t := int(Data.items[id]["set_tier"])
+			counts[t] = int(counts.get(t, 0)) + 1
+	var best := -1
+	var n := 0
+	for t in counts:
+		if int(counts[t]) > n:
+			n = int(counts[t])
+			best = int(t)
+	var stats := {}
+	if best >= 0 and n >= 2:
+		stats["hp"] = 10.0 * (best + 1)
+	if best >= 0 and n >= 3:
+		stats["atk"] = 3.0 * (best + 1)
+		stats["mag"] = 3.0 * (best + 1)
+		stats["defense"] = 2.0 * (best + 1)
+	return {"name": SET_NAMES[best] if best >= 0 else "", "count": n, "tier": best, "stats": stats}
+
+
+## Blacksmith: gold (+ embers from +4) to raise a piece one forge level.
+func forge_cost(id: String) -> Dictionary:
+	var lv := enh_level(id)
+	if id == "" or lv >= MAX_ENH:
+		return {}
+	var value := float(Data.items[id].get("value", 40))
+	return {"gold": roundi(maxf(15.0, value * 0.35) * (lv + 1)), "ember": maxi(0, lv - 2)}
+
+
+func can_forge(id: String) -> bool:
+	var c := forge_cost(id)
+	return not c.is_empty() and gold >= int(c["gold"]) and count("hell_ember") >= int(c["ember"])
+
+
+func forge(id: String) -> bool:
+	if not can_forge(id):
+		return false
+	var c := forge_cost(id)
+	gold -= int(c["gold"])
+	for i in int(c["ember"]):
+		take("hell_ember")
+	enh[id] = enh_level(id) + 1
+	return true
 
 
 func total_atk() -> float: return atk + _gear("atk")
@@ -137,7 +202,7 @@ func gain_xp(amount: int) -> bool:
 func to_dict() -> Dictionary:
 	return {"level": level, "class_id": class_id, "xp": xp, "gold": gold, "max_hp": max_hp, "max_mp": max_mp, "max_st": max_st, "atk": atk, "mag": mag,
 		"spark_tier": spark_tier, "sword_tier": sword_tier, "guild_rank": guild_rank, "eq_weapon": eq_weapon, "eq_armor": eq_armor,
-		"eq_charm": eq_charm, "inv_ids": inv_ids, "inv_counts": inv_counts}
+		"eq_charm": eq_charm, "inv_ids": inv_ids, "inv_counts": inv_counts, "enh": enh, "ng_plus": ng_plus}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -146,5 +211,9 @@ func from_dict(d: Dictionary) -> void:
 	for k in d:
 		if k in self:
 			set(k, d[k])
+	enh = {}
+	for k in d.get("enh", {}):
+		enh[k] = int(d["enh"][k])
+	ng_plus = int(d.get("ng_plus", 0))
 	if not HeroClasses.valid(class_id):
 		class_id = "warrior"

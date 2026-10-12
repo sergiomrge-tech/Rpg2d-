@@ -37,6 +37,7 @@ var skill_dir := Vector2.DOWN
 
 static func spawn(kind: String, at: Vector2, lv: int) -> Enemy:
 	var d: Dictionary = Data.demons[kind]
+	lv += 6 * Game.state.ng_plus        # Novo Jogo+: every monster is stronger (and drops better loot)
 	var e := Enemy.new()
 	e.name = "%s Nv%d" % [d["name"], lv]
 	e.def = d

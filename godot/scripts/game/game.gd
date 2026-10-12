@@ -159,9 +159,10 @@ func start(m: Node2D) -> void:
 		return
 	menu = MainMenu.new()
 	hud.root.add_child(menu)     # keep the menu under the options/touch layers' z-order handling
-	menu.setup(hud, FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists(SAVE_PATH + ".bak"))
+	menu.setup(hud, FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists(SAVE_PATH + ".bak"), flags.has("game_complete"))
 	menu.on_continue = _begin
 	menu.on_new = _open_class_select
+	menu.on_ngplus = new_game_plus
 	player.input_locked = true
 	if false:
 		player.input_locked = true
@@ -206,6 +207,37 @@ func _cancel_class_select() -> void:
 func _start_selected_class(class_id: String) -> void:
 	class_select = null
 	new_game(class_id)
+
+
+## Novo Jogo+: keep level, gear, bag and forge levels; the story, quests and map restart with tougher monsters.
+func new_game_plus() -> void:
+	state.ng_plus += 1
+	for old_pet in SpiritPet.active_pets.duplicate():
+		if is_instance_valid(old_pet):
+			old_pet.queue_free()
+	SpiritPet.active_pets.clear()
+	flags.clear()
+	quests.clear()
+	flags["prologue"] = true
+	clock = 0.0
+	_announced = {"__init": true}
+	player.anim.setup(HeroClasses.sheet_for(state.class_id))
+	player.anim.play("idle", true)
+	_load_map_now("village")
+	world.spawn_actors()
+	player.max_hp = state.hp_max()
+	player.hp = player.max_hp
+	player.mp = state.max_mp
+	player.dead = false
+	player.global_position = NEW_GAME_START
+	player.face(Util.Face.DOWN)
+	if Companion.I:
+		Companion.I.queue_free()
+	camera.snap()
+	_travel_cd = 3.0
+	player.input_locked = false
+	hud.banner("Novo Jogo+ %d" % state.ng_plus, "Monstros mais fortes · tesouros melhores")
+	save()
 
 
 ## New game: wipe progress, apply class restrictions, then play the prologue.
@@ -986,7 +1018,7 @@ func shot(n: String) -> void:
 func _ci_shots() -> void:
 	menu = MainMenu.new()
 	hud.root.add_child(menu)
-	menu.setup(hud, true)
+	menu.setup(hud, true, true)
 	await _wait(0.5)
 	await shot("00_menu")
 	menu.close()
@@ -1122,6 +1154,10 @@ func _ci_bosses() -> void:
 			_travel_cd = 999.0
 			await _wait(0.5)
 		var boss := _find_boss(id)
+		if boss == null:
+			# already defeated earlier in the tour (the starting area has fewer monsters now): bring a fresh one
+			Enemy.spawn(id, player.global_position + Vector2(4 * 64, 0), 5)
+			boss = _find_boss(id)
 		if boss == null:
 			print("[ci] boss not found ", id)
 			continue
@@ -1340,9 +1376,35 @@ func _ci_gear() -> void:
 	print("[ci] gear rolls invalid: ", bad)
 	for id in ["sw_0", "sw_2", "sw_4", "ar_1", "ar_3", "ch_2", "ch_4", "bw_3", "dg_1", "potion"]:
 		state.add(id, 1)
+	print("[ci] staff: mage ", HeroClasses.can_equip("mage", Data.items["st_2"]), " summoner ", HeroClasses.can_equip("summoner", Data.items["st_2"]), " warrior ", HeroClasses.can_equip("warrior", Data.items["st_2"]))
+	state.add("ar_2", 1)
+	state.add("ch_2", 1)
 	state.equip("sw_2")
+	state.equip("ar_2")
+	state.equip("ch_2")
+	var base_atk := state.total_atk()
+	print("[ci] set bonus: ", state.set_bonus())
+	state.gold = 5000
+	state.add("hell_ember", 3)
+	var forged := 0
+	for i in 6:
+		if state.forge("sw_2"):
+			forged += 1
+	print("[ci] forged ", forged, " levels (max 5); sword +", state.enh_level("sw_2"), " atk ", base_atk, " -> ", state.total_atk(), " gold left ", state.gold)
+	var ng_old := state.ng_plus
+	var bn := [0, 0, 0, 0, 0]
+	state.ng_plus = 2
+	for i in 300:
+		bn[Loot.rarity_for(18, true)] += 1
+	state.ng_plus = ng_old
+	print("[ci] boss rarity NG+2 ", bn)
+	Pickup.spawn("sw_4", 1, player.global_position + Vector2(160, 40))
+	Pickup.spawn("ar_3", 1, player.global_position + Vector2(-160, 40))
+	await _wait(1.2)
+	await shot("72_drop_lendario")
+	for pk in get_tree().get_nodes_in_group("__none"):
+		pk.queue_free()
 	state.equip("ar_3")
-	state.equip("ch_4")
 	grimoire.toggle()
 	grimoire.sel = state.inv_ids.find("sw_4")
 	grimoire._refresh()

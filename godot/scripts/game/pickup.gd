@@ -28,6 +28,12 @@ static func spawn(item_: String, count_: int, at: Vector2) -> void:
 	Util.glow(p, Data.RARITY_COLORS[rar], 2.2 if rar >= 2 else 1.2, 0.6 if rar >= 2 else 0.3)
 	Util.make_shadow(p, 0.45, 0.16, 0.28)
 	Game.world.add_entity(p, at)
+	if rar >= 3:
+		var beam := LightBeam.new()
+		beam.color = Data.RARITY_COLORS[rar]
+		beam.tall = 7.0 if rar >= 4 else 4.5
+		p.add_child(beam)
+		Sfx.play("legend" if rar >= 4 else "epic", 0.55, 1.0)
 	if rar >= 2:
 		Fx.toast(def["name"] + "!", Data.RARITY_COLORS[rar], at + Vector2.UP * 2.0 * T)
 
@@ -58,3 +64,29 @@ func _process(dt: float) -> void:
 				Game.hud.loot_feed(def, count)
 			Sfx.play("coin" if item == "gold" else "pickup", 0.45, randf_range(0.95, 1.1))
 			queue_free()
+
+
+## Column of light over epic / legendary drops so they can be spotted from afar.
+class LightBeam extends Node2D:
+	var color := Color.WHITE
+	var tall := 5.0
+	var t := 0.0
+
+	func _ready() -> void:
+		material = Util.additive()
+		z_index = 5
+
+	func _process(dt: float) -> void:
+		t += dt
+		queue_redraw()
+
+	func _draw() -> void:
+		var h := tall * 64.0
+		var w := 26.0 + 5.0 * sin(t * 3.0)
+		var a := 0.5 + 0.12 * sin(t * 4.0)
+		var pts := PackedVector2Array([Vector2(-w, 0), Vector2(w, 0), Vector2(w * 0.35, -h), Vector2(-w * 0.35, -h)])
+		var cols := PackedColorArray([Color(color, a), Color(color, a), Color(color, 0.0), Color(color, 0.0)])
+		draw_polygon(pts, cols)
+		var pts2 := PackedVector2Array([Vector2(-w * 0.35, 0), Vector2(w * 0.35, 0), Vector2(w * 0.1, -h * 0.8), Vector2(-w * 0.1, -h * 0.8)])
+		var c2 := Color(1, 1, 1)
+		draw_polygon(pts2, PackedColorArray([Color(c2, a), Color(c2, a), Color(c2, 0.0), Color(c2, 0.0)]))

@@ -17,7 +17,7 @@ const CLASSES := {
 	},
 	"mage": {
 		"name": "Mago", "role": "Magia elemental e arcana",
-		"strong": "Magia forte e muita mana", "weak": "Pouca vida; não usa armas", "weapon": "none",
+		"strong": "Magia forte e muita mana", "weak": "Pouca vida; só usa cajados", "weapon": "staff",
 		"move": 0.97, "defense": 0.0, "crit": 0.06, "damage_taken": 1.14,
 		"skill": "Explosão Arcana", "desc": "Somente magia: feitiço básico e feitiço carregado.",
 		"hp": 78.0, "mp": 105.0, "atk": 7.0, "mag": 23.0,
@@ -53,9 +53,9 @@ const CLASSES := {
 	},
 	"summoner": {
 		"name": "Invocador", "role": "Aliados invocados",
-		"strong": "Pets atacam e protegem", "weak": "Frágil sem seus familiares", "weapon": "none",
+		"strong": "Pets atacam e protegem", "weak": "Frágil sem seus familiares", "weapon": "staff",
 		"move": 0.95, "defense": 0.0, "crit": 0.0, "damage_taken": 1.21,
-		"skill": "Espírito Guardião", "desc": "Somente invoca ou comanda pets: sem arma nem feitiços ofensivos.",
+		"skill": "Espírito Guardião", "desc": "Somente invoca ou comanda pets: só cajados e nenhum feitiço ofensivo.",
 		"hp": 84.0, "mp": 108.0, "atk": 8.0, "mag": 22.0,
 		"hp_gain": 9.0, "mp_gain": 10.0, "atk_gain": 1.0, "mag_gain": 3.4,
 		"icon": "ether", "color": Color(0.49, 0.93, 0.86)

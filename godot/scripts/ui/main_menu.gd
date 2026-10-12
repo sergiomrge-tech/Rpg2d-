@@ -12,9 +12,10 @@ var _glow: TextureRect
 var _hero: TextureRect
 var on_continue := Callable()
 var on_new := Callable()
+var on_ngplus := Callable()
 
 
-func setup(h: Hud, has_save: bool) -> void:
+func setup(h: Hud, has_save: bool, ngp: bool = false) -> void:
 	hud = h
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var C := Vector2(0.5, 0.5)
@@ -35,6 +36,8 @@ func setup(h: Hud, has_save: bool) -> void:
 	var entries := []
 	if has_save:
 		entries.append(["continue", "Continuar"])
+	if ngp:
+		entries.append(["ngplus", "Novo Jogo+"])
 	entries.append(["new", "Novo Jogo"])
 	entries.append(["options", "Opções"])
 	if OS.has_feature("pc"):
@@ -80,6 +83,9 @@ func _activate() -> void:
 		"new":
 			close()
 			on_new.call()
+		"ngplus":
+			close()
+			on_ngplus.call()
 		"options":
 			Game.options.toggle()
 		"quit":

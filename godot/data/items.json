@@ -479,7 +479,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 40
+    "value": 40,
+    "set": "Aventureiro",
+    "set_tier": 0
   },
   "bw_0": {
     "id": "bw_0",
@@ -496,7 +498,9 @@
     "mana": 0,
     "consumable": false,
     "value": 40,
-    "weapon_type": "bow"
+    "weapon_type": "bow",
+    "set": "Aventureiro",
+    "set_tier": 0
   },
   "dg_0": {
     "id": "dg_0",
@@ -513,7 +517,9 @@
     "mana": 0,
     "consumable": false,
     "value": 40,
-    "weapon_type": "dual_daggers"
+    "weapon_type": "dual_daggers",
+    "set": "Aventureiro",
+    "set_tier": 0
   },
   "ar_0": {
     "id": "ar_0",
@@ -529,7 +535,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 40
+    "value": 40,
+    "set": "Aventureiro",
+    "set_tier": 0
   },
   "ch_0": {
     "id": "ch_0",
@@ -545,7 +553,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 40
+    "value": 40,
+    "set": "Aventureiro",
+    "set_tier": 0
   },
   "sw_1": {
     "id": "sw_1",
@@ -561,7 +571,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 120
+    "value": 120,
+    "set": "Veterano",
+    "set_tier": 1
   },
   "bw_1": {
     "id": "bw_1",
@@ -578,7 +590,9 @@
     "mana": 0,
     "consumable": false,
     "value": 120,
-    "weapon_type": "bow"
+    "weapon_type": "bow",
+    "set": "Veterano",
+    "set_tier": 1
   },
   "dg_1": {
     "id": "dg_1",
@@ -595,7 +609,9 @@
     "mana": 0,
     "consumable": false,
     "value": 120,
-    "weapon_type": "dual_daggers"
+    "weapon_type": "dual_daggers",
+    "set": "Veterano",
+    "set_tier": 1
   },
   "ar_1": {
     "id": "ar_1",
@@ -611,7 +627,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 120
+    "value": 120,
+    "set": "Veterano",
+    "set_tier": 1
   },
   "ch_1": {
     "id": "ch_1",
@@ -627,7 +645,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 120
+    "value": 120,
+    "set": "Veterano",
+    "set_tier": 1
   },
   "sw_2": {
     "id": "sw_2",
@@ -643,7 +663,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 320
+    "value": 320,
+    "set": "Rúnico",
+    "set_tier": 2
   },
   "bw_2": {
     "id": "bw_2",
@@ -660,7 +682,9 @@
     "mana": 0,
     "consumable": false,
     "value": 320,
-    "weapon_type": "bow"
+    "weapon_type": "bow",
+    "set": "Rúnico",
+    "set_tier": 2
   },
   "dg_2": {
     "id": "dg_2",
@@ -677,7 +701,9 @@
     "mana": 0,
     "consumable": false,
     "value": 320,
-    "weapon_type": "dual_daggers"
+    "weapon_type": "dual_daggers",
+    "set": "Rúnico",
+    "set_tier": 2
   },
   "ar_2": {
     "id": "ar_2",
@@ -693,7 +719,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 320
+    "value": 320,
+    "set": "Rúnico",
+    "set_tier": 2
   },
   "ch_2": {
     "id": "ch_2",
@@ -709,7 +737,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 320
+    "value": 320,
+    "set": "Rúnico",
+    "set_tier": 2
   },
   "sw_3": {
     "id": "sw_3",
@@ -725,7 +755,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 900
+    "value": 900,
+    "set": "Alvorecer",
+    "set_tier": 3
   },
   "bw_3": {
     "id": "bw_3",
@@ -742,7 +774,9 @@
     "mana": 0,
     "consumable": false,
     "value": 900,
-    "weapon_type": "bow"
+    "weapon_type": "bow",
+    "set": "Alvorecer",
+    "set_tier": 3
   },
   "dg_3": {
     "id": "dg_3",
@@ -759,7 +793,9 @@
     "mana": 0,
     "consumable": false,
     "value": 900,
-    "weapon_type": "dual_daggers"
+    "weapon_type": "dual_daggers",
+    "set": "Alvorecer",
+    "set_tier": 3
   },
   "ar_3": {
     "id": "ar_3",
@@ -775,7 +811,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 900
+    "value": 900,
+    "set": "Alvorecer",
+    "set_tier": 3
   },
   "ch_3": {
     "id": "ch_3",
@@ -791,7 +829,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 900
+    "value": 900,
+    "set": "Alvorecer",
+    "set_tier": 3
   },
   "sw_4": {
     "id": "sw_4",
@@ -807,7 +847,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "set": "Lendário",
+    "set_tier": 4
   },
   "bw_4": {
     "id": "bw_4",
@@ -824,7 +866,9 @@
     "mana": 0,
     "consumable": false,
     "value": 2400,
-    "weapon_type": "bow"
+    "weapon_type": "bow",
+    "set": "Lendário",
+    "set_tier": 4
   },
   "dg_4": {
     "id": "dg_4",
@@ -841,7 +885,9 @@
     "mana": 0,
     "consumable": false,
     "value": 2400,
-    "weapon_type": "dual_daggers"
+    "weapon_type": "dual_daggers",
+    "set": "Lendário",
+    "set_tier": 4
   },
   "ar_4": {
     "id": "ar_4",
@@ -857,7 +903,9 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "set": "Lendário",
+    "set_tier": 4
   },
   "ch_4": {
     "id": "ch_4",
@@ -873,6 +921,103 @@
     "heal": 0,
     "mana": 0,
     "consumable": false,
-    "value": 2400
+    "value": 2400,
+    "set": "Lendário",
+    "set_tier": 4
+  },
+  "st_0": {
+    "id": "st_0",
+    "name": "Cajado de Carvalho",
+    "desc": "Equipamento comum. Só magos e invocadores.",
+    "slot": 1,
+    "rarity": 0,
+    "atk": 0,
+    "defense": 0,
+    "mag": 6,
+    "hp": 0,
+    "icon": "skill_spark",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 40,
+    "weapon_type": "staff",
+    "set": "Aventureiro",
+    "set_tier": 0
+  },
+  "st_1": {
+    "id": "st_1",
+    "name": "Cajado de Ébano",
+    "desc": "Bem trabalhado. Só magos e invocadores.",
+    "slot": 1,
+    "rarity": 1,
+    "atk": 0,
+    "defense": 0,
+    "mag": 13,
+    "hp": 0,
+    "icon": "skill_spark",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 120,
+    "weapon_type": "staff",
+    "set": "Veterano",
+    "set_tier": 1
+  },
+  "st_2": {
+    "id": "st_2",
+    "name": "Cajado Arcano",
+    "desc": "Artesanato raro, de brilho azulado. Só magos e invocadores.",
+    "slot": 1,
+    "rarity": 2,
+    "atk": 0,
+    "defense": 0,
+    "mag": 21,
+    "hp": 0,
+    "icon": "skill_spark",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 320,
+    "weapon_type": "staff",
+    "set": "Rúnico",
+    "set_tier": 2
+  },
+  "st_3": {
+    "id": "st_3",
+    "name": "Cajado das Tempestades",
+    "desc": "Peça épica; runas pulsam no metal. Só magos e invocadores.",
+    "slot": 1,
+    "rarity": 3,
+    "atk": 0,
+    "defense": 0,
+    "mag": 31,
+    "hp": 0,
+    "icon": "skill_spark",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 900,
+    "weapon_type": "staff",
+    "set": "Alvorecer",
+    "set_tier": 3
+  },
+  "st_4": {
+    "id": "st_4",
+    "name": "Cetro da Centelha Eterna",
+    "desc": "LENDÁRIO — forjado para heróis antigos. Só magos e invocadores.",
+    "slot": 1,
+    "rarity": 4,
+    "atk": 0,
+    "defense": 0,
+    "mag": 46,
+    "hp": 0,
+    "icon": "skill_spark",
+    "heal": 0,
+    "mana": 0,
+    "consumable": false,
+    "value": 2400,
+    "weapon_type": "staff",
+    "set": "Lendário",
+    "set_tier": 4
   }
 }

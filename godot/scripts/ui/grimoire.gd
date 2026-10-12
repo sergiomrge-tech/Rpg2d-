@@ -196,11 +196,59 @@ func _slot(parent: Control, pos: Vector2, slot: int, label: String) -> void:
 	hud.txt(parent, label, Util.font_bold, 15, Color(0.45, 0.32, 0.2), C, pos + Vector2(0, 54), Vector2(130, 20), HORIZONTAL_ALIGNMENT_CENTER, false)
 	if id != "":
 		hud.img(parent, Sheets.icon(Data.items[id]["icon"]), C, pos + Vector2(0, 2), Vector2(62, 62))
-		var nm := hud.txt(parent, str(Data.items[id]["name"]), Util.font_bold, 14, col.lerp(Color(0.27, 0.16, 0.1), 0.5), C, pos + Vector2(0, -60), Vector2(150, 34), HORIZONTAL_ALIGNMENT_CENTER, false)
+		var nm := hud.txt(parent, str(Data.items[id]["name"]) + (" +%d" % gs.enh_level(id) if gs.enh_level(id) > 0 else ""), Util.font_bold, 14, col.lerp(Color(0.27, 0.16, 0.1), 0.5), C, pos + Vector2(0, -60), Vector2(150, 34), HORIZONTAL_ALIGNMENT_CENTER, false)
 		nm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_row_btn(parent, pos, Vector2(112, 92), _unequip.bind(slot))
 	else:
 		hud.txt(parent, "—", Util.font_serif, 40, Color(0.45, 0.32, 0.2, 0.6), C, pos, Vector2(60, 50), HORIZONTAL_ALIGNMENT_CENTER, false)
+
+
+func _forge_btn(parent: Control, pos: Vector2, slot: int) -> void:
+	var gs := Player.I.gs
+	var id := gs.equipped(slot)
+	if id == "":
+		return
+	var lv := gs.enh_level(id)
+	var c := gs.forge_cost(id)
+	var label := "MÁX +%d" % lv if c.is_empty() else "Forjar +%d · %dg" % [lv + 1, int(c["gold"])]
+	var fill := Color(0.3, 0.25, 0.12, 0.9) if c.is_empty() else (Color(0.45, 0.25, 0.08, 0.95) if gs.can_forge(id) else Color(0.3, 0.2, 0.18, 0.8))
+	if not c.is_empty():
+		_btn(parent, label, pos, Vector2(124, 32), _forge.bind(slot), fill, 16)
+	else:
+		hud.txt(parent, label, Util.font_bold, 17, Color(0.7, 0.5, 0.1), Vector2(0.5, 0.5), pos, Vector2(124, 30), HORIZONTAL_ALIGNMENT_CENTER, false)
+
+
+func _blacksmith_near() -> bool:
+	var p := Player.I
+	for n in Game.world.entities.get_children():
+		if n is Npc and (n.id == "blacksmith" or n.id == "smith_v") and n.visible and (n.global_position - p.global_position).length() < 7.0 * 64.0:
+			return true
+	return false
+
+
+func _forge(slot: int) -> void:
+	var gs := Player.I.gs
+	var id := gs.equipped(slot)
+	if id == "":
+		return
+	if not _blacksmith_near():
+		Sfx.play("ui", 0.2, 0.6)
+		Fx.toast("Procure um ferreiro para forjar", Color(1.0, .66, .51))
+		return
+	var c := gs.forge_cost(id)
+	if not gs.can_forge(id):
+		Sfx.play("ui", 0.2, 0.6)
+		var need := "%d ouro" % int(c["gold"])
+		if int(c["ember"]) > 0:
+			need += " e %d Brasa Infernal" % int(c["ember"])
+		Fx.toast("Precisa de " + need, Color(1.0, .66, .51))
+		return
+	gs.forge(id)
+	Sfx.play("clang", 0.7, 1.0)
+	Sfx.play("levelup", 0.4, 1.3)
+	Fx.toast("%s +%d" % [Data.items[id]["name"], gs.enh_level(id)], Color(1, 0.85, 0.4))
+	Player.I.hp = minf(Player.I.hp, gs.hp_max())
+	_refresh()
 
 
 func _unequip(slot: int) -> void:
@@ -311,12 +359,21 @@ func _refresh() -> void:
 	var stats := "Vida %d/%d   Mana %d/%d\n" % [ceili(p.hp), roundi(gs.hp_max()), floori(p.mp), roundi(gs.max_mp)]
 	stats += "Ataque %d  Defesa %d  Magia %d\n" % [roundi(gs.total_atk()), roundi(gs.total_def()), roundi(gs.total_mag())]
 	stats += "XP %d/%d   Ouro %d" % [gs.xp, Data.xp_to_next(gs.level), gs.gold]
+	if gs.ng_plus > 0:
+		stats += "   NJ+%d" % gs.ng_plus
 	hud.txt(page, stats, bold, 22, ink, C, Vector2(-250, 150), Vector2(380, 130), L, false)
 	var slot_names := ["ARMA", "ARMADURA", "AMULETO"]
 	for k in 3:
 		_slot(page, Vector2(-470 + k * 135, 20), k + 1, slot_names[k])
+		_forge_btn(page, Vector2(-470 + k * 135, -58), k + 1)
+	var sbn := gs.set_bonus()
+	if int(sbn["count"]) >= 2:
+		var parts := PackedStringArray()
+		for key in sbn["stats"]:
+			parts.append("%s +%d" % [{"hp": "PV", "atk": "ATQ", "mag": "MAG", "defense": "DEF"}[key], roundi(sbn["stats"][key])])
+		hud.txt(page, "Conjunto %s (%d/3): %s" % [sbn["name"], sbn["count"], ", ".join(parts)], bold, 18, Color(0.3, 0.5, 0.2), C, Vector2(-335, -88), Vector2(520, 24), M, false)
 	var class_info := HeroClasses.info(gs.class_id)
-	hud.txt(page, "Habilidades de " + str(class_info["name"]), serif, 29, ink, C, Vector2(-335, -100), Vector2(500, 40), M, false)
+	hud.txt(page, "Habilidades de " + str(class_info["name"]), serif, 29, ink, C, Vector2(-335, -118), Vector2(500, 40), M, false)
 	hud.txt(page, str(class_info["skill"]), bold, 26, ink, C, Vector2(-335, -170), Vector2(485, 40), M, false)
 	var benefit := hud.txt(page, "FORTE: " + str(class_info["strong"]), sans, 22, Color(.25, .42, .22), C, Vector2(-335, -228), Vector2(485, 46), M, false)
 	benefit.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -354,21 +411,28 @@ func _refresh() -> void:
 		var rar := int(d["rarity"])
 		hud.img(page, Sheets.ui("flourish"), C, Vector2(335, -138), Vector2(380, 30))
 		var kind := "Equipamento" if int(d["slot"]) > 0 else ("Consumível" if d["consumable"] else "Material")
-		var rl := hud.txt(page, "%s · %s" % [Data.RARITY_NAMES[rar].to_upper(), kind], bold, 23, (Data.RARITY_COLORS[rar] as Color).lerp(ink, 0.35), C, Vector2(335, -164), Vector2(520, 30), M, false)
+		var rl := hud.txt(page, "%s · %s" % [Data.RARITY_NAMES[rar].to_upper(), kind], bold, 23, (Data.RARITY_COLORS[rar] as Color).lerp(ink, 0.35), C, Vector2(335, -166), Vector2(520, 30), M, false)
 		rl.name = "RarityLabel"
-		var stat := ""
 		if int(d["slot"]) > 0:
-			stat = "\n"
-			if float(d["atk"]) > 0: stat += "ATQ +%d  " % roundi(d["atk"])
-			if float(d["defense"]) > 0: stat += "DEF +%d  " % roundi(d["defense"])
-			if float(d["mag"]) > 0: stat += "MAG +%d  " % roundi(d["mag"])
-			if float(d["hp"]) > 0: stat += "PV +%d  " % roundi(d["hp"])
-		var desc := hud.txt(page, str(d["desc"]) + stat, sans, 20, ink, C, Vector2(335, -222), Vector2(540, 70), M, false, VERTICAL_ALIGNMENT_TOP)
+			# comparison with the piece currently worn in that slot (green = better, red = worse)
+			var cur := gs.equipped(int(d["slot"]))
+			var shown := 0
+			for kv in [["atk", "ATQ"], ["defense", "DEF"], ["mag", "MAG"], ["hp", "PV"]]:
+				var nv := gs.item_stat(gs.inv_ids[sel], kv[0])
+				var ov := gs.item_stat(cur, kv[0])
+				if nv == 0.0 and ov == 0.0:
+					continue
+				var diff := roundi(nv - ov)
+				var col := Color(0.2, 0.55, 0.2) if diff > 0 else (Color(0.75, 0.2, 0.15) if diff < 0 else faint)
+				var arrow := "▲" if diff > 0 else ("▼" if diff < 0 else "=")
+				hud.txt(page, "%s %d %s%s" % [kv[1], roundi(nv), arrow, ("%+d" % diff) if diff != 0 else ""], bold, 21, col, C, Vector2(120 + shown * 138, -196), Vector2(136, 26), M, false)
+				shown += 1
+		var desc := hud.txt(page, str(d["desc"]), sans, 19, ink, C, Vector2(335, -243), Vector2(540, 56), M, false, VERTICAL_ALIGNMENT_TOP)
 		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var act := "Equipar" if int(d["slot"]) > 0 else "Usar"
-		_btn(page, act, Vector2(190, -286), Vector2(230, 56), _act_use, Color(0.32, 0.2, 0.1, 0.95))
+		_btn(page, act, Vector2(190, -300), Vector2(230, 56), _act_use, Color(0.32, 0.2, 0.1, 0.95))
 		var price := sell_price(gs.inv_ids[sel])
 		if price > 0:
-			_btn(page, "Vender %d (Q)" % price, Vector2(450, -286), Vector2(290, 56), _act_sell, Color(0.4, 0.14, 0.1, 0.95))
+			_btn(page, "Vender %d (Q)" % price, Vector2(450, -300), Vector2(290, 56), _act_sell, Color(0.4, 0.14, 0.1, 0.95))
 	# The information page is rebuilt after item use; keep X above it.
 	root.move_child(close_button, root.get_child_count() - 1)

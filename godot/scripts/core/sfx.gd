@@ -513,6 +513,16 @@ func _synth(n: String) -> PackedFloat32Array:
 				var t := i / float(RATE)
 				b[i] += sin(TAU * (220.0 - 120.0 * t) * t) * _env(t, 0.001, 0.08) * 0.6
 			return b
+		"legend", "epic":
+			var notes: Array = [392.0, 523.0, 659.0, 784.0, 1046.0, 1318.0] if n == "legend" else [523.0, 659.0, 784.0]
+			var step := 0.13 if n == "legend" else 0.1
+			var b := _buf(step * notes.size() + (1.6 if n == "legend" else 0.7))
+			for k in notes.size():
+				var s0 := int(k * step * RATE)
+				for i in range(s0, b.size()):
+					var t := (i - s0) / float(RATE)
+					b[i] += (sin(TAU * notes[k] * t) + 0.35 * sin(2.0 * TAU * notes[k] * t) + 0.2 * sin(TAU * notes[k] * 1.005 * t)) * _env(t, 0.004, 0.45 if n == "legend" else 0.25) * 0.22
+			return b
 		"coin", "pickup", "potion", "levelup", "ui":
 			var notes: Array = [1318.0, 1975.0] if n == "coin" else ([660.0, 990.0] if n == "pickup" else ([523.0, 659.0, 784.0] if n == "potion" else ([523.0, 659.0, 784.0, 1046.0] if n == "levelup" else [880.0])))
 			var step := 0.11 if n == "levelup" else 0.07

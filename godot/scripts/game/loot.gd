@@ -16,14 +16,18 @@ static func drop(def: Dictionary, level: int, at: Vector2) -> void:
 	var boss := bool(def.get("boss", false))
 	gear_drop(level, boss, at)
 	if boss:                     # bosses drop a second piece, 60% of the time
-		gear_drop(level, true, at, 0.6)
+		var ng: int = Game.state.ng_plus
+		gear_drop(level, true, at, minf(1.0, 0.6 + 0.2 * ng))
+		if ng >= 2:
+			gear_drop(level, true, at, 0.5)
 
 
 ## Random equipment (Comum → Lendário). Stronger monsters and bosses roll better rarities.
 static func rarity_for(level: int, boss: bool) -> int:
-	var w := [maxf(8.0, 60.0 - level * 2.5), 28.0, 4.0 + level * 0.9, maxf(0.0, (level - 7) * 0.7), maxf(0.0, (level - 15) * 0.3)]
+	var ng := Game.state.ng_plus if Game.state != null else 0
+	var w := [maxf(8.0, 60.0 - level * 2.5), 28.0, 4.0 + level * 0.9, maxf(0.0, (level - 7) * 0.7), maxf(0.0, (level - 15) * 0.3) + 2.0 * ng]
 	if boss:
-		w = [0.0, 10.0, 45.0, 35.0 + level, maxf(5.0, (level - 8) * 1.2)]
+		w = [0.0, 10.0, 45.0, 35.0 + level, maxf(5.0, (level - 8) * 1.2) + 12.0 * ng]
 	var total := 0.0
 	for x in w:
 		total += x
@@ -56,6 +60,6 @@ static func roll_gear(level: int, boss: bool) -> String:
 		fam = ["ar", "ch", "w", "w"]       # a class that wields weapons finds them more often
 	var f: String = fam[randi() % fam.size()]
 	if f == "w":
-		f = {"sword": "sw", "bow": "bw", "dual_daggers": "dg"}.get(wt, "sw")
+		f = {"sword": "sw", "bow": "bw", "dual_daggers": "dg", "staff": "st"}.get(wt, "sw")
 	var id := "%s_%d" % [f, r]
 	return id if Data.items.has(id) else ""
