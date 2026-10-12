@@ -53,7 +53,7 @@ assert "Projectile.arrow(" in player
 assert "Projectile.spark(" in player
 assert 'Fx.toast("Mana insuficiente"' in player
 assert "class_name SpiritPet" in pet
-assert "owner.gs.class_id != \"summoner\"" in pet
+assert "summoner.gs.class_id != \"summoner\"" in pet
 assert "MAX_ACTIVE := 2" in pet
 
 for item_id,typ in [("hunter_bow","bow"),("twin_daggers","dual_daggers")]:
