@@ -300,7 +300,7 @@ class MothOracle(Boss):
 
 class QueenVespara(Boss):
     name='queen_vespara'
-    OY=267  # long segmented venom trident must stay inside frame
+    OY=288  # wings and long venom tail both fit inside 384px
     def __init__(self):
         self.black=Pal('#252939','#181b28','#626e7a','#171724')
         self.gold=Pal('#c49861','#856341','#ffdaa1','#563e37')
