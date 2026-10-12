@@ -22,6 +22,9 @@ var hex_slow := 0.0
 var venom := 0.0
 var venom_tick := 0.0
 var sonic := 0.0
+var cast_action := ""
+var special_strike := false
+var special_cd := 0.0
 
 const WALK := 4.0 * T
 const RUN := 6.4 * T
@@ -97,6 +100,7 @@ func _physics_process(dt: float) -> void:
 	state_t += dt
 	hex_slow = maxf(0.0, hex_slow - dt)
 	sonic = maxf(0.0, sonic - dt)
+	special_cd = maxf(0.0, special_cd - dt)
 	if venom > 0.0:
 		venom = maxf(0.0, venom - dt)
 		venom_tick -= dt
@@ -123,7 +127,8 @@ func _physics_process(dt: float) -> void:
 				var can_run := run
 				face(Util.facing_from(move_dir, facing))
 				anim.play("run" if can_run else "walk")
-				velocity = move_dir * (RUN if can_run else WALK) * (0.52 if hex_slow > 0.0 else 1.0) + knock
+				var move_factor: float = HeroClasses.info(gs.class_id)["move"]
+				velocity = move_dir * (RUN if can_run else WALK) * move_factor * (0.52 if hex_slow > 0.0 else 1.0) + knock
 				step_t -= dt * (1.5 if can_run else 1.0)
 				if step_t <= 0.0:
 					step_t = 0.36
@@ -168,11 +173,28 @@ func ci_cast() -> void: _try_cast()
 
 
 func _try_attack() -> void:
+	# Hard restrictions: Mages never strike with weapons; Archers fire bows;
+	# Summoners may command pets but cannot attack directly.
+	if gs.class_id == "mage":
+		_begin_cast("magic_basic", 4.0)
+		return
+	if gs.class_id == "archer":
+		_begin_cast("arrow_basic", 0.0)
+		return
+	if gs.class_id == "summoner":
+		if SpiritPet.count_for(self) <= 0:
+			Fx.toast("Invoque um familiar (K)", Color(.61, .95, .89))
+			return
+		_begin_cast("pet_command", 0.0)
+		return
+	if not HeroClasses.allows_melee(gs.class_id):
+		return
 	if state == St.ATTACK:
 		buffered_attack = true
 		return
 	if state != St.FREE:
 		return
+	special_strike = false
 	_start_attack(1)
 
 
@@ -189,11 +211,16 @@ func _start_attack(n: int) -> void:
 
 func _on_anim_hit(a: String) -> void:
 	if a.begins_with("attack"):
+		if not HeroClasses.allows_melee(gs.class_id):
+			return
 		var f := Util.facing_vec(facing)
 		var c := pos() + Vector2.UP * 0.55 * T + f * (1.0 if combo == 3 else 0.85) * T
-		var r := (1.55 if combo == 3 else 1.25) * T
+		var r := ((1.05 if gs.class_id == "assassin" else 1.55) if combo == 3 else (1.0 if gs.class_id == "assassin" else 1.25)) * T
 		Fx.slash(pos() + Vector2.UP * 0.6 * T, facing, combo)
-		if combo == 3 and gs.sword_tier >= 2:
+		if gs.class_id == "assassin":
+			# Two close-range dagger arcs, never a magical projectile.
+			Fx.slash(pos() + Vector2.UP * 0.4 * T + f * .2 * T, facing, 1)
+		if combo == 3 and gs.sword_tier >= 2 and (gs.class_id == "paladin"):
 			Projectile.crescent(pos() + Vector2.UP * 0.7 * T + f * 0.9 * T, f, gs.total_atk() * 1.1)
 		if combo == 3:
 			Fx.shockwave(c, 1.2)
@@ -205,8 +232,10 @@ func _on_anim_hit(a: String) -> void:
 			var d: Vector2 = e.pos() + Vector2.UP * 0.4 * T - c
 			if d.length() > r + 0.35 * T:
 				continue
-			var crit := randf() < 0.08
-			var dmg := gs.total_atk() * (1.9 if combo == 3 else (1.15 if combo == 2 else 1.0)) * randf_range(0.9, 1.1) * (1.8 if crit else 1.0)
+			var crit := randf() < float(HeroClasses.info(gs.class_id)["crit"])
+			var base_mult := 2.55 if special_strike else (1.9 if combo == 3 else (1.15 if combo == 2 else 1.0))
+			var dagger_mult := 1.23 if gs.class_id == "assassin" else 1.0
+			var dmg := gs.total_atk() * base_mult * dagger_mult * randf_range(0.9, 1.1) * (1.8 if crit else 1.0)
 			if e.hurt(roundf(dmg), pos(), 9.0 if combo == 3 else 5.0, 30.0 if combo == 3 else 12.0, crit):
 				hits += 1
 		if hits > 0:
@@ -216,12 +245,41 @@ func _on_anim_hit(a: String) -> void:
 				Game.camera.shake(0.08, 0.12)
 	elif a == "cast":
 		var dir := Util.facing_vec(facing)
-		var t := Enemy.nearest(pos(), 9.0 * T, dir, 0.45)
-		if t != null:
-			dir = ((t.pos() + Vector2.UP * 0.5 * T) - (pos() + Vector2.UP * 0.8 * T)).normalized()
-		Projectile.spark(pos() + Vector2.UP * 0.8 * T + dir * 0.5 * T, dir, gs.total_mag() * (1.0 + 0.35 * (gs.spark_tier - 1)), gs.spark_tier, true)
-		Sfx.play("spark", 0.6, 1.0)
-
+		var target := Enemy.nearest(pos(), 10.0 * T, dir, .35)
+		if target != null:
+			dir = ((target.pos() + Vector2.UP * .5 * T) - (pos() + Vector2.UP * .8 * T)).normalized()
+		var origin := pos() + Vector2.UP * .8 * T + dir * .5 * T
+		match cast_action:
+			"arrow_basic":
+				if gs.class_id == "archer":
+					Projectile.arrow(origin, dir, gs.total_atk() * 1.0)
+					Sfx.play("swing", .46, 1.35)
+			"arrow_burst":
+				if gs.class_id == "archer":
+					for k in [-1, 0, 1]:
+						var angle: float = k * .16
+						var spread := dir.rotated(angle)
+						Projectile.arrow(origin + spread * 12.0, spread, gs.total_atk() * .80)
+					Sfx.play("swing", .62, 1.25)
+			"magic_basic":
+				if gs.class_id == "mage":
+					Projectile.spark(origin, dir, gs.total_mag() * .74, mini(gs.spark_tier, 3), true)
+					Sfx.play("spark", .5, 1.05)
+			"magic_burst":
+				if gs.class_id == "mage":
+					Projectile.spark(origin, dir, gs.total_mag() * (1.55 + .24 * (gs.spark_tier - 1)), mini(gs.spark_tier + 1, 3), true)
+					Sfx.play("spark", .72, .80)
+			"paladin_heal":
+				if gs.class_id == "paladin":
+					hp = minf(gs.hp_max(), hp + 16.0 + gs.total_mag() * 1.45)
+					Fx.heal(pos())
+					Sfx.play("potion", .60, .83)
+			"pet_summon":
+				if gs.class_id == "summoner":
+					SpiritPet.summon(self)
+			"pet_command":
+				if gs.class_id == "summoner":
+					SpiritPet.command(self)
 
 func _on_anim_end(a: String) -> void:
 	if state == St.ATTACK and a.begins_with("attack"):
@@ -231,6 +289,7 @@ func _on_anim_end(a: String) -> void:
 			return
 		buffered_attack = false
 		combo = 0
+		special_strike = false
 		_to_free()
 	elif state == St.CAST and a == "cast":
 		_to_free()
@@ -238,23 +297,56 @@ func _on_anim_end(a: String) -> void:
 		_to_free()
 
 
-func _try_cast() -> void:
-	if state != St.FREE:
+func _begin_cast(action: String, cost: float, cooldown: float = 0.0) -> void:
+	if state != St.FREE or (cooldown > 0.0 and special_cd > 0.0):
 		return
-	if mp < CAST_COST:
-		Fx.toast("Mana insuficiente", Color(0.5, 0.75, 1.0))
+	if mp < cost:
+		Fx.toast("Mana insuficiente", Color(.5, .75, 1.0))
 		return
-	mp -= CAST_COST
+	if action == "pet_summon" and SpiritPet.count_for(self) >= SpiritPet.MAX_ACTIVE:
+		Fx.toast("Máximo de 2 familiares", Color(.63, .94, .87))
+		return
+	mp -= cost
+	if cooldown > 0.0:
+		special_cd = cooldown
+	cast_action = action
 	state = St.CAST
 	state_t = 0.0
 	var target := Enemy.nearest(pos(), 9.0 * T)
-	if target != null and move_dir.length_squared() < 0.01:
+	if target != null and move_dir.length_squared() < .01:
 		face(Util.facing_from(target.pos() - pos(), facing))
-	elif move_dir.length_squared() > 0.01:
+	elif move_dir.length_squared() > .01:
 		face(Util.facing_from(move_dir, facing))
 	anim.play("cast", true)
-	Fx.magic_circle(pos(), gs.spark_tier)
-	Sfx.play("charge", 0.4, 1.0)
+	if action in ["magic_basic", "magic_burst", "paladin_heal", "pet_summon"]:
+		Fx.magic_circle(pos(), gs.spark_tier if gs.class_id == "mage" else 1)
+		Sfx.play("charge", .38, 1.0)
+
+
+func _try_cast() -> void:
+	if state != St.FREE:
+		return
+	match gs.class_id:
+		"warrior":
+			if special_cd > 0.0:
+				return
+			special_cd = 2.7
+			special_strike = true
+			_start_attack(3)  # strong physical weapon hit; absolutely no magic
+		"mage":
+			_begin_cast("magic_burst", 17.0, 1.7)
+		"archer":
+			_begin_cast("arrow_burst", 0.0, 2.2)
+		"paladin":
+			_begin_cast("paladin_heal", 19.0, 5.5)
+		"assassin":
+			if special_cd > 0.0:
+				return
+			special_cd = 2.3
+			special_strike = true
+			_start_attack(3)  # dual-dagger finisher, no mana and no spell
+		"summoner":
+			_begin_cast("pet_summon", 22.0, 1.6)
 
 
 func _try_roll() -> void:
@@ -289,6 +381,7 @@ func hurt(dmg: float, from: Vector2, knockback: float, poise_dmg: float, crit: b
 	if state == St.ROLL and invuln > 0.0:
 		Fx.toast("Esquiva!", Color(0.7, 0.95, 1.0))
 		return false
+	dmg *= float(HeroClasses.info(gs.class_id)["damage_taken"])
 	dmg = maxf(1.0, roundf(dmg * 100.0 / (100.0 + gs.total_def() * 3.0)))
 	var ok := super.hurt(dmg, from, knockback, poise_dmg, crit)
 	if not ok:
