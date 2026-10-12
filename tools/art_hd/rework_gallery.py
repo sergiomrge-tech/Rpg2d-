@@ -4,6 +4,8 @@ Run before while old PNGs are checked out; re-render; run after.
 All panels are frames from original animation atlases, NOT screenshots.
 """
 import json
+import io
+import subprocess
 import sys
 from pathlib import Path
 from PIL import Image, ImageDraw
@@ -24,6 +26,21 @@ def frame(id_):
     w,h,cols=j['frameW'],j['frameH'],j['cols']
     with Image.open(SHEETS/(id_+'.png')) as sheet:
         return sheet.crop(((k%cols)*w,(k//cols)*h,(k%cols+1)*w,(k//cols+1)*h)).convert('RGBA')
+
+def original_frame(id_):
+    """Read the original PR4 atlas, never the already-remodeled worktree PNG."""
+    upstream='origin/gpt6-lote1-all-sprites-20261012'
+    base='unity/Assets/Resources/Sprites/Demons/'+id_
+    j=json.loads(subprocess.check_output(
+        ['git','show',upstream+':'+base+'.json'],cwd=ROOT).decode('utf-8'))
+    image_bytes=subprocess.check_output(
+        ['git','show',upstream+':'+base+'.png'],cwd=ROOT)
+    a=next(a for a in j['anims'] if a['name']=='idle_down')
+    k=a['start']+min(2,a['count']-1)
+    w,h,cols=j['frameW'],j['frameH'],j['cols']
+    with Image.open(io.BytesIO(image_bytes)) as sheet:
+        return sheet.crop(((k%cols)*w,(k//cols)*h,(k%cols+1)*w,(k//cols+1)*h)).convert('RGBA')
+
 
 def crop(f):
     box=f.getchannel('A').getbbox()
@@ -85,8 +102,8 @@ def main():
     if sys.argv[1]=='before':
         STAGE.mkdir(parents=True,exist_ok=True)
         for id_ in IDS:
-            frame(id_).save(STAGE/(id_+'.png'),optimize=True)
-        print('Stored eight old sprite reference frames')
+            original_frame(id_).save(STAGE/(id_+'.png'),optimize=True)
+        print('Staged eight pre-rework original frames from PR4 base')
     else:
         after()
 
