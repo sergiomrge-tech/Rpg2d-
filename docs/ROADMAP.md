@@ -1,10 +1,12 @@
 # Roadmap
 
+**Checkpoint verificado de 12/10/2026:** [situação consolidada do GitHub, PRs e testes](asset_catalog/CHECKPOINT_2026-10-12.md). **Lote 2:** 10 demônios + 5 chefes com folhas de sprites, animações e combate implementado em C#; **sem execução real validada no Editor Unity**. Os PRs estão em rascunho e as alterações ainda não estão na branch `main`.
+
 Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 
 ## Etapa 0 — Infra
 - ✅ Projeto Unity 2022.3 (cena criada por código, `Boot.cs`)
-- ✅ CI GitHub Actions (GameCI) com build Linux + screenshots na branch `ci-shots`
+- 🔄 Pipeline GameCI configurado para build Linux e screenshots, **ainda sem execução real aprovada**; licença/secrets Unity pendentes
 - ⬜ **Usuário:** cadastrar segredos `UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD` ([guia](UNITY_CI.md))
 - ✅ Checagem de compilação local (`tools/unity_check.sh`)
 - ⬜ Validar primeiro build real e corrigir o que aparecer nos screenshots
@@ -63,7 +65,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - 🔄 **Lote 1: oito silhuetas redesenhadas** após avaliação de repetição: batedor alado, saqueador de quatro braços, salamandra de brasas, sapo ressonador, naga lanceiro, tartaruga blindada, ceifador ósseo e Morgash bovino de seis patas. Arte candidata, aguardando aprovação visual.
 - ✅ Renderização completa em `gpt6-lote1-silhouettes-20261012`: os 15 atlas PNG/JSON continuam verificáveis e a Action de revisão **38246798620** passou; máscaras de silhueta e corte de bordas foram verificadas sem alterar personagem/cenário aprovado.
 - 🔄 Pranchas de comparação de sprites originais versus remodelados: `docs/asset_catalog/previews/LOTE1_REMODEL_COMPARACAO.png` e `LOTE1_REMODEL_OITO.png`; imagens do pipeline, **não capturas do jogo**.
-- ✅ **Ordem de produção do Lote 2 definida:** `docs/asset_catalog/LOTE2_ORDEM_PRODUCAO.md` (10 insetoides e 5 bosses únicos). Dez demônios comuns já têm sprites e integração C# no ramo Set B; cinco chefes permanecem pendentes.
+- ✅ **Lote 2 codificado:** dez demônios e cinco chefes insetoides já têm PNG/JSON com trilhas animadas e combate C# registrado nas branches Set B e Five Bosses. **Pendente:** aprovação visual e testes reais na Unity.
 - ⬜ Inspecionar a fidelidade ao estilo HD cartoon em escala real na Unity; obter aprovação do diretor antes de incorporar os remodelados. VFX únicos, IA, spawns e gameplays dos novos inimigos seguem pendentes.
 
 ## Regra permanente — entrega obrigatoriamente jogável (12/10/2026)
@@ -76,5 +78,12 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Set A (3): térmita escavadora, vespa perfuradora e cigarra sônica — atlas, colisões/dano temporizado, status de veneno e efeito sônico.
 - ✅ Set B (4): formiga sentinela, barata pestilenta, besouro ouriço e libélula caçadora — atlas, armadura temporária, zona tóxica persistente, rolagem e disparos rápidos.
 - ✅ Testes independentes: renderização GitHub Actions; verificadores de imagens e 180 trilhas de animação; compilação Unity C# via arquivos de referência.
-- ⬜ **Cinco chefes insetoides**: modelos realmente próprios e duas habilidades animadas cada (não usar escalonamento dos demônios comuns).
+- ✅ **Cinco chefes insetoides**: rigs inéditos (não escalonados dos demônios comuns), 21 trilhas cada, duas habilidades animadas, cinco encounters opcionais, IA/skill hit frames e QA automática. ⬜ Aprovação visual e execução real Unity.
 - ⬜ Unity Editor 2022.3 LTS: inspeção de animações/qualidade, screenshot real, colisão, IA, balanceamento, FPS e build jogável. A execução automatizada ainda não substitui esse teste.
+
+## Lote 2 — chefes e combate (12/10/2026)
+- ✅ Cinco chefes insetoides com PNG/JSON HD cartoon reais, importação de altas texturas, identidade anatômica exclusiva, sete animações × três direções e duas habilidades por chefe.
+- ✅ `Enemy.cs` com 2 skills temporizadas por frames, cooldowns diferentes, defesa e movimento; `InsectBossSkills.cs` com dez habilidades jogáveis codificadas (projetéis, área, invocações, veneno, escudo e salto).
+- ✅ Bar de vida e nome de chefe adaptados no HUD existente. Nenhum sprite previamente aprovado foi alterado.
+- ✅ CI do GitHub: atlas/quadros/direções/corte aprovados e compilação C#/contrato gameplay aprovados.
+- ⬜ **Pendente:** abrir projeto no Editor Unity 2022.3 e inspecionar fidelidade visual em escala, gameplay, animações, FPS, colisões e impactos. Não afirmar que o jogo foi executado nem anunciar screenshot de engine sem arquivo gerado pela Unity.

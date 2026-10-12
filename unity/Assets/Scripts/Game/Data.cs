@@ -20,6 +20,7 @@ namespace Aetheria
         public string id, name, sheet;
         public float hp, dmg, speed, aggro, xp, scale = 1f, poise;
         public bool caster;
+        public bool boss; // Lote 2: independent high-HP boss AI and two animation-based skills.
         // Optional combat archetype; empty preserves the original imp behaviour.
         public string behavior = "";
         public (string item, float chance, int min, int max)[] drops;
@@ -127,6 +128,47 @@ namespace Aetheria
                 behavior = "dragonfly_zigzag", hp = 80, dmg = 17, speed = 4.2f, aggro = 9f,
                 xp = 47, poise = 12, scale = .82f,
                 drops = new[] { ("gold", 1f, 9, 20), ("ether", .14f, 1, 1), ("hell_ember", .12f, 1, 1) }
+            };
+            // Five OPTIONAL Lote 2 insectoid bosses; these do not replace story bosses.
+            Demons["mantis_high_reaper"] = new DemonDef
+            {
+                id = "mantis_high_reaper", name = "Alto Ceifador Mantídeo",
+                sheet = "Sprites/Demons/mantis_high_reaper", boss = true,
+                behavior = "boss_reaper", hp = 490, dmg = 29, speed = 3.2f,
+                aggro = 10.5f, xp = 245, poise = 110, scale = 1.16f,
+                drops = new[] { ("gold", 1f, 65, 100), ("hell_ember", .65f, 1, 2), ("potion", .8f, 1, 2) }
+            };
+            Demons["scarab_colossus"] = new DemonDef
+            {
+                id = "scarab_colossus", name = "Colosso do Escaravelho",
+                sheet = "Sprites/Demons/scarab_colossus", boss = true,
+                behavior = "boss_scarab", hp = 830, dmg = 33, speed = 1.55f,
+                aggro = 9f, xp = 300, poise = 220, scale = 1.17f,
+                drops = new[] { ("gold", 1f, 85, 145), ("hell_ember", .8f, 1, 3), ("potion", .9f, 1, 2) }
+            };
+            Demons["moth_oracle"] = new DemonDef
+            {
+                id = "moth_oracle", name = "Oráculo da Mariposa",
+                sheet = "Sprites/Demons/moth_oracle", boss = true,
+                behavior = "boss_moth", hp = 530, dmg = 24, speed = 2.7f,
+                aggro = 10.5f, xp = 255, poise = 110, scale = 1.18f,
+                drops = new[] { ("gold", 1f, 78, 115), ("ether", .85f, 1, 3), ("hell_ember", .60f, 1, 2) }
+            };
+            Demons["queen_vespara"] = new DemonDef
+            {
+                id = "queen_vespara", name = "Rainha Vespara",
+                sheet = "Sprites/Demons/queen_vespara", boss = true,
+                behavior = "boss_vespara", hp = 570, dmg = 28, speed = 3.25f,
+                aggro = 10f, xp = 285, poise = 100, scale = 1.1f,
+                drops = new[] { ("gold", 1f, 72, 132), ("hell_ember", .7f, 1, 3), ("ether", .6f, 1, 2) }
+            };
+            Demons["brood_tyrant"] = new DemonDef
+            {
+                id = "brood_tyrant", name = "Tirano da Ninhada",
+                sheet = "Sprites/Demons/brood_tyrant", boss = true,
+                behavior = "boss_brood", hp = 920, dmg = 36, speed = 1.45f,
+                aggro = 9f, xp = 400, poise = 245, scale = 1.25f,
+                drops = new[] { ("gold", 1f, 120, 190), ("hell_ember", 1f, 2, 4), ("potion", .9f, 1, 3) }
             };
         }
 

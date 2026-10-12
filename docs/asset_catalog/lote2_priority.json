@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game": "Crônicas de Aetheria — A Centelha",
   "lot": "LOTE_02",
-  "status": "10_demoniac_insectoids_rendered_and_wired_cpp_csharp_checked__5_bosses_not_started",
+  "status": "15_of_15_insectoid_art_real_PNG_JSON_and_gameplay_wired_in_Unity_CSharp__runtime_unverified",
   "style_guard": "Official existing HD cartoon Cairo shading and outlines; NEVER lower quality, pixelate, use low-poly, or replace approved graphics. Each insectoid has unique anatomy and pose cycle.",
   "morphology_rules": {
     "max_same_body_archetype": 1,
@@ -62,7 +62,7 @@
         "moth_oracle"
       ],
       "gate": "bespoke boss skeletons (not scaled normal mobs), distinct attack and two skill animations",
-      "status": "not_started"
+      "status": "real_HD_sprites_gameplay_wired_CI_passed_editor_pending"
     },
     {
       "id": "boss_b",
@@ -72,7 +72,7 @@
         "brood_tyrant"
       ],
       "gate": "signature bosses with multi-phase telegraphs and unique body plans",
-      "status": "not_started"
+      "status": "real_HD_sprites_gameplay_wired_CI_passed_editor_pending"
     }
   ],
   "artifacts": [
@@ -465,12 +465,27 @@
         "side"
       ],
       "frame_pixels": [
-        256,
-        256
+        384,
+        384
       ],
-      "art_status": "not_started",
-      "gameplay_status": "not_started",
-      "unity_runtime_verified": false
+      "art_status": "rendered_boss_sprite_pending_director_visual_approval",
+      "gameplay_status": "registered_in_Data_Enemy_InsectBossSkills_and_map__CSharp_compiled",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/mantis_high_reaper.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/mantis_high_reaper.json",
+      "preview": "docs/asset_catalog/previews/lote2/bosses/mantis_high_reaper.png",
+      "animation_states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directional_track_count": 21,
+      "rendered_total_frames": 201,
+      "unique_anatomy_rig": "tools/art_hd/lote2_bosses.py"
     },
     {
       "id": "scarab_colossus",
@@ -497,12 +512,27 @@
         "side"
       ],
       "frame_pixels": [
-        256,
-        256
+        384,
+        384
       ],
-      "art_status": "not_started",
-      "gameplay_status": "not_started",
-      "unity_runtime_verified": false
+      "art_status": "rendered_boss_sprite_pending_director_visual_approval",
+      "gameplay_status": "registered_in_Data_Enemy_InsectBossSkills_and_map__CSharp_compiled",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/scarab_colossus.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/scarab_colossus.json",
+      "preview": "docs/asset_catalog/previews/lote2/bosses/scarab_colossus.png",
+      "animation_states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directional_track_count": 21,
+      "rendered_total_frames": 201,
+      "unique_anatomy_rig": "tools/art_hd/lote2_bosses.py"
     },
     {
       "id": "moth_oracle",
@@ -529,12 +559,27 @@
         "side"
       ],
       "frame_pixels": [
-        256,
-        256
+        384,
+        384
       ],
-      "art_status": "not_started",
-      "gameplay_status": "not_started",
-      "unity_runtime_verified": false
+      "art_status": "rendered_boss_sprite_pending_director_visual_approval",
+      "gameplay_status": "registered_in_Data_Enemy_InsectBossSkills_and_map__CSharp_compiled",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/moth_oracle.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/moth_oracle.json",
+      "preview": "docs/asset_catalog/previews/lote2/bosses/moth_oracle.png",
+      "animation_states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directional_track_count": 21,
+      "rendered_total_frames": 201,
+      "unique_anatomy_rig": "tools/art_hd/lote2_bosses.py"
     },
     {
       "id": "queen_vespara",
@@ -561,12 +606,27 @@
         "side"
       ],
       "frame_pixels": [
-        256,
-        256
+        384,
+        384
       ],
-      "art_status": "not_started",
-      "gameplay_status": "not_started",
-      "unity_runtime_verified": false
+      "art_status": "rendered_boss_sprite_pending_director_visual_approval",
+      "gameplay_status": "registered_in_Data_Enemy_InsectBossSkills_and_map__CSharp_compiled",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/queen_vespara.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/queen_vespara.json",
+      "preview": "docs/asset_catalog/previews/lote2/bosses/queen_vespara.png",
+      "animation_states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directional_track_count": 21,
+      "rendered_total_frames": 201,
+      "unique_anatomy_rig": "tools/art_hd/lote2_bosses.py"
     },
     {
       "id": "brood_tyrant",
@@ -593,13 +653,28 @@
         "side"
       ],
       "frame_pixels": [
-        256,
-        256
+        384,
+        384
       ],
-      "art_status": "not_started",
-      "gameplay_status": "not_started",
-      "unity_runtime_verified": false
+      "art_status": "rendered_boss_sprite_pending_director_visual_approval",
+      "gameplay_status": "registered_in_Data_Enemy_InsectBossSkills_and_map__CSharp_compiled",
+      "unity_runtime_verified": false,
+      "source_sheet": "unity/Assets/Resources/Sprites/Demons/brood_tyrant.png",
+      "source_metadata": "unity/Assets/Resources/Sprites/Demons/brood_tyrant.json",
+      "preview": "docs/asset_catalog/previews/lote2/bosses/brood_tyrant.png",
+      "animation_states": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "skill_2",
+        "hurt",
+        "death"
+      ],
+      "directional_track_count": 21,
+      "rendered_total_frames": 201,
+      "unique_anatomy_rig": "tools/art_hd/lote2_bosses.py"
     }
   ],
-  "status_note": "10 common insectoid demons are real 3-direction PNG/JSON sprite atlases with unique scripts, on-map spawns and C#-compiled ability code. No real Unity Editor run/visual gate yet. Five bosses do not have sprites or gameplay implementations."
+  "status_note": "Ten regular insectoids and five entirely different bosses have real 3-view PNG/JSON sprite atlases in Unity Resources. Five bosses have 7 animated states, 2 skill animations, 5 optional forest spawns, unique ability logic, upgraded boss HUD; GitHub C# compilation and sprite-render QA passed. Actual Unity 2022.3 runtime, collisions, balance, FPS and director visual gate NOT passed."
 }

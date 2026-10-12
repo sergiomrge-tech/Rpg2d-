@@ -1,0 +1,33 @@
+name: Lote 2 - Insect boss Unity gameplay checks
+on:
+  push:
+    branches: [gpt6-lote2-five-bosses-20261012]
+    paths:
+      - 'unity/Assets/Scripts/**'
+      - 'unity/Assets/Editor/InsectBossAtlasImporter.cs'
+      - 'unity/Assets/Resources/Maps/village.json'
+      - 'tools/unity_stubs/EditorStubs.cs'
+      - 'tools/art_hd/verify_lote2_boss_gameplay.py'
+      - '.github/workflows/lote2-boss-gameplay.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-gameplay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate boss AI skills, player effects and unchanged quest spawns
+        run: python tools/art_hd/verify_lote2_boss_gameplay.py
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Compile all game and Unity Editor scripts against module reference assemblies
+        run: bash tools/unity_check.sh

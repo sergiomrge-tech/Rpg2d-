@@ -397,28 +397,45 @@ namespace Aetheria
             if (cam == null) return;
             foreach (var e in Enemy.All)
             {
-                bool show = !e.dead && (Time.time - e.lastHurt < 6f || (Player.I != null && (Player.I.Pos - e.Pos).magnitude < 5f));
+                bool show = !e.dead && (Time.time - e.lastHurt < 6f ||
+                    (Player.I != null && (Player.I.Pos - e.Pos).magnitude < (e.def.boss ? 10f : 5f)));
                 plates.TryGetValue(e, out var pl);
                 if (show && pl == null)
                 {
-                    var rt = Rect("plate", root, Vector2.zero, Vector2.zero, new Vector2(120, 30));
+                    float width = e.def.boss ? 270f : 120f;
+                    var rt = Rect(e.def.boss ? "boss_plate" : "plate",
+                                  root, Vector2.zero, Vector2.zero,
+                                  new Vector2(width, e.def.boss ? 45f : 30f));
                     pl = new Plate { e = e, rt = rt, shown = 1 };
-                    Img("track", rt, Ui("pill_track"), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104, 16));
-                    pl.trail = Img("trail", rt, Ui("pill_fill"), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(98, 10));
+                    Img("track", rt, Ui("pill_track"), new Vector2(0.5f, 0.5f), Vector2.zero,
+                        new Vector2(e.def.boss ? 255f : 104f, e.def.boss ? 20f : 16f));
+                    pl.trail = Img("trail", rt, Ui("pill_fill"), new Vector2(0.5f, 0.5f),
+                                   Vector2.zero, new Vector2(e.def.boss ? 248f : 98f,
+                                                             e.def.boss ? 14f : 10f));
                     pl.trail.type = Image.Type.Filled;
                     pl.trail.fillMethod = Image.FillMethod.Horizontal;
                     pl.trail.color = new Color(1f, 0.9f, 0.7f);
-                    pl.fill = Img("fill", rt, Ui("pill_fill"), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(98, 10));
+                    pl.fill = Img("fill", rt, Ui("pill_fill"), new Vector2(0.5f, 0.5f),
+                                  Vector2.zero, new Vector2(e.def.boss ? 248f : 98f,
+                                                            e.def.boss ? 14f : 10f));
+                    if (e.def.boss) pl.fill.color = new Color(.88f, .30f, .42f);
                     pl.fill.type = Image.Type.Filled;
                     pl.fill.fillMethod = Image.FillMethod.Horizontal;
-                    pl.name = Txt("lv", rt, "Nv " + e.level, SansBold, 18, e.level > (Player.I != null ? Player.I.gs.level : 1) ? new Color(1f, 0.5f, 0.4f) : new Color(1f, 0.95f, 0.85f),
-                        new Vector2(0.5f, 0.5f), new Vector2(0, 18), new Vector2(120, 22));
+                    pl.name = Txt("lv", rt,
+                        e.def.boss ? e.def.name + "  ·  Nv " + e.level : "Nv " + e.level,
+                        SansBold, e.def.boss ? 20 : 18,
+                        e.def.boss ? new Color(1f, .83f, .56f) :
+                        e.level > (Player.I != null ? Player.I.gs.level : 1) ?
+                            new Color(1f, .5f, .4f) : new Color(1f, .95f, .85f),
+                        new Vector2(.5f,.5f), new Vector2(0, e.def.boss ? 24f : 18f),
+                        new Vector2(e.def.boss ? 330f : 120f, e.def.boss ? 28f : 22f));
                     plates[e] = pl;
                 }
                 if (pl == null) continue;
                 pl.rt.gameObject.SetActive(show);
                 if (!show) continue;
-                Vector2 sp = cam.WorldToScreenPoint(e.Pos + Vector2.up * (2.1f * e.body.transform.localScale.y));
+                Vector2 sp = cam.WorldToScreenPoint(e.Pos +
+                    Vector2.up * ((e.def.boss ? 4.15f : 2.1f) * e.body.transform.localScale.y));
                 pl.rt.anchoredPosition = sp * scale;
                 float n = e.hp / e.maxHp;
                 pl.fill.fillAmount = n;

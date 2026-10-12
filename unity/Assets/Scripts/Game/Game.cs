@@ -248,6 +248,27 @@ namespace Aetheria
                 yield return Shot(pilotNames[i]);
                 yield return new WaitForSeconds(0.4f);
             }
+            // Five optional Lote 2 bosses. These are captured from the REAL Unity
+            // running world and both actual skill animations (not poster mockups).
+            string[] bossIds = { "mantis_high_reaper", "scarab_colossus",
+                                 "moth_oracle", "queen_vespara", "brood_tyrant" };
+            for (int i = 0; i < bossIds.Length; i++)
+            {
+                Enemy boss = Enemy.All.Find(e => !e.dead && e.def.id == bossIds[i]);
+                if (boss == null) { Debug.LogWarning("[ci] missing boss " + bossIds[i]); continue; }
+                player.invuln = 6f;
+                player.transform.position = boss.Pos + Vector2.down * 4f;
+                player.rb.velocity = Vector2.zero;
+                CameraRig.I.Snap();
+                boss.CiCastSkill(player.Pos);
+                yield return new WaitForSeconds(.62f);
+                yield return Shot("boss_" + bossIds[i] + "_skill1");
+                yield return new WaitForSeconds(.5f);
+                boss.CiCastSkill2(player.Pos);
+                yield return new WaitForSeconds(.63f);
+                yield return Shot("boss_" + bossIds[i] + "_skill2");
+                yield return new WaitForSeconds(.3f);
+            }
             Debug.Log("[ci] done");
             yield return new WaitForSeconds(0.5f);
             Application.Quit();

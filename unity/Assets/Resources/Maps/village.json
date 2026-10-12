@@ -2224,6 +2224,36 @@
     "x": 2048,
     "y": 2944,
     "level": 2
+  },
+  {
+    "kind": "mantis_high_reaper",
+    "x": 3328,
+    "y": 2304,
+    "level": 3
+  },
+  {
+    "kind": "scarab_colossus",
+    "x": 192,
+    "y": 3264,
+    "level": 4
+  },
+  {
+    "kind": "moth_oracle",
+    "x": 3328,
+    "y": 3200,
+    "level": 3
+  },
+  {
+    "kind": "queen_vespara",
+    "x": 192,
+    "y": 2304,
+    "level": 4
+  },
+  {
+    "kind": "brood_tyrant",
+    "x": 1152,
+    "y": 2432,
+    "level": 5
   }
 ],
 "npcs": [

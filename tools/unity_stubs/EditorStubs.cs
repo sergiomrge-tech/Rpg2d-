@@ -65,6 +65,7 @@ namespace UnityEditor
         public TextureWrapMode wrapMode { get; set; }
         public FilterMode filterMode { get; set; }
         public int maxTextureSize { get; set; }
+        public int compressionQuality { get; set; }
         public TextureImporterCompression textureCompression { get; set; }
         public bool sRGBTexture { get; set; }
     }

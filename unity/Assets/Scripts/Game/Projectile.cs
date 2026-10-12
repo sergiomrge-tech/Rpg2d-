@@ -9,6 +9,7 @@ namespace Aetheria
         public bool friendly;
         public bool inflictsHexSlow;
         public bool tealTrail;
+        public bool inflictsVenom;
         public int tier;
         public string hitFx = "hit";
         SpriteAnim anim;
@@ -80,6 +81,18 @@ namespace Aetheria
             return p;
         }
 
+        // Queen's actual venom bolt: separate colour, speed, damage and debuff.
+        public static Projectile VenomDart(Vector2 pos, Vector2 dir, float dmg)
+        {
+            var p = Make("spark2", pos, dir, 10.4f, dmg, false, .86f,
+                         new Color(.67f, .95f, .33f));
+            p.radius = .34f;
+            p.hitFx = "hit_spark";
+            p.life = 2.3f;
+            p.inflictsVenom = true;
+            return p;
+        }
+
         void Update()
         {
             float dt = Time.deltaTime;
@@ -89,7 +102,8 @@ namespace Aetheria
             if (trailT <= 0)
             {
                 trailT = 0.035f;
-                Fx.Ember(transform.position, tealTrail ? new Color(.36f, .96f, .90f) :
+                Fx.Ember(transform.position, inflictsVenom ? new Color(.67f, .95f, .36f) :
+                    tealTrail ? new Color(.36f, .96f, .90f) :
                     inflictsHexSlow ? new Color(.72f, .39f, .94f) :
                     friendly && tier == 1 ? new Color(0.6f, 0.9f, 1f) : new Color(1f, 0.6f, 0.2f));
             }
@@ -116,6 +130,7 @@ namespace Aetheria
                     if (Player.I.Hurt(Mathf.Round(dmg), p - vel.normalized, 6f, 15))
                     {
                         if (inflictsHexSlow) Player.I.ApplyHexSlow(2.1f);
+                        if (inflictsVenom) Player.I.ApplyVenom(3.0f);
                         Explode(); return;
                     }
                 }
