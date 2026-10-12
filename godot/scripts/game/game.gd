@@ -768,7 +768,7 @@ func _ui_smoke_test() -> void:
 				push_error("[class-smoke] summoner skill did not create a real AI pet")
 				get_tree().quit(1)
 				return
-			var real_pet := SpiritPet.active_pets.back()
+			var real_pet: SpiritPet = SpiritPet.active_pets.back()
 			if real_pet == null or real_pet.visual == null or real_pet.visual.sheet == null or real_pet.visual.texture == null:
 				push_error("[class-smoke] bespoke animated pet asset not loaded")
 				get_tree().quit(1)
