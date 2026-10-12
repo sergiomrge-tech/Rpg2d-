@@ -151,32 +151,96 @@ namespace Aetheria
             player.Revive(Util.MapToWorld(world.data.playerX, world.data.playerY));
             CameraRig.I.Snap();
             world.RespawnEnemies();
+            Save(); // A morte custa metade do ouro: persistir somente apos a ressuscitacao.
+        }
+
+        static string BackupPath => SavePath + ".bak";
+        static string TempPath => SavePath + ".tmp";
+
+        // Arquivos parciais ou desatualizados nunca substituem um progresso valido.
+        static SaveData ReadSave(string path)
+        {
+            if (!File.Exists(path)) return null;
+            try
+            {
+                var s = JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
+                if (s == null || s.state == null ||
+                    s.state.level < 1 || s.state.maxHp <= 0 || s.state.maxMp <= 0 || s.state.maxSt <= 0 ||
+                    float.IsNaN(s.state.maxHp) || float.IsNaN(s.state.maxMp) || float.IsNaN(s.state.maxSt) ||
+                    s.state.invIds == null || s.state.invCounts == null ||
+                    s.state.invIds.Count != s.state.invCounts.Count ||
+                    s.flags == null || s.questIds == null || s.questVals == null ||
+                    s.questIds.Count != s.questVals.Count)
+                    return null;
+                return s;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("save invalid (" + Path.GetFileName(path) + "): " + ex.Message);
+                return null;
+            }
         }
 
         public void Save()
         {
-            if (ciDir != null) return;
+            if (ciDir != null || player == null) return;
             try
             {
                 var s = new SaveData { state = state, flags = new List<string>(flags) };
                 foreach (var kv in quests) { s.questIds.Add(kv.Key); s.questVals.Add(kv.Value); }
-                File.WriteAllText(SavePath, JsonUtility.ToJson(s));
+
+                // Estagiar primeiro em arquivo separado; a versao anterior continua recuperavel.
+                Directory.CreateDirectory(Application.persistentDataPath);
+                File.WriteAllText(TempPath, JsonUtility.ToJson(s));
+                if (ReadSave(TempPath) == null)
+                    throw new IOException("new save did not pass integrity check");
+
+                if (File.Exists(SavePath))
+                {
+                    if (ReadSave(SavePath) != null)
+                    {
+                        if (File.Exists(BackupPath)) File.Delete(BackupPath);
+                        File.Move(SavePath, BackupPath);
+                    }
+                    else
+                    {
+                        // Preserve um backup valido quando o arquivo principal foi corrompido.
+                        File.Delete(SavePath);
+                    }
+                }
+                File.Move(TempPath, SavePath);
             }
             catch (Exception ex) { Debug.LogWarning("save failed: " + ex.Message); }
+            finally
+            {
+                try { if (File.Exists(TempPath)) File.Delete(TempPath); }
+                catch (Exception ex) { Debug.LogWarning("temp save cleanup failed: " + ex.Message); }
+            }
         }
 
         void Load()
         {
-            try
+            // Se a gravacao foi interrompida, o arquivo .bak ainda contem a partida anterior.
+            var s = ReadSave(SavePath);
+            if (s == null)
             {
-                if (!File.Exists(SavePath)) return;
-                var s = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));
-                if (s?.state == null) return;
-                state = s.state;
-                flags = new HashSet<string>(s.flags);
-                for (int i = 0; i < s.questIds.Count; i++) quests[s.questIds[i]] = s.questVals[i];
+                s = ReadSave(BackupPath);
+                if (s != null) Debug.LogWarning("primary save unavailable; recovered backup");
             }
-            catch (Exception ex) { Debug.LogWarning("load failed: " + ex.Message); }
+            if (s == null) return;
+            state = s.state;
+            flags = new HashSet<string>(s.flags);
+            for (int i = 0; i < s.questIds.Count; i++) quests[s.questIds[i]] = s.questVals[i];
+        }
+
+        void OnApplicationPause(bool paused)
+        {
+            if (paused && player != null) Save();
+        }
+
+        void OnApplicationQuit()
+        {
+            if (player != null) Save();
         }
 
         // ------------------------------------------------------------ CI: scripted tour + screenshots
