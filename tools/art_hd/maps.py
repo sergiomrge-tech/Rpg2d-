@@ -203,6 +203,9 @@ def village():
     # imps in the southern woods; tougher pack near the pond
     for i, (x, y) in enumerate([(24, 42), (31, 44), (20, 47), (35, 49), (12, 40), (15, 49), (40, 41), (29, 51)]):
         m.spawns.append(dict(kind='imp', x=x * T, y=y * T, level=1 + (i % 3)))
+    for i, (x, y) in enumerate([(33, 47), (18, 44), (38, 51)]):
+        m.spawns.append(dict(kind='oni', x=x * T, y=y * T, level=2 + i % 2))
+    m.spawns.append(dict(kind='grakk', x=22 * T, y=51.5 * T, level=4))
     m.exits = [dict(to='forest', x=27 * T, y=53.5 * T, w=3 * T, h=T)]
     return m
 

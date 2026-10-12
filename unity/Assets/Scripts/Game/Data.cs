@@ -19,7 +19,8 @@ namespace Aetheria
     {
         public string id, name, sheet;
         public float hp, dmg, speed, aggro, xp, scale = 1f, poise;
-        public bool caster;
+        public bool caster, boss;
+        public string title;
         public (string item, float chance, int min, int max)[] drops;
     }
 
@@ -50,6 +51,19 @@ namespace Aetheria
                 xp = 14, caster = true, poise = 10, scale = 1.15f,
                 drops = new[] { ("gold", 1f, 3, 9), ("imp_horn", 0.45f, 1, 1), ("potion", 0.12f, 1, 1), ("ether", 0.06f, 1, 1),
                                 ("hell_ember", 0.05f, 1, 1), ("spark_tome", 0.012f, 1, 1) }
+            };
+
+            Demons["oni"] = new DemonDef
+            {
+                id = "oni", name = "Oni Soldado", sheet = "Sprites/Demons/oni", hp = 110, dmg = 24, speed = 2.1f, aggro = 6f,
+                xp = 30, poise = 38, scale = 1.25f,
+                drops = new[] { ("gold", 1f, 8, 18), ("potion", 0.2f, 1, 1), ("hell_ember", 0.12f, 1, 1), ("spark_tome", 0.02f, 1, 1) }
+            };
+            Demons["grakk"] = new DemonDef
+            {
+                id = "grakk", name = "Grakk", title = "Chefe dos Diabretes", sheet = "Sprites/Demons/grakk", hp = 420, dmg = 22,
+                speed = 2.9f, aggro = 8f, xp = 160, caster = true, boss = true, poise = 70, scale = 1.9f,
+                drops = new[] { ("gold", 1f, 120, 160), ("spark_tome", 1f, 1, 1), ("hell_ember", 1f, 2, 3), ("potion", 1f, 2, 2) }
             };
         }
 

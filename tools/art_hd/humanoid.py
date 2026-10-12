@@ -472,6 +472,8 @@ def draw_figure(ctx, L: Look, view, P):
     def weapon():
         if wpn is not None and L.weapon == 'sword':
             draw_sword(ctx, L, hand_b_pos, wpn, P.get('wscale', 1.0))
+        elif wpn is not None and callable(L.weapon):
+            L.weapon(ctx, L, hand_b_pos, wpn, P.get('wscale', 1.0))
 
     if view == 'side':
         draw_arm(ctx, L, sh_a, P['arm_a'], far=True, glow=P['glow'] if P.get('glow_hand') == 'a' else None)

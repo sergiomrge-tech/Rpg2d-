@@ -121,12 +121,20 @@ namespace Aetheria
                     ? "◆ Volte à Guilda e fale com Elina"
                     : $"◆ Purgar o Bosque dos Chifres\n<size=22>Diabretes {n}/{Story.QuestImpsGoal}</size>";
             }
+            if (!flags.Contains("grakk_dead")) return "◆ Derrote Grakk, Chefe dos Diabretes\n<size=22>sul do Bosque dos Chifres</size>";
+            if (!flags.Contains("rank_e")) return "◆ Volte à Guilda e fale com Elina";
             return "◆ Rank E — aguarde novas missões\n<size=20>Floresta de Velmoor (em breve)</size>";
         }
 
         public void OnEnemyKilled(Enemy e)
         {
             if (quests.ContainsKey(Story.QuestImps) && e.def.id == "imp") quests[Story.QuestImps]++;
+            if (e.def.boss)
+            {
+                flags.Add(e.def.id + "_dead");
+                hud.Banner(e.def.name + " foi derrotado", "Volte à Guilda");
+                Save();
+            }
             int xp = Mathf.RoundToInt(e.def.xp * Data.LevelScale(e.level));
             Fx.Toast("+" + xp + " EXP", new Color(0.75f, 0.95f, 1f), e.Pos + Vector2.up * 2.6f);
             if (state.GainXp(xp))

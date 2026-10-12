@@ -19,8 +19,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Texturas do HUD (medalhão, arcos PV/PM/stamina, orbes, faixa de diálogo, fita de nome, pílulas, vinheta) — `tools/art_hd/ui.py`
 - ✅ Ícones de itens/habilidades (`Sprites/Ui/icons`)
 - ✅ Retratos (herói, Elina, Borin, Marta, Lumia)
-- ⬜ Chefe do capítulo: Diabrete-Chefe Grakk
-- ⬜ Oni soldado (2º demônio)
+- ✅ Chefe do capítulo: Grakk, Chefe dos Diabretes (leque de 3 bolas de fogo, banner de chefe, drop garantido do Tomo)
+- ✅ Oni Soldado (clava com espinhos, golpe pesado, alta postura)
+- ✅ Missão em cadeia: 5 diabretes → Grakk → Rank E
 - ⬜ Menus: inventário/grimório (livro aberto), forja, quadro de missões
 - ⬜ Música e ambiência por região
 
@@ -48,4 +49,5 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 
 ## Próximo passo imediato
 1. Assim que a licença estiver nos segredos: rodar o CI, ver screenshots e corrigir.
-2. Chefe Grakk + Oni soldado para fechar o Capítulo 1.
+2. Menus (inventário/grimório, forja), usar o Tomo para evoluir a Centelha.
+3. Floresta de Velmoor (Capítulo 2).

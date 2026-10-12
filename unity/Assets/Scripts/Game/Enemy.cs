@@ -102,6 +102,7 @@ namespace Aetheria
                     {
                         Go(St.Chase);
                         Fx.Alert(this);
+                        if (def.boss) { Hud.I?.Banner(def.name, def.title); CameraRig.Shake(0.25f, 0.4f); }
                         Sfx.Play("imp_cry", 0.35f, Random.Range(1.0f, 1.2f));
                     }
                     break;
@@ -194,7 +195,13 @@ namespace Aetheria
                 Vector2 from = Pos + Vector2.up * 0.9f;
                 // lead the target slightly
                 Vector2 aim = (p.Pos + p.rb.velocity * 0.25f + Vector2.up * 0.5f - from).normalized;
-                Projectile.Fireball(from + aim * 0.4f, aim, dmg * 0.8f);
+                if (def.boss)
+                    for (int k = -1; k <= 1; k++)
+                    {
+                        Vector2 a2 = Quaternion.Euler(0, 0, k * 18f) * aim;
+                        Projectile.Fireball(from + a2 * 0.5f, a2, dmg * 0.7f);
+                    }
+                else if (def.caster) Projectile.Fireball(from + aim * 0.4f, aim, dmg * 0.8f);
                 Sfx.Play("fireball", 0.5f, Random.Range(0.95f, 1.1f));
             }
         }

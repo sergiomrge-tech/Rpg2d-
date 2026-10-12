@@ -338,4 +338,15 @@ class Imp:
                                                                                    '#b23a10'), sh=1.2, hl=1.0, line=0.6)
 
 
-DEMONS = [Imp()]
+class Grakk(Imp):
+    """Chapter 1 boss: an elder imp chieftain (dark violet, gold horns, ember eyes)."""
+    name = 'grakk'
+    skin = Pal('#6a3a8a', '#482466', '#9a64b8', '#1a0828')
+    belly = Pal('#c86a5a', '#9a4a44', '#f0a090', '#3a1014')
+    wing = Pal('#2a1a3a', '#180e24', '#4a3460', '#08040e')
+    membrane = Pal('#a8283a', '#7a1628', '#d85a6a', '#2a040c')
+    horn = Pal('#f0c860', '#b8862c', '#fff2b0', '#4a300c')
+    eye = hx('#ff7a2a')
+
+
+DEMONS = [Imp(), Grakk()]

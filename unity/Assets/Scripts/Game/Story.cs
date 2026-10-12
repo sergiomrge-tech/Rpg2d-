@@ -58,17 +58,31 @@ namespace Aetheria
                     if (g.QuestProgress(QuestImps) >= QuestImpsGoal && !g.flags.Contains("q_imps_done"))
                     {
                         g.flags.Add("q_imps_done");
-                        gs.gold += 120;
+                        gs.gold += 60;
                         gs.Add("potion", 2);
+                        return new[]
+                        {
+                            new Line(npc, "Cinco diabretes?! E voltou inteiro! Aqui estão 60 de ouro e duas poções."),
+                            new Line(npc, "Mas há algo pior: um diabrete ancião, Grakk, comanda os outros no fundo do bosque."),
+                            new Line(npc, "Derrote Grakk e a Guilda o promove ao Rank E. Ele cospe fogo em leque — não fique parado."),
+                        };
+                    }
+                    if (g.flags.Contains("grakk_dead") && !g.flags.Contains("rank_e"))
+                    {
+                        g.flags.Add("rank_e");
+                        gs.gold += 200;
                         gs.guildRank = "E";
                         return new[]
                         {
-                            new Line(npc, "Cinco diabretes?! E voltou inteiro! Aqui estão 120 de ouro e duas poções."),
-                            new Line(npc, "Você subiu para o Rank E. Os demônios estão ficando mais ousados... algo os está chamando."),
+                            new Line(npc, "Grakk... morto? Por um novato de Rank F? A Guilda inteira está falando de você!"),
+                            new Line(npc, "Rank E, oficialmente. E 200 de ouro. Aquele Tomo que ele deixou... leve ao ferreiro um dia."),
+                            new Line(npc, "Os relatórios dizem que os demônios vêm da Floresta de Velmoor. É para lá que o Rank D vai."),
                         };
                     }
-                    if (g.flags.Contains("q_imps_done"))
+                    if (g.flags.Contains("rank_e"))
                         return new[] { new Line(npc, "Novas missões chegam em breve ao quadro. O Rank D exige ir à Floresta de Velmoor.") };
+                    if (g.flags.Contains("q_imps_done"))
+                        return new[] { new Line(npc, "Grakk se esconde no sul do bosque, perto do lago. Cuidado com o leque de fogo.") };
                     return new[] { new Line(npc, $"Diabretes abatidos: {g.QuestProgress(QuestImps)}/{QuestImpsGoal}. O bosque fica ao sul da praça.") };
                 case "blacksmith":
                     return new[]
