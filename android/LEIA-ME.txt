@@ -1,0 +1,11 @@
+Crônicas de Aetheria — A Centelha (APK de teste)
+
+Como instalar no Android:
+1. Descompacte este zip (ou baixe o .apk direto) e toque em Aetheria.apk.
+2. Se o Android pedir, permita "instalar apps de fontes desconhecidas" para o navegador/arquivos.
+3. Abra o jogo. Joystick na metade esquerda da tela; botões à direita (golpe, magia, rolar, poção, falar).
+   Botões "Livro" (grimório) e "Menu" (opções) ficam no canto superior esquerdo.
+
+O APK é assinado sempre com a mesma chave, então uma versão nova instala por cima da anterior sem perder o save.
+Chave: android/aetheria-teste.keystore (senha aetheria123, alias aetheria). É uma chave de TESTE e pública:
+para publicar na Play Store, crie uma chave sua e guarde como segredo do GitHub.

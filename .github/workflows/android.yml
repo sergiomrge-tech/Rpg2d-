@@ -28,7 +28,7 @@ jobs:
           unzip -q tpz.zip -d tpz && mv tpz/templates ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
       - name: Configure Android export (SDK, JDK, debug keystore)
         run: |
-          keytool -genkey -v -keystore $HOME/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          cp android/aetheria-teste.keystore $HOME/debug.keystore   # same signing key on every build
           mkdir -p ~/.config/godot
           cat > ~/.config/godot/editor_settings-4.3.tres <<EOF
           [gd_resource type="EditorSettings" format=3]
@@ -37,8 +37,8 @@ jobs:
           export/android/android_sdk_path = "${ANDROID_HOME}"
           export/android/java_sdk_path = "${JAVA_HOME}"
           export/android/debug_keystore = "${HOME}/debug.keystore"
-          export/android/debug_keystore_user = "androiddebugkey"
-          export/android/debug_keystore_pass = "android"
+          export/android/debug_keystore_user = "aetheria"
+          export/android/debug_keystore_pass = "aetheria123"
           EOF
           sed -i 's/^          //' ~/.config/godot/editor_settings-4.3.tres
           ls $ANDROID_HOME $ANDROID_HOME/build-tools || true
@@ -51,6 +51,10 @@ jobs:
           mkdir -p dist
           godot --headless --path godot --export-debug "Android" "$PWD/dist/Aetheria.apk" 2>&1 | tail -30
           ls -la dist
+      - name: Zip APK + instructions
+        run: |
+          cp android/LEIA-ME.txt dist/
+          cd dist && zip -q Aetheria-android.zip Aetheria.apk LEIA-ME.txt && ls -la
       - uses: actions/upload-artifact@v4
         with:
           name: Aetheria-apk
@@ -60,4 +64,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete apk-latest --yes --cleanup-tag || true
-          gh release create apk-latest dist/Aetheria.apk --title "Aetheria APK (teste)" --notes "Build debug do commit ${{ github.sha }}. Instale no Android (permitir fontes desconhecidas)." --prerelease
+          gh release create apk-latest dist/Aetheria-android.zip dist/Aetheria.apk --title "Aetheria APK (teste)" --notes "Build do commit ${{ github.sha }}. Instale no Android (permitir fontes desconhecidas)." --prerelease
