@@ -67,6 +67,7 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento
+- ✅ Passos por superfície: grama (Aurora/Velmoor), pedra (Valemont/Minas/Castelo/Cidadela), areia (Kharis), lama (Mirewail), neve (Picos), cascalho (Terras Devastadas) — sintetizados, 3 variações cada
 - ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
 - ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
 - ✅ Falas em sussurro: cada letra revelada dispara uma sílaba soprada (ruído filtrado por formantes de vogal), com timbre por personagem e voz mais baixa na narração (`Sfx.whisper`)

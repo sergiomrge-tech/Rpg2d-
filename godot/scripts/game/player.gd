@@ -139,7 +139,7 @@ func _physics_process(dt: float) -> void:
 				step_t -= dt * (1.5 if can_run else 1.0)
 				if step_t <= 0.0:
 					step_t = 0.36
-					Sfx.play("step", 0.18, randf_range(0.9, 1.1))
+					Sfx.step(Game.map_name, 1.25 if can_run else 1.0)
 					if can_run:
 						Fx.dust(pos(), 0.5)
 			else:

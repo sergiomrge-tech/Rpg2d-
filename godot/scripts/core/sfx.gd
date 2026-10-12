@@ -64,6 +64,19 @@ func play(name: String, vol: float = 0.5, pitch: float = 1.0, bus: String = "Sfx
 	p.play()
 
 
+const SURFACES := {
+	"village": "grass", "velmoor": "grass", "valemont": "stone", "kharis": "sand", "mines": "stone",
+	"mirewail": "mud", "peaks": "snow", "castle": "stone", "wastelands": "gravel", "citadel": "stone",
+}
+const STEP_VOL := {"grass": 0.55, "sand": 0.5, "snow": 0.4, "stone": 0.2, "mud": 0.22, "gravel": 0.4}
+
+
+## Footstep for the current map's ground (grass, sand, snow, stone, mud, gravel).
+func step(map_name: String, loud: float = 1.0) -> void:
+	var kind: String = SURFACES.get(map_name, "grass")
+	play("fs_%s_%d" % [kind, _rng.randi() % 3], float(STEP_VOL[kind]) * loud, _rng.randf_range(0.9, 1.1))
+
+
 ## One whispered syllable for a typed character. `voice` (0..1) bends pitch/formants per speaker.
 func whisper(ch: String, voice: float, vol: float = 0.3) -> void:
 	var c := ch.to_lower()
@@ -211,7 +224,56 @@ func _boss_voice(hiss: bool) -> PackedFloat32Array:
 	return b
 
 
+## Footsteps per surface ("fs_<surface>_<variant>"): grass, sand, snow, stone, mud, gravel.
+func _footstep(n: String) -> PackedFloat32Array:
+	var parts := n.split("_")
+	var kind := parts[1]
+	var v := int(parts[2])
+	var b: PackedFloat32Array
+	match kind:
+		"grass":
+			b = _noise(0.13, 0.22 + 0.04 * v, 0.018, 0.035, 0.55)
+			var hi := _noise(0.13, 0.8, 0.03, 0.03, 0.12)
+			for i in b.size():
+				b[i] += hi[i]
+		"sand":
+			b = _noise(0.2, 0.5, 0.045, 0.06, 0.38)
+			var low := _noise(0.2, 0.07, 0.01, 0.07, 0.3)
+			for i in b.size():
+				b[i] += low[i]
+		"snow":
+			b = _buf(0.2)
+			for g in 4:
+				var at := 0.012 + g * (0.022 + 0.004 * v)
+				var grain := _noise(0.05, 0.35 + 0.1 * g, 0.001, 0.012, 0.8)
+				var off := int(at * RATE)
+				for i in grain.size():
+					if off + i < b.size():
+						b[off + i] += grain[i] * (1.0 - g * 0.15)
+		"stone":
+			b = _noise(0.09, 0.55, 0.0008, 0.012, 0.7)
+			for i in b.size():
+				var t := i / float(RATE)
+				b[i] += sin(TAU * (620.0 + 80.0 * v) * t) * exp(-t * 55.0) * 0.55
+		"mud":
+			b = _noise(0.2, 0.1, 0.01, 0.07, 0.8)
+			for i in b.size():
+				var t := i / float(RATE)
+				b[i] += sin(TAU * (210.0 - 520.0 * t) * t) * exp(-t * 16.0) * 0.5
+		_:   # gravel / ash: dense dry crunch
+			b = _buf(0.17)
+			for g in 7:
+				var grain := _noise(0.03, 0.5, 0.0006, 0.007, 0.65)
+				var off := int((0.008 + g * (0.015 + 0.003 * v)) * RATE)
+				for i in grain.size():
+					if off + i < b.size():
+						b[off + i] += grain[i] * randf_range(0.5, 1.0)
+	return b
+
+
 func _synth(n: String) -> PackedFloat32Array:
+	if n.begins_with("fs_"):
+		return _footstep(n)
 	if n.begins_with("wh_"):
 		return _whisper(n)
 	if n == "boss_roar" or n == "boss_hiss":
