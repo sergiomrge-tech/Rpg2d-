@@ -52,6 +52,25 @@ def preview(kind,img,meta):
     folder=os.path.join(ROOT,"docs","asset_catalog","previews","classes")
     os.makedirs(folder,exist_ok=True)
     board.convert("RGB").save(os.path.join(folder,kind+".png"),optimize=True)
+    # Small, transparent CLASS SELECTION portrait cut directly from the real
+    # in-game atlas. No extra generation or stand-alone conceptual rendering.
+    idle=_crop(img,meta,"idle_down",3)
+    box=idle.getchannel("A").getbbox()
+    if box is None:
+        raise ValueError(kind+": atlas contains an empty actor silhouette")
+    # Preserve a fine transparent air gap around the equipment and hat.
+    box=(max(0,box[0]-6),max(0,box[1]-5),
+         min(idle.width,box[2]+6),min(idle.height,box[3]+4))
+    extracted=idle.crop(box)
+    scale=min(140/extracted.width,166/extracted.height)
+    extracted=extracted.resize((max(1,round(extracted.width*scale)),
+                                max(1,round(extracted.height*scale))),Image.Resampling.LANCZOS)
+    portrait=Image.new("RGBA",(148,174),(0,0,0,0))
+    portrait.alpha_composite(extracted,((148-extracted.width)//2,
+                                      170-extracted.height))
+    outdir=os.path.join(ROOT,"godot","assets","Sprites","Ui","ClassPortraits")
+    os.makedirs(outdir,exist_ok=True)
+    portrait.save(os.path.join(outdir,kind+".png"),optimize=True)
 
 
 def main():
