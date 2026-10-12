@@ -8,6 +8,7 @@ namespace Aetheria
         public float dmg, life = 2.2f, radius = 0.35f;
         public bool friendly;
         public bool inflictsHexSlow;
+        public bool tealTrail;
         public int tier;
         public string hitFx = "hit";
         SpriteAnim anim;
@@ -67,6 +68,18 @@ namespace Aetheria
             return p;
         }
 
+        public static Projectile InsectNeedle(Vector2 pos, Vector2 dir, float dmg)
+        {
+            // Distinct rapid dragonfly lancet: not a fireball and no fire-colored trail.
+            var p = Make("spark1", pos, dir, 15.5f, dmg, false, .67f,
+                         new Color(.37f, .90f, .87f));
+            p.hitFx = "hit_spark";
+            p.radius = .25f;
+            p.life = 1.3f;
+            p.tealTrail = true;
+            return p;
+        }
+
         void Update()
         {
             float dt = Time.deltaTime;
@@ -76,7 +89,8 @@ namespace Aetheria
             if (trailT <= 0)
             {
                 trailT = 0.035f;
-                Fx.Ember(transform.position, inflictsHexSlow ? new Color(.72f, .39f, .94f) :
+                Fx.Ember(transform.position, tealTrail ? new Color(.36f, .96f, .90f) :
+                    inflictsHexSlow ? new Color(.72f, .39f, .94f) :
                     friendly && tier == 1 ? new Color(0.6f, 0.9f, 1f) : new Color(1f, 0.6f, 0.2f));
             }
             if (glow != null) glow.transform.localScale = Vector3.one * (1.8f + Mathf.Sin(Time.time * 30) * 0.15f);
