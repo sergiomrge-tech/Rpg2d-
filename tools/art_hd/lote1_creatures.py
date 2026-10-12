@@ -399,4 +399,8 @@ def build_creatures():
     items['grakk']=GrakkFull()
     items['velka_flamebeak']=Velka()
     items['thornmaw_alpha']=Thornmaw()
+    # Replace visually repetitive Imp/Oni variants with independent anatomy.
+    # No recolor/weapon swap: each override draws its own silhouette and poses.
+    from lote1_remodel import remodeled_creatures
+    items.update(remodeled_creatures())
     return items
