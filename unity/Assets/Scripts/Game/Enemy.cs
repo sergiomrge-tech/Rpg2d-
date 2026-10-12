@@ -7,7 +7,7 @@ namespace Aetheria
     public class Enemy : Actor
     {
         public static readonly List<Enemy> All = new List<Enemy>();
-        enum St { Idle, Chase, Telegraph, Attack, Cast, Hurt, Dead, Retreat }
+        enum St { Idle, Chase, Telegraph, Attack, Cast, Cast2, Hurt, Dead, Retreat }
 
         public DemonDef def;
         public int level;
@@ -22,6 +22,9 @@ namespace Aetheria
         Vector2 wander;
         bool hitDone;
         bool nextIsCast;
+        bool nextIsSkill2;
+        float secondaryCd;
+        float bossGuardLeft;
         Vector2 skillDirection; // locked during telegraph; skill hit matches animation keyframe
         float chitinGuardLeft; // ant's active defensive cast buff
 
@@ -34,14 +37,16 @@ namespace Aetheria
             e.def = def;
             e.level = level;
             float s = Data.LevelScale(level);
-            e.Build(def.sheet, 0.9f, 0.3f, def.behavior == "scarab_shockwave" ? 0.56f :
+            e.Build(def.sheet, def.boss ? 2.7f : .9f, def.boss ? .68f : .3f,
+                def.boss ? .80f :
+                def.behavior == "scarab_shockwave" ? 0.56f :
                 def.behavior == "termite_burrow" ? 0.46f :
                 def.behavior == "ant_carapace" ? .43f :
                 def.behavior == "spike_roll" ? .48f :
                 def.behavior == "roach_plague" ? .42f :
                 def.behavior == "cicada_sonic" ? .38f : 0.3f,
                 def.scale + 0.05f * (level - 1));
-            e.rb.mass = 0.6f;
+            e.rb.mass = def.boss ? 2.4f : .6f;
             e.rb.drag = 0;
             e.maxHp = e.hp = Mathf.Round(def.hp * s);
             e.dmg = def.dmg * s;
@@ -49,6 +54,7 @@ namespace Aetheria
             e.maxPoise = e.poise = def.poise * s;
             e.home = pos;
             e.castCd = Random.Range(1.5f, 3f);
+            e.secondaryCd = def.boss ? Random.Range(5f, 7f) : 0f;
             e.anim.OnHit += e.OnAnimHit;
             e.anim.OnEnd += e.OnAnimEnd;
             e.anim.Play("idle");
@@ -70,6 +76,22 @@ namespace Aetheria
             hitDone = false;
             Go(St.Cast);
             anim.Play("cast", true);
+        }
+
+        public void CiCastSkill2(Vector2 target)
+        {
+            if (dead || !def.boss) return;
+            Vector2 direction = target - Pos;
+            skillDirection = direction.sqrMagnitude > .001f ? direction.normalized : Util.FacingVec(facing);
+            Face(Util.FacingFrom(skillDirection, facing));
+            hitDone = false;
+            Go(St.Cast2);
+            anim.Play("skill_2", true);
+        }
+
+        public void ActivateBossGuard(float duration)
+        {
+            if (def.boss) bossGuardLeft = Mathf.Max(bossGuardLeft, duration);
         }
 
         public static Enemy Nearest(Vector2 p, float maxDist, Vector2? dir = null, float minDot = -2f)
@@ -102,7 +124,9 @@ namespace Aetheria
             float dt = Time.deltaTime;
             stateT += dt;
             castCd -= dt;
+            secondaryCd -= dt;
             attackCd -= dt;
+            if (bossGuardLeft > 0f) bossGuardLeft = Mathf.Max(0f, bossGuardLeft - dt);
             if (chitinGuardLeft > 0f) chitinGuardLeft = Mathf.Max(0f, chitinGuardLeft - dt);
             var p = Player.I;
             Vector2 toP = p != null ? p.Pos - Pos : Vector2.zero;
@@ -131,6 +155,43 @@ namespace Aetheria
                 {
                     if (!playerOk || dist > def.aggro * 1.8f) { Go(St.Idle); break; }
                     Face(Util.FacingFrom(toP, facing));
+                    // Dedicated boss decision pattern: telegraphed attacks, two distinct
+                    // active skills and mobility tuned per rig. Does NOT replace normal AI.
+                    if (def.boss)
+                    {
+                        bool far = dist > 3.0f;
+                        if (secondaryCd <= 0f && dist < 9f)
+                        {
+                            nextIsCast = true;
+                            nextIsSkill2 = true;
+                            skillDirection = toP.sqrMagnitude > .01f ? toP.normalized : Util.FacingVec(facing);
+                            Go(St.Telegraph);
+                            break;
+                        }
+                        if (castCd <= 0f && dist < 8.3f)
+                        {
+                            nextIsCast = true;
+                            nextIsSkill2 = false;
+                            skillDirection = toP.sqrMagnitude > .01f ? toP.normalized : Util.FacingVec(facing);
+                            Go(St.Telegraph);
+                            break;
+                        }
+                        if (dist < 2.5f && attackCd <= 0f)
+                        {
+                            nextIsCast = false; nextIsSkill2 = false;
+                            Go(St.Telegraph);
+                            break;
+                        }
+                        Vector2 travel = toP.sqrMagnitude > .01f ? toP.normalized : Vector2.zero;
+                        bool ranged = def.behavior == "boss_moth" || def.behavior == "boss_vespara";
+                        Vector2 arc = new Vector2(-travel.y, travel.x) *
+                                      Mathf.Sin(Time.time * 1.1f + GetInstanceID());
+                        Vector2 steer = ranged && dist < 4.2f ? -travel :
+                                        ranged && !far ? arc : travel;
+                        Move(steer, def.speed * (dist < 2.5f && !ranged ? .25f : 1f));
+                        Separate();
+                        break;
+                    }
                     // Each Lote 2 species has its own combat range and skill windows.
                     bool mantis = def.behavior == "mantis_dash";
                     bool scarab = def.behavior == "scarab_shockwave";
@@ -186,7 +247,9 @@ namespace Aetheria
                     // red pulse warns the player; the window is the time to roll
                     float pulse = Mathf.PingPong(stateT * 8f, 1f);
                     Flash(nextIsCast ? new Color(1f, 0.6f, 0.2f) : new Color(1f, 0.15f, 0.15f), 0.55f * pulse);
-                    float tell = nextIsCast
+                    float tell = def.boss
+                        ? (nextIsSkill2 ? .90f : nextIsCast ? .68f : .48f)
+                        : nextIsCast
                         ? (def.behavior == "scarab_shockwave" ? 0.72f :
                            def.behavior == "termite_burrow" ? .78f :
                            def.behavior == "cicada_sonic" ? .72f :
@@ -200,10 +263,17 @@ namespace Aetheria
                     if (stateT > tell)
                     {
                         hitDone = false;
-                        if (nextIsCast)
+                        if (def.boss && nextIsSkill2)
+                        {
+                            Go(St.Cast2);
+                            anim.Play("skill_2", true);
+                            secondaryCd = def.behavior == "boss_brood" ? 10.2f : 8.5f;
+                        }
+                        else if (nextIsCast)
                         {
                             Go(St.Cast); anim.Play("cast", true);
-                            castCd = def.behavior == "scarab_shockwave" ? 6.2f :
+                            castCd = def.boss ? 4.2f :
+                                     def.behavior == "scarab_shockwave" ? 6.2f :
                                      def.behavior == "termite_burrow" ? 5.1f :
                                      def.behavior == "cicada_sonic" ? 6.0f :
                                      def.behavior == "vespa_sting" ? 4.0f :
@@ -231,7 +301,24 @@ namespace Aetheria
                     rb.velocity = (n > 0.3f && n < 0.6f ? f * burst : Vector2.zero) + knock;
                     break;
                 }
+                case St.Cast2:
+                    if (def.boss &&
+                        (def.behavior == "boss_reaper" || def.behavior == "boss_vespara"))
+                    {
+                        float n2 = anim.Normalized;
+                        rb.velocity = (n2 > .20f && n2 < .68f ? skillDirection *
+                                       (def.behavior == "boss_vespara" ? 10.6f : 8.3f) : Vector2.zero) + knock;
+                    }
+                    else rb.velocity = knock;
+                    break;
                 case St.Cast:
+                    if (def.boss)
+                    {
+                        float n = anim.Normalized;
+                        rb.velocity = (def.behavior == "boss_reaper" &&
+                                       n > .20f && n < .64f ? skillDirection * 6.8f : Vector2.zero) + knock;
+                        break;
+                    }
                     // A real skill animation controls the strike window; this is not idle with recolor.
                     if (def.behavior == "mantis_dash")
                     {
@@ -293,6 +380,29 @@ namespace Aetheria
         {
             var p = Player.I;
             if (p == null || p.dead) return;
+            if (def.boss)
+            {
+                if (hitDone) return;
+                if (a == "attack" && state == St.Attack)
+                {
+                    hitDone = true;
+                    Fx.Claw(Pos + Util.FacingVec(facing) * 1.1f + Vector2.up * .7f, facing);
+                    if ((p.Pos - (Pos + Util.FacingVec(facing) * 1.0f)).magnitude < 2.0f)
+                        p.Hurt(dmg, Pos, 8f, 24);
+                    Sfx.Play("swing_heavy", .55f, .83f);
+                }
+                else if (a == "cast" && state == St.Cast)
+                {
+                    hitDone = true;
+                    InsectBossSkills.Execute(this, 1, skillDirection);
+                }
+                else if (a == "skill_2" && state == St.Cast2)
+                {
+                    hitDone = true;
+                    InsectBossSkills.Execute(this, 2, skillDirection);
+                }
+                return;
+            }
             if (a == "attack" && !hitDone)
             {
                 hitDone = true;
@@ -430,7 +540,9 @@ namespace Aetheria
 
         void OnAnimEnd(string a)
         {
-            if ((a == "attack" && state == St.Attack) || (a == "cast" && state == St.Cast))
+            if ((a == "attack" && state == St.Attack) ||
+                (a == "cast" && state == St.Cast) ||
+                (a == "skill_2" && state == St.Cast2))
             {
                 Go(St.Chase);
                 anim.Play("move");
@@ -440,6 +552,12 @@ namespace Aetheria
 
         public override bool Hurt(float d, Vector2 from, float knockback, float poiseDmg, bool crit = false)
         {
+            if (def.boss && bossGuardLeft > 0f)
+            {
+                d *= .38f;
+                poiseDmg *= .42f;
+                Fx.Dust(Pos, .3f);
+            }
             if (def.behavior == "ant_carapace" && chitinGuardLeft > 0f)
             {
                 d *= .36f; // actual temporary armour, not simply a bright shader pulse
