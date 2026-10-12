@@ -71,7 +71,7 @@ static func info(id: String) -> Dictionary:
 	return CLASSES.get(id, CLASSES["warrior"])
 
 
-static func apply_new_game(gs: GameState, id: String) -> void:
+static func apply_new_game(gs, id: String) -> void:
 	var d := info(id)
 	gs.class_id = id if valid(id) else "warrior"
 	gs.max_hp = float(d["hp"])
