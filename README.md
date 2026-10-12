@@ -6,6 +6,8 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e importad
 > **Estado atual:** campanha completa dos Capítulos 1 a 10 (da Vila de Aurora até Malgrath, o Rei Demônio), com final e créditos. Rodando de ponta a ponta no Godot (screenshots de todas as regiões gerados em CI).
 > Planejamento completo: [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md) · Etapas e tarefas: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
+> **Expansão em revisão (não na versão principal):** seis classes jogáveis com sprites HD próprios, retratos extraídos dos atlas e familiar original **Lince Astral**, com animações reais. [Ver produção e limites de validação](docs/CLASS_ART_IMPLEMENTATION.md) · [classes, atributos, armas e fraquezas](docs/CLASS_SYSTEM.md). [Prévias de sprites de verdade](docs/asset_catalog/previews/classes/) — não são prints do jogo.
+
 ![Vila de Aurora](docs/previews/godot_vila.png)
 ![Combate](docs/previews/godot_combate.png)
 
@@ -14,11 +16,14 @@ Toda a arte é gerada por código (Python + Cairo) em `tools/art_hd/` e importad
 - **Sandbox/CI:** `tools/run.sh 90 -ciShots /tmp/shots` importa, roda sob Xvfb e salva screenshots. O workflow `.github/workflows/godot.yml` faz o mesmo a cada push e publica na branch `ci-shots`.
 
 ## Controles
+
+**Novo Jogo:** selecione Guerreiro, Mago, Arqueiro, Paladino, Assassino ou Invocador. Os botões **J** e **K** executam a ação/skill específica da classe; Guerreiro não usa magia, Arqueiro somente arco, Mago somente feitiços, Assassino duas adagas e Invocador somente pets. Não há gasto de fôlego.
+
 | Ação | Tecla |
 |---|---|
 | Mover / correr | WASD ou setas / Shift |
-| Combo de espada (×3) | J ou clique esquerdo |
-| Magia Centelha | K ou clique direito |
+| Ataque exclusivo da classe (espada, magia, flecha, adagas ou comando ao pet) | J ou clique esquerdo |
+| Habilidade exclusiva (espada, magia, rajada, cura, adagas ou invocação) | K ou clique direito |
 | Rolar (invencível) | Espaço |
 | Poção | Q |
 | Falar | E |
