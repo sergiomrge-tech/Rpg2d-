@@ -1,0 +1,60 @@
+name: Godot Six Class Gameplay & Touch QA
+on:
+  push:
+    branches: [gpt6-class-selection-20261012]
+    paths:
+      - 'godot/scripts/game/**'
+      - 'godot/scripts/ui/class_select.gd'
+      - 'godot/scripts/ui/main_menu.gd'
+      - 'godot/data/items.json'
+      - 'tools/test_classes.py'
+      - '.github/workflows/godot-classes.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: classes-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  class-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Static contract on classes, equipment and pet mechanics
+        run: |
+          python tools/test_classes.py
+          python tools/test_no_stamina.py
+          python tools/test_ui_contract.py
+      - name: Install Godot 4.3 with X virtual display
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1 libxcursor1 libxinerama1 libxi6 libxrandr2 unzip
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Import actual game assets and GDScript
+        run: |
+          timeout 145 godot --headless --path godot --import > import.log 2>&1
+          tail -n 24 import.log
+      - name: Real Godot menu touch, skill routing, summoning and saves
+        run: |
+          set -o pipefail
+          timeout 130 xvfb-run -a -s '-screen 0 1920x1080x24' godot --path godot --rendering-driver opengl3 -- -uiSmoke -touch 2>&1 | tee runtime.log
+          grep -F '[class-smoke] PASS touchscreen select and confirm' runtime.log
+          grep -F '[class-smoke] PASS six distinct classes' runtime.log
+          grep -F '[ui-smoke] PASS unlimited sprint animation' runtime.log
+          grep -F '[ui-smoke] PASS all tests' runtime.log
+          ! grep -Eq 'SCRIPT ERROR|Parse Error|\[class-smoke\].*failed|\[ui-smoke\].*failed' runtime.log
+      - name: Preserve native runtime log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-class-Godot-runtime-qa
+          path: |
+            runtime.log
+            import.log
+          if-no-files-found: ignore
