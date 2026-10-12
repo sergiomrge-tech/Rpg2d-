@@ -48,6 +48,7 @@ var touch_move := Vector2.ZERO
 var touch_run := false
 var touch: TouchControls
 var menu: MainMenu
+var class_select: ClassSelect
 var in_menu := false
 
 var _time := 0.0
@@ -152,7 +153,7 @@ func start(m: Node2D) -> void:
 	hud.root.add_child(menu)     # keep the menu under the options/touch layers' z-order handling
 	menu.setup(hud, FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists(SAVE_PATH + ".bak"))
 	menu.on_continue = _begin
-	menu.on_new = new_game
+	menu.on_new = _open_class_select
 	player.input_locked = true
 	if false:
 		player.input_locked = true
@@ -181,9 +182,28 @@ func _begin() -> void:
 		hud.banner(t[0], "Rank " + state.guild_rank)
 
 
-## New game: wipe progress, wake up in the meadow west of Aurora (far from the town), then play the prologue.
-func new_game() -> void:
+## New game: the chosen class is locked in before the story begins.
+func _open_class_select() -> void:
+	player.input_locked = true
+	class_select = ClassSelect.new()
+	hud.add_child(class_select)
+	class_select.setup(hud, _start_selected_class, _cancel_class_select)
+
+
+func _cancel_class_select() -> void:
+	class_select = null
+	menu.reopen()
+
+
+func _start_selected_class(class_id: String) -> void:
+	class_select = null
+	new_game(class_id)
+
+
+## New game: wipe progress, apply class restrictions, then play the prologue.
+func new_game(class_id: String = "warrior") -> void:
 	state.from_dict(GameState.new().to_dict())
+	HeroClasses.apply_new_game(state, class_id)
 	flags.clear()
 	quests.clear()
 	_announced = {"__init": true}
