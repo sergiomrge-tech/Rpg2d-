@@ -78,6 +78,16 @@ static func apply_new_game(gs: GameState, id: String) -> void:
 	gs.max_mp = float(d["mp"])
 	gs.atk = float(d["atk"])
 	gs.mag = float(d["mag"])
+	# The starting equipment is part of the class rules, not a cosmetic name.
+	match gs.class_id:
+		"archer":
+			gs.eq_weapon = "hunter_bow"
+		"assassin":
+			gs.eq_weapon = "twin_daggers"
+		"mage", "summoner":
+			gs.eq_weapon = ""
+		_:
+			gs.eq_weapon = "rusty_sword"
 
 
 static func can_equip(class_id: String, item: Dictionary) -> bool:
