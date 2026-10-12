@@ -29,7 +29,7 @@ Status: 15 sprite sheets e seus JSONs renderizados; Unity runtime, screenshots r
 - [Fichas individuais (quadros, FPS, evento de ataque e habilidade)](LOTE1_FICHAS.md)
 - [Contrato JSON versionado](lote1_spec.json)
 - Validação sem licença Unity: `python tools/art_hd/verify_lote1.py`
-- Status: **15 folhas de sprites PNG/JSON renderizadas** e prévias reais dos quadros; 285 trilhas/3.024 quadros **planejados** no contrato. Todos os 15 possuem os seis estados-base e 4 chefes adicionais têm `skill_2`; apenas Grakk ainda precisa da segunda habilidade animada. A arte aguarda aprovação visual e testes Unity. Nenhum desses 14 novos inimigos/chefes está integrado ao combate.
+- Status: **15 folhas de sprites PNG/JSON renderizadas** e prévias reais dos quadros; 285 trilhas/3.024 quadros **renderizados e conferidos no contrato**. Todos os 15 possuem os seis estados-base; os cinco chefes também têm a segunda habilidade `skill_2` animada. A arte aguarda aprovação visual e testes Unity. Nenhum desses 14 novos inimigos/chefes está integrado ao combate.
 
 ## Pranchas reais de arte (não screenshots do jogo)
 
