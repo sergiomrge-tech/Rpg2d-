@@ -116,6 +116,9 @@ func _use(id: String) -> void:
 	var gs := p.gs
 	var d: Dictionary = Data.items[id]
 	if id == "sword_tome":
+		if gs.class_id != "warrior" and gs.class_id != "paladin":
+			Fx.toast("Apenas espadachins dominam este tomo", Color(1.0, .66, .51))
+			return
 		if gs.sword_tier >= 2:
 			Fx.toast("O Corte Crescente já foi aprendido", Color.WHITE)
 			return
@@ -125,11 +128,16 @@ func _use(id: String) -> void:
 		hud.banner("Corte Crescente", "O 3º golpe lança uma lâmina de energia")
 		return
 	if int(d["slot"]) > 0:
-		gs.equip(id)
+		if not gs.equip(id):
+			Fx.toast("Equipamento incompatível com sua classe!", Color(1.0, 0.65, 0.52))
+			return
 		Sfx.play("pickup", 0.5, 0.9)
 		p.hp = minf(p.hp, gs.hp_max())
 		return
 	if id == "spark_tome":
+		if gs.class_id != "mage":
+			Fx.toast("Apenas magos aprendem esta magia", Color(1.0, .66, .51))
+			return
 		if gs.spark_tier >= 3:
 			Fx.toast("A Centelha já está no máximo", Color.WHITE)
 			return
@@ -171,7 +179,7 @@ func _refresh() -> void:
 
 	# ---- left page: the hero
 	hud.txt(page, "Ren Takamura", serif, 44, ink, C, Vector2(-335, 300), Vector2(500, 60), M, false)
-	hud.txt(page, "Nível %d  ·  Aventureiro Rank %s" % [gs.level, gs.guild_rank], sans, 26, faint, C, Vector2(-335, 236), Vector2(500, 40), M, false)
+	hud.txt(page, "Nível %d  ·  %s  ·  Rank %s" % [gs.level, HeroClasses.info(gs.class_id)["name"], gs.guild_rank], sans, 26, faint, C, Vector2(-335, 236), Vector2(500, 40), M, false)
 	hud.img(page, Sheets.ui("portrait"), C, Vector2(-535, 150), Vector2(110, 110))
 	hud.img(page, Sheets.ui("medallion"), C, Vector2(-535, 150), Vector2(170, 170))
 	var stats := "Vida          %d / %d\n" % [ceili(p.hp), roundi(gs.hp_max())]
@@ -183,15 +191,13 @@ func _refresh() -> void:
 	stats += "Arma: %s\nArmadura: %s\nAmuleto: %s" % [_name(gs.eq_weapon), _name(gs.eq_armor), _name(gs.eq_charm)]
 	hud.txt(page, stats, bold, 22, ink, C, Vector2(-250, 62), Vector2(360, 320), L, false)
 	hud.img(page, Sheets.ui("flourish"), C, Vector2(-335, -60), Vector2(380, 30))
-	hud.txt(page, "Grimório de Magias", serif, 30, ink, C, Vector2(-335, -100), Vector2(500, 40), M, false)
-	var tints := [Color(0.6, 0.85, 1.0), Color(1.0, 0.6, 0.3), Color(0.8, 0.55, 1.0)]
-	for t in range(1, 4):
-		var have: bool = gs.spark_tier >= t
-		var y := -150.0 - (t - 1) * 62.0
-		var ic := hud.img(page, Sheets.icon("skill_spark"), C, Vector2(-560, y), Vector2(52, 52))
-		ic.modulate = tints[t - 1] if have else Color(0.3, 0.25, 0.2, 0.5)
-		hud.txt(page, SPARK_NAMES[t] + ("  ◆" if gs.spark_tier == t else ""), bold, 26, ink if have else faint, C, Vector2(-300, y + 12), Vector2(440, 30), L, false)
-		hud.txt(page, SPARK_DESC[t] if have else "Requer um Tomo da Centelha", sans, 21, faint, C, Vector2(-300, y - 14), Vector2(440, 26), L, false)
+	var class_info := HeroClasses.info(gs.class_id)
+	hud.txt(page, "Habilidades de " + str(class_info["name"]), serif, 29, ink, C, Vector2(-335, -100), Vector2(500, 40), M, false)
+	hud.txt(page, str(class_info["skill"]), bold, 26, ink, C, Vector2(-335, -170), Vector2(485, 40), M, false)
+	var benefit := hud.txt(page, "FORTE: " + str(class_info["strong"]), sans, 22, Color(.25, .42, .22), C, Vector2(-335, -228), Vector2(485, 46), M, false)
+	benefit.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var frailty := hud.txt(page, "FRACO: " + str(class_info["weak"]), sans, 22, faint, C, Vector2(-335, -295), Vector2(485, 56), M, false)
+	frailty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	# ---- right page: the bag
 	hud.txt(page, "Bolsa", serif, 44, ink, C, Vector2(335, 300), Vector2(500, 60), M, false)
