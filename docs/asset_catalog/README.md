@@ -49,3 +49,6 @@ Oito criaturas originalmente consideradas repetitivas receberam **rigs exclusivo
 - [Lote 2 — ordem de produção dos 10 insetoides e 5 chefes](LOTE2_ORDEM_PRODUCAO.md); **ainda sem sprites**.
 
 **Nota:** os novos corpos substituem apenas versões candidatas na branch de revisão. A direção HD cartoon e os arquivos aprovados da base oficial são mantidos intactos.
+
+## Regra permanente do diretor
+**Não apresentar arte conceitual como entrega.** Toda nova criatura precisa ter assets importados **e funcionar na Unity** com animações, movimentos, ataques e habilidades reais antes de ser declarada pronta. [Leia os critérios completos de aceitação](REGRA_OBRIGATORIA_ASSETS_JOGAVEIS.md). As pranchas e PNGs existentes seguem classificados apenas como material de catálogo, nunca como inimigos integrados à jogabilidade.
