@@ -4,6 +4,8 @@ on:
     branches: [gpt6-class-art-in-game-20261012]
     paths:
       - 'godot/scripts/game/game.gd'
+      - 'godot/scripts/game/hero_classes.gd'
+      - 'godot/scripts/ui/class_select.gd'
       - '.github/workflows/godot-class-screenshots.yml'
   workflow_dispatch:
 concurrency:
