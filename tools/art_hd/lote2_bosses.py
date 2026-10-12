@@ -26,15 +26,15 @@ def rune(c,x,y,r,color,opacity=.85):
 class Boss(Insect):
     FW=FH=384
     OX=192
-    OY=351
+    OY=304
     ANIMS={
-        'idle':(11,12,True,-1),
-        'move':(13,15,True,-1),
-        'attack':(14,18,False,8),
-        'cast':(17,16,False,10),
-        'skill_2':(19,17,False,12),
-        'hurt':(8,13,False,-1),
-        'death':(18,12,False,-1),
+        'idle':(8,12,True,-1),
+        'move':(10,15,True,-1),
+        'attack':(11,18,False,7),
+        'cast':(11,16,False,7),
+        'skill_2':(12,17,False,8),
+        'hurt':(5,13,False,-1),
+        'death':(10,12,False,-1),
     }
     def pose(self, action, t, view):
         p=super().pose(action,t,view)
