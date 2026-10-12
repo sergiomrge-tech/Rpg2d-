@@ -313,6 +313,7 @@ export class World {
     this.combatT += dt;
 
     Combat.updatePlayer(this, dt);
+    this.separatePlayer();
     for (const e of this.enemies) updateEnemy(this, e, dt);
     this.enemies = this.enemies.filter((e) => !(e.dead));
     this.updateNpcs(dt);
@@ -386,6 +387,19 @@ export class World {
           this.burst((b.tx + i) * TS + 8, (b.ty + j) * TS + 8, 6, b.color, { speed: 60, life: 0.8, up: 20 });
         }
         Audio.sfx('slam'); this.addShake(6);
+      }
+    }
+  }
+
+  /** Keeps the player from walking through NPCs. */
+  separatePlayer() {
+    const p = this.player;
+    for (const n of this.npcs) {
+      const dx = p.x - n.x, dy = p.y - n.y, d = Math.hypot(dx, dy);
+      if (d < 9 && d > 0.01) {
+        const nx = p.x + (dx / d) * (9 - d), ny = p.y + (dy / d) * (9 - d);
+        if (this.boxFree(nx, p.y, p.hw, p.hh)) p.x = nx;
+        if (this.boxFree(p.x, ny, p.hw, p.hh)) p.y = ny;
       }
     }
   }
