@@ -50,16 +50,20 @@ func setup(h: Hud, chosen: Callable, cancel: Callable) -> void:
 		btn.pressed.connect(_pick.bind(i))
 		cards.append(btn)
 		var tint: Color = d["color"]
-		hud.img(btn, Sheets.icon(d["icon"]), C, Vector2(-209, 65), Vector2(70, 70)).modulate = tint
+		# A real idle frame of each in-game hero, cropped by the atlas builder.
+		# Keeps the established fantasy UI; no unrelated AI concept art.
+		hud.img(btn, Sheets.tex("Sprites/Ui/ClassPortraits/" + id), C,
+				Vector2(-217, -15), Vector2(130, 154))
+		hud.img(btn, Sheets.icon(d["icon"]), C, Vector2(-213, 93), Vector2(45, 45)).modulate = tint
 		hud.txt(btn, str(d["name"]), Util.font_serif, 40, tint, C,
 				Vector2(35, 88), Vector2(390, 50))
 		hud.txt(btn, str(d["role"]), Util.font_sans, 25, INK, C,
-				Vector2(0, 33), Vector2(508, 39))
+				Vector2(57, 33), Vector2(395, 39))
 		var strong := hud.txt(btn, "FORTE: " + str(d["strong"]), Util.font_sans, 23,
-				Color(0.64, 0.95, 0.70), C, Vector2(0, -24), Vector2(510, 47))
+				Color(0.64, 0.95, 0.70), C, Vector2(58, -24), Vector2(395, 47))
 		strong.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var weak := hud.txt(btn, "FRACO: " + str(d["weak"]), Util.font_sans, 23,
-				Color(0.99, 0.72, 0.65), C, Vector2(0, -82), Vector2(510, 50))
+				Color(0.99, 0.72, 0.65), C, Vector2(58, -82), Vector2(395, 50))
 		weak.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	confirm_button = Button.new()
