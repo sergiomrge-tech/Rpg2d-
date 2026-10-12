@@ -7,7 +7,7 @@ const T := 64.0
 const MAX_ACTIVE := 2
 static var active_pets: Array[SpiritPet] = []
 
-var owner: Player
+var owner: Node2D
 var life := 38.0
 var attack_cd := 0.5
 var desired_target: Enemy
@@ -16,7 +16,7 @@ var glow: Sprite2D
 var orbit_phase := 0.0
 
 
-static func count_for(p: Player) -> int:
+static func count_for(p: Node2D) -> int:
 	var total := 0
 	for spirit in active_pets:
 		if is_instance_valid(spirit) and spirit.owner == p and not spirit.is_queued_for_deletion():
@@ -24,7 +24,7 @@ static func count_for(p: Player) -> int:
 	return total
 
 
-static func summon(p: Player) -> bool:
+static func summon(p: Node2D) -> bool:
 	if p == null or p.dead or p.gs.class_id != "summoner":
 		return false
 	if count_for(p) >= MAX_ACTIVE:
@@ -41,7 +41,7 @@ static func summon(p: Player) -> bool:
 	return true
 
 
-static func command(p: Player) -> void:
+static func command(p: Node2D) -> void:
 	var dir := Util.facing_vec(p.facing)
 	var target := Enemy.nearest(p.pos(), 12.0 * T, dir, .25)
 	if target == null:
