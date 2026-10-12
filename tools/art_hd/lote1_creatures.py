@@ -199,15 +199,17 @@ class OniVariant(OniSoldier):
             shape(ctx,[(x-11,y-18),(x+11,y-18),(x+13,y+1),(x,y+23),(x-13,y+1)],self.trim,1.2,.5,.8)
             shape(ctx,[(x,y-16),(x+6,y),(x,y+17),(x-6,y)],self.blade,.5,.4,.5)
         elif self.kind=='oni_executioner':
-            hand=body['hand'];hx0,hy=hand
-            beam(ctx,[(hx0,hy+12),(hx0+10,hy-50)],self.trim,4.6)
+            hand=body['hand'];hx0,hy=(38 if view!='side' else 34),hand[1]
+            # Keep the huge blade clear of the face in front/side views.
+            beam(ctx,[(hand[0],hy+12),(hx0+10,hy-50)],self.trim,4.6)
             for sx in (-1,1):
                 x=hx0+10;y=hy-52
                 shape(ctx,[(x,y-14),(x+sx*18,y-18),(x+sx*28,y-5),
                            (x+sx*22,y+13),(x,y+13)],self.blade,2.5,1.2)
         elif self.kind=='morgash_ironhorn':
-            hand=body['hand'];x=hand[0]+5;y=hand[1]-24
-            beam(ctx,[(x,hand[1]+14),(x+2,y-30)],self.trim,7)
+            hand=body['hand'];x=(39 if view!='side' else 35);y=hand[1]-24
+            # Raise the boss hammer outside the facial silhouette.
+            beam(ctx,[(hand[0],hand[1]+14),(x+2,y-30)],self.trim,7)
             shape(ctx,[(x-18,y-22),(x+18,y-22),(x+24,y+13),(x-24,y+13)],self.blade,3,1.3,2)
             for off in (-12,0,12):
                 circle(ctx,x+off,y-14,3,3,self.trim)
