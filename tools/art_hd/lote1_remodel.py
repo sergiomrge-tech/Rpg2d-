@@ -69,6 +69,7 @@ class AnatomicalRemodel:
         if p['death']:
             ctx.scale(1,1-.36*p['death'])
         self._draw_species(ctx,view,p)
+        self._draw_signature_details(ctx,view,p)
         ctx.restore()
 
     def _draw_species(self,ctx,view,p):
@@ -300,6 +301,129 @@ class AnatomicalRemodel:
         if sp:
             for sx in (-1,1):radial_glow(c,sx*46,-84,29,self.light.base,.5*sp)
             stroke(c,lambda cc:cc.arc(0,-49,70,-.6,math.pi+.4),self.fire.base,3,sp*.7)
+
+    def _draw_signature_details(self,c,view,p):
+        """Species-specific material layers and articulated details.
+
+        Applied on the unique anatomical rigs, not on reused humanoid/imp
+        sprites. Small parts use the production Pal/paint shade gradients.
+        """
+        g=p['gait']; glow=p['glow'];hit=p['hit']
+        if self.rig=='wing_ray':
+            # Rigid bat wing veins / web seams and an asymmetric scout crest.
+            for sx in (-1,1):
+                for k,(ex,ey) in enumerate(((37,-66),(48,-79),(49,-49))):
+                    beam(c,[(sx*12,-46),(sx*(ex+3*g),ey)],self.bone,1.2)
+                    orb(c,sx*(ex+3*g),ey,1.5,self.light)
+                poly(c,[(sx*8,-41),(sx*14,-38),(sx*11,-28),(sx*6,-32)],self.bone,.8,.4)
+                beam(c,[(sx*11,-21),(sx*13,-14),(sx*15,-9)],self.bone,1.2)
+            poly(c,[(-5,-82),(0,-87),(5,-82),(3,-75),(0,-73),(-3,-75)],self.bone,1,.6)
+            orb(c,0,-79,2,self.light)
+            beam(c,[(-6,-40),(0,-35),(6,-40)],self.ink,1.5)
+        elif self.rig=='brute_quadarm':
+            # Armoured shoulder cuffs, layered breast plate, tribal tattoos.
+            poly(c,[(-16,-59),(0,-64),(18,-60),(15,-45),(0,-39),(-17,-46)],self.shell,1.4,.7)
+            for sx in (-1,1):
+                poly(c,[(sx*18,-60),(sx*32,-66),(sx*38,-52),(sx*30,-43),(sx*22,-49)],self.ink,1.5,.7)
+                for y in (-51,-44):
+                    orb(c,sx*27,y,2,self.bone)
+                beam(c,[(sx*19,-31),(sx*23,-24),(sx*19,-21)],self.bone,1.4)
+                orb(c,sx*12,-53,2.3,self.light)
+                beam(c,[(sx*10,-78),(sx*14,-82),(sx*11,-86)],self.ink,1.5)
+            poly(c,[(-8,-54),(0,-58),(9,-54),(0,-47)],self.bone,.9,.6)
+            beam(c,[(-12,-47),(0,-43),(13,-47)],self.light,1)
+        elif self.rig=='salamander':
+            # Real plate segmentation and cracked glowing magma veins.
+            for i in range(6):
+                x=-29+i*12
+                poly(c,[(x-7,-41),(x,-49),(x+7,-43),(x+4,-31),(x-6,-31)],self.meat,1.4,.7)
+                beam(c,[(x-4,-43),(x,-38),(x+4,-43)],self.ink,1.1)
+                if i%2==0:
+                    beam(c,[(x,-50),(x+2,-53)],self.light,1.2)
+            for sx in (-1,1):
+                orb(c,sx*13,-39,5,self.shell)
+                orb(c,sx*13,-38,2.3,self.light)
+                poly(c,[(sx*18,-28),(sx*24,-24),(sx*22,-18)],self.bone,.7,.5)
+            for k in range(4):
+                x=-50+k*11
+                beam(c,[(x,-31),(x+3,-28),(x+6,-32)],self.fire,1.6)
+            if glow:
+                radial_glow(c,0,-36,30,self.fire.base,.32*glow)
+        elif self.rig=='toad':
+            # Vocal skin folds and large tympanic discs: no imp ears/helmet.
+            for sx in (-1,1):
+                orb(c,sx*28,-40,7,self.shell)
+                orb(c,sx*28,-40,4,self.bone)
+                for k in range(3):
+                    y=-28+k*7
+                    beam(c,[(sx*19,y),(sx*(27+k*2),y+3)],self.ink,1.25)
+                orb(c,sx*19,-55,3,self.light)
+                orb(c,sx*20,-56,1.5,self.ink)
+            for j in range(4):
+                y=-28+j*7
+                beam(c,[(-11+j*2,y),(0,y+2),(11-j*2,y)],self.bone,1.1)
+            for sx in (-1,1):
+                poly(c,[(sx*33,-12),(sx*38,-7),(sx*34,-3)],self.light,.7,.4)
+        elif self.rig=='naga':
+            # Repeated inlaid tail-scales, ribbed throat and fin crown.
+            for i in range(6):
+                x=-29+i*12
+                poly(c,[(x-4,-30),(x+4,-33),(x+9,-24),(x+1,-20)],self.bone,.6,.5)
+                orb(c,x,-25,1.5,self.light)
+            for sx in (-1,1):
+                poly(c,[(sx*11,-59),(sx*22,-54),(sx*16,-38)],self.shell,1,.6)
+                poly(c,[(sx*5,-89),(sx*10,-104),(sx*15,-90)],self.bone,1,.5)
+                beam(c,[(sx*7,-69),(sx*13,-66)],self.ink,1.2)
+            poly(c,[(-7,-54),(0,-58),(7,-54),(6,-48),(0,-44),(-6,-49)],self.bone,.6,.5)
+            orb(c,0,-51,3,self.light)
+            for y in (-80,-66,-40):
+                beam(c,[(31,y),(38,y-2)],self.shell,2.3)
+        elif self.rig=='tortoise':
+            # Interlocking tortoise shell tessellation, rim rivets, talons.
+            for sx in (-1,1):
+                for y in (-67,-52,-37):
+                    beam(c,[(sx*25,y-7),(sx*32,y),(sx*25,y+8)],self.bone,1.3)
+                    orb(c,sx*36,y,1.7,self.light)
+                for x in (26,39):
+                    poly(c,[(sx*x,-5),(sx*(x+4),-1),(sx*(x-4),-1)],self.bone,.9,.4)
+                orb(c,sx*8,-83,4,self.ink)
+                orb(c,sx*9,-84,2.0,self.light)
+            poly(c,[(-11,-48),(0,-58),(11,-48),(0,-39)],self.light,1,.6)
+            for rad in (17,24):
+                stroke(c,lambda cc,rad=rad:cc.arc(0,-49,rad,.18,math.pi-.18),self.bone.base,1.2,.55)
+            if glow:radial_glow(c,0,-47,32,self.light.base,.35*glow)
+        elif self.rig=='skeletal':
+            # Silver rib rivets, bone collar, facial fissures, scythe glyphs.
+            for j in range(5):
+                y=-83+j*8
+                orb(c,0,y+2,2,self.light)
+                for sx in (-1,1):
+                    orb(c,sx*(10-j*.5),y,1.6,self.bone)
+            for sx in (-1,1):
+                poly(c,[(sx*15,-111),(sx*22,-117),(sx*20,-98)],self.shell,1.2,.6)
+                beam(c,[(sx*8,-104),(sx*10,-99),(sx*6,-96)],self.bone,1)
+                for y in (-39,-24):
+                    orb(c,sx*31,y,2,self.bone)
+            poly(c,[(-6,-91),(0,-96),(6,-91),(0,-87)],self.light,.8,.5)
+            beam(c,[(50+hit*18,-21),(58+hit*18,-34),(66+hit*22,-42)],self.ink,1.5)
+            orb(c,0,-91,3.4,self.fire)
+            if glow:radial_glow(c,0,-84,29,self.fire.base,.31*glow)
+        elif self.rig=='bull_sixlegs':
+            # Layered fur plating, horn rings and ceremonial nasal armor.
+            for j in range(6):
+                x=-44+j*17
+                poly(c,[(x-7,-105),(x+5,-105),(x+9,-95),(x,-87),(x-9,-94)],self.meat,1.1,.5)
+                beam(c,[(x-2,-98),(x+4,-94)],self.bone,1.1)
+            for sx in (-1,1):
+                for k in (0,1):
+                    yy=-130-k*9
+                    beam(c,[(sx*(32+k*6),yy),(sx*(41+k*6),yy-6)],self.shell,2.2)
+                orb(c,sx*15,-102,3.6,self.fire)
+                poly(c,[(sx*21,-77),(sx*24,-66),(sx*18,-61)],self.shell,1.1,.6)
+                beam(c,[(sx*34,-41),(sx*39,-35),(sx*35,-31)],self.bone,1.8)
+            poly(c,[(-11,-84),(0,-89),(11,-84),(8,-77),(0,-74),(-8,-78)],self.shell,.9,.6)
+            orb(c,0,-79,4,self.bone)
+            if glow:radial_glow(c,0,-81,39,self.fire.base,.25*glow)
 
 
 def remodeled_creatures():
