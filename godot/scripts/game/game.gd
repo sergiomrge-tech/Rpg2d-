@@ -36,6 +36,7 @@ var world: World
 var camera: CameraRig
 var hud: Hud
 var grimoire: Grimoire
+var options: OptionsMenu
 var marker: ObjectiveMarker
 var main: Node2D
 var map_name := "village"
@@ -108,6 +109,9 @@ func start(m: Node2D) -> void:
 	grimoire = Grimoire.new()
 	hud.add_child(grimoire)
 	grimoire.setup(hud)
+	options = OptionsMenu.new()
+	hud.add_child(options)
+	options.setup(hud)
 	for k in COMPLETE_FLAGS:
 		if flags.has(k):
 			_announced[k] = true
@@ -141,7 +145,9 @@ func _process(dt: float) -> void:
 		Engine.time_scale = want
 	if player == null:
 		return
-	if consume(KEY_TAB) and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked:
+	if consume(KEY_ESCAPE) and not grimoire.open and not options.open and not hud.in_dialogue() and not hud.in_credits() and not player.dead:
+		options.toggle()
+	if consume(KEY_TAB) and not options.open and not grimoire.open and not hud.in_dialogue() and not player.dead and not player.input_locked:
 		grimoire.toggle()
 	_travel_cd -= dt
 	Music.play("boss" if hud.boss_bar.visible else map_name)
@@ -157,6 +163,10 @@ func _process(dt: float) -> void:
 	if consume(KEY_F5):
 		save()
 		Fx.toast("Jogo salvo", Color.WHITE)
+
+
+func save_settings_note() -> void:
+	pass   # volumes are saved as they change (Sfx.set_level)
 
 
 func hit_stop(t: float) -> void:
@@ -549,6 +559,10 @@ func _ci_shots() -> void:
 	player.ci_cast()
 	await _wait(0.35)
 	await shot("06_combat2")
+	options.toggle()
+	await _wait(0.4)
+	await shot("08_options")
+	options.toggle()
 	hud.quest_complete("Promovido ao Rank E")
 	await _wait(0.7)
 	await shot("07_quest_complete")

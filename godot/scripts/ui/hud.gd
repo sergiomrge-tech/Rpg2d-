@@ -58,6 +58,7 @@ var type_t := 0.0
 var _whisper_n := 0
 var _voice := 0.5
 var _narr := false
+var _cps := 55.0
 var on_done := Callable()
 var _active := false
 
@@ -238,7 +239,7 @@ func _build() -> void:
 		txt(o, keys[i], bold, 20, Color(1, 0.95, 0.8), Vector2(0.5, 0), Vector2(0, -6), Vector2(100, 24))
 		if i == 3:
 			potion_count = txt(o, "", serif, 24, Color.WHITE, Vector2(1, 1), Vector2(-14, -14), Vector2(40, 30))
-	txt(root, "WASD mover · Shift correr · E falar · Tab grimório", sans, 20, Color(1, 1, 1, 0.7), Vector2(1, 0), Vector2(-250, 26), Vector2(520, 28))
+	txt(root, "WASD mover · Shift correr · E falar · Tab grimório · Esc opções", sans, 20, Color(1, 1, 1, 0.7), Vector2(1, 0), Vector2(-250, 26), Vector2(520, 28))
 
 	# ---- cutscene backdrop
 	scene_img = img(root, null, C, Vector2.ZERO, SIZE)
@@ -399,6 +400,7 @@ func _show_line() -> void:
 	type_t = 0.0
 	_whisper_n = 0
 	_narr = narr
+	_cps = 30.0 if str(ln[0]) == "lumia" else (44.0 if narr else 55.0)   # the goddess speaks slowly, with weight
 	_voice = 0.12 if narr else float(hash(str(ln[0])) % 1000) / 1000.0
 	if str(ln[0]) in ["lumia", "receptionist", "sylra", "cleric", "witch", "elowen", "villager", "child"]:
 		_voice = 0.65 + _voice * 0.35      # lighter voices
@@ -409,7 +411,7 @@ func advance() -> void:
 	if not _active:
 		return
 	var full: String = lines[line_idx][1]
-	if int(type_t * 55.0) < full.length():
+	if int(type_t * _cps) < full.length():
 		type_t = 999.0
 		return
 	line_idx += 1
@@ -514,7 +516,7 @@ func _process(delta: float) -> void:
 	if _active:
 		type_t += dt
 		var full: String = lines[line_idx][1]
-		var n := mini(full.length(), int(type_t * 55.0))
+		var n := mini(full.length(), int(type_t * _cps))
 		dlg_text.visible_characters = n
 		# whisper: a breathy syllable on every vowel / hiss as the text is revealed
 		while _whisper_n < n:
@@ -568,7 +570,7 @@ func _update_plates(dt: float, _now: float) -> void:
 	for e in Enemy.all:
 		if not is_instance_valid(e):
 			continue
-		var show: bool = not e.dead and (Game.time() - e.last_hurt < 6.0 or (p != null and (p.global_position - e.global_position).length() < 5.0 * 64.0))
+		var show: bool = not e.dead and not get_tree().paused and (Game.time() - e.last_hurt < 6.0 or (p != null and (p.global_position - e.global_position).length() < 5.0 * 64.0))
 		var pl: Dictionary = plates.get(e, {})
 		if show and pl.is_empty():
 			var c := ctl(root, Vector2(0, 0), Vector2.ZERO, Vector2(120, 30))

@@ -127,6 +127,8 @@ func _physics_process(dt: float) -> void:
 				if def["boss"]:
 					Game.hud.banner(def["name"], def["title"])
 					Game.camera.shake(0.25, 0.4)
+					var hissy: bool = String(def.get("behavior", "")) in ["boss_vespara", "boss_brood", "boss_scarab", "boss_reaper"]
+					Sfx.play("boss_hiss" if hissy else "boss_roar", 0.6, randf_range(0.9, 1.05), "Voice")
 				Sfx.play("imp_cry", 0.35, randf_range(1.0, 1.2))
 		St.CHASE:
 			if not player_ok or dist > float(def["aggro"]) * T * 1.8:

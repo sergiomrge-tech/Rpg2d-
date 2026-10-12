@@ -8,7 +8,41 @@ var _next := 0
 var _rng := RandomNumberGenerator.new()
 
 
+const SETTINGS_PATH := "user://settings.json"
+var levels := {"Music": 0.8, "Sfx": 0.8, "Voice": 0.8}
+
+
+func _ensure_buses() -> void:
+	for b in ["Music", "Sfx", "Voice"]:
+		if AudioServer.get_bus_index(b) < 0:
+			AudioServer.add_bus()
+			var i := AudioServer.get_bus_count() - 1
+			AudioServer.set_bus_name(i, b)
+			AudioServer.set_bus_send(i, "Master")
+	var f := FileAccess.open(SETTINGS_PATH, FileAccess.READ)
+	if f:
+		var d = JSON.parse_string(f.get_as_text())
+		if typeof(d) == TYPE_DICTIONARY:
+			for k in levels:
+				levels[k] = clampf(float(d.get(k, levels[k])), 0.0, 1.0)
+	for k in levels:
+		set_level(k, levels[k], false)
+
+
+func set_level(bus: String, v: float, save_it: bool = true) -> void:
+	levels[bus] = clampf(v, 0.0, 1.0)
+	var i := AudioServer.get_bus_index(bus)
+	if i >= 0:
+		AudioServer.set_bus_volume_db(i, linear_to_db(maxf(levels[bus], 0.0001)))
+		AudioServer.set_bus_mute(i, levels[bus] <= 0.001)
+	if save_it:
+		var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+		if f:
+			f.store_string(JSON.stringify(levels))
+
+
 func _ready() -> void:
+	_ensure_buses()
 	_rng.seed = 7
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	for i in 14:
@@ -17,13 +51,14 @@ func _ready() -> void:
 		_pool.append(p)
 
 
-func play(name: String, vol: float = 0.5, pitch: float = 1.0) -> void:
+func play(name: String, vol: float = 0.5, pitch: float = 1.0, bus: String = "Sfx") -> void:
 	var c := _clip(name)
 	if c == null:
 		return
 	var p := _pool[_next]
 	_next = (_next + 1) % _pool.size()
 	p.stream = c
+	p.bus = bus
 	p.volume_db = linear_to_db(maxf(vol, 0.001))
 	p.pitch_scale = pitch
 	p.play()
@@ -40,12 +75,13 @@ func whisper(ch: String, voice: float, vol: float = 0.3) -> void:
 	elif c in ["u", "ú"]: clip = "u"
 	elif c in ["s", "x", "z", "f", "ç", "h"]: clip = "s"
 	else: return
-	play("wh_%s_%d" % [clip, _rng.randi() % 3], vol, lerpf(0.82, 1.28, voice) * _rng.randf_range(0.96, 1.05))
+	play("wh_%s_%d" % [clip, _rng.randi() % 3], vol, lerpf(0.82, 1.28, voice) * _rng.randf_range(0.96, 1.05), "Voice")
 
 
 func loop(name: String, vol: float) -> void:
 	var p := AudioStreamPlayer.new()
 	p.stream = _clip(name)
+	p.bus = "Sfx"
 	p.volume_db = linear_to_db(vol)
 	add_child(p)
 	p.play()
@@ -140,9 +176,46 @@ func _whisper(n: String) -> PackedFloat32Array:
 	return b
 
 
+## Long breathy growl (boss_roar) or venomous hiss (boss_hiss) for boss introductions.
+func _boss_voice(hiss: bool) -> PackedFloat32Array:
+	var sec := 1.25
+	var b := _buf(sec)
+	var y1 := [0.0, 0.0]
+	var y2 := [0.0, 0.0]
+	var ph := 0.0
+	var hp := 0.0
+	for i in b.size():
+		var t := i / float(RATE)
+		var u := t / sec
+		var env := sin(PI * clampf(u, 0.0, 1.0)) * (1.0 - 0.3 * u)
+		var x := _n()
+		if hiss:
+			hp = x - hp * 0.5
+			b[i] = hp * 0.3 * env * (0.7 + 0.3 * sin(t * 40.0))
+		else:
+			var out := 0.0
+			for k in 2:
+				var w: float = TAU * ([420.0, 760.0][k] * (1.0 - 0.25 * u)) / RATE
+				var yy: float = x * 0.05 + 2.0 * 0.985 * cos(w) * float(y1[k]) - 0.985 * 0.985 * float(y2[k])
+				y2[k] = y1[k]
+				y1[k] = yy
+				out += yy
+			ph += TAU * (62.0 - 20.0 * u) / RATE
+			var rough := 0.5 + 0.5 * sin(t * 48.0)
+			b[i] = (out * 0.5 + (fmod(ph, TAU) / PI - 1.0) * 0.25 * rough) * env
+	var pk := 0.001
+	for q in b:
+		pk = maxf(pk, absf(q))
+	for i in b.size():
+		b[i] = b[i] / pk * 0.75
+	return b
+
+
 func _synth(n: String) -> PackedFloat32Array:
 	if n.begins_with("wh_"):
 		return _whisper(n)
+	if n == "boss_roar" or n == "boss_hiss":
+		return _boss_voice(n == "boss_hiss")
 	match n:
 		"swing", "swing_heavy":
 			var h := n == "swing_heavy"

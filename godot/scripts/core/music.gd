@@ -31,6 +31,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	for i in 2:
 		var p := AudioStreamPlayer.new()
+		p.bus = "Music"
 		p.volume_db = -60.0
 		add_child(p)
 		_players.append(p)

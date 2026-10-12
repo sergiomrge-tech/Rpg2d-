@@ -67,6 +67,8 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ⬜ Novo Jogo+ (dificuldade ×1,5, itens lendários extras)
 
 ## Etapa 5 — Polimento e lançamento
+- ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
+- ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
 - ✅ Falas em sussurro: cada letra revelada dispara uma sílaba soprada (ruído filtrado por formantes de vogal), com timbre por personagem e voz mais baixa na narração (`Sfx.whisper`)
 - ✅ **Missão principal animada:** marcador dourado flutuante sobre o alvo (NPC/chefe/inimigo) ou chevron na saída do mapa que leva até ele, seta de bússola na borda da tela com distância, painel de missão que desliza/brilha com "NOVA MISSÃO"/"PROGRESSO", banner animado "MISSÃO CONCLUÍDA" nas promoções e chefes
 - ✅ Save resiliente (arquivo temporário validado + `.bak` + recuperação automática; salva ao morrer/fechar) — ideia do PR #1
