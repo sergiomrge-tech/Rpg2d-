@@ -12,6 +12,13 @@ STATES=('idle','move','attack','cast','hurt','death')
 DIRECTIONS=('down','up','side')
 
 def main():
+    def actually_different(a, b):
+        # RGBA.getbbox on ImageChops.difference can return None even if RGB
+        # changes when the alpha-difference channel is zero (Pillow semantics).
+        delta = ImageChops.difference(a, b)
+        return (delta.getchannel('A').getbbox() is not None or
+                delta.convert('RGB').getbbox() is not None)
+
     digests=[]
     for id_ in IDS:
         png=ART/(id_+'.png');meta=ART/(id_+'.json')
@@ -37,11 +44,11 @@ def main():
                     return im.crop((x,y,x+288,y+288))
                 first=frame_at(0)
                 middle=frame_at(a['count']//2)
-                assert ImageChops.difference(first,middle).getbbox() is not None, (id_,a['name'],'static animation')
+                assert actually_different(first,middle), (id_,a['name'],'static animation')
                 stage_frames[a['name']]=middle
             for state in STATES:
-                assert ImageChops.difference(stage_frames[state+'_down'],stage_frames[state+'_up']).getbbox() is not None, (id_,state,'no back view')
-                assert ImageChops.difference(stage_frames[state+'_down'],stage_frames[state+'_side']).getbbox() is not None, (id_,state,'no side view')
+                assert actually_different(stage_frames[state+'_down'],stage_frames[state+'_up']), (id_,state,'no back view')
+                assert actually_different(stage_frames[state+'_down'],stage_frames[state+'_side']), (id_,state,'no side view')
             for a in anims:
                 assert a['start']==total
                 assert a['count']>=6 and a['fps']>0
