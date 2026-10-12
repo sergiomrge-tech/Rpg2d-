@@ -1,0 +1,42 @@
+name: Aetheria HD HUD art
+
+on:
+  push:
+    branches: [gpt6-hud-assets-20261012]
+    paths:
+      - 'tools/art_hd/ui.py'
+      - 'tools/art_hd/verify_ui.py'
+      - '.github/workflows/hud-art.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render-hud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install artwork dependency
+        run: python -m pip install 'Pillow>=10,<13'
+      - name: Generate HUD art using the original character sprites
+        run: python tools/art_hd/ui.py
+      - name: Verify PNG dimensions, alpha and Unity icon atlas
+        run: python tools/art_hd/verify_ui.py
+      - name: Commit generated sprites to this feature branch
+        if: github.ref == 'refs/heads/gpt6-hud-assets-20261012'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add unity/Assets/Resources/Sprites/Ui/
+          if git diff --cached --quiet; then
+            echo "Art outputs already up to date."
+          else
+            git commit -m "art: render HUD PNGs and portrait crops from approved HD sprites"
+            git push origin HEAD:refs/heads/gpt6-hud-assets-20261012
+          fi
