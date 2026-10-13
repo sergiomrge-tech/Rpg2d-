@@ -109,6 +109,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ **Muralha de Valemont danificada pela história** (5 estágios: rachaduras → buracos → brecha com entulho; reparada após derrotar Malgrath) — `Game.wall_stage()`
 - ✅ **Luzes dinâmicas nos interiores** (lareira, forja, tochas, forno, caldeirão; ambiente escurecido, cintilação)
 - ✅ **Aurora maior:** +8 casas, 3 ruas novas, feira com barracas, lampiões e um segundo poço
+- ✅ **Gráficos automáticos:** celulares começam em Média; sem escolha salva, o jogo baixa um nível sozinho se o FPS ficar < 38 por 8 s
+- ✅ **Muralha cai ao vivo** (estrondo, tremor de câmera, poeira, toast) quando a história avança dentro de Valemont
+- ✅ **Janelas acesas à noite** nas casas e prédios, com luz no chão; **folhas/pétalas/neve ao vento** que seguem o herói; **ondulações** ao andar na margem do rio; Aurora com 12 moradores andando
 - ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
 - ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
 - ✅ Falas em sussurro: cada letra revelada dispara uma sílaba soprada (ruído filtrado por formantes de vogal), com timbre por personagem e voz mais baixa na narração (`Sfx.whisper`)

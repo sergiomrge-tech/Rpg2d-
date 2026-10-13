@@ -58,6 +58,9 @@ var in_menu := false
 
 var _time := 0.0
 var _int_npc := {}                # npc id -> interior map (data/interiors.json)
+var quality_auto := true           # no explicit choice saved yet: the game lowers the tier by itself if the frame rate stays low
+var _fps_acc := 0.0
+var _fps_n := 0
 var quality := 2                 # graphics: 0 low (no cast shadows / wind / water fx / room lights), 1 medium, 2 high
 var daily := {"day": -1, "quests": [], "bonus": false}   # guild daily board (see DailyBoard)
 var clock := 0.0               # world clock in seconds (day length = World.DAY_LENGTH); starts at midday
@@ -78,6 +81,7 @@ func _ready() -> void:
 		var qd: Variant = JSON.parse_string(f_q.get_as_text())
 		if qd is Dictionary:
 			quality = clampi(int(qd.get("quality", 2)), 0, 2)
+			quality_auto = bool(qd.get("auto", false))
 	var f_int := FileAccess.open("res://data/interiors.json", FileAccess.READ)
 	if f_int:
 		_int_npc = JSON.parse_string(f_int.get_as_text())
@@ -91,6 +95,8 @@ func _ready() -> void:
 			class_shots = true
 	ui_smoke = "-uiSmoke" in args
 	touch_mode = OS.has_feature("mobile") or "-touch" in args
+	if not FileAccess.file_exists("user://graphics.json") and OS.has_feature("mobile"):
+		quality = 1                    # phones start on Medium
 	if touch_mode:
 		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP   # keep 16:9 layout on tall/wide phones
 
@@ -316,7 +322,23 @@ func phase_name() -> String:
 	return "Entardecer" if f < 0.5 else "Amanhecer"
 
 
+func _auto_quality(dt: float) -> void:
+	if not quality_auto or ci_dir != "" or quality == 0 or get_tree().paused or world == null:
+		return
+	_fps_acc += dt
+	_fps_n += 1
+	if _fps_acc < 8.0:
+		return
+	var fps := float(_fps_n) / _fps_acc * Engine.time_scale
+	_fps_acc = 0.0
+	_fps_n = 0
+	if fps < 38.0:
+		set_quality(quality - 1, false)
+		Fx.toast("Desempenho baixo: gráficos ajustados para %s" % ["Baixa", "Média"][quality], Color(1, 0.9, 0.6))
+
+
 func _process(dt: float) -> void:
+	_auto_quality(dt)
 	_time += dt
 	if not get_tree().paused:
 		clock += dt
@@ -377,11 +399,13 @@ func wall_stage() -> int:
 	return 1 if flags.has("val_started") else 0
 
 
-func set_quality(q: int) -> void:
+func set_quality(q: int, user_choice := true) -> void:
 	quality = clampi(q, 0, 2)
+	if user_choice:
+		quality_auto = false
 	var f := FileAccess.open("user://graphics.json", FileAccess.WRITE)
 	if f:
-		f.store_string(JSON.stringify({"quality": quality}))
+		f.store_string(JSON.stringify({"quality": quality, "auto": quality_auto}))
 	if world != null and is_instance_valid(world):
 		world.apply_quality()
 
@@ -2097,6 +2121,39 @@ func _ci_fx() -> void:
 		print("[ci] wall stage ", wall_stage())
 		await _wait(4.0)
 		await shot("98_muralha_%d" % st)
+	# night windows + leaves in Aurora
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	player.global_position = Vector2(2496, 2250)
+	for e in Enemy.all.duplicate():
+		if is_instance_valid(e):
+			e.queue_free()
+	camera.snap()
+	clock = World.DAY_LENGTH * 0.5
+	await _wait(1.0)
+	await shot("98_noite_janelas")
+	# live wall collapse: story advances while in Valemont
+	flags.erase("val_started")
+	flags.erase("rank_c")
+	for r in Story.regions:
+		flags.erase(str(r["done"]))
+	flags.erase("lumia_blessed")
+	flags.erase("game_complete")
+	_tour_to("valemont")
+	_travel_cd = 999.0
+	var a2 := deg_to_rad(20.0)
+	player.global_position = Vector2((50.0 + 31.0 * cos(a2)) * 64.0 - 20.0, (50.0 + 31.0 * sin(a2)) * 64.0 - 200.0)
+	camera.snap()
+	flags["val_started"] = true
+	await _wait(1.0)
+	flags["rank_c"] = true
+	for r in Story.regions:
+		flags[str(r["done"])] = true
+	await _wait(1.2)
+	print("[ci] live wall stage ", wall_stage(), " pending ", world._stage_pending.size())
+	await shot("98_muralha_ao_vivo")
 	for n in ["int_tavern_aurora", "int_smithy_aurora"]:
 		for q in [2, 0]:
 			quality = q

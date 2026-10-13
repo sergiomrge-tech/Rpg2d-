@@ -17,7 +17,23 @@ var _tall: Array = []     # [{n: Sprite2D, w, h}] big sprites that fade when the
 var _mod: CanvasModulate
 var _base_tint := Color.WHITE
 var _outdoor := false
+var _flat: Node2D
+var _last_prop: Node2D
+var _stage_pending: Array = []     # wall-damage props not yet visible: spawned live when the story reaches their stage
+var _wall_seen := 0
+var _wall_cd := 0.0
+var _night_glows: Array = []       # [{g: Sprite2D, a: float}] lit windows / door light, fade in at night
+var _leaves: CPUParticles2D
+var _splash_cd := 0.0
 var _room_lights: Array = []   # [{l: PointLight2D, e: base energy, ph: phase}] interior lamps (flicker)
+
+const NIGHT_WINDOWS := ["house_a", "house_b", "house_c", "house_e", "house_f", "tavern", "bakery", "apothecary", "guild", "smithy", "armory", "library", "stable", "barracks", "cathedral"]
+const LEAF_MAPS := {
+	"village": [Color(0.45, 0.78, 0.30), Color(1.0, 0.72, 0.82)], "valemont": [Color(0.55, 0.80, 0.32), Color(1.0, 0.82, 0.88)],
+	"velmoor": [Color(0.40, 0.72, 0.38), Color(0.75, 0.95, 0.65)], "kharis": [Color(0.62, 0.74, 0.30), Color(0.95, 0.85, 0.50)],
+	"mirewail": [Color(0.35, 0.50, 0.28), Color(0.55, 0.70, 0.40)], "peaks": [Color(0.95, 0.97, 1.0), Color(0.85, 0.92, 1.0)],
+	"wastelands": [Color(0.55, 0.42, 0.30), Color(0.35, 0.30, 0.28)],
+}
 
 # furniture kind -> [color, radius (tiles), energy, height of the flame above the feet (px)]
 const ROOM_LIGHTS := {
@@ -94,6 +110,7 @@ func build() -> void:
 	var flat_layer := Node2D.new()
 	flat_layer.z_index = -90
 	add_child(flat_layer)
+	_flat = flat_layer
 	shadow_layer = Node2D.new()
 	shadow_layer.z_index = -80
 	add_child(shadow_layer)
@@ -133,6 +150,7 @@ func build() -> void:
 
 	for p in d["props"]:
 		_spawn_prop(p, flat_layer)
+	_wall_seen = Game.wall_stage() if str(d["name"]) == "valemont" else 0
 	var am: Array = AMBIENT.get(d["name"], [Color(1.0, 0.94, 0.84), false] if d.get("interior", false) else [Color.WHITE, false])
 	_base_tint = am[0]
 	_outdoor = am[1]
@@ -202,12 +220,14 @@ func _build_water_colliders() -> void:
 func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 	var kind: String = p["kind"]
 	if p.has("stage") and Game.wall_stage() < int(p["stage"]):
+		_stage_pending.append(p)
 		return
 	var info := Sheets.prop_info(kind)
 	var tx := Sheets.prop_texture(kind)
 	if tx == null:
 		return
 	var s := Sprite2D.new()
+	_last_prop = s
 	s.texture = tx
 	s.centered = false
 	s.offset = Vector2(-float(info.get("pivotX", tx.get_width() / 2)), -(float(info.get("h", tx.get_height())) - float(info.get("pivotY", 0))))
@@ -235,6 +255,16 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
 		_tall.append({"n": s, "w": float(info.get("w", 200)), "h": float(info.get("h", 200)), "px": float(info.get("pivotX", 100))})
 	_ambient_for(kind, pos, info)
+	if Game.quality >= 1 and kind in NIGHT_WINDOWS:
+		var h2 := float(info.get("h", 160))
+		var w2 := float(info.get("w", 200))
+		var win := Util.glow(s, Color(1.0, 0.72, 0.36), w2 * 0.0042, 0.0)
+		win.position = Vector2(-w2 * 0.05, -h2 * 0.30)
+		var spill := Util.glow(s, Color(1.0, 0.66, 0.30), w2 * 0.011, 0.0)
+		spill.position = Vector2(w2 * 0.04, 26)
+		spill.scale.y *= 0.45
+		_night_glows.append({"g": win, "a": 0.75})
+		_night_glows.append({"g": spill, "a": 0.42})
 	if LIGHTS.has(kind):
 		var L: Array = LIGHTS[kind]
 		var g := Util.glow(s, L[0], L[1], L[2])
@@ -265,6 +295,101 @@ func _build_water_fx(d: Dictionary) -> void:
 			ground.add_child(s)
 
 
+## Valemont wall: when the story advances while the hero is in the city the wall breaks live (rumble, dust, new cracks).
+func _refresh_wall() -> void:
+	if str(data.get("name", "")) != "valemont":
+		return
+	var st := Game.wall_stage()
+	if st <= _wall_seen:
+		return
+	var from := _wall_seen
+	_wall_seen = st
+	var spawned: Array = []
+	for p in _stage_pending.duplicate():
+		if int(p["stage"]) <= st:
+			_stage_pending.erase(p)
+			_spawn_prop(p, _flat)
+			spawned.append(Vector2(float(p["x"]), float(p["y"])))
+	if from > 0 and not spawned.is_empty():
+		if Game.camera != null:
+			Game.camera.shake(0.9, 1.6)
+		Sfx.play("boom", 0.6, 0.6)
+		Fx.toast("Um estrondo ecoa das muralhas…", Color(1, 0.85, 0.6))
+		for at in spawned:
+			for k in 4:
+				Fx.dust((at as Vector2) + Vector2(randf_range(-60, 60), randf_range(-40, 20)), 2.0)
+
+
+## Drifting leaves / petals / snow carried by the wind (follows the hero; quality >= Medium).
+func _setup_leaves() -> void:
+	for old in Game.get_tree().get_nodes_in_group("leaves_fx"):
+		old.queue_free()
+	if Game.quality < 1 or not LEAF_MAPS.has(str(data.get("name", ""))) or Player.I == null:
+		return
+	var cols: Array = LEAF_MAPS[str(data["name"])]
+	var snow := str(data["name"]) == "peaks"
+	_leaves = CPUParticles2D.new()
+	_leaves.add_to_group("leaves_fx")
+	_leaves.texture = Util.soft_circle()
+	_leaves.amount = 22 if not snow else 40
+	_leaves.lifetime = 7.0
+	_leaves.preprocess = 7.0
+	_leaves.local_coords = false
+	_leaves.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	_leaves.emission_rect_extents = Vector2(1100, 640)
+	_leaves.direction = Vector2(1, 0.25)
+	_leaves.spread = 14.0
+	_leaves.initial_velocity_min = 60.0
+	_leaves.initial_velocity_max = 150.0
+	_leaves.gravity = Vector2(0, 14)
+	_leaves.angular_velocity_min = -160.0
+	_leaves.angular_velocity_max = 160.0
+	_leaves.scale_amount_min = 0.045
+	_leaves.scale_amount_max = 0.11 if not snow else 0.07
+	var g := Gradient.new()
+	g.colors = PackedColorArray([cols[0], cols[1]])
+	_leaves.color_initial_ramp = g
+	_leaves.z_index = 90
+	Player.I.add_child(_leaves)
+
+
+func _update_leaves() -> void:
+	if _leaves == null or not is_instance_valid(_leaves):
+		return
+	_leaves.visible = Game.quality >= 1
+	var gust := 0.6 + 0.4 * sin(_t * 0.33)
+	_leaves.initial_velocity_min = 40.0 + 70.0 * gust
+	_leaves.initial_velocity_max = 90.0 + 120.0 * gust
+	_leaves.direction = Vector2(1, 0.25 + 0.2 * sin(_t * 0.5))
+
+
+## Ripples and droplets when the hero walks along a bank.
+func _water_splash(dt: float) -> void:
+	_splash_cd -= dt
+	if _splash_cd > 0.0 or Game.quality < 2 or Player.I == null or bool(data.get("interior", false)):
+		return
+	if Player.I.velocity.length() < 40.0 or str(data["name"]) not in ["village", "valemont", "velmoor", "kharis", "mirewail"]:
+		return
+	if str(data["name"]) == "valemont":
+		var rr: float = (Player.I.global_position / T - Vector2(50, 50)).length()
+		if rr > 28.0:
+			return          # the city wall ring is blocked terrain too, not water
+	var tw := int(data["w"])
+	var th := int(data["h"])
+	var tx := int(Player.I.global_position.x / T)
+	var ty := int(Player.I.global_position.y / T)
+	var near := false
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var x := tx + dx
+			var y := ty + dy
+			if x >= 0 and y >= 0 and x < tw and y < th and _blocked[y * tw + x] == 1:
+				near = true
+	if near:
+		_splash_cd = 0.38
+		Fx.shockwave(Player.I.global_position + Vector2(0, -4), 0.16)
+
+
 func apply_quality() -> void:
 	if shadow_layer != null:
 		shadow_layer.visible = Game.quality >= 1
@@ -290,6 +415,14 @@ func _process(dt: float) -> void:
 	_update_sun()
 	var n := night_amount()
 	_mod.color = _base_tint.lerp(_base_tint * NIGHT_TINT, n * 0.85)
+	for ng in _night_glows:
+		(ng["g"] as Sprite2D).modulate.a = float(ng["a"]) * n * (0.92 + 0.08 * sin(_t * 3.1 + float(ng["g"].get_instance_id() % 17)))
+	_wall_cd -= dt
+	if _wall_cd <= 0.0:
+		_wall_cd = 0.5
+		_refresh_wall()
+	_update_leaves()
+	_water_splash(dt)
 	for rl in _room_lights:
 		var ph: float = rl["ph"]
 		rl["l"].energy = float(rl["e"]) * (0.88 + 0.12 * sin(_t * 8.0 + ph) + 0.06 * sin(_t * 21.0 + ph * 2.0))
@@ -338,6 +471,7 @@ func all_spawns() -> Array:
 
 
 func spawn_actors() -> void:
+	_setup_leaves()
 	for s in all_spawns():
 		Enemy.spawn(s["kind"], Vector2(float(s["x"]), float(s["y"])), int(s["level"]))
 	for n in data["npcs"]:

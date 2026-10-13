@@ -23,7 +23,7 @@ from interiors import patch_map as interiors_patch   # noqa: E402
 
 OUT = os.path.join(ROOT, 'godot', 'assets', 'Maps')
 CHUNK = 1024
-TOWN_WALKERS = {'valemont': 16, 'village': 5}
+TOWN_WALKERS = {'valemont': 16, 'village': 12}
 JSON_ONLY = '--json-only' in sys.argv
 MASKS_ONLY = '--masks' in sys.argv
 EXPAND_FACTOR = {n: 0.21 for n in ['village', 'velmoor', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']}   # ring of new land on each side => ~2x area
