@@ -59,6 +59,7 @@ var in_menu := false
 var _time := 0.0
 var _int_npc := {}                # npc id -> interior map (data/interiors.json)
 var show_fps := false
+var view3d := false                # HD-2D view (beta): the world drawn in real 3D by View3D
 var wet := 0.0                     # 0 dry .. 1 soaked: rain wets the hero, rooms and time dry them
 var weather := 0.0                 # 0 clear .. 1 heavy rain (eased toward weather_target)
 var weather_target := 0.0
@@ -88,6 +89,7 @@ func _ready() -> void:
 		if qd is Dictionary:
 			quality = clampi(int(qd.get("quality", 2)), 0, 2)
 			quality_auto = bool(qd.get("auto", false))
+			view3d = bool(qd.get("view3d", false))
 	var f_int := FileAccess.open("res://data/interiors.json", FileAccess.READ)
 	if f_int:
 		_int_npc = JSON.parse_string(f_int.get_as_text())
@@ -437,13 +439,24 @@ func wall_stage() -> int:
 	return 1 if flags.has("val_started") else 0
 
 
+## Switch the HD-2D view on/off and rebuild the current map in place (hero keeps his position).
+func set_view3d(on: bool) -> void:
+	view3d = on
+	set_quality(quality, false)
+	if world != null and player != null and not bool(world.data.get("interior", false)):
+		var at := player.global_position
+		_tour_to(map_name)
+		player.global_position = at
+		camera.snap()
+
+
 func set_quality(q: int, user_choice := true) -> void:
 	quality = clampi(q, 0, 2)
 	if user_choice:
 		quality_auto = false
 	var f := FileAccess.open("user://graphics.json", FileAccess.WRITE)
 	if f:
-		f.store_string(JSON.stringify({"quality": quality, "auto": quality_auto}))
+		f.store_string(JSON.stringify({"quality": quality, "auto": quality_auto, "view3d": view3d}))
 	if world != null and is_instance_valid(world):
 		world.apply_quality()
 
@@ -1267,6 +1280,32 @@ func _ci_shots() -> void:
 		grimoire._refresh()
 		await _wait(0.4)
 		await shot("78_req_armadura")
+		print("[ci] done")
+		get_tree().quit()
+		return
+	if "-ci3d" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		view3d = true
+		await _ci_3d()
+		print("[ci] done")
+		get_tree().quit()
+		return
+	if "-ciV3toggle" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		_tour_to("village")
+		player.input_locked = false
+		options.toggle()
+		options.sel = 4
+		options._refresh()
+		await _wait(0.3)
+		await shot("99_opcoes_3d")
+		options.toggle()
+		set_view3d(true)
+		await _wait(0.5)
+		print("[ci] view3d on: ", world.view3d != null)
+		set_view3d(false)
+		await _wait(0.5)
+		print("[ci] view3d off: ", world.view3d == null)
 		print("[ci] done")
 		get_tree().quit()
 		return
@@ -2211,6 +2250,30 @@ func _ci_doors(outdoor: String) -> void:
 
 
 ## Directional cast shadows follow the sun through the day.
+func _ci_3d() -> void:
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	for e in Enemy.all.duplicate():
+		if is_instance_valid(e):
+			e.queue_free()
+	player.global_position = Vector2(2496, 2250)
+	camera.snap()
+	await _wait(1.0)
+	await shot("99_3d_vila")
+	player.global_position = Vector2(1350, 3330)
+	camera.snap()
+	await _wait(0.6)
+	await shot("99_3d_lago")
+	clock = World.DAY_LENGTH * 0.5
+	player.global_position = Vector2(2496, 2250)
+	camera.snap()
+	await _wait(0.8)
+	await shot("99_3d_noite")
+	clock = 0.0
+
+
 func _ci_fx() -> void:
 	# water + wind (village river), wall damage stages (Valemont), room lights (tavern), quality tiers
 	for q in [2, 0]:

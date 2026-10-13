@@ -18,6 +18,7 @@ var _mod: CanvasModulate
 var _base_tint := Color.WHITE
 var _outdoor := false
 var _flat: Node2D
+var view3d: View3D
 var _has_water := false
 var _rain: CPUParticles2D
 var _thunder_t := 8.0
@@ -171,6 +172,8 @@ func build() -> void:
 	_mod = CanvasModulate.new()
 	_mod.color = _base_tint
 	add_child(_mod)
+	if Game.view3d and not d.get("interior", false):
+		view3d = View3D.attach(self)
 
 
 ## Interior room: procedural floor/walls plus furniture entities (y-sorted with the hero) and their colliders.
