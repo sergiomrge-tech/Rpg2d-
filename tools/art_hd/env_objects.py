@@ -1218,7 +1218,7 @@ def throne(ctx):
 # ------------------------------------------------------------------ 2.5D buildings
 # Every building is drawn as a front elevation; this pass extrudes the silhouette back along an oblique depth vector,
 # giving the right wall and the roof a visible, shaded side so the houses read as volumes (front + side + roof).
-BUILDINGS = ['house_a', 'house_b', 'house_c', 'house_d', 'house_e', 'house_f', 'house_g', 'guild', 'tavern', 'smithy', 'stable',
+BUILDINGS = ['city_tower', 'house_a', 'house_b', 'house_c', 'house_d', 'house_e', 'house_f', 'house_g', 'guild', 'tavern', 'smithy', 'stable',
              'apothecary', 'armory', 'bakery', 'barracks', 'library']
 DEPTH = (36, -22)       # oblique depth vector in final pixels (right, up)
 EXTRA_W = 52            # extra canvas width on the right for the side face
@@ -1262,6 +1262,59 @@ def extrude_building(img):
     return res
 
 
+# ------------------------------------------------ surface texture + volume light for every prop
+_LEAFY = ('tree_', 'bush', 'berry', 'hedge', 'frost_shrub', 'swamp_tree', 'snow_pine', 'dry_shrub', 'canopy')
+_GRASSY = ('tuft', 'fern', 'glow_fern', 'tall_grass', 'reeds', 'flowers', 'flower_bed')
+_NO_TEX = ('bridge', 'fountain')
+
+
+def _noise_field(shape, sigma, seed):
+    rng = np.random.default_rng(seed)
+    n = ndimage.gaussian_filter(rng.standard_normal(shape).astype(np.float32), sigma)
+    return n / (n.std() + 1e-6)
+
+
+def texturize(img, name):
+    """Leaf clumps, bark streaks, stone/plaster grain and a top-left light so every prop reads as a textured 2.5D volume."""
+    a = img[..., 3]
+    if a.max() <= 0 or name in _NO_TEX:
+        return img
+    h, w = a.shape
+    seed = abs(hash(name)) % 100000
+    rgb = img[..., :3].copy()
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    sat = (mx - mn) / (mx + 1e-5)
+    leafy = name.startswith(_LEAFY)
+    grassy = name.startswith(_GRASSY)
+    building = name in BUILDINGS
+    green = (g > r * 1.03) & (g > b * 1.08) & (sat > 0.16)
+    brown = (r > g * 1.04) & (g > b * 0.95) & (sat > 0.22) & ~green
+    body = a > 0.5
+    k = np.zeros((h, w), np.float32)          # additive brightness modulation
+    if (leafy or grassy) and not building:
+        clump = _noise_field((h, w), 5.0 * S, seed)            # leaf clusters
+        speck = _noise_field((h, w), 1.5 * S, seed + 1)        # individual leaves
+        lit = np.clip(clump, 0, None) * 0.07 + np.clip(speck - 0.6, 0, None) * 0.16
+        dark = np.clip(-clump, 0, None) * 0.07 + np.clip(-speck - 0.7, 0, None) * 0.15
+        k += np.where(green, lit - dark, 0.0)
+    streak = ndimage.gaussian_filter(np.random.default_rng(seed + 2).standard_normal((h, w)).astype(np.float32), (9 * S, 1.2 * S))
+    streak /= streak.std() + 1e-6
+    k += np.where(brown, streak * 0.09, 0.0)                    # bark / wood grain (vertical)
+    grain = _noise_field((h, w), 0.9 * S, seed + 3)
+    k += grain * (0.035 if not leafy else 0.02) * body
+    # light from the upper-left: bright rims on the lit side, darker lower-right, rounded volume
+    hmap = ndimage.gaussian_filter(a, 5.5 * S)
+    gy, gx = np.gradient(hmap)
+    ls = (-gx * 0.62 - gy * 0.78)
+    ls = ls / (np.abs(ls).max() + 1e-6)
+    vol = 0.26 if (leafy or grassy) else (0.12 if building else 0.2)
+    k += ls * vol * 1.4
+    out = img.copy()
+    out[..., :3] = np.clip(rgb * (1.0 + k[..., None]) + (k[..., None] > 0) * k[..., None] * 0.04, 0, 1)
+    return out
+
+
 def render_prop(name):
     p = PROPS[name]
     f = Frame(p['w'], p['h'], p['px'], p['py'])
@@ -1269,6 +1322,7 @@ def render_prop(name):
     img = f.rgba()
     if name in BUILDINGS:
         img = extrude_building(img)
+    img = texturize(img, name)
     if p['outline']:
         img = outline_rgba(img, OUTLINE, p['outline'])
     if p['shadow']:

@@ -9,6 +9,9 @@ const OL := Color(0.16, 0.09, 0.07)
 
 var data: Dictionary
 var style := "tavern"
+var tex_floor: Texture2D
+var tex_wall: Texture2D
+var tex_wain: Texture2D
 
 # style -> [floor A, floor B, wall, wainscot, trim, floor kind]
 const STYLES := {
@@ -28,6 +31,16 @@ func setup(d: Dictionary) -> void:
 	data = d
 	style = str(d.get("style", "tavern"))
 	z_index = -100
+	var fk: String = (STYLES.get(style, STYLES["tavern"]) as Array)[5]
+	tex_floor = Sheets.tex("Sprites/Tex/" + {"wood": "floor_wood", "stone": "floor_stone", "check": "floor_stone", "dirt": "floor_dirt"}.get(fk, "floor_wood"))
+	var brick := style in ["guild", "smithy", "armory", "barracks"]
+	var wooden := style in ["stable", "library"]
+	tex_wall = Sheets.tex("Sprites/Tex/" + ("wall_brick" if brick else ("wall_wood" if wooden else "wall_plaster")))
+	tex_wain = Sheets.tex("Sprites/Tex/" + ("wall_brick" if brick else "wall_wood"))
+
+
+func _tint(c: Color, k: float = 1.3) -> Color:
+	return Color(c.r * k, c.g * k, c.b * k, 1.0)
 
 
 func _ready() -> void:
@@ -55,31 +68,27 @@ func _draw() -> void:
 	var W := w * T
 	var H := h * T
 	draw_rect(Rect2(-200, -200, W + 400, H + 400), Color(0.05, 0.03, 0.03))
-	# ---------------------------------------------------------- floor
+	# ---------------------------------------------------------- floor (tiled surface texture, tinted per room)
 	var rnd := RandomNumberGenerator.new()
 	rnd.seed = hash(str(data["name"]))
+	var fr := Rect2(T, WALL_ROWS * T, W - 2 * T, H - WALL_ROWS * T)
+	if tex_floor != null:
+		draw_texture_rect(tex_floor, fr, true, _tint(fa))
+	else:
+		draw_rect(fr, fa)
 	for j in range(WALL_ROWS, h):
 		for i in range(1, w - 1):
 			var x := i * T
 			var y := j * T
 			match fk:
 				"wood":
-					draw_rect(Rect2(x, y, T, T), fa if (j % 2 == 0) else fb)
-					draw_line(Vector2(x, y + 32), Vector2(x + T, y + 32), fb.darkened(0.25), 1.5)
-					draw_line(Vector2(x, y), Vector2(x + T, y), fb.darkened(0.3), 2.0)
-					var off := rnd.randf_range(8.0, 56.0)
-					draw_line(Vector2(x + off, y), Vector2(x + off, y + 32), fb.darkened(0.25), 1.5)
-					draw_line(Vector2(x + 64.0 - off, y + 32), Vector2(x + 64.0 - off, y + 64), fb.darkened(0.25), 1.5)
-				"stone":
-					var c := fa if ((i + j) % 2 == 0) else fb
-					draw_rect(Rect2(x, y, T, T), c)
-					draw_rect(Rect2(x, y, T, T), c.darkened(0.22), false, 2.0)
-					draw_line(Vector2(x + 6, y + 6), Vector2(x + 26, y + 6), c.lightened(0.15), 2.0)
-				"check":
-					draw_rect(Rect2(x, y, T, T), fa if ((i + j) % 2 == 0) else fb)
+					if (j + i) % 3 == 0:
+						draw_rect(Rect2(x, y, T, T), Color(0, 0, 0, 0.05))
+				"stone", "check":
+					if (i + j) % 2 == 0:
+						draw_rect(Rect2(x, y, T, T), Color(0, 0, 0, 0.12 if fk == "check" else 0.07))
 				_:
-					draw_rect(Rect2(x, y, T, T), fa if rnd.randf() < 0.5 else fb)
-					for k in 5:
+					for k in 3:
 						var sx := x + rnd.randf_range(4, 56)
 						var sy := y + rnd.randf_range(4, 56)
 						draw_line(Vector2(sx, sy), Vector2(sx + rnd.randf_range(6, 14), sy + rnd.randf_range(-3, 3)), Color(0.85, 0.72, 0.35, 0.8), 2.0)
@@ -88,24 +97,22 @@ func _draw() -> void:
 		_floor_decor(dc)
 	# ---------------------------------------------------------- back wall
 	var wh := WALL_ROWS * T
-	draw_rect(Rect2(0, 0, W, wh), wall)
-	var low := Rect2(0, wh - 78, W, 78)
-	draw_rect(low, wains)
-	if fk == "stone" or style == "smithy":
-		for r in 6:
-			var yy := r * 32.0
-			draw_line(Vector2(0, yy), Vector2(W, yy), wall.darkened(0.18), 1.5)
-			var offs := 0.0 if r % 2 == 0 else 32.0
-			var xx := offs
-			while xx < W:
-				draw_line(Vector2(xx, yy), Vector2(xx, yy + 32), wall.darkened(0.18), 1.5)
-				xx += 64.0
+	if tex_wall != null:
+		draw_texture_rect(tex_wall, Rect2(0, 0, W, wh), true, _tint(wall))
 	else:
+		draw_rect(Rect2(0, 0, W, wh), wall)
+	if tex_wain != null:
+		draw_texture_rect(tex_wain, Rect2(0, wh - 78, W, 78), true, _tint(wains, 1.25))
+	else:
+		draw_rect(Rect2(0, wh - 78, W, 78), wains)
+	if fk != "stone" and style != "smithy":
 		for i in range(0, w, 4):
 			draw_rect(Rect2(i * T - 6, 0, 12, wh), trim)
+			draw_rect(Rect2(i * T - 6, 0, 3, wh), trim.lightened(0.18))
 		draw_line(Vector2(0, 72), Vector2(W, 72), wall.darkened(0.12), 2.0)
-	for i in range(0, w * 2):
-		draw_line(Vector2(i * 32.0, wh - 78), Vector2(i * 32.0, wh), wains.darkened(0.2), 1.5)
+	# light falling from the window side: soft vertical gradient on the wall
+	for gi in 6:
+		draw_rect(Rect2(0, gi * 32.0, W, 32.0), Color(1, 0.97, 0.85, 0.08 - gi * 0.012))
 	draw_rect(Rect2(0, wh - 82, W, 8), trim)
 	draw_rect(Rect2(0, 0, W, 14), trim)
 	draw_rect(Rect2(0, wh - 8, W, 8), trim.darkened(0.25))

@@ -1143,6 +1143,12 @@ func shot(n: String) -> void:
 
 
 func _ci_shots() -> void:
+	if "-ciShadows" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		await _ci_shadows()
+		print("[ci] done")
+		get_tree().quit()
+		return
 	if "-ciBuildings" in OS.get_cmdline_user_args():
 		flags["prologue"] = true
 		await _ci_buildings()
@@ -1982,7 +1988,7 @@ func _ci_buildings() -> void:
 	player.input_locked = false
 	player.invuln = 99.0
 	clock = 0.0
-	for spot in [["tavern", Vector2(4576, 3200)], ["guild", Vector2(3968, 2660)], ["smithy", Vector2(1920, 3690)], ["plaza", Vector2(3300, 3300)]]:
+	for spot in [["tavern", Vector2(4576, 3200)], ["guild", Vector2(3968, 2660)], ["smithy", Vector2(1920, 3690)], ["plaza", Vector2(3300, 3300)], ["muralha_ne", Vector2(4470, 1960)], ["muralha_sul", Vector2(2700, 5050)], ["muralha_oeste", Vector2(1450, 2400)]]:
 		player.global_position = spot[1]
 		camera.snap()
 		await _wait(0.5)
@@ -2015,3 +2021,20 @@ func _ci_doors(outdoor: String) -> void:
 			_travel_cd = 0.0
 			await _wait(0.5)
 			print("[ci] door ", outdoor, " -> ", want, ": entered ", inside, " back in ", map_name, " at ", player.global_position.distance_to(Vector2(ax, ay)) < 80.0)
+
+
+## Directional cast shadows follow the sun through the day.
+func _ci_shadows() -> void:
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	player.global_position = Vector2(2496, 2250)
+	for e in Enemy.all.duplicate():
+		if is_instance_valid(e):
+			e.queue_free()
+	camera.snap()
+	for t in [["meio_dia", 0.0], ["fim_tarde", 0.18], ["por_do_sol", 0.26], ["noite", 0.5], ["amanhecer", 0.78]]:
+		clock = World.DAY_LENGTH * float(t[1])
+		await _wait(0.6)
+		await shot("97_sombra_" + t[0])

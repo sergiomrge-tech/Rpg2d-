@@ -70,6 +70,9 @@ static func load_map(name: String) -> World:
 	return w
 
 
+var shadow_layer: Node2D
+
+
 func build() -> void:
 	var d := data
 	var tile := float(d["tile"])
@@ -84,6 +87,9 @@ func build() -> void:
 	var flat_layer := Node2D.new()
 	flat_layer.z_index = -90
 	add_child(flat_layer)
+	shadow_layer = Node2D.new()
+	shadow_layer.z_index = -80
+	add_child(shadow_layer)
 	entities = Node2D.new()
 	entities.y_sort_enabled = true
 	add_child(entities)
@@ -193,6 +199,8 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 			var ch := float(info["colH"])
 			var cy := float(info["colY"])
 			_box(pos + Vector2(float(info.get("colX", 0)), -(ch * 0.5 - cy)), Vector2(cw, ch))
+	if float(info.get("h", 0)) >= 110.0 and kind not in ["bridge", "flowers", "flower_bed", "tall_grass", "reeds", "fence", "city_gate"]:
+		CastShadow.attach(s, true, clampf(float(info.get("h", 0)) / 260.0, 0.45, 1.0))
 	if kind.begins_with("tree") or kind.begins_with("bush") or kind in ["tuft", "swamp_tree", "snow_pine", "fern", "glow_fern", "tall_grass", "dry_shrub", "berry_bush", "hedge", "frost_shrub"]:
 		_swaying.append(s)
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
@@ -220,6 +228,7 @@ func night_amount() -> float:
 func _process(dt: float) -> void:
 	_t += dt
 	_fade_tall(dt)
+	_update_sun()
 	var n := night_amount()
 	_mod.color = _base_tint.lerp(_base_tint * NIGHT_TINT, n * 0.85)
 	for l in _lights:
@@ -229,6 +238,27 @@ func _process(dt: float) -> void:
 		var ph := s.position.x * 0.0055 + s.position.y * 0.003
 		var a := sin(_t * 1.3 + ph) * 0.9 + sin(_t * 2.9 + ph * 1.7) * 0.35
 		s.rotation = deg_to_rad(a)
+
+
+## Sun for the cast shadows: noon = short shadows, sunrise / sunset = long ones pointing west / east, night = faint moon shadows.
+func _update_sun() -> void:
+	var m := Util.shadow_material()
+	if bool(data.get("interior", false)):
+		m.set_shader_parameter("shear", 0.42)
+		m.set_shader_parameter("flat_k", 0.22)
+		m.set_shader_parameter("strength", 0.30)
+		return
+	var ang := Game.clock / DAY_LENGTH * TAU
+	var elev := cos(ang)                      # 1 at noon, -1 at midnight
+	var day := smoothstep(-0.12, 0.35, elev)
+	var shear_day := 0.18 + 0.95 * sin(ang)
+	m.set_shader_parameter("shear", lerpf(-0.32, shear_day, day))
+	m.set_shader_parameter("flat_k", lerpf(0.34, 0.20 + 0.42 * (1.0 - maxf(elev, 0.0)), day))
+	m.set_shader_parameter("strength", lerpf(0.14, 0.42, day))
+	if not _outdoor:
+		m.set_shader_parameter("shear", 0.36)
+		m.set_shader_parameter("flat_k", 0.24)
+		m.set_shader_parameter("strength", 0.28)
 
 
 func exit_at(w: Vector2) -> Dictionary:

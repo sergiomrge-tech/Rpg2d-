@@ -17,6 +17,8 @@ import town_life
 from env_ground import bake, T
 from env_objects import PROPS
 from sheet import ROOT
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+from interiors import patch_map as interiors_patch   # noqa: E402
 
 OUT = os.path.join(ROOT, 'godot', 'assets', 'Maps')
 CHUNK = 1024
@@ -155,6 +157,7 @@ class Map:
                     blocked=blocked, playerX=self.player[0], playerY=self.player[1],
                     props=sorted(self.props, key=lambda p: p['y']), spawns=self.spawns, npcs=self.npcs, exits=self.exits,
                     caches=getattr(self, 'caches', []), walkers=getattr(self, 'walkers', []))
+        data = interiors_patch(data)      # door exits, NPCs moved indoors, extra Aurora buildings
         with open(os.path.join(OUT, self.name + '.json'), 'w') as fp:
             json.dump(data, fp, indent=0)
         if img is not None:
@@ -333,7 +336,7 @@ def valemont():
         nxt = iv[(i + 1) % len(iv)][0]
         a0, a1 = e0, nxt if nxt > e0 else nxt + 360
         pts = [pol(RW, a) for a in np.linspace(a0, a1, max(3, int((a1 - a0) / 4)))]
-        m.path(pts, 1.9, 'x')
+        m.path(pts, 2.5, 'x')
     # ---- wall furniture: towers, gates, banners
     for a in range(0, 360, 30):
         if any(abs((a - g + 180) % 360 - 180) < 9 for g, _ in gaps):

@@ -343,14 +343,14 @@
   },
   {
    "name": "city_tower",
-   "w": 130,
+   "w": 182,
    "h": 260,
    "pivotX": 65,
    "pivotY": 20,
-   "colW": 100,
+   "colW": 121,
    "colH": 50,
    "colY": 0,
-   "colX": 0
+   "colX": 10
   },
   {
    "name": "city_gate",

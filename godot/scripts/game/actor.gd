@@ -20,6 +20,18 @@ var _dissolve := 0.0
 var _mat: ShaderMaterial
 
 
+var _cast: CastShadow
+
+
+func _enter_tree() -> void:
+	# (re)attach the directional cast shadow whenever the actor enters a world (new map = new shadow layer)
+	if anim == null:
+		return
+	if _cast != null and is_instance_valid(_cast):
+		_cast.queue_free()
+	_cast = CastShadow.attach(anim, false, 1.0)
+
+
 func build(sheet_path: String, shadow_w: float, shadow_h: float, radius: float, scl: float = 1.0) -> void:
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	anim = Anim.new()

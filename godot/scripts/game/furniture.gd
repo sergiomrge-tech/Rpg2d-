@@ -104,8 +104,35 @@ func _ell(c: Vector2, rx: float, ry: float, col: Color, outline: bool = true) ->
 		draw_polyline(pts, OL, 2.0)
 
 
+const HEIGHT := {"bookshelf": 140.0, "potion_shelf": 140.0, "fireplace": 128.0, "forge": 140.0, "pillar": 140.0, "weapon_rack": 120.0,
+	"armor_stand": 130.0, "board": 136.0, "door_room": 118.0, "barrel": 46.0, "crate": 42.0, "anvil": 42.0, "plant": 60.0, "counter": 52.0,
+	"table": 40.0, "round_table": 36.0, "cauldron": 60.0, "oven": 90.0, "bread_rack": 100.0, "stall": 86.0, "bed": 60.0, "torch_stand": 98.0,
+	"desk": 44.0, "chair": 44.0, "stool": 24.0, "bench": 24.0, "sack": 36.0, "hay": 30.0, "cot": 26.0}
+
+
 func _shadow(wpx: float) -> void:
 	_ell(Vector2(0, -3), wpx * 0.5 + 8.0, 9.0, Color(0, 0, 0, 0.26), false)
+	# long directional shadow on the floor, away from the light (upper-left)
+	var hh: float = HEIGHT.get(kind, 40.0)
+	var run := hh * 0.42
+	var drop := hh * 0.17
+	draw_colored_polygon(PackedVector2Array([Vector2(-wpx * 0.5, -2), Vector2(wpx * 0.5, -2), Vector2(wpx * 0.5 + run, drop), Vector2(-wpx * 0.5 + run, drop)]), Color(0, 0, 0, 0.17))
+
+
+## Wood grain lines inside a rectangle (only for brown surfaces).
+func _grain(r: Rect2, col: Color) -> void:
+	if not (col.r > col.b * 1.2 and col.r >= col.g):
+		return
+	var rnd := RandomNumberGenerator.new()
+	rnd.seed = int(r.position.x * 7.0 + r.position.y * 13.0 + r.size.x)
+	var y := r.position.y + 5.0
+	while y < r.end.y - 3.0:
+		var x0 := r.position.x + rnd.randf_range(3, 14)
+		var x1 := r.end.x - rnd.randf_range(3, 14)
+		draw_line(Vector2(x0, y), Vector2(x1, y + rnd.randf_range(-1.2, 1.2)), Color(0.18, 0.1, 0.06, 0.22), 1.2)
+		if rnd.randf() < 0.35:
+			draw_line(Vector2(x0 + 6, y + 2.2), Vector2(x1 - 10, y + 2.2), Color(1, 0.9, 0.7, 0.10), 1.0)
+		y += rnd.randf_range(6.0, 10.0)
 
 
 ## Box seen from the front and above: front face (w x h) topped by a top face (w x depth * 0.5).
@@ -113,6 +140,8 @@ func _box(cx: float, wpx: float, depth: float, h: float, front: Color, top: Colo
 	var dd := depth * 0.5
 	_fill(Rect2(cx - wpx * 0.5, base_y - h - dd, wpx, dd), top)
 	_fill(Rect2(cx - wpx * 0.5, base_y - h, wpx, h), front)
+	_grain(Rect2(cx - wpx * 0.5, base_y - h - dd, wpx, dd), top)
+	_grain(Rect2(cx - wpx * 0.5, base_y - h, wpx, h), front)
 	draw_line(Vector2(cx - wpx * 0.5 + 3, base_y - h + 4), Vector2(cx + wpx * 0.5 - 3, base_y - h + 4), top.lightened(0.2), 2.0)
 
 
@@ -173,6 +202,7 @@ func _draw() -> void:
 			else:
 				_fill(Rect2(-wpx * 0.5, -40, wpx, 9), WOOD * tn)
 				_fill(Rect2(-wpx * 0.5, -40 - dpx * 0.5, wpx, dpx * 0.5), WOOD_LT * tn)
+				_grain(Rect2(-wpx * 0.5, -40 - dpx * 0.5, wpx, dpx * 0.5), WOOD_LT)
 			_items(wpx, -40.0 - dpx * 0.18)
 		"chair":
 			_fill(Rect2(-14, -44, 28, 24), WOOD_DK * tn)
@@ -186,6 +216,7 @@ func _draw() -> void:
 				_fill(Rect2(x - 3, -16, 6, 16), WOOD_DK * tn)
 		"bench":
 			_fill(Rect2(-wpx * 0.5, -24, wpx, 9), WOOD_LT * tn)
+			_grain(Rect2(-wpx * 0.5, -24, wpx, 9), WOOD_LT)
 			_fill(Rect2(-wpx * 0.5 + 6, -15, 8, 15), WOOD_DK * tn)
 			_fill(Rect2(wpx * 0.5 - 14, -15, 8, 15), WOOD_DK * tn)
 		"barrel":
@@ -344,6 +375,7 @@ func _draw() -> void:
 		"door_room":
 			_fill(Rect2(-wpx * 0.5, -118, wpx, 118), WOOD_DK * tn)
 			_fill(Rect2(-wpx * 0.5 + 8, -108, wpx - 16, 98), WOOD * tn)
+			_grain(Rect2(-wpx * 0.5 + 8, -108, wpx - 16, 98), WOOD)
 			draw_circle(Vector2(wpx * 0.25, -56), 4.0, Color(0.95, 0.8, 0.3))
 			_fill(Rect2(-14, -150, 28, 26), Color(0.9, 0.8, 0.55))
 			draw_circle(Vector2(0, -137), 4.0, OL)

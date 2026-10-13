@@ -123,6 +123,59 @@ GRASS_VELMOOR = dict(dark='#2f5a3e', mid='#3e7048', light='#548a52', warm='#6a6a
                      blade_d=(0.16, 0.32, 0.22), flowers=False)
 
 
+def blade_path(ctx, bx, by, tx, ty, wd):
+    """Tapered blade from base (bx,by) to tip (tx,ty) with a slight curve."""
+    mx, my = (bx + tx) / 2 + (tx - bx) * 0.15, (by + ty) / 2
+    ctx.move_to(bx - wd / 2, by)
+    ctx.curve_to(bx - wd / 2, by - (by - ty) * 0.4, mx - wd * 0.3, my, tx, ty)
+    ctx.curve_to(mx + wd * 0.3, my, bx + wd / 2, by - (by - ty) * 0.4, bx + wd / 2, by)
+    ctx.close_path()
+
+
+def draw_tuft(ctx, rnd, x, y, G, scale=1.0, shadow=True):
+    """A grass tuft standing on the ground: soft contact shadow, then fanned blades (dark side + lit side) with a bright tip."""
+    ld = G['blade_d']
+    ll = G['blade_l']
+    if shadow:
+        ctx.save()
+        ctx.translate(x + 4 * scale, y + 2.5 * scale)
+        ctx.scale(1.0, 0.38)
+        ctx.arc(0, 0, rnd.uniform(9, 14) * scale, 0, math.tau)
+        ctx.restore()
+        ctx.set_source_rgba(ld[0] * 0.35, ld[1] * 0.45, ld[2] * 0.35, 0.34)
+        ctx.fill()
+    n = rnd.randint(5, 9)
+    blades = []
+    for k in range(n):
+        a = -0.9 + 1.8 * k / max(1, n - 1) + rnd.uniform(-0.12, 0.12)
+        ln = rnd.uniform(11, 22) * scale * (1.0 - 0.35 * abs(a))
+        blades.append((a, ln))
+    blades.sort(key=lambda b: abs(b[0]), reverse=True)      # outer blades behind
+    for a, ln in blades:
+        bx = x + a * 5 * scale
+        tx, ty = bx + math.sin(a) * ln * 0.9 + rnd.uniform(-1.5, 1.5), y - math.cos(a) * ln
+        wd = rnd.uniform(2.6, 3.8) * scale
+        t = rnd.random()
+        base = tuple(ld[i] * (1 - t) + ll[i] * t for i in range(3))
+        # shadow side
+        blade_path(ctx, bx, y, tx, ty, wd)
+        ctx.set_source_rgba(*[c * 0.62 for c in base], 0.95)
+        ctx.fill()
+        # lit half
+        ctx.move_to(bx, y)
+        ctx.curve_to(bx + wd * 0.1, y - ln * 0.4, tx - 0.6, ty + ln * 0.35, tx, ty)
+        ctx.curve_to(tx + 0.4, ty + ln * 0.3, bx + wd * 0.55, y - ln * 0.35, bx + wd / 2, y)
+        ctx.close_path()
+        ctx.set_source_rgba(*[min(1.0, c * 1.12 + 0.04) for c in base], 0.95)
+        ctx.fill()
+        ctx.set_source_rgba(min(1, ll[0] + 0.12), min(1, ll[1] + 0.1), min(1, ll[2] + 0.06), 0.55)
+        ctx.set_line_width(0.9)
+        ctx.move_to(tx - (tx - bx) * 0.2, ty + ln * 0.18)
+        ctx.line_to(tx, ty)
+        ctx.stroke()
+
+
+
 def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
     G = dict(DEF_EXTRA)
     G.update(grass or GRASS)
@@ -138,22 +191,32 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
     img = lerp_c(img, g_light, smoothstep(0.55, 0.8, n1) * 0.8)
     img = lerp_c(img, g_warm, smoothstep(0.6, 0.85, n2) * 0.35)
 
-    # blade strokes
+    # blade strokes: every blade has a dark ground shadow stroke under it; tufts stand on soft contact shadows
+    sh_col = (G['blade_d'][0] * 0.38, G['blade_d'][1] * 0.5, G['blade_d'][2] * 0.38)
+
     def blades(ctx):
-        for i in range(int(w * h / 900)):
+        for i in range(int(w * h / 560)):
             x, y = rnd.uniform(0, w), rnd.uniform(0, h)
             nv = n1[int(y) % h, int(x) % w]
             light = rnd.random() < 0.55
             c = G['blade_l'] if light else G['blade_d']
             if nv < 0.35:
                 c = tuple(v * 0.88 for v in (G['blade_l'] if light else G['blade_d']))
-            ctx.set_source_rgba(*c, rnd.uniform(0.35, 0.7))
-            ctx.set_line_width(rnd.uniform(1.4, 2.4))
-            l = rnd.uniform(5, 10)
+            lw = rnd.uniform(1.4, 2.4)
+            l = rnd.uniform(5, 11)
             a = rnd.uniform(-0.5, 0.5)
+            ctx.set_source_rgba(*sh_col, 0.30)
+            ctx.set_line_width(lw + 0.9)
+            ctx.move_to(x + 1.4, y + 1.7)
+            ctx.curve_to(x + 1.4 + a * l * 0.3, y + 1.7 - l * 0.5, x + 1.4 + a * l * 0.7, y + 1.7 - l * 0.8, x + 1.4 + a * l, y + 1.7 - l)
+            ctx.stroke()
+            ctx.set_source_rgba(*c, rnd.uniform(0.4, 0.75))
+            ctx.set_line_width(lw)
             ctx.move_to(x, y)
             ctx.curve_to(x + a * l * 0.3, y - l * 0.5, x + a * l * 0.7, y - l * 0.8, x + a * l, y - l)
             ctx.stroke()
+        for i in range(int(w * h / 2900)):
+            draw_tuft(ctx, rnd, rnd.uniform(0, w), rnd.uniform(0, h), G, rnd.uniform(1.0, 1.7))
         # tiny clover/flower specks
         for i in range(int(w * h / 22000)):
             x, y = rnd.uniform(0, w), rnd.uniform(0, h)
@@ -161,6 +224,9 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
                            [(0.55, 1, 0.75), (0.75, 0.6, 1), (0.5, 0.85, 1)])
             for k in range(rnd.randint(2, 5)):
                 xx, yy = x + rnd.uniform(-10, 10), y + rnd.uniform(-8, 8)
+                ctx.set_source_rgba(0.1, 0.2, 0.1, 0.28)
+                ctx.arc(xx + 1, yy + 1.4, rnd.uniform(1.4, 2.2), 0, math.tau)
+                ctx.fill()
                 ctx.set_source_rgba(*c, 0.95)
                 ctx.arc(xx, yy, rnd.uniform(1.4, 2.2), 0, math.tau)
                 ctx.fill()
@@ -233,63 +299,184 @@ def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
                     if ms[gy, gx] < 0.05:
                         continue
                     sw, shh = cw / 2 - 2.2, ch / 2 - 2.2
-                    tone = rnd.uniform(-0.06, 0.06)
+                    tone = rnd.uniform(-0.07, 0.07)
                     b0 = G['stone'][2]
                     base = (b0 + tone, b0 - 0.02 + tone, b0 + 0.04 + tone)
-                    # bottom-right shadow
-                    ctx.set_source_rgba(0.42, 0.40, 0.50, 1)
-                    rrect(ctx, x - sw + 1.2, y - shh + 1.6, sw * 2, shh * 2, 5)
+                    # joint shadow + stone body: dark rim (underside), lit upper-left bevel, textured face
+                    ctx.set_source_rgba(0.30, 0.28, 0.38, 0.9)
+                    rrect(ctx, x - sw + 1.6, y - shh + 2.0, sw * 2, shh * 2, 5)
                     ctx.fill()
-                    ctx.set_source_rgba(*base, 1)
+                    ctx.set_source_rgba(base[0] * 0.78, base[1] * 0.78, base[2] * 0.82, 1)
                     rrect(ctx, x - sw, y - shh, sw * 2, shh * 2, 5)
                     ctx.fill()
-                    ctx.set_source_rgba(1, 1, 1, 0.35)
-                    rrect(ctx, x - sw + 2, y - shh + 1.5, sw * 1.2, 3, 1.5)
+                    ctx.set_source_rgba(*base, 1)
+                    rrect(ctx, x - sw + 1.4, y - shh + 1.2, sw * 2 - 3.2, shh * 2 - 3.0, 4.5)
                     ctx.fill()
+                    ctx.set_source_rgba(min(1, base[0] + 0.12), min(1, base[1] + 0.12), min(1, base[2] + 0.12), 0.9)
+                    rrect(ctx, x - sw + 2.4, y - shh + 1.8, sw * 1.3, 2.6, 1.3)
+                    ctx.fill()
+                    # speckle grain + a few cracks
+                    for q in range(rnd.randint(3, 7)):
+                        ctx.set_source_rgba(0.2, 0.2, 0.28, rnd.uniform(0.10, 0.2)) if q % 2 else ctx.set_source_rgba(1, 1, 1, rnd.uniform(0.12, 0.22))
+                        ctx.arc(x + rnd.uniform(-sw, sw) * 0.8, y + rnd.uniform(-shh, shh) * 0.7, rnd.uniform(0.5, 1.2), 0, math.tau)
+                        ctx.fill()
+                    if rnd.random() < 0.16:
+                        ctx.set_source_rgba(0.25, 0.23, 0.32, 0.5)
+                        ctx.set_line_width(0.9)
+                        ctx.move_to(x - sw * 0.5, y - shh * 0.2)
+                        ctx.line_to(x, y + shh * 0.1)
+                        ctx.line_to(x + sw * 0.4, y + shh * 0.5)
+                        ctx.stroke()
+                    # moss in the joints
+                    if rnd.random() < 0.22:
+                        ctx.set_source_rgba(0.35, 0.55, 0.28, 0.5)
+                        ctx.arc(x + rnd.choice([-1, 1]) * sw * 0.9, y + shh * 0.8, rnd.uniform(1.8, 3.2), 0, math.tau)
+                        ctx.fill()
         rgb, a = cairo_layer(w, h, cobbles)
         stone_img = over(stone_img, rgb, a)
         img = lerp_c(img, stone_img, ms)
         rim = np.clip(ms - ndimage.grey_erosion(ms, size=(9, 9)), 0, 1)
         img = lerp_c(img, col(G['stone'][1]), rim * 0.55)
 
-    # ---------------- city wall ring (code 'x'): masonry top, shaded south face, soft ground shadow
+    # ---------------- city wall ring (code 'x'): 2.5D masonry - paved top, crenellated parapet, tall brick south face, cast shadow
     mxr = mask_from(grid, 'x', h, w, seed + 12, blur=5, jitter=0.03)
     mxk = smoothstep(0.47, 0.53, mxr)
     if mxk.max() > 0:
-        face_h = 22
-        shifted = np.zeros_like(mxk)
-        shifted[face_h:, :] = mxk[:-face_h, :]
-        face = np.clip(shifted - mxk, 0, 1)
-        shadow = ndimage.gaussian_filter(np.roll(np.roll(mxk, face_h + 12, axis=0), 8, axis=1), 8)
-        img = lerp_c(img, np.array([0.08, 0.07, 0.12], np.float32), np.clip(shadow * 0.5, 0, 1) * (1 - np.maximum(mxk, face)))
-        fy = np.arange(h, dtype=np.float32)[:, None]
-        courses = 0.5 + 0.5 * np.sin(fy * (math.tau / 11.0))
-        face_rgb = np.ones((h, w, 3), np.float32) * np.array([0.47, 0.44, 0.52], np.float32)
-        face_rgb = face_rgb * (0.84 + 0.16 * courses[..., None])
-        img = lerp_c(img, face_rgb, face)
+        face_h = 62
+        inside = mxk > 0.5
+        # the top surface is everything that still has wall below it within face_h px; the rest is the visible south face
+        top_m = ndimage.minimum_filter1d(inside.astype(np.uint8), face_h + 1, axis=0, origin=-(face_h // 2)).astype(bool) & inside
+        face_m = inside & ~top_m
+        topf = ndimage.gaussian_filter(top_m.astype(np.float32), 1.0)
+        facef = ndimage.gaussian_filter(face_m.astype(np.float32), 1.0)
+        # ground shadow cast to the south-east
+        cast = ndimage.gaussian_filter(np.roll(np.roll(mxk, face_h + 6, axis=0), 14, axis=1), 9)
+        img = lerp_c(img, np.array([0.06, 0.06, 0.10], np.float32), np.clip(cast * 0.55, 0, 1) * (1 - mxk))
+        yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+        gn = fbm(h, w, seed + 13, (40, 14, 5), (0.5, 0.3, 0.2))
 
-        def blocks(ctx):
-            bw, bh = 46, 26
+        # ---- south face: running-bond blocks with bevel, mortar, tone per block, moss at the base
+        def face_blocks(ctx):
+            bw, bh = 44, 22
             for row in range(h // bh + 2):
                 off = (bw / 2) if row % 2 else 0
                 for k in range(w // bw + 2):
                     x = k * bw + off
                     y = row * bh
                     gy, gx = int(min(max(y, 0), h - 1)), int(min(max(x, 0), w - 1))
-                    if mxk[gy, gx] < 0.05:
+                    if facef[gy, gx] < 0.05:
+                        continue
+                    tone = rnd.uniform(-0.07, 0.07)
+                    r0, g0, b0 = 0.60 + tone, 0.57 + tone, 0.62 + tone
+                    ctx.set_source_rgba(0.20, 0.18, 0.26, 1)
+                    ctx.rectangle(x - bw / 2, y - bh / 2, bw, bh)
+                    ctx.fill()
+                    ctx.set_source_rgba(r0 * 0.78, g0 * 0.78, b0 * 0.80, 1)
+                    rrect(ctx, x - bw / 2 + 1.5, y - bh / 2 + 1.5, bw - 3, bh - 3, 3)
+                    ctx.fill()
+                    ctx.set_source_rgba(r0, g0, b0, 1)
+                    rrect(ctx, x - bw / 2 + 2.5, y - bh / 2 + 2.5, bw - 6, bh - 6.5, 3)
+                    ctx.fill()
+                    ctx.set_source_rgba(1, 1, 1, 0.22)
+                    ctx.rectangle(x - bw / 2 + 4, y - bh / 2 + 2.8, bw - 12, 1.6)
+                    ctx.fill()
+                    for q in range(rnd.randint(2, 5)):
+                        ctx.set_source_rgba(0.15, 0.14, 0.2, rnd.uniform(0.1, 0.22))
+                        ctx.arc(x + rnd.uniform(-bw * 0.4, bw * 0.4), y + rnd.uniform(-bh * 0.3, bh * 0.3), rnd.uniform(0.7, 1.6), 0, math.tau)
+                        ctx.fill()
+                    if rnd.random() < 0.07:
+                        ctx.set_source_rgba(0.14, 0.13, 0.2, 0.55)
+                        ctx.set_line_width(1.0)
+                        ctx.move_to(x - 8, y - 6)
+                        ctx.line_to(x - 2, y)
+                        ctx.line_to(x + 5, y + 5)
+                        ctx.stroke()
+        rgb, a = cairo_layer(w, h, face_blocks)
+        face_img = over(np.ones((h, w, 3), np.float32) * np.array([0.30, 0.28, 0.36], np.float32), rgb, a)
+        # vertical light: sunlit near the parapet, darker toward the foundation, moss creeping up from the base
+        # rows from the south edge: 0 at the ground line .. face_h at the parapet
+        from_bottom = np.zeros((h, w), np.float32)
+        run = np.zeros(w, np.float32)
+        for y in range(h - 1, -1, -1):
+            run = np.where(inside[y], run + 1, 0).astype(np.float32)
+            from_bottom[y] = run
+        vgrad = np.clip(from_bottom / face_h, 0, 1)
+        face_img = face_img * (0.62 + 0.46 * vgrad[..., None])
+        moss = np.clip((0.30 - vgrad) * 3.0, 0, 1) * smoothstep(0.45, 0.7, gn)
+        face_img = lerp_c(face_img, np.array([0.30, 0.46, 0.24], np.float32), moss * 0.7)
+        face_img = lerp_c(face_img, np.array([0.12, 0.10, 0.16], np.float32), np.clip((0.12 - vgrad) * 5.0, 0, 1) * 0.6)
+        img = lerp_c(img, face_img, facef)
+
+        # ---- top: large flagstones with bevel + parapet merlons on the south edge
+        def flags(ctx):
+            bw, bh = 52, 26
+            for row in range(h // bh + 2):
+                off = (bw / 2) if row % 2 else 0
+                for k in range(w // bw + 2):
+                    x = k * bw + off
+                    y = row * bh
+                    gy, gx = int(min(max(y, 0), h - 1)), int(min(max(x, 0), w - 1))
+                    if topf[gy, gx] < 0.05:
                         continue
                     tone = rnd.uniform(-0.05, 0.05)
-                    ctx.set_source_rgba(0.36, 0.34, 0.42, 1)
-                    rrect(ctx, x - bw / 2 + 2, y - bh / 2 + 2, bw - 2, bh - 2, 4)
+                    ctx.set_source_rgba(0.34, 0.32, 0.40, 1)
+                    rrect(ctx, x - bw / 2 + 1.5, y - bh / 2 + 1.5, bw - 1.5, bh - 1.5, 4)
                     ctx.fill()
-                    ctx.set_source_rgba(0.70 + tone, 0.68 + tone, 0.74 + tone, 1)
-                    rrect(ctx, x - bw / 2 + 1, y - bh / 2 + 1, bw - 3, bh - 4, 4)
+                    ctx.set_source_rgba(0.72 + tone, 0.70 + tone, 0.76 + tone, 1)
+                    rrect(ctx, x - bw / 2 + 1, y - bh / 2 + 1, bw - 3.5, bh - 4, 4)
                     ctx.fill()
-        rgb, a = cairo_layer(w, h, blocks)
-        top = over(np.ones((h, w, 3), np.float32) * np.array([0.52, 0.50, 0.58], np.float32), rgb, a)
-        img = lerp_c(img, top, mxk)
-        rimx = np.clip(mxk - ndimage.grey_erosion(mxk, size=(7, 7)), 0, 1)
-        img = lerp_c(img, np.array([0.30, 0.28, 0.36], np.float32), rimx * 0.6)
+                    ctx.set_source_rgba(1, 1, 1, 0.3)
+                    ctx.rectangle(x - bw / 2 + 4, y - bh / 2 + 2.2, bw - 14, 1.8)
+                    ctx.fill()
+                    for q in range(rnd.randint(2, 6)):
+                        ctx.set_source_rgba(0.2, 0.2, 0.28, rnd.uniform(0.08, 0.18))
+                        ctx.arc(x + rnd.uniform(-bw * 0.4, bw * 0.4), y + rnd.uniform(-bh * 0.3, bh * 0.3), rnd.uniform(0.6, 1.4), 0, math.tau)
+                        ctx.fill()
+        rgb, a = cairo_layer(w, h, flags)
+        top_img = over(np.ones((h, w, 3), np.float32) * np.array([0.40, 0.38, 0.46], np.float32), rgb, a)
+        img = lerp_c(img, top_img, topf)
+        # parapet: periodic raised merlons along the south edge of the walkway (viewed from the south, so they stand in front of the top)
+        edge_band = top_m & ~ndimage.minimum_filter1d(top_m.astype(np.uint8), 22, axis=0, origin=-11).astype(bool)
+        edge_band = (top_m & ~np.roll(top_m, -30, axis=0)) | edge_band
+        merlon_x = ((xx // 44) % 2 == 0)
+        merlon_m = edge_band & merlon_x & top_m
+        mer = ndimage.gaussian_filter(merlon_m.astype(np.float32), 0.8)
+        mer_top = np.roll(mer, -22, axis=0) * (1 - mer)
+        img = lerp_c(img, np.array([0.80, 0.78, 0.84], np.float32), np.clip(mer_top, 0, 1) * 0.9)         # lit tops
+        img = lerp_c(img, np.array([0.58, 0.55, 0.64], np.float32) * (0.78 + 0.22 * np.clip(mer_top * 4, 0, 1))[..., None], mer * 0.97)   # merlon fronts
+        img = lerp_c(img, np.array([0.16, 0.14, 0.22], np.float32), np.clip(np.roll(mer, 6, axis=0) - mer, 0, 1) * 0.6)                   # merlon base shadow
+        gap_shadow = ndimage.gaussian_filter((edge_band & ~merlon_x & top_m).astype(np.float32), 2.0)
+        img = lerp_c(img, np.array([0.18, 0.16, 0.24], np.float32), gap_shadow * 0.45)
+        # edge lines: bright north/west rim, dark east rim and a dark joint between top and face
+        rimn = np.clip(topf - np.roll(topf, 3, axis=0), 0, 1)
+        img = lerp_c(img, np.array([0.95, 0.94, 0.98], np.float32), rimn * 0.5)
+        joint = np.clip(topf - np.roll(topf, -4, axis=0), 0, 1)
+        img = lerp_c(img, np.array([0.14, 0.12, 0.2], np.float32), joint * 0.55)
+        img = lerp_c(img, np.array([0.14, 0.12, 0.2], np.float32), np.clip(mxk - ndimage.grey_erosion(mxk, size=(5, 5)), 0, 1) * 0.35)
+
+    # ---------------- grass tufts hugging the edges of paths, plazas and walls (soften the border, add depth)
+    edge_masks = []
+    for m_ in (md_raw if 'md_raw' in dir() else None, ms_raw if 'ms_raw' in dir() else None):
+        if m_ is not None:
+            edge_masks.append(m_)
+    if edge_masks:
+        edge_zone = np.zeros((h, w), bool)
+        for m_ in edge_masks:
+            edge_zone |= (m_ > 0.30) & (m_ < 0.5)
+        ys, xs = np.nonzero(edge_zone[::6, ::6])
+        order = list(range(len(ys)))
+        rnd.shuffle(order)
+
+        def edge_tufts(ctx):
+            for j in order[:int(len(order) * 0.38)]:
+                x, y = xs[j] * 6 + rnd.uniform(0, 6), ys[j] * 6 + rnd.uniform(0, 6)
+                draw_tuft(ctx, rnd, x, y, G, rnd.uniform(0.75, 1.1))
+        rgb, a_ = cairo_layer(w, h, edge_tufts)
+        img = over(img, rgb, a_)
+
+    # ---------------- fine grain over everything (stone speckle / soil / blade texture)
+    grain = (fbm(h, w, seed + 20, (6, 3), (0.6, 0.4)) - 0.5) * 0.07
+    img = np.clip(img + grain[..., None], 0, 1)
 
     # ---------------- water
     mw_raw = mask_from(grid, 'wb', h, w, seed + 9, blur=14, jitter=0.12)

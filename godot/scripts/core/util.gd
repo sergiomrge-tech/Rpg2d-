@@ -72,6 +72,17 @@ func glow(parent: Node, color: Color, size_tiles: float, alpha: float) -> Sprite
 	return s
 
 
+var _shadow_mat: ShaderMaterial
+
+
+## One shared material for every cast shadow; World updates its sun parameters every frame.
+func shadow_material() -> ShaderMaterial:
+	if _shadow_mat == null:
+		_shadow_mat = ShaderMaterial.new()
+		_shadow_mat.shader = preload("res://shaders/cast_shadow.gdshader")
+	return _shadow_mat
+
+
 func make_fx_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = fx_shader
