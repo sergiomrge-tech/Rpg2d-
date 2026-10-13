@@ -29,8 +29,8 @@ var arrow_n := 0
 var lock_target: Enemy = null            # target lock (T): faces, aims and homes the attacks at this enemy
 var _lock_marker: LockMarker = null
 const LOCK_RANGE := 13.0 * 64.0
-var skill_cd := {"r": 0.0, "f": 0.0}
-var skill_cd_max := {"r": 1.0, "f": 1.0}
+var skill_cd := {"r": 0.0, "f": 0.0, "g": 0.0, "v": 0.0}
+var skill_cd_max := {"r": 1.0, "f": 1.0, "g": 1.0, "v": 1.0}
 
 const WALK := 4.0 * T
 const RUN := 6.4 * T
@@ -135,6 +135,8 @@ func _physics_process(dt: float) -> void:
 	if _pressed([KEY_T]): lock_cycle()
 	if _pressed([KEY_R]): _try_skill("r")
 	if _pressed([KEY_F]): _try_skill("f")
+	if _pressed([KEY_G]): _try_skill("g")
+	if _pressed([KEY_V]): _try_skill("v")
 	if _pressed([KEY_E]): Game.interact(self)
 
 	match state:
@@ -387,6 +389,10 @@ func _on_anim_hit(a: String) -> void:
 				SkillActions.cast(self, "r")
 			"skill_f":
 				SkillActions.cast(self, "f")
+			"skill_g":
+				SkillActions.cast(self, "g")
+			"skill_v":
+				SkillActions.cast(self, "v")
 			"magic_burst":
 				if gs.class_id == "mage":
 					Projectile.spark(origin, dir, gs.total_mag() * (1.55 + .24 * (gs.spark_tier - 1)), mini(gs.spark_tier + 1, 3), true)
@@ -443,7 +449,7 @@ func _begin_cast(action: String, cost: float, cooldown: float = 0.0) -> void:
 	elif move_dir.length_squared() > .01:
 		face(Util.facing_from(move_dir, facing))
 	anim.play("cast", true)
-	if action in ["magic_basic", "magic_burst", "paladin_heal", "pet_summon", "skill_r", "skill_f"]:
+	if action in ["magic_basic", "magic_burst", "paladin_heal", "pet_summon", "skill_r", "skill_f", "skill_g", "skill_v"]:
 		Fx.magic_circle(pos(), gs.spark_tier if gs.class_id == "mage" else 1)
 		Sfx.play("charge", .38, 1.0)
 
@@ -479,11 +485,11 @@ func _try_skill(which: String) -> void:
 	if state != St.FREE or dead:
 		return
 	if not gs.has_unlock(which):
-		Fx.toast("Habilidade bloqueada — aprenda na árvore (P)", Color(1, 0.8, 0.5))
+		Fx.toast("Slot vazio — aprenda e equipe habilidades na árvore (P)", Color(1, 0.8, 0.5))
 		return
-	var a: Dictionary = SkillTree.ACTIVES[gs.class_id][which]
+	var a: Dictionary = gs.slot_skill(which)
 	if float(skill_cd[which]) > 0.0:
-		Fx.toast("%s recarregando %.0fs" % [a["name"], float(skill_cd[which])], Color(1, 0.7, 0.4))
+		Fx.toast("%s recarregando %.0fs" % [a["n"], float(skill_cd[which])], Color(1, 0.7, 0.4))
 		return
 	if mp < float(a["mp"]):
 		Fx.toast("Mana insuficiente", Color(.5, .75, 1.0))

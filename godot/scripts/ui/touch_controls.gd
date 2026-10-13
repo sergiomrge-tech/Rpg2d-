@@ -59,11 +59,8 @@ func setup(h: Hud) -> void:
 	_add_btn("lock", Vector2(1150, 770), 58, KEY_T, "", 1.0)
 	_add_btn("meteor", Vector2(1330, 700), 62, KEY_R, "skill_spark", 1.0)
 	_add_btn("storm", Vector2(1420, 560), 62, KEY_F, "skill_spark", 1.0)
-	for b in _buttons:
-		if b["id"] == "meteor":
-			b["c"].get_child(0).modulate = Color(1.0, 0.55, 0.25)
-		elif b["id"] == "storm":
-			b["c"].get_child(0).modulate = Color(0.55, 0.8, 1.0)
+	_add_btn("slot_g", Vector2(1240, 590), 56, KEY_G, "skill_spark", 1.0)
+	_add_btn("slot_v", Vector2(1370, 430), 56, KEY_V, "skill_spark", 1.0)
 	_add_btn("book", Vector2(560, 62), 46, KEY_TAB, "", 0.8)
 	_add_btn("skills", Vector2(455, 62), 46, KEY_P, "", 0.8)
 	_add_btn("menu", Vector2(665, 62), 46, KEY_ESCAPE, "", 0.8)
@@ -78,6 +75,10 @@ func setup(h: Hud) -> void:
 		_add_btn(p[0], p[1], 56, p[2], "", 1.0, p[3], menu_pad)
 	menu_pad.visible = false
 	# letters on the game buttons without an icon
+	_label_for("meteor", "R")
+	_label_for("storm", "F")
+	_label_for("slot_g", "G")
+	_label_for("slot_v", "V")
 	_label_for("talk", "E")
 	_label_for("lock", "Alvo")
 	_label_for("book", "Livro")
@@ -88,7 +89,7 @@ func setup(h: Hud) -> void:
 func _label_for(id: String, text: String) -> void:
 	for b in _buttons:
 		if b["id"] == id:
-			var l := hud.txt(b["c"], text, Util.font_bold, 24 if id == "talk" else 18, Color(1, 0.95, 0.8), Vector2(0.5, 0.5), Vector2.ZERO, Vector2(120, 30))
+			var l := hud.txt(b["c"], text, Util.font_bold, 24 if id == "talk" else 18, Color(1, 0.95, 0.8), Vector2(0.5, 0.5), Vector2(0, 34 if id in ["meteor", "storm", "slot_g", "slot_v"] else 0), Vector2(120, 30))
 			l.z_index = 2
 
 
@@ -136,13 +137,14 @@ func _process(_dt: float) -> void:
 	for b in _buttons:
 		if b["id"] == "talk":
 			b["c"].modulate.a = 1.0 if _near_npc() else 0.35
-		elif (b["id"] == "meteor" or b["id"] == "storm") and Game.player != null:
-			# R / F: the class active skills; dimmed until learned in the skill tree
-			var which := "r" if b["id"] == "meteor" else "f"
-			var a: Dictionary = SkillTree.ACTIVES[Game.player.gs.class_id][which]
+		elif b["id"] in ["meteor", "storm", "slot_g", "slot_v"] and Game.player != null:
+			# R / F / G / V: the skills equipped in the tree; dimmed while the slot is empty
+			var which: String = {"meteor": "r", "storm": "f", "slot_g": "g", "slot_v": "v"}[b["id"]]
 			var ic: TextureRect = b["c"].get_child(0)
-			ic.texture = Sheets.icon(a["icon"])
-			ic.modulate = a["color"]
+			if Game.player.gs.has_unlock(which):
+				var a: Dictionary = Game.player.gs.slot_skill(which)
+				ic.texture = Sheets.icon(a["i"])
+				ic.modulate = a["c"]
 			b["c"].modulate.a = 1.0 if Game.player.gs.has_unlock(which) else 0.35
 
 

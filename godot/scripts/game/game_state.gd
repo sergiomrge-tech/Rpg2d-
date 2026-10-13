@@ -26,6 +26,7 @@ var attr_pts := 0              # unspent attribute points
 var skill_pts := 0             # unspent skill-tree points
 var attrs := {}                # attribute -> points invested above the class base
 var skills: Array = []         # learned tree nodes ("branch_tier")
+var slots: Array = ["", "", "", ""]   # node id equipped on R, F, G, V
 var buffs := {}                # transient: name -> {"t": seconds, "eff": {...}}
 var hp_frac := 1.0             # transient: current life fraction (set by the Player; drives Sangue de Ferro)
 var enh := {}                  # item id -> forge level (+0..+5)
@@ -135,7 +136,7 @@ func attr(a: String) -> int:
 
 func _node_eff(sid: String) -> Dictionary:
 	var parts := sid.split("_")
-	return SkillTree.node(class_id, int(parts[0]), int(parts[1]))[1]
+	return SkillTree.node(class_id, int(parts[0]), int(parts[1]))["pas"]
 
 
 ## Sum of one bonus key from attributes, learned skills and active buffs.
@@ -169,11 +170,31 @@ func bonus(key: String) -> float:
 	return t
 
 
+## The skill equipped on slot "r" / "f" / "g" / "v" ({} when empty).
+func slot_skill(which: String) -> Dictionary:
+	var sid: String = slots[SkillTree.SLOTS.find(which)]
+	return SkillTree.skill(class_id, sid) if sid != "" else {}
+
+
 func has_unlock(which: String) -> bool:
-	for sid in skills:
-		if _node_eff(sid).get("unlock", "") == which:
-			return true
-	return false
+	return slots[SkillTree.SLOTS.find(which)] != ""
+
+
+## Put a learned skill on a slot (it leaves any other slot); passing "" empties the slot.
+func equip_skill(which: String, sid: String) -> void:
+	var i := SkillTree.SLOTS.find(which)
+	if sid != "":
+		if not skills.has(sid):
+			return
+		for k in slots.size():
+			if slots[k] == sid:
+				slots[k] = ""
+	slots[i] = sid
+
+
+func slot_of(sid: String) -> String:
+	var i := slots.find(sid)
+	return SkillTree.SLOTS[i].to_upper() if i >= 0 else ""
 
 
 func crit_chance() -> float: return float(HeroClasses.info(class_id)["crit"]) + bonus("crit") / 100.0
@@ -217,7 +238,11 @@ func learn_skill(branch: int, tier: int) -> bool:
 	if skill_block(branch, tier) != "":
 		return false
 	skill_pts -= int(SkillTree.TIER_COST[tier])
-	skills.append(SkillTree.node_id(branch, tier))
+	var sid := SkillTree.node_id(branch, tier)
+	skills.append(sid)
+	var free := slots.find("")
+	if free >= 0:          # a new skill takes the first free slot
+		slots[free] = sid
 	return true
 
 
@@ -232,6 +257,7 @@ func respec() -> bool:
 	gold -= respec_cost()
 	attrs = {}
 	skills = []
+	slots = ["", "", "", ""]
 	buffs = {}
 	attr_pts = (level - 1) * SkillTree.ATTR_PER_LEVEL
 	skill_pts = level - 1
@@ -372,7 +398,7 @@ func to_dict() -> Dictionary:
 	return {"level": level, "class_id": class_id, "xp": xp, "gold": gold, "max_hp": max_hp, "max_mp": base_mp, "max_st": max_st, "atk": atk, "mag": mag,
 		"spark_tier": spark_tier, "sword_tier": sword_tier, "guild_rank": guild_rank, "eq_weapon": eq_weapon, "eq_armor": eq_armor,
 		"eq_charm": eq_charm, "inv_ids": inv_ids, "inv_counts": inv_counts, "enh": enh, "ng_plus": ng_plus,
-		"attr_pts": attr_pts, "skill_pts": skill_pts, "attrs": attrs, "skills": skills, "stats_v": 1}
+		"attr_pts": attr_pts, "skill_pts": skill_pts, "attrs": attrs, "skills": skills, "slots": slots, "stats_v": 2}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -391,7 +417,14 @@ func from_dict(d: Dictionary) -> void:
 	skills = []
 	for k in d.get("skills", []):
 		skills.append(str(k))
+	slots = ["", "", "", ""]
+	for i in mini(4, (d.get("slots", []) as Array).size()):
+		slots[i] = str(d["slots"][i])
 	buffs = {}
+	if int(d.get("stats_v", 0)) == 1:     # trees were rebuilt (10 skills per class): refund the skill points, learn again
+		skills = []
+		slots = ["", "", "", ""]
+		skill_pts = level - 1
 	if not d.has("stats_v"):      # save from before attributes/skills: grant what the levels would have given
 		attr_pts = (level - 1) * SkillTree.ATTR_PER_LEVEL
 		skill_pts = level - 1

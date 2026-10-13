@@ -1245,6 +1245,28 @@ func _ci_shots() -> void:
 		print("[ci] done")
 		get_tree().quit()
 		return
+	if "-ciSkillsUI" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		_tour_to("village")
+		state.class_id = "warrior"
+		state.level = 12
+		state.skill_pts = 4
+		state.skills = ["0_0", "0_1", "1_0", "2_0", "2_1"]
+		state.slots = ["0_1", "0_0", "2_1", ""]
+		skills.toggle()
+		skills.sel_b = 0
+		skills.sel_t = 2
+		skills._refresh()
+		await _wait(0.5)
+		await shot("77_arvore_a")
+		skills.sel_b = 2
+		skills.sel_t = 1
+		skills._refresh()
+		await _wait(0.3)
+		await shot("77_arvore_b")
+		print("[ci] done")
+		get_tree().quit()
+		return
 	if "-ciFx" in OS.get_cmdline_user_args():
 		flags["prologue"] = true
 		await _ci_fx()
@@ -1562,6 +1584,7 @@ func _ci_mage() -> void:
 	_travel_cd = 999.0
 	state.class_id = "mage"
 	state.skills = ["0_1", "1_1"]       # Chuva de Meteoros + Tempestade de Raios
+	state.slots = ["0_1", "1_1", "", ""]
 	state.max_mp = 999.0
 	player.mp = 999.0
 	player.anim.setup(HeroClasses.sheet_for("mage"))
@@ -1809,38 +1832,35 @@ func _ci_stats() -> void:
 	print("[ci] tree: tier0 ", gs.skill_block(0, 0) == "", " tier1 w/o tier0: ", gs.skill_block(0, 1), " tier3 lvl: ", gs.skill_block(0, 3))
 	gs.learn_skill(0, 0)
 	gs.learn_skill(0, 1)
-	print("[ci] learned ", gs.skills, " unlock r: ", gs.has_unlock("r"), " f: ", gs.has_unlock("f"), " pts left ", gs.skill_pts)
+	print("[ci] learned ", gs.skills, " slots ", gs.slots, " unlock r: ", gs.has_unlock("r"), " f: ", gs.has_unlock("f"), " pts left ", gs.skill_pts)
 	gs.gold = 5000
 	print("[ci] respec: ", gs.respec(), " attrs ", gs.attrs, " skills ", gs.skills, " attr_pts ", gs.attr_pts, " skill_pts ", gs.skill_pts)
-	# every class tree is well-formed
+	# every class tree is well-formed: 10 skills, each with a description and a valid kind
 	var bad := 0
 	for c in HeroClasses.CLASSES:
+		var total := 0
 		for b in 3:
-			for t in 4:
+			for t in int(SkillTree.LAYOUT[b]):
 				var n := SkillTree.node(c, b, t)
-				if SkillTree.describe(n[1]) == "" and not (n[1] as Dictionary).has("unlock"):
+				total += 1
+				if SkillTree.active_text(n) == "" and SkillTree.describe(n["pas"]) == "" or not (str(n["k"]) in ["nova", "meteor", "storm", "volley", "dash", "summon", "none"]):
 					bad += 1
-		for w in ["r", "f"]:
-			var found := false
-			for b in 3:
-				for t in 4:
-					if SkillTree.node(c, b, t)[1].get("unlock", "") == w:
-						found = true
-			if not found:
-				bad += 1
+		if total != 10:
+			bad += 1
 	print("[ci] trees malformed: ", bad)
 	# live hero: unlock everything, cast every class active
 	_tour_to("village")
 	_travel_cd = 999.0
 	player.input_locked = false
 	player.invuln = 99.0
-	var classes := ["warrior", "paladin", "archer", "assassin", "summoner"]
+	var classes := ["warrior", "mage", "paladin", "archer", "assassin", "summoner"]
 	for c in classes:
 		state.class_id = c
 		state.skills = []
 		for b in 3:
-			for t in 4:
+			for t in int(SkillTree.LAYOUT[b]):
 				state.skills.append(SkillTree.node_id(b, t))
+		state.slots = ["0_0", "0_1", "1_0", "2_2"]
 		state.base_mp = 999.0
 		player.mp = 999.0
 		player.anim.setup(HeroClasses.sheet_for(c))
@@ -1849,23 +1869,34 @@ func _ci_stats() -> void:
 		for i in 4:
 			pack.append(Enemy.spawn("imp", player.global_position + Vector2(randf_range(-110, 110), randf_range(-90, 90)), 6))
 		await _wait(0.3)
-		player.skill_cd["r"] = 0.0
-		player.skill_cd["f"] = 0.0
-		player._try_skill("r")
-		await _wait(0.9)
-		player.skill_cd["f"] = 0.0
-		player.state = Player.St.FREE
-		var hp_before := 0.0
-		for e in pack:
-			if is_instance_valid(e):
-				hp_before += e.hp
-		player._try_skill("f")
-		await _wait(1.0)
-		var hp_after := 0.0
-		for e in pack:
-			if is_instance_valid(e) and not e.dead:
-				hp_after += e.hp
-		print("[ci] active skills ", c, ": enemy hp ", hp_before, " -> ", hp_after, " buffs ", state.buffs.keys())
+		var report := []
+		for b2 in 3:
+			for t2 in int(SkillTree.LAYOUT[b2]):
+				var sid := SkillTree.node_id(b2, t2)
+				state.equip_skill("r", sid)
+				player.skill_cd["r"] = 0.0
+				player.state = Player.St.FREE
+				player.mp = 999.0
+				var hp0 := 0.0
+				for e in pack:
+					if is_instance_valid(e) and not e.dead:
+						hp0 += e.hp
+				player._try_skill("r")
+				await _wait(1.2)
+				var hp1 := 0.0
+				for e in pack:
+					if is_instance_valid(e) and not e.dead:
+						hp1 += e.hp
+				report.append("%s:%d" % [SkillTree.node(c, b2, t2)["n"].substr(0, 8), roundi(hp0 - hp1)])
+				player.state = Player.St.FREE
+				if hp1 < 40.0:
+					for e in pack:
+						if is_instance_valid(e):
+							e.queue_free()
+					pack = []
+					for i in 4:
+						pack.append(Enemy.spawn("imp", player.global_position + Vector2(randf_range(-110, 110), randf_range(-90, 90)), 6))
+		print("[ci] active skills ", c, ": ", report)
 		if c == "paladin" or c == "summoner":
 			await shot("76_skill_" + c)
 		for e in pack:
@@ -1880,6 +1911,7 @@ func _ci_stats() -> void:
 	state.skill_pts = 2
 	state.attrs = {"int": 4, "man": 2}
 	state.skills = ["0_0", "1_0"]
+	state.slots = ["0_0", "1_0", "", ""]
 	skills.toggle()
 	skills.sel_b = 0
 	skills.sel_t = 1

@@ -260,11 +260,11 @@ func _build() -> void:
 		if i == 3:
 			potion_count = txt(o, "", serif, 24, Color.WHITE, Vector2(1, 1), Vector2(-14, -14), Vector2(40, 30))
 	# mage-only area-spell orbs (shown for the Mage class)
-	for j in 2:
-		var p2 := Vector2(95, 262) if j == 0 else Vector2(-12, 252)
+	for j in 4:
+		var p2: Vector2 = [Vector2(95, 262), Vector2(-12, 252), Vector2(-112, 226), Vector2(-196, 176)][j]
 		var o2 := img(fan, Sheets.ui("orb"), C, p2, Vector2(96, 96))
 		var ic2 := img(o2, Sheets.icon("skill_spark"), C, Vector2.ZERO, Vector2(54, 54))
-		ic2.modulate = Color(1.0, 0.55, 0.25) if j == 0 else Color(0.55, 0.8, 1.0)
+		ic2.modulate = Color(1.0, 0.55, 0.25)
 		var cd2 := TextureProgressBar.new()
 		cd2.fill_mode = TextureProgressBar.FILL_CLOCKWISE
 		cd2.min_value = 0.0
@@ -275,7 +275,7 @@ func _build() -> void:
 		ctl(o2, C, Vector2.ZERO, nat2, cd2)
 		cd2.scale = Vector2.ONE * 96.0 * 0.8 / nat2.x
 		cd2.value = 0.0
-		txt(o2, "R" if j == 0 else "F", bold, 20, Color(1, 0.95, 0.8), Vector2(0.5, 0), Vector2(0, -6), Vector2(60, 24))
+		txt(o2, ["R", "F", "G", "V"][j], bold, 20, Color(1, 0.95, 0.8), Vector2(0.5, 0), Vector2(0, -6), Vector2(60, 24))
 		area_orbs.append({"orb": o2, "cd": cd2, "icon": ic2})
 	txt(root, "WASD mover · Shift correr · T mira · E falar · Tab livro · P atributos · Esc opções", sans, 20, Color(1, 1, 1, 0.7), Vector2(1, 0), Vector2(-400, 26), Vector2(780, 28))
 
@@ -498,13 +498,13 @@ func _process(delta: float) -> void:
 		# Melee and dodge have no stamina requirement; the orbs stay ready.
 		orb_cd[2].value = 0.0
 		for i in area_orbs.size():
-			var which := "r" if i == 0 else "f"
-			var a: Dictionary = SkillTree.ACTIVES[gs.class_id][which]
+			var which: String = SkillTree.SLOTS[i]
 			var unlocked := gs.has_unlock(which)
+			var a: Dictionary = gs.slot_skill(which) if unlocked else {"i": "skill_spark", "c": Color(0.6, 0.6, 0.6), "mp": 0.0}
 			area_orbs[i]["orb"].visible = true
 			area_orbs[i]["orb"].modulate = Color(1, 1, 1, 1) if unlocked else Color(0.5, 0.5, 0.55, 0.65)
-			area_orbs[i]["icon"].texture = Sheets.icon(a["icon"])
-			area_orbs[i]["icon"].modulate = a["color"]
+			area_orbs[i]["icon"].texture = Sheets.icon(a["i"])
+			area_orbs[i]["icon"].modulate = a["c"]
 			var cdv: float = float(p.skill_cd[which])
 			var cmax: float = maxf(0.1, float(p.skill_cd_max[which]))
 			area_orbs[i]["cd"].value = 1.0 if (not unlocked or p.mp < float(a["mp"])) else clampf(cdv / cmax, 0.0, 1.0)

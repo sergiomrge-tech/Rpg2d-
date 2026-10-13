@@ -14,7 +14,7 @@ var sel_t := 0
 
 const NODE := 58.0
 const COL_X := [-170.0, 0.0, 170.0]
-const ROW_Y := [166.0, 74.0, -16.0, -104.0]
+const ROW_Y := [176.0, 96.0, 16.0, -64.0]
 
 
 func setup(h: Hud) -> void:
@@ -104,10 +104,20 @@ func _process(_dt: float) -> void:
 		_add(SkillTree.ATTRS[asel])
 	if Game.consume(KEY_D) or Game.consume(KEY_RIGHT):
 		sel_b = (sel_b + 1) % 3
+		sel_t = mini(sel_t, int(SkillTree.LAYOUT[sel_b]) - 1)
 		_refresh()
 	if Game.consume(KEY_A) or Game.consume(KEY_LEFT):
 		sel_b = (sel_b + 2) % 3
+		sel_t = mini(sel_t, int(SkillTree.LAYOUT[sel_b]) - 1)
 		_refresh()
+	if Game.consume(KEY_Z):
+		sel_t = (sel_t + 1) % int(SkillTree.LAYOUT[sel_b])
+		_refresh()
+	if Game.consume(KEY_L):
+		_learn()
+	for i in 4:
+		if Game.consume(KEY_1 + i):
+			_equip(SkillTree.SLOTS[i])
 
 
 func _add(a: String) -> void:
@@ -145,8 +155,18 @@ func _learn() -> void:
 	gs.learn_skill(sel_b, sel_t)
 	Sfx.play("levelup", 0.6, 1.1)
 	var n := SkillTree.node(gs.class_id, sel_b, sel_t)
-	Fx.toast("Aprendeu: " + str(n[0]), Color(1, 0.9, 0.5))
+	Fx.toast("Aprendeu: " + str(n["n"]) + (" (slot %s)" % gs.slot_of(SkillTree.node_id(sel_b, sel_t)) if gs.slot_of(SkillTree.node_id(sel_b, sel_t)) != "" else ""), Color(1, 0.9, 0.5))
 	_apply()
+	_refresh()
+
+
+func _equip(which: String) -> void:
+	var gs := Game.state
+	var sid := SkillTree.node_id(sel_b, sel_t)
+	if not gs.skills.has(sid):
+		return
+	gs.equip_skill(which, "" if gs.slots[SkillTree.SLOTS.find(which)] == sid else sid)
+	Sfx.play("ui", 0.3, 1.2)
 	_refresh()
 
 
@@ -245,25 +265,30 @@ func _refresh() -> void:
 	for b in 3:
 		var cx: float = 335.0 + COL_X[b]
 		hud.txt(page, str(branches[b]["name"]), bold, 21, ink, C, Vector2(cx, 232), Vector2(160, 26), M, false)
-		for t in 4:
+		for t in int(SkillTree.LAYOUT[b]):
 			var cy: float = ROW_Y[t]
-			if t < 3:     # link to the next tier
+			if t < int(SkillTree.LAYOUT[b]) - 1:     # link to the next tier
 				var ln := ColorRect.new()
 				ln.color = Color(0.7, 0.5, 0.15) if gs.skill_known(b, t) else Color(0.45, 0.35, 0.25, 0.5)
 				hud.ctl(page, C, Vector2(cx, cy - 41.0), Vector2(5, 26), ln)
 			_node_view(page, b, t, Vector2(cx, cy), gs, bold, ink)
 	# details of the selected node
 	var nd := SkillTree.node(gs.class_id, sel_b, sel_t)
-	hud.txt(page, "%s — nível %d" % [nd[0], int(SkillTree.TIER_LEVELS[sel_t])], bold, 24, ink, C, Vector2(335, -178), Vector2(540, 32), M, false)
-	var det := hud.txt(page, SkillTree.node_text(gs.class_id, sel_b, sel_t), sans, 17, ink, C, Vector2(335, -224), Vector2(560, 60), M, false, VERTICAL_ALIGNMENT_TOP)
+	hud.txt(page, "%s — nível %d" % [nd["n"], int(SkillTree.TIER_LEVELS[sel_t])], bold, 24, ink, C, Vector2(335, -152), Vector2(540, 32), M, false)
+	var det := hud.txt(page, SkillTree.node_text(gs.class_id, sel_b, sel_t), sans, 16, ink, C, Vector2(335, -208), Vector2(560, 70), M, false, VERTICAL_ALIGNMENT_TOP)
 	hud.wrap(det, 560.0)
 	var why := gs.skill_block(sel_b, sel_t)
 	if gs.skill_known(sel_b, sel_t):
-		hud.txt(page, "✔ Aprendida", bold, 24, Color(0.25, 0.5, 0.2), C, Vector2(335, -290), Vector2(300, 40), M, false)
+		var sid := SkillTree.node_id(sel_b, sel_t)
+		hud.txt(page, "Equipar em:", bold, 17, ink, C, Vector2(190, -310), Vector2(130, 30), M, false)
+		for i in 4:
+			var on: bool = gs.slots[i] == sid
+			_btn(page, str(SkillTree.SLOTS[i]).to_upper(), Vector2(285.0 + i * 62.0, -310), Vector2(54, 46), _equip.bind(SkillTree.SLOTS[i]),
+				Color(0.2, 0.5, 0.2, 0.95) if on else Color(0.4, 0.2, 0.08, 0.9), 24)
 	elif why == "":
-		_btn(page, "Aprender · %d pt" % int(SkillTree.TIER_COST[sel_t]), Vector2(335, -290), Vector2(300, 50), _learn, Color(0.4, 0.2, 0.08, 0.95))
+		_btn(page, "Aprender · %d pt" % int(SkillTree.TIER_COST[sel_t]), Vector2(335, -310), Vector2(300, 50), _learn, Color(0.4, 0.2, 0.08, 0.95))
 	else:
-		hud.txt(page, why, bold, 21, Color(0.7, 0.2, 0.15), C, Vector2(335, -290), Vector2(520, 40), M, false)
+		hud.txt(page, why, bold, 21, Color(0.7, 0.2, 0.15), C, Vector2(335, -310), Vector2(520, 40), M, false)
 
 
 func _node_view(parent: Control, b: int, t: int, pos: Vector2, gs: GameState, bold: Font, ink: Color) -> void:
@@ -271,6 +296,7 @@ func _node_view(parent: Control, b: int, t: int, pos: Vector2, gs: GameState, bo
 	var known := gs.skill_known(b, t)
 	var why := gs.skill_block(b, t)
 	var lvl_locked := gs.level < int(SkillTree.TIER_LEVELS[t])
+	var sid := SkillTree.node_id(b, t)
 	var col := Color(0.35, 0.3, 0.28)
 	var bg := Color(0.2, 0.15, 0.12, 0.35)
 	if known:
@@ -292,13 +318,13 @@ func _node_view(parent: Control, b: int, t: int, pos: Vector2, gs: GameState, bo
 		sb.border_color = col.lightened(0.35)
 	panel.add_theme_stylebox_override("panel", sb)
 	hud.ctl(parent, C, pos, Vector2(NODE, NODE), panel)
-	var br: Dictionary = SkillTree.branches(gs.class_id)[b]
-	var ic := hud.img(parent, Sheets.icon(br["icon"]), C, pos, Vector2(34, 34))
-	ic.modulate = Color(1, 1, 1, 1) if (known or why == "") else Color(0.6, 0.6, 0.6, 0.55)
 	var n := SkillTree.node(gs.class_id, b, t)
-	if (n[1] as Dictionary).has("unlock"):
-		hud.txt(parent, str(n[1]["unlock"]).to_upper(), bold, 17, Color(1, 0.95, 0.6) if known else Color(1, 0.85, 0.4), C, pos + Vector2(19, 19), Vector2(24, 20), HORIZONTAL_ALIGNMENT_CENTER, true)
-	var nm := str(n[0])
+	var ic := hud.img(parent, Sheets.icon(n["i"]), C, pos, Vector2(34, 34))
+	ic.modulate = (n["c"] as Color) if (known or why == "") else Color(0.6, 0.6, 0.6, 0.55)
+	var sl := gs.slot_of(sid)
+	if sl != "":
+		hud.txt(parent, sl, bold, 17, Color(1, 0.95, 0.6), C, pos + Vector2(19, 19), Vector2(24, 20), HORIZONTAL_ALIGNMENT_CENTER, true)
+	var nm := str(n["n"])
 	hud.txt(parent, nm, bold, 14, ink if (known or why == "") else Color(0.45, 0.35, 0.28), C, pos + Vector2(0, -43), Vector2(166, 18), HORIZONTAL_ALIGNMENT_CENTER, false)
 	if lvl_locked:
 		hud.txt(parent, "Nv %d" % int(SkillTree.TIER_LEVELS[t]), bold, 14, Color(0.7, 0.25, 0.2), C, pos + Vector2(-19, 19), Vector2(40, 18), HORIZONTAL_ALIGNMENT_CENTER, false)
