@@ -18,7 +18,8 @@ var _last := Vector2.ZERO
 var mode := "patrol"          # patrol | market | tavern | shelter | asleep
 var _goal := Vector2.ZERO
 var _inside := false
-var _mine := 0.0              # per-citizen dice so not everybody follows the same routine
+var _mine := 0.0
+var _chat_cd := 5.0              # per-citizen dice so not everybody follows the same routine
 
 
 static func spawn(w: Dictionary, map: String) -> Citizen:
@@ -47,7 +48,8 @@ static func spawn(w: Dictionary, map: String) -> Citizen:
 ## Daily routine: market stalls in the morning, the tavern in the evening, sleep at night, shelter from the rain.
 func _pick_mode() -> String:
 	if look == "v_guard":
-		return "patrol"
+		# two shifts: day guards are off duty at night, night guards only walk the walls in the dark
+		return "patrol" if Game.is_night() == (_mine >= 0.5) else "asleep"
 	if Game.is_night():
 		return "asleep"
 	if Game.weather > 0.45 and _mine < 0.85:
@@ -58,6 +60,40 @@ func _pick_mode() -> String:
 	if ph > 0.68 and ph < 0.9 and _mine > 0.35 and _find("stall") != Vector2.ZERO:
 		return "market"
 	return "patrol"
+
+
+func _farewell(next: String) -> void:
+	var p := Player.I
+	if p == null or (p.global_position - global_position).length() > 6.0 * T or not visible:
+		return
+	var line := ""
+	if look == "v_guard" and next == "asleep":
+		line = "Fim do turno. Boa vigília aos outros!"
+	elif next == "asleep":
+		line = "Boa noite, herói!"
+	elif next == "tavern":
+		line = "Vou tomar uma caneca na taverna!"
+	elif next == "shelter":
+		line = "Que chuvarada! Vou me abrigar."
+	elif next == "market":
+		line = "Hora da feira! Até mais!"
+	if line != "":
+		Fx.toast(line, Color(1, 0.96, 0.8), global_position + Vector2.UP * 2.0 * T)
+
+
+## Two neighbours at the market chat or haggle.
+func _market_chat(dt: float) -> void:
+	_chat_cd -= dt
+	if _chat_cd > 0.0:
+		return
+	_chat_cd = randf_range(7.0, 14.0)
+	for o in get_tree().get_nodes_in_group("citizens"):
+		if o != self and o.visible and o.mode == "market" and o.global_position.distance_to(global_position) < 2.8 * T:
+			var p := Player.I
+			if p != null and (p.global_position - global_position).length() < 7.0 * T:
+				var lines := ["Quanto custa essa maçã?", "Fresquinha, colhida hoje!", "Levo duas, então.", "Fechado! Aqui está o ouro.", "Que dia bonito para a feira!", "Ouvi que o herói limpou o bosque."]
+				Fx.toast(lines[randi() % lines.size()], Color(1, 0.94, 0.78), global_position + Vector2.UP * 2.0 * T)
+			return
 
 
 func _find(what: String) -> Vector2:
@@ -88,6 +124,7 @@ func _physics_process(dt: float) -> void:
 	# townsfolk go home at night; the guards keep patrolling
 	var want := _pick_mode()
 	if want != mode:
+		_farewell(want)
 		mode = want
 		_goal = Vector2.ZERO
 		if mode in ["market", "tavern", "shelter"]:
@@ -108,6 +145,8 @@ func _physics_process(dt: float) -> void:
 		if gd.length() < 0.6 * T or stuck_t > 3.0:
 			velocity = Vector2.ZERO
 			anim.play("idle")
+			if mode == "market":
+				_market_chat(dt)
 			if mode in ["tavern", "shelter"]:
 				_inside = true
 			stuck_t = 0.0

@@ -113,6 +113,27 @@ func region_ambience(map: String) -> void:
 	tw.tween_property(_amb, "volume_db", linear_to_db(float(AMB_VOL.get(map, 0.4)) * 0.45), 1.5)
 
 
+var _rain_p: AudioStreamPlayer
+
+
+## Rain bed under everything else; level 0..1 (0 stops it).
+func set_rain(level: float) -> void:
+	if _rain_p == null:
+		if level <= 0.01:
+			return
+		_rain_p = AudioStreamPlayer.new()
+		_rain_p.bus = "Sfx"
+		_rain_p.stream = _clip("rain")
+		add_child(_rain_p)
+	if level <= 0.01:
+		if _rain_p.playing:
+			_rain_p.stop()
+		return
+	if not _rain_p.playing:
+		_rain_p.play()
+	_rain_p.volume_db = linear_to_db(0.32 * level)
+
+
 func loop(name: String, vol: float) -> void:
 	var p := AudioStreamPlayer.new()
 	p.stream = _clip(name)
@@ -142,7 +163,7 @@ func _clip(name: String) -> AudioStreamWAV:
 	for i in d.size():
 		bytes.encode_s16(i * 2, clampi(int(d[i] * 32000.0), -32767, 32767))
 	w.data = bytes
-	if name == "ambience" or name == "murmur" or name == "water" or name.begins_with("amb_"):
+	if name == "ambience" or name == "murmur" or name == "water" or name == "rain" or name.begins_with("amb_"):
 		w.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		w.loop_end = d.size()
 	_clips[name] = w
@@ -440,6 +461,21 @@ func _synth(n: String) -> PackedFloat32Array:
 			var u := float(i) / b.size()
 			b[i] *= minf(1.0, minf(u, 1.0 - u) * 24.0)
 		return b
+	if n == "rain":
+		var br := _buf(2.0)
+		var yr := 0.0
+		for i in br.size():
+			yr += (_n() - yr) * 0.5
+			br[i] = (_n() * 0.5 + yr * 0.5) * 0.55
+		for i in 600:
+			br[br.size() - 1 - i] = lerpf(br[br.size() - 1 - i], br[600 - i], 1.0 - i / 600.0)
+		return br
+	if n == "thunder":
+		var bt := _noise(2.6, 0.02, 0.25, 0.9, 2.2)
+		for i in bt.size():
+			var tt := i / float(RATE)
+			bt[i] += sin(TAU * (55.0 - 15.0 * tt) * tt) * _env(tt, 0.1, 0.8) * 0.5
+		return bt
 	if n == "water":
 		var sec2 := 2.0
 		var b2 := _buf(sec2)

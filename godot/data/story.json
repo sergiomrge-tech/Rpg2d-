@@ -350,7 +350,11 @@
     "librarian": "Mestre Orrin",
     "guard_captain": "Capitão Brandt",
     "inn_aurora": "Hilda, a Taverneira",
-    "baker": "Mestre Crostini"
+    "baker": "Mestre Crostini",
+    "res_lucia": "Dona Lúcia",
+    "res_tomas": "Seu Tomás",
+    "res_nina": "Nina",
+    "res_bento": "Bento, o Pescador"
   },
   "final_blessing": [
     [

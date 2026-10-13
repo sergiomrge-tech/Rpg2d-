@@ -20,6 +20,9 @@ var _outdoor := false
 var _flat: Node2D
 var _has_water := false
 var _rain: CPUParticles2D
+var _thunder_t := 8.0
+var _flash := 0.0
+var _puddles: Array = []
 const RAIN_MAPS := ["village", "valemont", "velmoor", "kharis", "mirewail", "wastelands"]
 var _water_atlas: Image
 var _reflect_mat: ShaderMaterial
@@ -367,8 +370,46 @@ func _refresh_wall() -> void:
 				Fx.dust((at as Vector2) + Vector2(randf_range(-60, 60), randf_range(-40, 20)), 2.0)
 
 
+## Puddles on the ground while it rains: pooled soft ellipses around the hero with small rings splashing in them.
+func _update_puddles(rain: float, dt: float) -> void:
+	if Game.quality < 1 or Player.I == null or bool(data.get("interior", false)) or not (str(data.get("name", "")) in RAIN_MAPS):
+		return
+	if _puddles.is_empty():
+		if rain < 0.2:
+			return
+		for i in 16:
+			var sp := Sprite2D.new()
+			sp.texture = Util.soft_circle()
+			sp.scale = Vector2(randf_range(0.8, 1.6), randf_range(0.28, 0.5))
+			sp.z_index = -85
+			sp.modulate = Color(0.72, 0.84, 1.0, 0.0)
+			add_child(sp)
+			_puddles.append({"n": sp, "s": randf()})
+	var pp := Player.I.global_position
+	for pd in _puddles:
+		var n: Sprite2D = pd["n"]
+		if n.global_position.distance_to(pp) > 1100.0 or n.global_position == Vector2.ZERO:
+			for tries in 6:
+				var at := pp + Vector2(randf_range(-950, 950), randf_range(-560, 560))
+				var tx := int(at.x / T)
+				var ty := int(at.y / T)
+				if tx > 0 and ty > 0 and tx < int(data["w"]) - 1 and ty < int(data["h"]) - 1 and _blocked[ty * int(data["w"]) + tx] == 0:
+					n.global_position = at
+					break
+		n.modulate.a = clampf((rain - 0.2) * 1.1, 0.0, 0.85) * (0.6 + 0.4 * sin(_t * 0.6 + float(pd["s"]) * 9.0))
+		if rain > 0.4 and randf() < dt * 0.6 and n.modulate.a > 0.1 and Game.quality >= 2:
+			Fx.shockwave(n.global_position + Vector2(randf_range(-30, 30), randf_range(-8, 8)), 0.12)
+
+
 ## Rain streaks around the hero + stronger wind; only on outdoor maps that can rain.
 func _update_rain(rain: float) -> void:
+	Sfx.set_rain(rain if _outdoor and not bool(data.get("interior", false)) else 0.0)
+	_thunder_t -= get_process_delta_time()
+	if rain > 0.6 and _outdoor and _thunder_t <= 0.0:
+		_thunder_t = randf_range(14.0, 32.0)
+		_flash = 1.0
+		get_tree().create_timer(randf_range(0.3, 1.4)).timeout.connect(func(): Sfx.play("thunder", 0.55, randf_range(0.85, 1.05)))
+	_flash = maxf(0.0, _flash - get_process_delta_time() * 3.0)
 	for kind in ["tree", "shrub", "grass"]:
 		Util.wind_material(kind).set_shader_parameter("boost", 1.0 + 1.3 * rain)
 	if _rain == null and rain > 0.01 and Game.quality >= 1 and Player.I != null and str(data.get("name", "")) in RAIN_MAPS:
@@ -503,6 +544,10 @@ func _process(dt: float) -> void:
 	if rain > 0.01:
 		_mod.color *= Color(1.0 - 0.30 * rain, 1.0 - 0.22 * rain, 1.0 - 0.08 * rain)
 	_update_rain(rain)
+	if _flash > 0.0:
+		var fl := _flash * (0.6 + 0.4 * sin(_flash * 40.0))
+		_mod.color = Color(minf(_mod.color.r + fl * 0.8, 1.6), minf(_mod.color.g + fl * 0.8, 1.6), minf(_mod.color.b + fl, 1.8))
+	_update_puddles(rain, dt)
 	for ng in _night_glows:
 		(ng["g"] as Sprite2D).modulate.a = float(ng["a"]) * maxf(n, (Game.weather if _outdoor else 0.0) * 0.65) * (0.92 + 0.08 * sin(_t * 3.1 + float(ng["g"].get_instance_id() % 17)))
 	_wall_cd -= dt

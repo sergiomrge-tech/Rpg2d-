@@ -2182,8 +2182,34 @@ func _ci_fx() -> void:
 		modes[c.mode] = int(modes.get(c.mode, 0)) + 1
 	print("[ci] rain citizen modes ", modes, " weather ", weather, " outdoor ", world._outdoor, " mod ", world._mod.color, " rain node ", world._rain)
 	await shot("98_chuva")
+	await _wait(2.0)
+	await shot("98_chuva_poças")
 	weather = 0.0
 	weather_target = 0.0
+	# house quests
+	for who in ["res_nina", "res_lucia"]:
+		var l1 := Story.talk(who)
+		var l2 := Story.talk(who)
+		state.add("imp_horn", 2)
+		state.add("demon_hide", 4)
+		var l3 := Story.talk(who)
+		print("[ci] house quest ", who, " offer ", l1.size(), " again ", l2[0][1].substr(0, 20), " done ", l3[0][1].substr(0, 24), " gold ", state.gold)
+	# guard shifts in Valemont
+	for ph in [0.0, 0.5]:
+		clock = World.DAY_LENGTH * ph
+		_tour_to("valemont")
+		_travel_cd = 999.0
+		await _wait(0.8)
+		var gv := 0
+		var cv := 0
+		for c in get_tree().get_nodes_in_group("citizens"):
+			if c.visible:
+				if c.look == "v_guard":
+					gv += 1
+				else:
+					cv += 1
+		print("[ci] valemont phase ", ph, " visible guards ", gv, " citizens ", cv)
+	clock = 0.0
 	# inside a house
 	_tour_to("int_house_aurora_0")
 	_travel_cd = 999.0

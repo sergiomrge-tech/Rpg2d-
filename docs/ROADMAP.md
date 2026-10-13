@@ -117,6 +117,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ **Rotina dos moradores:** feira de manhã, taverna ao entardecer, dormem à noite, abrigam-se da chuva (`citizen.gd`)
 - ✅ **Reflexo na água** de árvores e prédios na beira (Alta): espelho ondulado recortado pela máscara de água
 - ✅ Opção **FPS na tela** (Opções) para comparar Baixa/Média/Alta no celular
+- ✅ **Poças** na chuva (com respingos), **som de chuva** e **trovões com relâmpago** (`Sfx.set_rain`, clipes sintetizados)
+- ✅ **Missões dos moradores de Aurora** (Dona Lúcia, Seu Tomás, Nina, Bento: entregar materiais por ouro e poções) — `Story.RES_QUESTS`
+- ✅ **Feira viva:** vizinhos conversam e pechincham; despedidas ao anoitecer/chuva; **guardas de Valemont em dois turnos** (dia/noite)
 - ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
 - ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
 - ✅ Falas em sussurro: cada letra revelada dispara uma sílaba soprada (ruído filtrado por formantes de vogal), com timbre por personagem e voz mais baixa na narração (`Sfx.whisper`)

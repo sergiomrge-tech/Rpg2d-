@@ -39,10 +39,47 @@ func _l(npc: String, text: String) -> Array:
 	return [npc, text]
 
 
+# Aurora cottage residents: id -> [item, amount, gold, reward item, reward amount, quest title, offer lines, thanks line]
+const RES_QUESTS := {
+	"res_lucia": ["demon_hide", 4, 60, "potion", 2, "Remendos da Dona Lúcia",
+		["Meu casaco rasgou todo e o inverno vem aí. Peles de demônio são grossas e quentinhas.", "Traga 4 Peles de Demônio e pago 60 de ouro mais duas poções."], "Que pele macia! Toma, filho: 60 de ouro e duas poções."],
+	"res_tomas": ["spirit_dust", 3, 90, "ether", 2, "Pó para o Seu Tomás",
+		["Sou boticário aposentado, mas ainda faço meus unguentos. Falta Pó Espiritual.", "Traga 3 Pós Espirituais e te dou 90 de ouro e dois éteres."], "Pó puríssimo! Aqui: 90 de ouro e dois éteres. Cuide-se."],
+	"res_nina": ["imp_horn", 2, 25, "potion", 1, "Brinquedo da Nina",
+		["Os diabretes têm uns chifrinhos lindos! Quero fazer um colar pra minha mamãe.", "Traz 2 chifres de diabrete? Dou minhas economias: 25 de ouro e uma poção!"], "Que lindos! Obrigada, herói! Toma o ouro e a poção!"],
+	"res_bento": ["hell_ember", 2, 80, "ether", 1, "Brasa para o Bento",
+		["Meu fogão apagou e a lenha daqui não pega direito. Dizem que Brasas Infernais não se apagam.", "Me traga 2 Brasas Infernais e pago 80 de ouro e um éter."], "Ahhh, quentinho! 80 de ouro e um éter, como combinado."],
+}
+
+
+func _res_quest(npc: String) -> Array:
+	var q: Array = RES_QUESTS[npc]
+	var g := Game
+	var gs: GameState = g.state
+	var on := "sq_%s_on" % npc
+	var done := "sq_%s_done" % npc
+	if g.flags.has(done):
+		return [_l(npc, "Obrigado de novo! Passe aqui sempre que quiser.")]
+	if not g.flags.has(on):
+		g.flags[on] = true
+		return [_l(npc, q[6][0]), _l(npc, q[6][1])]
+	if gs.count(q[0]) >= int(q[1]):
+		for i in int(q[1]):
+			gs.take(q[0])
+		gs.gold += int(q[2])
+		gs.add(q[3], int(q[4]))
+		g.flags[done] = true
+		g.hud.quest_complete(q[5])
+		return [_l(npc, q[7])]
+	return [_l(npc, "Ainda faltam %d. Você consegue!" % (int(q[1]) - gs.count(q[0])))]
+
+
 ## Side quests handed out by the town services. Returns lines when the NPC offers or completes one, otherwise [].
 func _side_quest_talk(npc: String) -> Array:
 	var g := Game
 	var gs: GameState = g.state
+	if RES_QUESTS.has(npc):
+		return _res_quest(npc)
 	match npc:
 		"villager":
 			if not g.flags.has("sq_horns_on"):

@@ -219,10 +219,11 @@ def house(name, outdoor, variant, resident, title):
     cols = ['#8a3a32', '#3a5a8a', '#4a7a4a', '#7a5a2a'][variant % 4]
     dc = windows([mx(5.6), mx(10.0)]) + [D('torch', mx(1.7), 0.8), D('painting', mx(11.9), 0.7),
         D('round_rug', mx(4.1), 8.0, w=4.0, d=2.6, c=cols)]
-    npcs = [N('villager', 'villager', mx(5.5) if not flip else mx(5.5), 5.6, 'down')] if resident else []
+    npcs = [N(resident[0], resident[1], mx(5.5), 5.6, 'down')] if resident else []
     return room(name, title, 'house', W, H, outdoor, f, dc, npcs, 'house')
 
 
+RESIDENTS = [('res_lucia', 'villager'), ('res_tomas', 'r_monk'), ('res_nina', 'v_child'), ('res_bento', 'merchant')]
 HOUSE_DOOR_X = {'house_a': 0, 'house_b': -30}
 
 
@@ -364,7 +365,7 @@ def main():
             index[n['id']] = r['name']
     vil = json.load(open(os.path.join(MAPS, 'village.json')))
     for i, hp in enumerate(village_houses(vil)):
-        d = build_interior(house(house_name(i), 'village', i % 4, i % 3 == 0, 'Casa de Aurora'))
+        d = build_interior(house(house_name(i), 'village', i % 4, RESIDENTS[i // 3] if i % 3 == 0 and i // 3 < len(RESIDENTS) else None, 'Casa de Aurora'))
         with open(os.path.join(MAPS, house_name(i) + '.json'), 'w') as fp:
             json.dump(d, fp)
     for m in sorted({m for m, _, _ in INTERIORS}):

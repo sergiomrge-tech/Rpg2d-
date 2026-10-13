@@ -41,5 +41,5 @@ def add_walkers(m, count, radius=15.0):
             pts.append(rnd.choice(cand))
         if len(pts) < 2:
             continue
-        walkers.append(dict(look=rnd.choice(LOOKS), route=[[round(x * T), round(y * T)] for x, y in pts]))
+        walkers.append(dict(look=rnd.choice(LOOKS + (['v_guard'] * 3 if m.name == 'valemont' else [])), route=[[round(x * T), round(y * T)] for x, y in pts]))
     m.walkers = walkers
