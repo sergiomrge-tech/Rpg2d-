@@ -1,0 +1,206 @@
+Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:360)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+libpulse.so.0: cannot open shared object file: No such file or directory
+libpulse.so.0: cannot open shared object file: No such file or directory
+ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+   at: init_output_device (drivers/alsa/audio_driver_alsa.cpp:90)
+WARNING: All audio drivers failed, falling back to the dummy driver.
+     at: initialize (servers/audio_server.cpp:247)
+
+[ci] shot 00_menu
+[ci] shot 00b_new_game_start
+[ci] shot 01_village
+[ci] shot 02_dialogue
+[ci] shot 02b_quest_update
+[ci] shot 03_grimoire
+[ci] shot 04_woods
+[ci] shot 05_combat
+[ci] shot 06_combat2
+[ci] shot 08_options
+[ci] shot 07_quest_complete
+[ci] shot 10_velmoor
+[ci] shot 10_valemont
+[ci] citizens moved 15/22 emitters 9
+[ci] shot 11_valemont_plaza
+[ci] shot 11_valemont_taverna
+[ci] shot 11_valemont_ferraria
+[ci] shot 11_valemont_catedral
+[ci] shot 11_valemont_estabulo
+[ci] shot 10_kharis
+[ci] shot 10_mines
+[ci] shot 10_mirewail
+[ci] shot 10_peaks
+[ci] shot 10_castle
+[ci] shot 10_wastelands
+[ci] shot 10_citadel
+[ci] shot 50_mage_meteor_a
+[ci] shot 51_mage_meteor_b
+[ci] meteor rain: pack hp 952 -> 761 alive 7/7
+[ci] shot 52_mage_storm_a
+[ci] shot 53_mage_storm_b
+[ci] lightning storm: pack hp 2265 -> 2020 alive 7/7
+[ci] side quests active: 5 (before 0)
+[ci] side quest rewards given, remaining active: 0 gold 420 spark_tome 1
+[ci] night: Noite hidden townsfolk 23/26
+[ci] shot 60_valemont_noite
+[ci] rarity lv8 mob [307, 207, 79, 7, 0] lv18 boss [0, 24, 71, 90, 15]
+[ci] gear rolls invalid: 0
+[ci] staff: mage true summoner true warrior false
+[ci] set bonus: { "name": "Rúnico", "count": 3, "tier": 2, "stats": { "hp": 30, "atk": 9, "mag": 9, "defense": 6 } }
+[ci] forged 5 levels (max 5); sword +5 atk 70 -> 80.8 gold left 3320
+[ci] boss rarity NG+2 [0, 22, 96, 113, 69]
+[ci] shot 72_drop_lendario
+[ci] shot 70_bolsa_raridades
+[ci] sold: gold 3320 -> 3340 bag 12 -> 11
+[ci] shot 71_legenda
+[ci] mage starts with: st_0
+[ci] set power tier 0: xp
+[ci] set power tier 1: gold
+[ci] set power tier 2: bolt
+[ci] set power tier 3: heal
+[ci] set power tier 4: meteor
+[ci] smith hint: Visite o ferreiro de Valemont / int_smithy_valemont / smith_v
+[ci] shot 73_ferreiro_bussola
+[ci] shot 74_loja_ferreiro
+[ci] shop buy: gold 3000 -> 2880
+[ci] abyss wave 1 alive 5
+[ci] shot 75_abismo_onda
+[ci] abyss cancelled, alive 5 active false
+[ci] str+5 agi+3: atk 16 -> 24 dodge 0.018 aspd 1.03 crit 0.085
+[ci] con+2 man+1 int+1: hp 135 -> 149 mp 45 -> 50 regen 1.26
+[ci] req legendary sword (str 28) with str 19: 'Requer FOR 28' equip: false
+[ci] req sw_1 (str 10) ok: true equip: true
+[ci] tree: tier0 true tier1 w/o tier0: Aprenda a habilidade anterior tier3 lvl: Requer nível 14
+[ci] learned ["0_0", "0_1"] slots ["0_0", "0_1", "", ""] unlock r: true f: true pts left 0
+[ci] respec: true attrs {  } skills [] attr_pts 15 skill_pts 5
+[ci] trees malformed: 0
+[ci] active skills warrior: ["Golpe Ra:440", "Grito de:0", "Redemoin:440", "Execução:220", "Postura :0", "Investid:110", "Bastião :0", "Pisão:110", "Terremot:440", "Fúria Be:0"]
+[ci] active skills mage: ["Bola de :300", "Chuva de:0", "Muralha :140", "Apocalip:369", "Raio em :71", "Tempesta:440", "Nova Gél:440", "Escudo A:157", "Meditaçã:30", "Pulso Ar:253"]
+[ci] active skills paladin: ["Golpe Sa:440", "Julgamen:440", "Martelo :330", "Avatar d:0", "Armadura:0", "Escudo S:0", "Guardião:110", "Mãos Cur:0", "Bênção:0", "Milagre:0"]
+[ci] shot 76_skill_paladin
+[ci] active skills archer: ["Tiro Per:110", "Foco Mor:0", "Tiro Exp:330", "Tiro de :110", "Leque de:110", "Salva To:220", "Tempesta:440", "Salto Ev:0", "Armadilh:440", "Instinto:0"]
+[ci] active skills assassin: ["Corte Pr:330", "Dança da:110", "Veneno L:440", "Execução:440", "Passo So:440", "Véu das :0", "Sombra E:0", "Bomba de:419", "Roubo Vi:440", "Mercador:0"]
+[ci] active skills summoner: ["Chamar F:0", "Explosão:440", "Legião E:440", "Senhor d:440", "Aura Pro:103", "Vínculo :119", "Alma Gêm:65", "Foco Cal:104", "Raio Esp:49", "Eco Infi:110"]
+[ci] shot 76_skill_summoner
+[ci] shot 77_arvore_habilidades
+[ci] passive text problem warrior 1: Sangue de Ferro I — Abaixo de 40% de vida: +20% de ataque e -10% de dano recebido
+[ci] passive text problem warrior 10: Sangue de Ferro II — Abaixo de 40% de vida: +30% de ataque e -15% de dano recebido
+[ci] passive text problem warrior 20: Sangue de Ferro III — Abaixo de 40% de vida: +40% de ataque e -20% de dano recebido
+[ci] passive text problem mage 1: Fluxo Arcano I — Ao abater um inimigo, recupera 6% da mana
+[ci] passive text problem mage 10: Fluxo Arcano II — Ao abater um inimigo, recupera 9% da mana
+[ci] passive text problem mage 20: Fluxo Arcano III — Ao abater um inimigo, recupera 12% da mana
+[ci] passive text problem archer 1: Tiro Certeiro I — A cada 5 flechas, a próxima causa +80% de dano
+[ci] passive text problem archer 10: Tiro Certeiro II — A cada 4 flechas, a próxima causa +80% de dano
+[ci] passive text problem archer 20: Tiro Certeiro III — A cada 3 flechas, a próxima causa +80% de dano
+[ci] passive text problem paladin 1: Aura Sagrada I — Regenera 0.6% da vida por segundo
+[ci] passive text problem paladin 10: Aura Sagrada II — Regenera 0.9% da vida por segundo
+[ci] passive text problem paladin 20: Aura Sagrada III — Regenera 1.2% da vida por segundo
+[ci] passive text problem assassin 1: Golpe Furtivo I — O primeiro golpe em um inimigo ileso causa +50% de dano
+[ci] passive text problem assassin 10: Golpe Furtivo II — O primeiro golpe em um inimigo ileso causa +80% de dano
+[ci] passive text problem assassin 20: Golpe Furtivo III — O primeiro golpe em um inimigo ileso causa +110% de dano
+[ci] passive text problem summoner 1: Laço Espiritual I — Familiares causam +20% de dano; +0.8 mana/s para você
+[ci] passive text problem summoner 10: Laço Espiritual II — Familiares causam +35% de dano; +1.2 mana/s para você
+[ci] passive text problem summoner 20: Laço Espiritual III — Familiares causam +50% de dano; +1.6 mana/s para você
+[ci] passives: Sangue de Ferro I — Abaixo de 40% de vida: +20% de ataque e -10% de dano recebido | Aura Sagrada III — Regenera 1.2% da vida por segundo
+[ci] Sangue de Ferro atk 16 -> 19.2 dmg_taken 0.9
+[ci] daily: ["Caçar 17 monstros [209 ouro · 193 EXP]", "Caçar 8× Oni Escudeiro [238 ouro · 216 EXP · Poção de Vida]", "Trazer 6× Pó de Espírito [468 ouro · 186 EXP]"]
+[ci] daily regions for imp: ["Vila de Aurora"] seconds left true
+[ci] hunt any progress 12/12 ready true
+[ci] deliver ready true
+[ci] claim hunt: true claim deliver: true gold 5192 -> 5484 bag left 97
+[ci] daily save roundtrip: done 2 bonus false
+[ci] shot 78_quadro_guilda
+[ci] shot 79_loja_vender
+[ci] shop sell: gold 5484 -> 6044 sell list 11
+[ci] shot 80_passiva
+[ci] interior int_guild_aurora npcs ["receptionist"] furniture 20
+[ci] shot 90_int_guild_aurora
+[ci] interior int_smithy_aurora npcs ["blacksmith"] furniture 13
+[ci] shot 90_int_smithy_aurora
+[ci] interior int_tavern_aurora npcs ["inn_aurora"] furniture 31
+[ci] shot 90_int_tavern_aurora
+[ci] interior int_guild_valemont npcs ["guildmaster"] furniture 20
+[ci] shot 90_int_guild_valemont
+[ci] interior int_tavern_valemont npcs ["tavern_keeper"] furniture 31
+[ci] shot 90_int_tavern_valemont
+[ci] interior int_smithy_valemont npcs ["smith_v"] furniture 13
+[ci] shot 90_int_smithy_valemont
+[ci] interior int_shop_valemont npcs ["shopkeeper"] furniture 13
+[ci] shot 90_int_shop_valemont
+[ci] interior int_armory_valemont npcs ["armorer"] furniture 14
+[ci] shot 90_int_armory_valemont
+[ci] interior int_stable_valemont npcs ["stable_master"] furniture 13
+[ci] shot 90_int_stable_valemont
+[ci] interior int_library_valemont npcs ["librarian"] furniture 17
+[ci] shot 90_int_library_valemont
+[ci] interior int_barracks_valemont npcs ["guard_captain"] furniture 15
+[ci] shot 90_int_barracks_valemont
+[ci] interior int_bakery_valemont npcs ["baker"] furniture 14
+[ci] shot 90_int_bakery_valemont
+[ci] door village -> int_guild_aurora: entered true back in village at true
+[ci] door village -> int_smithy_aurora: entered true back in village at true
+[ci] door village -> int_tavern_aurora: entered true back in village at true
+[ci] door village -> int_house_aurora_0: entered true back in village at true
+[ci] door village -> int_house_aurora_3: entered true back in village at true
+[ci] door valemont -> int_guild_valemont: entered true back in valemont at true
+[ci] door valemont -> int_tavern_valemont: entered true back in valemont at true
+[ci] door valemont -> int_smithy_valemont: entered true back in valemont at true
+[ci] door valemont -> int_shop_valemont: entered true back in valemont at true
+[ci] door valemont -> int_armory_valemont: entered true back in valemont at true
+[ci] door valemont -> int_stable_valemont: entered true back in valemont at true
+[ci] door valemont -> int_library_valemont: entered true back in valemont at true
+[ci] door valemont -> int_barracks_valemont: entered true back in valemont at true
+[ci] door valemont -> int_bakery_valemont: entered true back in valemont at true
+[ci] night shop: map valemont tavern: 
+[ci] night tavern: map int_tavern_valemont
+[ci] shot 91_taverna_quartos
+[ci] shot 92_taverna_comida
+[ci] food buffs: ["food"] hp 112.4
+[ci] shot 93_dormindo
+[ci] slept: clock 180 -> 367.2 hp 316/316 mp 1013 buffs ["food", "rest"] open true
+[ci] shot 94_taverna_apos_dormir
+[ci] lock 1: nearest true
+[ci] lock 2: next true
+[ci] lock 3: next true
+[ci] lock 4: released true
+[ci] shot 95_trava_de_mira
+[ci] lock melee: facing away, hit true facing now 3
+[ci] lock arrow: far target hit true
+[ci] dbg nearest from c: <null> dist a-c 8.55120086669922 player dead false all 3
+[ci] lock after kill: true c.dead true lock Diabrete Nv3:<CharacterBody2D#2843201243135> a.dead false b.dead false
+[ci] lock cleared when none left: true
+[ci] shot 96_predio_tavern
+[ci] shot 96_predio_guild
+[ci] shot 96_predio_smithy
+[ci] shot 96_predio_plaza
+[ci] shot 96_predio_muralha_ne
+[ci] shot 96_predio_muralha_sul
+[ci] shot 96_predio_muralha_oeste
+[ci] shot 96_predio_aurora
+[ci] shot 40_insect_mantis_reaver_0
+[ci] shot 40_insect_scarab_brute_0
+[ci] shot 40_insect_moth_hexer_0
+[ci] shot 40_insect_termite_burrower_0
+[ci] shot 40_insect_vespa_lancer_0
+[ci] shot 40_insect_cicada_screecher_0
+[ci] shot 40_insect_ant_guard_0
+[ci] shot 40_insect_roach_plaguebearer_0
+[ci] shot 40_insect_spike_beetle_0
+[ci] shot 40_insect_dragonfly_skirmisher_0
+[ci] shot 40_insect_mantis_high_reaper_0
+[ci] shot 40_insect_mantis_high_reaper_1
+[ci] shot 40_insect_scarab_colossus_0
+[ci] shot 40_insect_scarab_colossus_1
+[ci] shot 40_insect_moth_oracle_0
+[ci] shot 40_insect_moth_oracle_1
+[ci] shot 40_insect_queen_vespara_0
