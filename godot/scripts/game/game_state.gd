@@ -27,6 +27,7 @@ var skill_pts := 0             # unspent skill-tree points
 var attrs := {}                # attribute -> points invested above the class base
 var skills: Array = []         # learned tree nodes ("branch_tier")
 var slots: Array = ["", "", "", ""]   # node id equipped on R, F, G, V
+var evo: Dictionary = {}       # node id -> "a" (Poder) / "b" (Veloz) evolution
 var buffs := {}                # transient: name -> {"t": seconds, "eff": {...}}
 var hp_frac := 1.0             # transient: current life fraction (set by the Player; drives Sangue de Ferro)
 var enh := {}                  # item id -> forge level (+0..+5)
@@ -173,7 +174,31 @@ func bonus(key: String) -> float:
 ## The skill equipped on slot "r" / "f" / "g" / "v" ({} when empty).
 func slot_skill(which: String) -> Dictionary:
 	var sid: String = slots[SkillTree.SLOTS.find(which)]
-	return SkillTree.skill(class_id, sid) if sid != "" else {}
+	return SkillTree.evolved(SkillTree.skill(class_id, sid), str(evo.get(sid, ""))) if sid != "" else {}
+
+
+const EVO_LEVEL := 10
+
+
+## "" when the learned skill can evolve now, otherwise the reason.
+func evo_block(sid: String) -> String:
+	if not skills.has(sid):
+		return "Aprenda primeiro"
+	if evo.has(sid):
+		return "Já evoluída"
+	if level < EVO_LEVEL:
+		return "Evolução no nível %d" % EVO_LEVEL
+	if skill_pts < 1:
+		return "Falta 1 ponto"
+	return ""
+
+
+func evolve(sid: String, v: String) -> bool:
+	if evo_block(sid) != "":
+		return false
+	skill_pts -= 1
+	evo[sid] = v
+	return true
 
 
 func has_unlock(which: String) -> bool:
@@ -257,6 +282,7 @@ func respec() -> bool:
 	gold -= respec_cost()
 	attrs = {}
 	skills = []
+	evo = {}
 	slots = ["", "", "", ""]
 	buffs = {}
 	attr_pts = (level - 1) * SkillTree.ATTR_PER_LEVEL
@@ -398,7 +424,7 @@ func to_dict() -> Dictionary:
 	return {"level": level, "class_id": class_id, "xp": xp, "gold": gold, "max_hp": max_hp, "max_mp": base_mp, "max_st": max_st, "atk": atk, "mag": mag,
 		"spark_tier": spark_tier, "sword_tier": sword_tier, "guild_rank": guild_rank, "eq_weapon": eq_weapon, "eq_armor": eq_armor,
 		"eq_charm": eq_charm, "inv_ids": inv_ids, "inv_counts": inv_counts, "enh": enh, "ng_plus": ng_plus,
-		"attr_pts": attr_pts, "skill_pts": skill_pts, "attrs": attrs, "skills": skills, "slots": slots, "stats_v": 2}
+		"attr_pts": attr_pts, "skill_pts": skill_pts, "attrs": attrs, "skills": skills, "slots": slots, "evo": evo, "stats_v": 2}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -420,6 +446,9 @@ func from_dict(d: Dictionary) -> void:
 	slots = ["", "", "", ""]
 	for i in mini(4, (d.get("slots", []) as Array).size()):
 		slots[i] = str(d["slots"][i])
+	evo = {}
+	for k in d.get("evo", {}):
+		evo[str(k)] = str(d["evo"][k])
 	buffs = {}
 	if int(d.get("stats_v", 0)) == 1:     # trees were rebuilt (10 skills per class): refund the skill points, learn again
 		skills = []

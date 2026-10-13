@@ -146,6 +146,12 @@ func _process(_dt: float) -> void:
 				ic.texture = Sheets.icon(a["i"])
 				ic.modulate = a["c"]
 			b["c"].modulate.a = 1.0 if Game.player.gs.has_unlock(which) else 0.35
+			if not b.has("t"):
+				b["t"] = hud.txt(b["c"], "", Util.font_bold, 34, Color(1, 1, 1), Vector2(0.5, 0.5), Vector2.ZERO, Vector2(110, 44))
+				(b["t"] as Label).z_index = 3
+			var cdv: float = float(Game.player.skill_cd[which])
+			b["c"].get_child(0).modulate.a = 0.25 if cdv > 0.05 else 1.0
+			(b["t"] as Label).text = ("%d" % ceili(cdv)) if cdv > 0.05 else ""
 
 
 func _near_npc() -> bool:

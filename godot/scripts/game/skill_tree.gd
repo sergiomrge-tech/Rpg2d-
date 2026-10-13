@@ -58,7 +58,7 @@ const TREES := {
 		]},
 		{"name": "Tremor", "icon": "skill_roll", "nodes": [
 			{"n": "Pisão", "mp": 8, "cd": 5, "k": "nova", "p": {"r": 2.4, "m": 1.6, "s": "atk", "kb": 14}, "pas": {"aspd": 3}, "i": "skill_roll", "c": Color(0.85, 0.7, 0.45)},
-			{"n": "Terremoto", "mp": 20, "cd": 11, "k": "nova", "p": {"r": 3.4, "m": 2.4, "s": "atk", "kb": 11}, "pas": {"aspd": 3}, "i": "skill_roll", "c": Color(0.85, 0.7, 0.45)},
+			{"n": "Terremoto", "mp": 20, "cd": 11, "k": "nova", "p": {"r": 3.4, "m": 3.0, "s": "atk", "kb": 11}, "pas": {"aspd": 3}, "i": "skill_roll", "c": Color(0.85, 0.7, 0.45)},
 			{"n": "Fúria Berserker", "mp": 24, "cd": 30, "k": "none", "p": {"buff": {"id": "berserk", "t": 10, "eff": {"atk_pct": 30, "aspd": 30, "lifesteal": 10}}}, "pas": {"lifesteal": 3}, "i": "skill_sword", "c": Color(1.0, 0.4, 0.4)},
 		]},
 	],
@@ -72,25 +72,25 @@ const TREES := {
 		{"name": "Tempestade", "icon": "skill_spark", "nodes": [
 			{"n": "Raio em Cadeia", "mp": 16, "cd": 6, "k": "nova", "p": {"r": 2.5, "m": 2.7, "s": "mag", "kb": 4, "at": "t", "rng": 9}, "pas": {"regen": 0.4, "mp": 10}, "i": "skill_spark", "c": Color(0.55, 0.8, 1.0)},
 			{"n": "Tempestade de Raios", "mp": 30, "cd": 9, "k": "storm", "p": {"m": 1.0}, "pas": {"regen": 0.4}, "i": "skill_spark", "c": Color(0.55, 0.8, 1.0)},
-			{"n": "Nova Gélida", "mp": 24, "cd": 13, "k": "nova", "p": {"r": 3.7, "m": 2.3, "s": "mag", "kb": 4}, "pas": {"cdr": 6}, "i": "skill_spark", "c": Color(0.6, 0.85, 1.0)},
+			{"n": "Nova Gélida", "mp": 24, "cd": 13, "k": "nova", "p": {"r": 3.7, "m": 2.8, "s": "mag", "kb": 4}, "pas": {"cdr": 6}, "i": "skill_spark", "c": Color(0.6, 0.85, 1.0)},
 		]},
 		{"name": "Sabedoria", "icon": "tome", "nodes": [
 			{"n": "Escudo Arcano", "mp": 20, "cd": 24, "k": "none", "p": {"shield": 3}, "pas": {"def": 3, "hp": 15}, "i": "tome", "c": Color(0.95, 0.95, 1.0)},
 			{"n": "Meditação", "mp": 0, "cd": 30, "k": "none", "p": {"buff": {"id": "medita", "t": 8, "eff": {"regen": 6}}}, "pas": {"mp": 15}, "i": "tome", "c": Color(0.55, 0.95, 0.9)},
-			{"n": "Pulso Arcano", "mp": 30, "cd": 16, "k": "nova", "p": {"r": 5.0, "m": 1.9, "s": "mag", "kb": 16}, "pas": {"mag_pct": 6, "mp": 25}, "i": "tome", "c": Color(0.7, 0.6, 1.0)},
+			{"n": "Pulso Arcano", "mp": 30, "cd": 16, "k": "nova", "p": {"r": 5.0, "m": 2.4, "s": "mag", "kb": 16}, "pas": {"mag_pct": 6, "mp": 25}, "i": "tome", "c": Color(0.7, 0.6, 1.0)},
 		]},
 	],
 	"archer": [
 		{"name": "Precisão", "icon": "skill_roll", "nodes": [
-			{"n": "Tiro Perfurante", "mp": 10, "cd": 5, "k": "volley", "p": {"n": 3, "arc": 14, "m": 1.6}, "pas": {"atk_pct": 4}, "i": "skill_roll", "c": Color(0.7, 1.0, 0.6)},
+			{"n": "Tiro Perfurante", "mp": 10, "cd": 5, "k": "volley", "p": {"n": 3, "arc": 14, "m": 1.0}, "pas": {"atk_pct": 4}, "i": "skill_roll", "c": Color(0.7, 1.0, 0.6)},
 			{"n": "Foco Mortal", "mp": 15, "cd": 20, "k": "none", "p": {"buff": {"id": "foco", "t": 8, "eff": {"crit": 40, "aspd": 30}}}, "pas": {"crit": 3}, "i": "skill_roll", "c": Color(0.7, 1.0, 0.6)},
 			{"n": "Tiro Explosivo", "mp": 22, "cd": 10, "k": "nova", "p": {"r": 2.2, "m": 3.3, "s": "atk", "kb": 10, "at": "t", "rng": 9}, "pas": {"crit": 4, "atk_pct": 4}, "i": "skill_roll", "c": Color(1.0, 0.55, 0.25)},
 			{"n": "Tiro de Mestre", "mp": 34, "cd": 18, "k": "volley", "p": {"n": 1, "arc": 0, "m": 6.5}, "pas": {"atk_pct": 12, "crit": 6}, "i": "skill_roll", "c": Color(1.0, 0.9, 0.5)},
 		]},
 		{"name": "Chuva", "icon": "skill_roll", "nodes": [
-			{"n": "Leque de Flechas", "mp": 12, "cd": 7, "k": "volley", "p": {"n": 7, "arc": 70, "m": 1.0}, "pas": {"aspd": 4}, "i": "skill_roll", "c": Color(0.7, 1.0, 0.6)},
-			{"n": "Salva Total", "mp": 22, "cd": 10, "k": "volley", "p": {"n": 12, "arc": 360, "m": 0.9}, "pas": {"aspd": 4}, "i": "skill_roll", "c": Color(0.7, 1.0, 0.6)},
-			{"n": "Tempestade de Flechas", "mp": 40, "cd": 24, "k": "volley", "p": {"n": 20, "arc": 360, "m": 0.9, "waves": 2}, "pas": {"atk_pct": 10, "cdr": 10}, "i": "skill_roll", "c": Color(0.5, 1.0, 0.7)},
+			{"n": "Leque de Flechas", "mp": 12, "cd": 7, "k": "volley", "p": {"n": 7, "arc": 70, "m": 0.7}, "pas": {"aspd": 4}, "i": "skill_roll", "c": Color(0.7, 1.0, 0.6)},
+			{"n": "Salva Total", "mp": 22, "cd": 10, "k": "volley", "p": {"n": 12, "arc": 360, "m": 0.55}, "pas": {"aspd": 4}, "i": "skill_roll", "c": Color(0.7, 1.0, 0.6)},
+			{"n": "Tempestade de Flechas", "mp": 40, "cd": 24, "k": "volley", "p": {"n": 20, "arc": 360, "m": 0.5, "waves": 2}, "pas": {"atk_pct": 10, "cdr": 10}, "i": "skill_roll", "c": Color(0.5, 1.0, 0.7)},
 		]},
 		{"name": "Caçador", "icon": "gear_charm", "nodes": [
 			{"n": "Salto Evasivo", "mp": 8, "cd": 6, "k": "dash", "p": {"dist": -4, "r": 0, "m": 0, "s": "atk"}, "pas": {"mspd": 5, "dodge": 2}, "i": "gear_charm", "c": Color(0.95, 0.95, 1.0)},
@@ -101,14 +101,14 @@ const TREES := {
 	"paladin": [
 		{"name": "Luz", "icon": "skill_spark", "nodes": [
 			{"n": "Golpe Sagrado", "mp": 10, "cd": 6, "k": "nova", "p": {"r": 2.4, "m": 2.0, "s": "mix", "kb": 8}, "pas": {"atk_pct": 3, "mag_pct": 3}, "i": "skill_spark", "c": Color(1.0, 0.9, 0.5)},
-			{"n": "Julgamento Divino", "mp": 30, "cd": 14, "k": "nova", "p": {"r": 3.8, "m": 1.5, "s": "mix", "kb": 8, "heal": 0.15}, "pas": {"mag_pct": 3}, "i": "skill_spark", "c": Color(1.0, 0.9, 0.5)},
+			{"n": "Julgamento Divino", "mp": 30, "cd": 14, "k": "nova", "p": {"r": 3.8, "m": 2.2, "s": "mix", "kb": 8, "heal": 0.15}, "pas": {"mag_pct": 3}, "i": "skill_spark", "c": Color(1.0, 0.9, 0.5)},
 			{"n": "Martelo da Justiça", "mp": 28, "cd": 14, "k": "nova", "p": {"r": 2.2, "m": 4.6, "s": "mix", "kb": 15, "at": "t", "rng": 3.2}, "pas": {"atk_pct": 8, "mag_pct": 6}, "i": "skill_sword", "c": Color(0.95, 0.95, 1.0)},
 			{"n": "Avatar da Luz", "mp": 40, "cd": 34, "k": "none", "p": {"buff": {"id": "avatar", "t": 12, "eff": {"atk_pct": 25, "mag_pct": 25, "dmg_red": 15}}}, "pas": {"atk_pct": 10, "mag_pct": 10}, "i": "skill_spark", "c": Color(1.0, 0.9, 0.5)},
 		]},
 		{"name": "Bastião", "icon": "gear_armor", "nodes": [
 			{"n": "Armadura Bendita", "mp": 12, "cd": 15, "k": "none", "p": {"buff": {"id": "armadura", "t": 8, "eff": {"def": 10}}}, "pas": {"def": 5, "hp": 25}, "i": "gear_armor", "c": Color(0.95, 0.95, 1.0)},
 			{"n": "Escudo Sagrado", "mp": 25, "cd": 25, "k": "none", "p": {"shield": 3}, "pas": {"def": 3}, "i": "gear_armor", "c": Color(1.0, 0.9, 0.5)},
-			{"n": "Guardião de Aetheria", "mp": 30, "cd": 24, "k": "nova", "p": {"r": 3.6, "m": 1.2, "s": "mix", "kb": 14, "buff": {"id": "guardiao", "t": 10, "eff": {"dmg_red": 10}}}, "pas": {"dmg_red": 6, "hp": 30}, "i": "gear_armor", "c": Color(0.95, 0.95, 1.0)},
+			{"n": "Guardião de Aetheria", "mp": 30, "cd": 24, "k": "nova", "p": {"r": 3.6, "m": 2.0, "s": "mix", "kb": 14, "buff": {"id": "guardiao", "t": 10, "eff": {"dmg_red": 10}}}, "pas": {"dmg_red": 6, "hp": 30}, "i": "gear_armor", "c": Color(0.95, 0.95, 1.0)},
 		]},
 		{"name": "Redenção", "icon": "potion", "nodes": [
 			{"n": "Mãos Curativas", "mp": 22, "cd": 14, "k": "none", "p": {"heal": 0.25}, "pas": {"heal_pct": 15, "regen": 0.4}, "i": "potion", "c": Color(0.7, 1.0, 0.6)},
@@ -129,17 +129,17 @@ const TREES := {
 			{"n": "Sombra Eterna", "mp": 30, "cd": 32, "k": "none", "p": {"buff": {"id": "sombra", "t": 10, "eff": {"dodge": 40, "crit": 30, "aspd": 30}}}, "pas": {"dodge": 8, "mspd": 8}, "i": "skill_roll", "c": Color(0.5, 0.4, 0.9)},
 		]},
 		{"name": "Ladrão", "icon": "coin", "nodes": [
-			{"n": "Bomba de Fumaça", "mp": 12, "cd": 12, "k": "nova", "p": {"r": 3.0, "m": 0.6, "s": "atk", "kb": 16, "buff": {"id": "fumaca", "t": 4, "eff": {"dodge": 25}}}, "pas": {"xp_pct": 5, "aspd": 3}, "i": "coin", "c": Color(0.95, 0.95, 1.0)},
-			{"n": "Roubo Vital", "mp": 18, "cd": 12, "k": "nova", "p": {"r": 2.5, "m": 2.0, "s": "atk", "kb": 5, "heal": 0.12}, "pas": {"lifesteal": 4, "crit": 3}, "i": "coin", "c": Color(1.0, 0.4, 0.4)},
+			{"n": "Bomba de Fumaça", "mp": 12, "cd": 12, "k": "nova", "p": {"r": 3.0, "m": 1.0, "s": "atk", "kb": 16, "buff": {"id": "fumaca", "t": 4, "eff": {"dodge": 25}}}, "pas": {"xp_pct": 5, "aspd": 3}, "i": "coin", "c": Color(0.95, 0.95, 1.0)},
+			{"n": "Roubo Vital", "mp": 18, "cd": 12, "k": "nova", "p": {"r": 2.5, "m": 2.6, "s": "atk", "kb": 5, "heal": 0.12}, "pas": {"lifesteal": 4, "crit": 3}, "i": "coin", "c": Color(1.0, 0.4, 0.4)},
 			{"n": "Mercador de Mortes", "mp": 20, "cd": 24, "k": "none", "p": {"buff": {"id": "mercador", "t": 8, "eff": {"lifesteal": 15, "crit": 20}}}, "pas": {"lifesteal": 6, "cdr": 10}, "i": "coin", "c": Color(1.0, 0.9, 0.5)},
 		]},
 	],
 	"summoner": [
 		{"name": "Espíritos", "icon": "skill_spark", "nodes": [
 			{"n": "Chamar Familiares", "mp": 24, "cd": 20, "k": "summon", "p": {"n": 2}, "pas": {"mag_pct": 6}, "i": "skill_spark", "c": Color(0.55, 0.95, 0.9)},
-			{"n": "Explosão Espiritual", "mp": 28, "cd": 12, "k": "nova", "p": {"r": 3.6, "m": 2.6, "s": "mag", "kb": 7}, "pas": {"mag_pct": 3}, "i": "skill_spark", "c": Color(0.55, 0.95, 0.9)},
-			{"n": "Legião Espectral", "mp": 34, "cd": 18, "k": "nova", "p": {"r": 4.0, "m": 2.3, "s": "mag", "kb": 8, "summon": 1}, "pas": {"mag_pct": 8, "cdr": 6}, "i": "skill_spark", "c": Color(0.6, 1.0, 0.95)},
-			{"n": "Senhor dos Espíritos", "mp": 55, "cd": 32, "k": "nova", "p": {"r": 5.0, "m": 3.2, "s": "mag", "kb": 14, "buff": {"id": "senhor", "t": 12, "eff": {"mag_pct": 40, "regen": 3}}}, "pas": {"mag_pct": 14, "cdr": 8}, "i": "skill_spark", "c": Color(0.95, 0.95, 1.0)},
+			{"n": "Explosão Espiritual", "mp": 28, "cd": 12, "k": "nova", "p": {"r": 3.6, "m": 3.0, "s": "mag", "kb": 7}, "pas": {"mag_pct": 3}, "i": "skill_spark", "c": Color(0.55, 0.95, 0.9)},
+			{"n": "Legião Espectral", "mp": 34, "cd": 18, "k": "nova", "p": {"r": 4.0, "m": 2.8, "s": "mag", "kb": 8, "summon": 1}, "pas": {"mag_pct": 8, "cdr": 6}, "i": "skill_spark", "c": Color(0.6, 1.0, 0.95)},
+			{"n": "Senhor dos Espíritos", "mp": 55, "cd": 32, "k": "nova", "p": {"r": 5.0, "m": 4.2, "s": "mag", "kb": 14, "buff": {"id": "senhor", "t": 12, "eff": {"mag_pct": 40, "regen": 3}}}, "pas": {"mag_pct": 14, "cdr": 8}, "i": "skill_spark", "c": Color(0.95, 0.95, 1.0)},
 		]},
 		{"name": "Vínculo", "icon": "potion", "nodes": [
 			{"n": "Aura Protetora", "mp": 14, "cd": 18, "k": "none", "p": {"buff": {"id": "aura", "t": 10, "eff": {"def": 8, "dmg_red": 10}}}, "pas": {"def": 3, "hp": 20}, "i": "potion", "c": Color(0.55, 0.95, 0.9)},
@@ -244,6 +244,40 @@ static func active_text(sk: Dictionary) -> String:
 		var bf: Dictionary = p["buff"]
 		parts.append("%s por %d s" % [describe(bf["eff"]), int(bf["t"])])
 	return "\n".join(parts)
+
+
+const EVO_NAMES := {"a": "Poder", "b": "Veloz"}
+
+
+## Evolution of a learned skill (Nv 10, 1 point): "a" Poder = stronger / bigger / longer, "b" Veloz = faster recharge and cheaper.
+static func evolved(sk: Dictionary, v: String) -> Dictionary:
+	if v == "":
+		return sk
+	var o: Dictionary = sk.duplicate(true)
+	var p: Dictionary = o["p"]
+	if v == "a":
+		o["n"] = str(sk["n"]) + " ✦"
+		if p.has("m"):
+			p["m"] = float(p["m"]) * 1.35
+		if p.has("r"):
+			p["r"] = float(p["r"]) * 1.15
+		if p.has("heal"):
+			p["heal"] = float(p["heal"]) * 1.3
+		if p.has("shield"):
+			p["shield"] = float(p["shield"]) * 1.4
+		if p.has("buff"):
+			p["buff"]["t"] = float(p["buff"]["t"]) * 1.4
+		if p.has("n") and str(o["k"]) == "volley":
+			p["n"] = int(ceil(float(p["n"]) * 1.3))
+	else:
+		o["n"] = str(sk["n"]) + " ❖"
+		o["cd"] = float(sk["cd"]) * 0.7
+		o["mp"] = float(sk["mp"]) * 0.8
+	return o
+
+
+static func evo_text(v: String) -> String:
+	return "Poder: +35% de dano, alcance, cura e duração" if v == "a" else "Veloz: recarga -30% e custo de mana -20%"
 
 
 static func node_text(class_id: String, branch: int, tier: int) -> String:

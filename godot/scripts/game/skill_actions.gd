@@ -36,6 +36,7 @@ static func cast(p: Player, which: String) -> void:
 			if prm.get("at", "") != "t":
 				Fx.shockwave(at, float(prm["r"]) * 0.45)
 			Sfx.play("boom", 0.35, 1.4)
+			_burst(centre, col, 26, 60.0 + float(prm["r"]) * 70.0)
 		"meteor":
 			var centre2 := AreaSpell.pick_center(p, 9.0)
 			AreaSpell.meteor_rain(centre2, gs.total_mag() * (1.0 + 0.2 * (tier - 1)) * float(prm["m"]), crit)
@@ -66,6 +67,7 @@ static func cast(p: Player, which: String) -> void:
 							dir = aim.rotated(lerpf(-arc * 0.5, arc * 0.5, k / float(n - 1)))
 						Projectile.arrow(origin + dir * 14.0, dir, dmg_v)
 					Sfx.play("swing", 0.6, 1.4)
+					_burst(origin + aim * 24.0, col, 10, 200.0)
 				if w == 0:
 					fire.call()
 				else:
@@ -73,6 +75,8 @@ static func cast(p: Player, which: String) -> void:
 		"dash":
 			var dir2 := p.aim_dir() if float(prm["dist"]) > 0.0 else -p.aim_dir()
 			p.move_and_collide(dir2 * absf(float(prm["dist"])) * T)
+			for k in 5:       # afterimage trail between start and landing
+				_burst(at.lerp(p.pos(), k / 4.0), col, 6, 90.0)
 			p.invuln = maxf(p.invuln, 0.4)
 			Fx.dust(at, 1.2)
 			if float(prm["m"]) > 0.0:
@@ -86,17 +90,63 @@ static func cast(p: Player, which: String) -> void:
 	if prm.has("heal"):
 		p.hp = minf(gs.hp_max(), p.hp + gs.hp_max() * float(prm["heal"]) * gs.heal_mult())
 		Fx.heal(at)
+		_burst(at, Color(0.6, 1.0, 0.7), 16, 120.0, true)
+		_icon_pop(p, sk)
 	if prm.has("shield"):
 		p.invuln = maxf(p.invuln, float(prm["shield"]))
 		_aura(p, col, float(prm["shield"]))
+		_burst(at, col, 20, 160.0)
+		_icon_pop(p, sk)
 	if prm.has("buff"):
 		var bf: Dictionary = prm["buff"]
 		gs.add_buff(str(bf["id"]), float(bf["t"]), bf["eff"], str(sk["n"]))
 		_aura(p, col, float(bf["t"]))
+		_icon_pop(p, sk)
 		if str(sk["k"]) == "none":
 			Fx.shockwave(at, 1.1)
 			Sfx.play("boom", 0.3, 1.5)
 	Fx.toast(str(sk["n"]) + "!", col, at + Vector2.UP * 2.2 * T)
+
+
+## One-shot particle burst (sparks in the skill colour).
+static func _burst(at: Vector2, col: Color, n: int, speed: float = 220.0, up: bool = false) -> void:
+	if Game.world == null:
+		return
+	var pr := CPUParticles2D.new()
+	pr.texture = Util.soft_circle()
+	pr.one_shot = true
+	pr.amount = n
+	pr.lifetime = 0.7
+	pr.explosiveness = 0.95
+	pr.direction = Vector2.UP if up else Vector2.ZERO
+	pr.spread = 40.0 if up else 180.0
+	pr.initial_velocity_min = speed * 0.5
+	pr.initial_velocity_max = speed
+	pr.gravity = Vector2(0, -30 if up else 60)
+	pr.scale_amount_min = 0.04
+	pr.scale_amount_max = 0.1
+	pr.color = col
+	pr.z_index = 90
+	pr.material = Util.additive()
+	Game.world.fx_layer.add_child(pr)
+	pr.global_position = at
+	pr.emitting = true
+	pr.get_tree().create_timer(1.2).timeout.connect(pr.queue_free)
+
+
+## The skill icon pops above the hero and drifts up (buffs, heals, shields).
+static func _icon_pop(p: Player, sk: Dictionary) -> void:
+	var ic := Sprite2D.new()
+	ic.texture = Sheets.icon(str(sk["i"]))
+	ic.modulate = sk["c"]
+	ic.scale = Vector2(0.5, 0.5)
+	ic.z_index = 95
+	ic.position = Vector2(0, -150)
+	p.add_child(ic)
+	var tw := ic.create_tween().set_parallel(true)
+	tw.tween_property(ic, "position:y", -230.0, 0.9)
+	tw.tween_property(ic, "modulate:a", 0.0, 0.9).set_delay(0.3)
+	tw.chain().tween_callback(ic.queue_free)
 
 
 ## Glow that follows the hero while a buff / shield lasts.

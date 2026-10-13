@@ -160,6 +160,20 @@ func _learn() -> void:
 	_refresh()
 
 
+func _evolve(v: String) -> void:
+	var gs := Game.state
+	var sid := SkillTree.node_id(sel_b, sel_t)
+	var why := gs.evo_block(sid)
+	if why != "":
+		Sfx.play("ui", 0.2, 0.6)
+		Fx.toast(why, Color(1.0, .66, .51))
+		return
+	gs.evolve(sid, v)
+	Sfx.play("levelup", 0.6, 1.3)
+	Fx.toast("Evoluiu: " + str(SkillTree.EVO_NAMES[v]), Color(1, 0.9, 0.5))
+	_refresh()
+
+
 func _equip(which: String) -> void:
 	var gs := Game.state
 	var sid := SkillTree.node_id(sel_b, sel_t)
@@ -274,21 +288,29 @@ func _refresh() -> void:
 			_node_view(page, b, t, Vector2(cx, cy), gs, bold, ink)
 	# details of the selected node
 	var nd := SkillTree.node(gs.class_id, sel_b, sel_t)
-	hud.txt(page, "%s — nível %d" % [nd["n"], int(SkillTree.TIER_LEVELS[sel_t])], bold, 24, ink, C, Vector2(335, -152), Vector2(540, 32), M, false)
-	var det := hud.txt(page, SkillTree.node_text(gs.class_id, sel_b, sel_t), sans, 16, ink, C, Vector2(335, -208), Vector2(560, 70), M, false, VERTICAL_ALIGNMENT_TOP)
+	hud.txt(page, "%s — nível %d" % [nd["n"], int(SkillTree.TIER_LEVELS[sel_t])], bold, 24, ink, C, Vector2(335, -138), Vector2(540, 32), M, false)
+	var det := hud.txt(page, SkillTree.node_text(gs.class_id, sel_b, sel_t), sans, 16, ink, C, Vector2(335, -184), Vector2(560, 70), M, false, VERTICAL_ALIGNMENT_TOP)
 	hud.wrap(det, 560.0)
 	var why := gs.skill_block(sel_b, sel_t)
 	if gs.skill_known(sel_b, sel_t):
 		var sid := SkillTree.node_id(sel_b, sel_t)
-		hud.txt(page, "Equipar em:", bold, 17, ink, C, Vector2(190, -310), Vector2(130, 30), M, false)
+		if gs.evo.has(sid):
+			hud.txt(page, "Evoluída — " + SkillTree.evo_text(str(gs.evo[sid])), bold, 15, Color(0.25, 0.5, 0.2), C, Vector2(335, -284), Vector2(560, 28), M, false)
+		else:
+			var ev := gs.evo_block(sid)
+			hud.txt(page, "Evoluir (Nv %d · 1 pt):" % GameState.EVO_LEVEL, bold, 16, ink if ev == "" else faint, C, Vector2(150, -284), Vector2(250, 28), M, false)
+			for k in ["a", "b"]:
+				_btn(page, str(SkillTree.EVO_NAMES[k]), Vector2(335.0 + (0 if k == "a" else 1) * 120.0 + 40.0, -284), Vector2(110, 40), _evolve.bind(k),
+					Color(0.4, 0.2, 0.08, 0.95) if ev == "" else Color(0.3, 0.25, 0.2, 0.6), 20)
+		hud.txt(page, "Equipar em:", bold, 17, ink, C, Vector2(190, -326), Vector2(130, 30), M, false)
 		for i in 4:
 			var on: bool = gs.slots[i] == sid
-			_btn(page, str(SkillTree.SLOTS[i]).to_upper(), Vector2(285.0 + i * 62.0, -310), Vector2(54, 46), _equip.bind(SkillTree.SLOTS[i]),
+			_btn(page, str(SkillTree.SLOTS[i]).to_upper(), Vector2(285.0 + i * 62.0, -326), Vector2(54, 46), _equip.bind(SkillTree.SLOTS[i]),
 				Color(0.2, 0.5, 0.2, 0.95) if on else Color(0.4, 0.2, 0.08, 0.9), 24)
 	elif why == "":
-		_btn(page, "Aprender · %d pt" % int(SkillTree.TIER_COST[sel_t]), Vector2(335, -310), Vector2(300, 50), _learn, Color(0.4, 0.2, 0.08, 0.95))
+		_btn(page, "Aprender · %d pt" % int(SkillTree.TIER_COST[sel_t]), Vector2(335, -326), Vector2(300, 50), _learn, Color(0.4, 0.2, 0.08, 0.95))
 	else:
-		hud.txt(page, why, bold, 21, Color(0.7, 0.2, 0.15), C, Vector2(335, -310), Vector2(520, 40), M, false)
+		hud.txt(page, why, bold, 21, Color(0.7, 0.2, 0.15), C, Vector2(335, -326), Vector2(520, 40), M, false)
 
 
 func _node_view(parent: Control, b: int, t: int, pos: Vector2, gs: GameState, bold: Font, ink: Color) -> void:

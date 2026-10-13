@@ -276,7 +276,8 @@ func _build() -> void:
 		cd2.scale = Vector2.ONE * 96.0 * 0.8 / nat2.x
 		cd2.value = 0.0
 		txt(o2, ["R", "F", "G", "V"][j], bold, 20, Color(1, 0.95, 0.8), Vector2(0.5, 0), Vector2(0, -6), Vector2(60, 24))
-		area_orbs.append({"orb": o2, "cd": cd2, "icon": ic2})
+		var cdt := txt(o2, "", bold, 30, Color(1, 1, 1), C, Vector2.ZERO, Vector2(80, 40))
+		area_orbs.append({"orb": o2, "cd": cd2, "icon": ic2, "t": cdt})
 	txt(root, "WASD mover · Shift correr · T mira · E falar · Tab livro · P atributos · Esc opções", sans, 20, Color(1, 1, 1, 0.7), Vector2(1, 0), Vector2(-400, 26), Vector2(780, 28))
 
 	# ---- cutscene backdrop
@@ -508,6 +509,7 @@ func _process(delta: float) -> void:
 			var cdv: float = float(p.skill_cd[which])
 			var cmax: float = maxf(0.1, float(p.skill_cd_max[which]))
 			area_orbs[i]["cd"].value = 1.0 if (not unlocked or p.mp < float(a["mp"])) else clampf(cdv / cmax, 0.0, 1.0)
+			area_orbs[i]["t"].text = ("%.0f" % ceilf(cdv)) if (unlocked and cdv > 0.05) else ("mana" if (unlocked and p.mp < float(a["mp"])) else "")
 		var pts_txt := ""
 		if gs.attr_pts > 0 or gs.skill_pts > 0:
 			pts_txt = "★ P: %d atributos · %d habilidades" % [gs.attr_pts, gs.skill_pts]
