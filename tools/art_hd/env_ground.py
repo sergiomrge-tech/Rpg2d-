@@ -176,6 +176,26 @@ def draw_tuft(ctx, rnd, x, y, G, scale=1.0, shadow=True):
 
 
 
+def water_masks(grid: np.ndarray, seed=1, shapes=()):
+    """1/4-res RGB mask for the runtime water overlay: R inside-water (0..1), G depth from the edge, B proximity to the edge from the shore side."""
+    SHAPES[:] = list(shapes)
+    gh, gw = grid.shape
+    h, w = gh * T, gw * T
+    mw_raw = mask_from(grid, 'wb', h, w, seed + 9, blur=14, jitter=0.12)
+    mw = smoothstep(0.48, 0.52, mw_raw)
+    if mw.max() <= 0:
+        return None
+    inside = mw > 0.5
+    d_in = ndimage.distance_transform_edt(inside).astype(np.float32)
+    d_out = ndimage.distance_transform_edt(~inside).astype(np.float32)
+    out = np.zeros((h, w, 3), np.float32)
+    out[..., 0] = mw
+    out[..., 1] = np.clip(d_in / 90, 0, 1)
+    out[..., 2] = np.clip(1 - d_out / 48, 0, 1) * (~inside)
+    q = (out.reshape(h // 4, 4, w // 4, 4, 3).mean(axis=(1, 3)) * 255).astype(np.uint8)
+    return q
+
+
 def bake(grid: np.ndarray, seed=1, shapes=(), grass=None):
     G = dict(DEF_EXTRA)
     G.update(grass or GRASS)

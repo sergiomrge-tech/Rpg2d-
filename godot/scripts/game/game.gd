@@ -58,6 +58,7 @@ var in_menu := false
 
 var _time := 0.0
 var _int_npc := {}                # npc id -> interior map (data/interiors.json)
+var quality := 2                 # graphics: 0 low (no cast shadows / wind / water fx / room lights), 1 medium, 2 high
 var daily := {"day": -1, "quests": [], "bonus": false}   # guild daily board (see DailyBoard)
 var clock := 0.0               # world clock in seconds (day length = World.DAY_LENGTH); starts at midday
 var _hit_until := 0
@@ -72,6 +73,11 @@ var _bestiary_idx := 0
 
 
 func _ready() -> void:
+	var f_q: FileAccess = FileAccess.open("user://graphics.json", FileAccess.READ) if FileAccess.file_exists("user://graphics.json") else null
+	if f_q:
+		var qd: Variant = JSON.parse_string(f_q.get_as_text())
+		if qd is Dictionary:
+			quality = clampi(int(qd.get("quality", 2)), 0, 2)
 	var f_int := FileAccess.open("res://data/interiors.json", FileAccess.READ)
 	if f_int:
 		_int_npc = JSON.parse_string(f_int.get_as_text())
@@ -350,6 +356,34 @@ func _process(dt: float) -> void:
 
 func save_settings_note() -> void:
 	pass   # volumes are saved as they change (Sfx.set_level)
+
+
+## How battered the Valemont wall is (0 intact .. 5 breached); follows the story and is mended after the Demon King falls.
+func wall_stage() -> int:
+	if flags.has("game_complete"):
+		return 1
+	var done := 0
+	for r in Story.regions:
+		if flags.has(r["done"]):
+			done += 1
+	if done >= 6 or flags.has("lumia_blessed"):
+		return 5
+	if done >= 4:
+		return 4
+	if done >= 2:
+		return 3
+	if flags.has("rank_c"):
+		return 2
+	return 1 if flags.has("val_started") else 0
+
+
+func set_quality(q: int) -> void:
+	quality = clampi(q, 0, 2)
+	var f := FileAccess.open("user://graphics.json", FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify({"quality": quality}))
+	if world != null and is_instance_valid(world):
+		world.apply_quality()
 
 
 ## Tavern rest: pay, restore HP/MP, save the game.
@@ -1146,6 +1180,12 @@ func _ci_shots() -> void:
 	if "-ciShadows" in OS.get_cmdline_user_args():
 		flags["prologue"] = true
 		await _ci_shadows()
+		print("[ci] done")
+		get_tree().quit()
+		return
+	if "-ciFx" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		await _ci_fx()
 		print("[ci] done")
 		get_tree().quit()
 		return
@@ -2024,6 +2064,50 @@ func _ci_doors(outdoor: String) -> void:
 
 
 ## Directional cast shadows follow the sun through the day.
+func _ci_fx() -> void:
+	# water + wind (village river), wall damage stages (Valemont), room lights (tavern), quality tiers
+	for q in [2, 0]:
+		quality = q
+		_tour_to("village")
+		_travel_cd = 999.0
+		player.input_locked = false
+		player.invuln = 99.0
+		player.global_position = Vector2(3450, 2330)
+		for e in Enemy.all.duplicate():
+			if is_instance_valid(e):
+				e.queue_free()
+		camera.snap()
+		await _wait(0.8)
+		await shot("98_agua_q%d" % q)
+	quality = 2
+	for st in [1, 3, 5]:
+		flags.erase("game_complete")
+		flags["val_started"] = true
+		flags["rank_c"] = st >= 2
+		if st >= 3:
+			for r in Story.regions:
+				flags[str(r["done"])] = st >= 5 or str(r["map"]) in ["kharis", "mines"]
+		_tour_to("valemont")
+		_travel_cd = 999.0
+		player.input_locked = false
+		player.invuln = 99.0
+		var a := deg_to_rad(20.0)
+		player.global_position = Vector2((50.0 + 31.0 * cos(a)) * 64.0 - 20.0, (50.0 + 31.0 * sin(a)) * 64.0 - 200.0)
+		camera.snap()
+		print("[ci] wall stage ", wall_stage())
+		await _wait(4.0)
+		await shot("98_muralha_%d" % st)
+	for n in ["int_tavern_aurora", "int_smithy_aurora"]:
+		for q in [2, 0]:
+			quality = q
+			_tour_to(n)
+			_travel_cd = 999.0
+			player.input_locked = false
+			await _wait(0.6)
+			await shot("98_luz_%s_q%d" % [n, q])
+	quality = 2
+
+
 func _ci_shadows() -> void:
 	_tour_to("village")
 	_travel_cd = 999.0

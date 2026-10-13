@@ -749,6 +749,72 @@
    "colX": 0
   },
   {
+   "name": "wall_crack",
+   "w": 150,
+   "h": 100,
+   "pivotX": 75,
+   "pivotY": 40,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0,
+   "colX": 0
+  },
+  {
+   "name": "wall_cracks2",
+   "w": 170,
+   "h": 120,
+   "pivotX": 85,
+   "pivotY": 50,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0,
+   "colX": 0
+  },
+  {
+   "name": "wall_hole_s",
+   "w": 150,
+   "h": 120,
+   "pivotX": 75,
+   "pivotY": 50,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0,
+   "colX": 0
+  },
+  {
+   "name": "wall_hole_m",
+   "w": 200,
+   "h": 150,
+   "pivotX": 100,
+   "pivotY": 65,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0,
+   "colX": 0
+  },
+  {
+   "name": "wall_breach",
+   "w": 280,
+   "h": 190,
+   "pivotX": 140,
+   "pivotY": 80,
+   "colW": 0,
+   "colH": 0,
+   "colY": 0,
+   "colX": 0
+  },
+  {
+   "name": "wall_rubble",
+   "w": 150,
+   "h": 80,
+   "pivotX": 75,
+   "pivotY": 20,
+   "colW": 70,
+   "colH": 20,
+   "colY": 6,
+   "colX": 0
+  },
+  {
    "name": "tavern",
    "w": 432,
    "h": 360,

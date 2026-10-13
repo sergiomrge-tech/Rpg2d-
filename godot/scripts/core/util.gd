@@ -73,6 +73,29 @@ func glow(parent: Node, color: Color, size_tiles: float, alpha: float) -> Sprite
 
 
 var _shadow_mat: ShaderMaterial
+var _wind_mats := {}
+
+
+## Shared wind materials: "tree", "shrub", "grass" (different sway amplitude / reference height).
+func wind_material(kind: String) -> ShaderMaterial:
+	if not _wind_mats.has(kind):
+		var m := ShaderMaterial.new()
+		m.shader = preload("res://shaders/wind.gdshader")
+		match kind:
+			"tree":
+				m.set_shader_parameter("amp", 5.0)
+				m.set_shader_parameter("height", 280.0)
+				m.set_shader_parameter("speed", 1.1)
+			"shrub":
+				m.set_shader_parameter("amp", 3.2)
+				m.set_shader_parameter("height", 110.0)
+				m.set_shader_parameter("speed", 1.5)
+			_:
+				m.set_shader_parameter("amp", 5.5)
+				m.set_shader_parameter("height", 80.0)
+				m.set_shader_parameter("speed", 1.9)
+		_wind_mats[kind] = m
+	return _wind_mats[kind]
 
 
 ## One shared material for every cast shadow; World updates its sun parameters every frame.

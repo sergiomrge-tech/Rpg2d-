@@ -14,6 +14,7 @@ from PIL import Image
 from expand_maps import expand
 import vegetation
 import town_life
+import env_ground
 from env_ground import bake, T
 from env_objects import PROPS
 from sheet import ROOT
@@ -24,6 +25,7 @@ OUT = os.path.join(ROOT, 'godot', 'assets', 'Maps')
 CHUNK = 1024
 TOWN_WALKERS = {'valemont': 16, 'village': 5}
 JSON_ONLY = '--json-only' in sys.argv
+MASKS_ONLY = '--masks' in sys.argv
 EXPAND_FACTOR = {n: 0.21 for n in ['village', 'velmoor', 'kharis', 'mines', 'mirewail', 'peaks', 'castle', 'wastelands', 'citadel']}   # ring of new land on each side => ~2x area
 
 
@@ -129,6 +131,19 @@ class Map:
         return placed
 
     # -------- export
+    def _save_masks(self, d, q):
+        for f in os.listdir(d):
+            if f.startswith('w_'):
+                os.remove(os.path.join(d, f))
+        if q is None:
+            return
+        c = CHUNK // 4
+        for j in range(math.ceil(q.shape[0] / c)):
+            for i in range(math.ceil(q.shape[1] / c)):
+                t = q[j * c:(j + 1) * c, i * c:(i + 1) * c]
+                if t[..., 0].max() > 8:
+                    Image.fromarray(t, 'RGB').save(os.path.join(d, f'w_{i}_{j}.png'), optimize=True)
+
     def export(self):
         if self.name in EXPAND_FACTOR and not getattr(self, '_expanded', False):
             f = EXPAND_FACTOR[self.name]
@@ -140,6 +155,12 @@ class Map:
             self.spawns = thin_spawns(self.spawns)
         d = os.path.join(OUT, self.name)
         os.makedirs(d, exist_ok=True)
+        if MASKS_ONLY:
+
+            q = env_ground.water_masks(self.grid, self.seed, self.shapes)
+            self._save_masks(d, q)
+            print(f'water masks {self.name}: {"none" if q is None else q.shape}')
+            return None
         if JSON_ONLY:      # keep the already-baked ground; only rewrite the map JSON (props, spawns, ...)
             h, w = self.gh * T, self.gw * T
             cx, cy = math.ceil(w / CHUNK), math.ceil(h / CHUNK)
@@ -148,6 +169,7 @@ class Map:
             img = bake(self.grid, self.seed, self.shapes, getattr(self, 'grass', None))
             h, w = img.shape[:2]
             cx, cy = math.ceil(w / CHUNK), math.ceil(h / CHUNK)
+            self._save_masks(d, env_ground.water_masks(self.grid, self.seed, self.shapes))
             for j in range(cy):
                 for i in range(cx):
                     tile = img[j * CHUNK:(j + 1) * CHUNK, i * CHUNK:(i + 1) * CHUNK]
@@ -209,6 +231,22 @@ def village():
     m.reserve(5, 8, 11, 13.5)
     m.put('house_a', 37.5, 12.3)
     m.reserve(33.5, 7, 42, 13)
+    # second ring of streets and houses (Aurora grows south and along the west/east roads)
+    m.path([(27, 26), (21, 27.2)], 1.8)
+    m.path([(27, 35), (41, 33.5)], 1.9)
+    m.path([(38, 26), (41, 31), (41, 33.5)], 1.8)
+    m.path([(10, 21.3), (7, 24)], 1.8)
+    for kind, x, y in [('house_b', 22.5, 29.8), ('house_a', 33.2, 29.6), ('house_b', 20.5, 35.0), ('house_a', 33.0, 38.4),
+                       ('house_b', 41.0, 30.2), ('house_a', 11.8, 17.6), ('house_a', 12.5, 36.4)]:
+        m.put(kind, x, y)
+        m.reserve(x - 3.6, y - 5.2, x + 3.6, y + 1.2)
+    for x, y in [(25.2, 27.2), (29.0, 27.2), (25.2, 33.0), (29.0, 33.0), (34.5, 35.0), (36.5, 33.0)]:
+        m.put('lamp', x, y)
+    for x, y, k in [(30.6, 28.0, 'stall'), (24.0, 25.6, 'stall'), (30.2, 33.4, 'stall'), (17.8, 29.6, 'barrel'), (23.6, 31.4, 'crate'),
+                    (35.6, 31.2, 'barrel'), (22.2, 36.4, 'crate'), (34.4, 40.0, 'barrel'), (39.4, 31.6, 'crate')]:
+        m.put(k, x, y)
+    m.put('well', 14.0, 26.6)
+    m.put('sign', 28.4, 38.4)
     m.put('well', 27, 20.4)
     m.reserve(25.5, 18.5, 28.5, 21)
     for (x, y) in [(21.5, 15.8), (32.5, 15.8), (21.5, 23.6), (32.5, 23.6)]:
@@ -349,6 +387,14 @@ def valemont():
         for dd in (-3.6, 3.6):
             x, y = pol(RW - 1.5, ang)
             m.put('banner_pole', x + (dd if ang in (270, 90) else 0), y + (dd if ang in (0, 180) else 0) + 0.6)
+    # ---- wall damage: shown as the story advances (stage key read by World)
+    for stage, kind, angs in [(1, 'wall_crack', [40, 100, 240, 330]), (2, 'wall_cracks2', [62, 143, 300, 352]),
+                              (2, 'wall_rubble', [62, 300]), (3, 'wall_hole_s', [47, 255, 322]),
+                              (4, 'wall_hole_m', [105, 225, 292]), (4, 'wall_rubble', [105, 292]),
+                              (5, 'wall_breach', [20, 240]), (5, 'wall_rubble', [20, 240])]:
+        for ang in angs:
+            x, y = pol(RW, ang)
+            m.props.append(dict(kind=kind, x=round(x * T, 1), y=round((y + (0.9 if kind == 'wall_rubble' else 0.2)) * T, 1), stage=stage))
     m.reserve(0, 0, 100, 100)                                 # clear; re-open below
     m.reserved[:, :] = False
     # ---- landmarks

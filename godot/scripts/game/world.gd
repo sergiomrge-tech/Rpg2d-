@@ -11,13 +11,20 @@ var entities: Node2D
 var fx_layer: Node2D
 var walls: StaticBody2D
 var _blocked := PackedByteArray()
-var _swaying: Array[Node2D] = []
 var _t := 0.0
 var _lights: Array = []
 var _tall: Array = []     # [{n: Sprite2D, w, h}] big sprites that fade when the hero walks behind them
 var _mod: CanvasModulate
 var _base_tint := Color.WHITE
 var _outdoor := false
+var _room_lights: Array = []   # [{l: PointLight2D, e: base energy, ph: phase}] interior lamps (flicker)
+
+# furniture kind -> [color, radius (tiles), energy, height of the flame above the feet (px)]
+const ROOM_LIGHTS := {
+	"fireplace": [Color(1.0, 0.60, 0.28), 8.0, 1.25, 46.0], "forge": [Color(1.0, 0.48, 0.20), 7.5, 1.3, 50.0],
+	"torch_stand": [Color(1.0, 0.76, 0.40), 5.5, 1.0, 84.0], "oven": [Color(1.0, 0.58, 0.26), 5.0, 1.0, 36.0],
+	"cauldron": [Color(0.55, 1.0, 0.65), 3.8, 0.8, 34.0], "board": [Color(1.0, 0.85, 0.55), 4.0, 0.55, 70.0],
+}
 
 # kind -> [color, size (tiles), alpha, height above feet (tiles), flicker]
 const LIGHTS := {
@@ -90,6 +97,7 @@ func build() -> void:
 	shadow_layer = Node2D.new()
 	shadow_layer.z_index = -80
 	add_child(shadow_layer)
+	shadow_layer.visible = Game.quality >= 1
 	entities = Node2D.new()
 	entities.y_sort_enabled = true
 	add_child(entities)
@@ -110,6 +118,8 @@ func build() -> void:
 			s.position = Vector2(i * d["chunk"], j * d["chunk"])
 			ground.add_child(s)
 
+	_build_water_fx(d)
+
 	_blocked.resize(int(d["w"]) * int(d["h"]))
 	var bs: String = d["blocked"]
 	for k in mini(_blocked.size(), bs.length()):
@@ -126,6 +136,8 @@ func build() -> void:
 	var am: Array = AMBIENT.get(d["name"], [Color(1.0, 0.94, 0.84), false] if d.get("interior", false) else [Color.WHITE, false])
 	_base_tint = am[0]
 	_outdoor = am[1]
+	if d.get("interior", false) and Game.quality >= 1:
+		_base_tint *= Color(0.66, 0.64, 0.72)      # dim rooms; the lamps and the hearth light them up
 	_mod = CanvasModulate.new()
 	_mod.color = _base_tint
 	add_child(_mod)
@@ -147,6 +159,16 @@ func _build_interior() -> void:
 			fu.tint = Color(str(f["tint"]))
 		fu.position = Vector2(float(f["x"]), float(f["y"]))
 		entities.add_child(fu)
+		if Game.quality >= 1 and ROOM_LIGHTS.has(fu.kind) and _room_lights.size() < 10:
+			var rl: Array = ROOM_LIGHTS[fu.kind]
+			var pl := PointLight2D.new()
+			pl.texture = Util.soft_circle()
+			pl.texture_scale = float(rl[1]) * T * 2.0 / 128.0
+			pl.color = rl[0]
+			pl.energy = float(rl[2])
+			pl.position = Vector2(0, -float(rl[3]))
+			fu.add_child(pl)
+			_room_lights.append({"l": pl, "e": float(rl[2]), "ph": randf() * 20.0})
 		if not f.get("nocol", false):
 			var fp := Furniture.footprint(fu.kind, fu.w) * T
 			_box(fu.position + Vector2(0, -fp.y * 0.5), fp)
@@ -179,6 +201,8 @@ func _build_water_colliders() -> void:
 
 func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 	var kind: String = p["kind"]
+	if p.has("stage") and Game.wall_stage() < int(p["stage"]):
+		return
 	var info := Sheets.prop_info(kind)
 	var tx := Sheets.prop_texture(kind)
 	if tx == null:
@@ -188,7 +212,7 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 	s.centered = false
 	s.offset = Vector2(-float(info.get("pivotX", tx.get_width() / 2)), -(float(info.get("h", tx.get_height())) - float(info.get("pivotY", 0))))
 	var pos := Vector2(float(p["x"]), float(p["y"]))
-	if kind == "bridge" or kind == "flowers" or kind == "flower_bed":
+	if kind in ["bridge", "flowers", "flower_bed", "wall_crack", "wall_cracks2", "wall_hole_s", "wall_hole_m", "wall_breach"]:
 		s.position = pos
 		flat_layer.add_child(s)
 	else:
@@ -199,10 +223,15 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 			var ch := float(info["colH"])
 			var cy := float(info["colY"])
 			_box(pos + Vector2(float(info.get("colX", 0)), -(ch * 0.5 - cy)), Vector2(cw, ch))
-	if float(info.get("h", 0)) >= 110.0 and kind not in ["bridge", "flowers", "flower_bed", "tall_grass", "reeds", "fence", "city_gate"]:
+	if Game.quality >= 1 and not kind.begins_with("wall_") and float(info.get("h", 0)) >= 110.0 and kind not in ["bridge", "flowers", "flower_bed", "tall_grass", "reeds", "fence", "city_gate"]:
 		CastShadow.attach(s, true, clampf(float(info.get("h", 0)) / 260.0, 0.45, 1.0))
-	if kind.begins_with("tree") or kind.begins_with("bush") or kind in ["tuft", "swamp_tree", "snow_pine", "fern", "glow_fern", "tall_grass", "dry_shrub", "berry_bush", "hedge", "frost_shrub"]:
-		_swaying.append(s)
+	if Game.quality >= 1:
+		if kind.begins_with("tree") or kind in ["swamp_tree", "snow_pine", "palm"]:
+			s.material = Util.wind_material("tree")
+		elif kind.begins_with("bush") or kind in ["dry_shrub", "berry_bush", "hedge", "frost_shrub", "cactus"]:
+			s.material = Util.wind_material("shrub")
+		elif kind in ["tuft", "fern", "glow_fern", "tall_grass", "reeds"]:
+			s.material = Util.wind_material("grass")
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
 		_tall.append({"n": s, "w": float(info.get("w", 200)), "h": float(info.get("h", 200)), "px": float(info.get("pivotX", 100))})
 	_ambient_for(kind, pos, info)
@@ -211,6 +240,36 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 		var g := Util.glow(s, L[0], L[1], L[2])
 		g.position = Vector2(0, -float(L[3]) * T)
 		_lights.append({"g": g, "a": L[2], "flick": L[4], "ph": randf() * 20.0})
+
+
+## Animated water on top of the baked ground, from the 1/4-res masks (w_i_j.png) made by tools/art_hd/maps.py.
+func _build_water_fx(d: Dictionary) -> void:
+	var mat: ShaderMaterial = null
+	for j in int(d["chunksY"]):
+		for i in int(d["chunksX"]):
+			if not ResourceLoader.exists("res://assets/Maps/%s/w_%d_%d.png" % [d["name"], i, j]):
+				continue
+			var tx := Sheets.tex("Maps/%s/w_%d_%d" % [d["name"], i, j])
+			if mat == null:
+				mat = ShaderMaterial.new()
+				mat.shader = load("res://shaders/water_fx.gdshader")
+			var s := Sprite2D.new()
+			s.texture = tx
+			s.centered = false
+			s.scale = Vector2(4, 4)
+			s.position = Vector2(i * d["chunk"], j * d["chunk"])
+			s.material = mat
+			s.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+			s.visible = Game.quality >= 2
+			s.add_to_group("water_fx")
+			ground.add_child(s)
+
+
+func apply_quality() -> void:
+	if shadow_layer != null:
+		shadow_layer.visible = Game.quality >= 1
+	for n in get_tree().get_nodes_in_group("water_fx"):
+		n.visible = Game.quality >= 2
 
 
 func add_entity(n: Node2D, at: Vector2) -> void:
@@ -231,13 +290,12 @@ func _process(dt: float) -> void:
 	_update_sun()
 	var n := night_amount()
 	_mod.color = _base_tint.lerp(_base_tint * NIGHT_TINT, n * 0.85)
+	for rl in _room_lights:
+		var ph: float = rl["ph"]
+		rl["l"].energy = float(rl["e"]) * (0.88 + 0.12 * sin(_t * 8.0 + ph) + 0.06 * sin(_t * 21.0 + ph * 2.0))
 	for l in _lights:
 		var fl := 1.0 + float(l["flick"]) * (sin(_t * 9.0 + l["ph"]) * 0.5 + sin(_t * 23.0 + l["ph"] * 2.0) * 0.5)
 		l["g"].modulate.a = float(l["a"]) * fl * (1.0 + 1.6 * n)
-	for s in _swaying:
-		var ph := s.position.x * 0.0055 + s.position.y * 0.003
-		var a := sin(_t * 1.3 + ph) * 0.9 + sin(_t * 2.9 + ph * 1.7) * 0.35
-		s.rotation = deg_to_rad(a)
 
 
 ## Sun for the cast shadows: noon = short shadows, sunrise / sunset = long ones pointing west / east, night = faint moon shadows.

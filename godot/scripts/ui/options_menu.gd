@@ -2,8 +2,8 @@ class_name OptionsMenu
 extends Node
 ## Pause / options (Esc): music, effects and voice volumes, save, resume. Pauses the game.
 
-const ROWS := ["Music", "Sfx", "Voice", "save", "resume"]
-const LABELS := {"Music": "Música", "Sfx": "Efeitos", "Voice": "Vozes", "save": "Salvar jogo", "resume": "Continuar"}
+const ROWS := ["Music", "Sfx", "Voice", "Gfx", "save", "resume"]
+const LABELS := {"Music": "Música", "Sfx": "Efeitos", "Voice": "Vozes", "Gfx": "Gráficos", "save": "Salvar jogo", "resume": "Continuar"}
 
 var open := false
 var hud: Hud
@@ -12,6 +12,8 @@ var sel := 0
 var _fills := {}
 var _marks := []
 var _vals := {}
+var _gfx: Label
+const GFX_NAMES := ["Baixa", "Média", "Alta"]
 
 
 func setup(h: Hud) -> void:
@@ -27,11 +29,13 @@ func setup(h: Hud) -> void:
 	for i in ROWS.size():
 		var r: String = ROWS[i]
 		var y := 160.0 - i * 90.0
-		if i >= 3:
+		if i >= 4:
 			y -= 20.0
 		_marks.append(hud.txt(root, "◆", Util.font_serif, 30, Color(1, 0.8, 0.3), C, Vector2(-330, y), Vector2(40, 40)))
-		hud.txt(root, LABELS[r], Util.font_bold, 36, Color(1, 0.96, 0.86), C, Vector2(-170 if i < 3 else 0, y), Vector2(240, 44),
-			HORIZONTAL_ALIGNMENT_LEFT if i < 3 else HORIZONTAL_ALIGNMENT_CENTER)
+		hud.txt(root, LABELS[r], Util.font_bold, 36, Color(1, 0.96, 0.86), C, Vector2(-170 if i < 4 else 0, y), Vector2(240, 44),
+			HORIZONTAL_ALIGNMENT_LEFT if i < 4 else HORIZONTAL_ALIGNMENT_CENTER)
+		if r == "Gfx":
+			_gfx = hud.txt(root, "", Util.font_bold, 34, Color(1, 0.9, 0.7), C, Vector2(150, y), Vector2(360, 44))
 		if i < 3:
 			hud.img(root, Sheets.ui("pill_track"), C, Vector2(150, y), Vector2(360, 30))
 			var f := TextureProgressBar.new()
@@ -66,6 +70,7 @@ func _refresh() -> void:
 	for r in _fills:
 		_fills[r].value = Sfx.levels[r]
 		_vals[r].text = "%d%%" % roundi(Sfx.levels[r] * 100.0)
+	_gfx.text = "◀  %s  ▶" % GFX_NAMES[Game.quality]
 	for i in _marks.size():
 		_marks[i].modulate.a = 1.0 if i == sel else 0.0
 
@@ -97,6 +102,11 @@ func _process(_dt: float) -> void:
 		elif r == "Sfx":
 			Sfx.play("hit", 0.4, 1.0)
 		_refresh()
+	if r == "Gfx" and (step != 0.0 or Game.consume(KEY_ENTER) or Game.consume(KEY_KP_ENTER)):
+		Game.set_quality((Game.quality + (1 if step <= 0.0 and step == 0.0 else int(signf(step))) + 3) % 3)
+		Sfx.play("ui", 0.3, 1.1)
+		_refresh()
+		return
 	if Game.consume(KEY_ENTER) or Game.consume(KEY_KP_ENTER) or Game.consume(KEY_SPACE):
 		if r == "save":
 			Game.save()

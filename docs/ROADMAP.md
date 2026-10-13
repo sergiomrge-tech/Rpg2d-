@@ -103,6 +103,12 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ Menu inicial (Continuar / Novo Jogo / Opções / Sair), teclado, mouse e toque; novo jogo acorda num campo além do rio, longe de Aurora, guiado pela bússola até a Guilda
 - ✅ Correção do toque no celular: o analógico e os botões usavam a transformada da câmera por engano; agora usam as coordenadas da tela (testado com toques simulados no CI)
 - ✅ Passos por superfície: grama (Aurora/Velmoor), pedra (Valemont/Minas/Castelo/Cidadela), areia (Kharis), lama (Mirewail), neve (Picos), cascalho (Terras Devastadas) — sintetizados, 3 variações cada
+- ✅ **Gráficos Alta/Média/Baixa** (Opções → Gráficos, salvo em `user://graphics.json`): Baixa desliga sombras projetadas, vento, água animada e luzes dos interiores; Média liga tudo menos a água animada
+- ✅ **Vento** em árvores, arbustos e capim (`shaders/wind.gdshader`, dobra a partir da base com rajadas)
+- ✅ **Água animada** por cima do chão assado: ondas, cáusticas, espuma nas margens que avança e recua (`shaders/water_fx.gdshader` + máscaras 1/4 de resolução `w_i_j.png` geradas por `maps.py`)
+- ✅ **Muralha de Valemont danificada pela história** (5 estágios: rachaduras → buracos → brecha com entulho; reparada após derrotar Malgrath) — `Game.wall_stage()`
+- ✅ **Luzes dinâmicas nos interiores** (lareira, forja, tochas, forno, caldeirão; ambiente escurecido, cintilação)
+- ✅ **Aurora maior:** +8 casas, 3 ruas novas, feira com barracas, lampiões e um segundo poço
 - ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
 - ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
 - ✅ Falas em sussurro: cada letra revelada dispara uma sílaba soprada (ruído filtrado por formantes de vogal), com timbre por personagem e voz mais baixa na narração (`Sfx.whisper`)

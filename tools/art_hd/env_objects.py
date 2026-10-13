@@ -1265,13 +1265,130 @@ def extrude_building(img):
 # ------------------------------------------------ surface texture + volume light for every prop
 _LEAFY = ('tree_', 'bush', 'berry', 'hedge', 'frost_shrub', 'swamp_tree', 'snow_pine', 'dry_shrub', 'canopy')
 _GRASSY = ('tuft', 'fern', 'glow_fern', 'tall_grass', 'reeds', 'flowers', 'flower_bed')
-_NO_TEX = ('bridge', 'fountain')
+_NO_TEX = ('bridge', 'fountain', 'wall_crack', 'wall_cracks2', 'wall_hole_s', 'wall_hole_m', 'wall_breach')
 
 
 def _noise_field(shape, sigma, seed):
     rng = np.random.default_rng(seed)
     n = ndimage.gaussian_filter(rng.standard_normal(shape).astype(np.float32), sigma)
     return n / (n.std() + 1e-6)
+
+
+# ---------------------------------------------------------------- Valemont wall damage (shown by story stage)
+def _crack_lines(ctx, rnd, x, y, n, length, col_a=0.9):
+    import cairo
+    for _ in range(n):
+        px, py = x, y
+        ang = rnd.uniform(0, math.tau)
+        for _s in range(rnd.randint(4, 7)):
+            nx = px + math.cos(ang) * length / 5
+            ny = py + math.sin(ang) * length / 5 * 0.8
+            ctx.set_source_rgba(0.04, 0.03, 0.05, col_a)
+            ctx.set_line_width(2.4)
+            ctx.move_to(px, py)
+            ctx.line_to(nx, ny)
+            ctx.stroke()
+            ctx.set_source_rgba(0.78, 0.74, 0.68, 0.45)
+            ctx.set_line_width(0.9)
+            ctx.move_to(px - 1.2, py - 1.0)
+            ctx.line_to(nx - 1.2, ny - 1.0)
+            ctx.stroke()
+            px, py = nx, ny
+            ang += rnd.uniform(-0.7, 0.7)
+
+
+@prop('wall_crack', 150, 100, 75, 60, outline=0)
+def wall_crack(ctx):
+    rnd = random.Random(5)
+    _crack_lines(ctx, rnd, 0, -20, 4, 60)
+
+
+@prop('wall_cracks2', 170, 120, 85, 70, outline=0)
+def wall_cracks2(ctx):
+    rnd = random.Random(8)
+    _crack_lines(ctx, rnd, -10, -28, 6, 78)
+    _crack_lines(ctx, rnd, 28, -10, 3, 44)
+    for _ in range(14):
+        x, y = rnd.uniform(-36, 38), rnd.uniform(-14, 14)
+        ellipse(ctx, x, y, rnd.uniform(1.4, 3.2), rnd.uniform(1.0, 2.4))
+        ctx.set_source_rgba(0.55, 0.52, 0.5, 0.9)
+        ctx.fill()
+
+
+def _hole(ctx, rx, ry, seed, scorch):
+    import cairo
+    rnd = random.Random(seed)
+    pts = []
+    for k in range(18):
+        a = k / 18 * math.tau
+        j = rnd.uniform(0.78, 1.12)
+        pts.append((math.cos(a) * rx * j, math.sin(a) * ry * j))
+    if scorch:
+        g = cairo.RadialGradient(0, 0, 2, 0, 0, max(rx, ry) * 1.55)
+        g.add_color_stop_rgba(0, 0.05, 0.03, 0.03, 0.85)
+        g.add_color_stop_rgba(1, 0.05, 0.03, 0.03, 0.0)
+        ctx.set_source(g)
+        ctx.arc(0, 0, max(rx, ry) * 1.55, 0, math.tau)
+        ctx.fill()
+    ctx.move_to(*pts[0])
+    for p in pts[1:]:
+        ctx.line_to(*p)
+    ctx.close_path()
+    ctx.set_source_rgba(0.55, 0.52, 0.5, 1)           # broken stone rim
+    ctx.set_line_width(5)
+    ctx.stroke_preserve()
+    g = cairo.RadialGradient(-rx * 0.2, -ry * 0.2, 2, 0, 0, max(rx, ry))
+    g.add_color_stop_rgba(0, 0.0, 0.0, 0.02, 1)
+    g.add_color_stop_rgba(1, 0.07, 0.05, 0.08, 1)
+    ctx.set_source(g)
+    ctx.fill()
+    for _ in range(int(rx * ry / 90)):                # chunks of rubble around the rim
+        a = rnd.uniform(0, math.tau)
+        x, y = math.cos(a) * rx * rnd.uniform(0.9, 1.35), math.sin(a) * ry * rnd.uniform(0.9, 1.4)
+        ellipse(ctx, x, y, rnd.uniform(2.2, 5.5), rnd.uniform(1.8, 4))
+        v = rnd.uniform(0.42, 0.7)
+        ctx.set_source_rgba(v, v * 0.97, v * 0.93, 1)
+        ctx.fill()
+        ellipse(ctx, x + 1, y + 1.6, 3, 1.4)
+        ctx.set_source_rgba(0, 0, 0, 0.25)
+        ctx.fill()
+
+
+@prop('wall_hole_s', 150, 120, 75, 70, outline=0)
+def wall_hole_s(ctx):
+    _hole(ctx, 22, 15, 3, False)
+
+
+@prop('wall_hole_m', 200, 150, 100, 85, outline=0)
+def wall_hole_m(ctx):
+    _hole(ctx, 36, 24, 4, True)
+
+
+@prop('wall_breach', 280, 190, 140, 110, outline=0)
+def wall_breach(ctx):
+    _hole(ctx, 60, 34, 6, True)
+    rnd = random.Random(21)
+    for _ in range(26):
+        x, y = rnd.uniform(-95, 95), rnd.uniform(14, 60)
+        ellipse(ctx, x, y, rnd.uniform(4, 10), rnd.uniform(3, 7))
+        v = rnd.uniform(0.36, 0.66)
+        ctx.set_source_rgba(v, v * 0.97, v * 0.93, 1)
+        ctx.fill()
+
+
+@prop('wall_rubble', 150, 80, 75, 60, col=(70, 20, 6), shadow=(0, 4, 56, 12, 0.5), outline=1.0)
+def wall_rubble(ctx):
+    rnd = random.Random(9)
+    for _ in range(11):
+        x, y = rnd.uniform(-40, 40), rnd.uniform(-14, 4)
+        w = rnd.uniform(7, 17)
+        ellipse(ctx, x, y, w, w * rnd.uniform(0.5, 0.8))
+        v = rnd.uniform(0.4, 0.68)
+        ctx.set_source_rgba(v, v * 0.97, v * 0.92, 1)
+        ctx.fill()
+        ellipse(ctx, x - w * 0.25, y - w * 0.25, w * 0.5, w * 0.3)
+        ctx.set_source_rgba(1, 1, 1, 0.18)
+        ctx.fill()
 
 
 def texturize(img, name):
