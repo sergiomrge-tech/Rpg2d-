@@ -23,6 +23,9 @@ var _rain: CPUParticles2D
 var _thunder_t := 8.0
 var _flash := 0.0
 var _puddles: Array = []
+var _trees: Array = []
+var _storm_warned := false
+const FIRE_KINDS := ["torch_post", "brazier"]
 const RAIN_MAPS := ["village", "valemont", "velmoor", "kharis", "mirewail", "wastelands"]
 var _water_atlas: Image
 var _reflect_mat: ShaderMaterial
@@ -264,6 +267,8 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
 		_tall.append({"n": s, "w": float(info.get("w", 200)), "h": float(info.get("h", 200)), "px": float(info.get("pivotX", 100))})
 	_ambient_for(kind, pos, info)
+	if kind.begins_with("tree") or kind == "snow_pine":
+		_trees.append(s)
 	if kind in REFLECTED or kind.begins_with("tree") or kind.begins_with("house"):
 		_add_reflection(s, kind, pos)
 	if Game.quality >= 1 and kind in NIGHT_WINDOWS:
@@ -280,7 +285,7 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 		var L: Array = LIGHTS[kind]
 		var g := Util.glow(s, L[0], L[1], L[2])
 		g.position = Vector2(0, -float(L[3]) * T)
-		_lights.append({"g": g, "a": L[2], "flick": L[4], "ph": randf() * 20.0})
+		_lights.append({"g": g, "a": L[2], "flick": L[4], "ph": randf() * 20.0, "fire": kind in FIRE_KINDS})
 
 
 ## Animated water on top of the baked ground, from the 1/4-res masks (w_i_j.png) made by tools/art_hd/maps.py.
@@ -370,6 +375,46 @@ func _refresh_wall() -> void:
 				Fx.dust((at as Vector2) + Vector2(randf_range(-60, 60), randf_range(-40, 20)), 2.0)
 
 
+## Lightning hits a tree near the hero: bolt, flash, scorch mark and a charred trunk that stays until you leave the map.
+func _strike_tree() -> void:
+	if Player.I == null or _trees.is_empty():
+		return
+	var cands: Array = []
+	for t in _trees:
+		if is_instance_valid(t) and (t as Node2D).global_position.distance_to(Player.I.global_position) < 14.0 * T and (t as Sprite2D).modulate.r > 0.9:
+			cands.append(t)
+	if cands.is_empty():
+		return
+	var tree: Sprite2D = cands[randi() % cands.size()]
+	var base := tree.global_position
+	var bolt := Line2D.new()
+	bolt.width = 7.0
+	bolt.default_color = Color(0.9, 0.95, 1.0)
+	bolt.z_index = 120
+	var pts := PackedVector2Array()
+	var x := base.x + randf_range(-60, 60)
+	for k in 8:
+		pts.append(Vector2(x + randf_range(-30, 30) * (1.0 if k < 7 else 0.0), lerpf(base.y - 900.0, base.y - 20.0, k / 7.0)))
+	bolt.points = pts
+	add_child(bolt)
+	var tw := create_tween()
+	tw.tween_property(bolt, "modulate:a", 0.0, 0.3)
+	tw.tween_callback(bolt.queue_free)
+	tree.modulate = Color(0.38, 0.33, 0.33)
+	var sc := Sprite2D.new()
+	sc.texture = Util.soft_circle()
+	sc.position = base
+	sc.scale = Vector2(0.9, 0.38)
+	sc.modulate = Color(0.04, 0.03, 0.03, 0.7)
+	sc.z_index = -84
+	add_child(sc)
+	Fx.shockwave(base, 0.8)
+	for k in 5:
+		Fx.dust(base + Vector2(randf_range(-30, 30), -randf_range(0, 120)), 2.0)
+	if Game.camera != null:
+		Game.camera.shake(0.5, 0.6)
+
+
 ## Puddles on the ground while it rains: pooled soft ellipses around the hero with small rings splashing in them.
 func _update_puddles(rain: float, dt: float) -> void:
 	if Game.quality < 1 or Player.I == null or bool(data.get("interior", false)) or not (str(data.get("name", "")) in RAIN_MAPS):
@@ -408,8 +453,15 @@ func _update_rain(rain: float) -> void:
 	if rain > 0.6 and _outdoor and _thunder_t <= 0.0:
 		_thunder_t = randf_range(14.0, 32.0)
 		_flash = 1.0
+		if randf() < 0.7:
+			_strike_tree()
 		get_tree().create_timer(randf_range(0.3, 1.4)).timeout.connect(func(): Sfx.play("thunder", 0.55, randf_range(0.85, 1.05)))
 	_flash = maxf(0.0, _flash - get_process_delta_time() * 3.0)
+	if rain > 0.6 and _outdoor and not _storm_warned:
+		_storm_warned = true
+		Fx.toast("⚡ Trovoada se aproximando — afaste-se das árvores!", Color(0.8, 0.9, 1.0))
+	elif rain < 0.1:
+		_storm_warned = false
 	for kind in ["tree", "shrub", "grass"]:
 		Util.wind_material(kind).set_shader_parameter("boost", 1.0 + 1.3 * rain)
 	if _rain == null and rain > 0.01 and Game.quality >= 1 and Player.I != null and str(data.get("name", "")) in RAIN_MAPS:
@@ -561,7 +613,8 @@ func _process(dt: float) -> void:
 		rl["l"].energy = float(rl["e"]) * (0.88 + 0.12 * sin(_t * 8.0 + ph) + 0.06 * sin(_t * 21.0 + ph * 2.0))
 	for l in _lights:
 		var fl := 1.0 + float(l["flick"]) * (sin(_t * 9.0 + l["ph"]) * 0.5 + sin(_t * 23.0 + l["ph"] * 2.0) * 0.5)
-		l["g"].modulate.a = float(l["a"]) * fl * (1.0 + 1.6 * n)
+		var drown := 1.0 - 0.85 * rain if bool(l.get("fire", false)) else 1.0     # the rain puts outdoor fires out
+		l["g"].modulate.a = float(l["a"]) * fl * (1.0 + 1.6 * n) * drown
 
 
 ## Sun for the cast shadows: noon = short shadows, sunrise / sunset = long ones pointing west / east, night = faint moon shadows.

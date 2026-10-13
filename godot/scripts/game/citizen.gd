@@ -19,7 +19,8 @@ var mode := "patrol"          # patrol | market | tavern | shelter | asleep
 var _goal := Vector2.ZERO
 var _inside := false
 var _mine := 0.0
-var _chat_cd := 5.0              # per-citizen dice so not everybody follows the same routine
+var _chat_cd := 5.0
+var _lantern: Sprite2D              # per-citizen dice so not everybody follows the same routine
 
 
 static func spawn(w: Dictionary, map: String) -> Citizen:
@@ -42,6 +43,9 @@ static func spawn(w: Dictionary, map: String) -> Citizen:
 	c.wait = randf_range(0.0, 3.0)
 	c.bark_cd = randf_range(2.0, 8.0)
 	c._mine = randf()
+	if c.look == "v_guard":
+		c._lantern = Util.glow(c, Color(1.0, 0.72, 0.36), 2.8, 0.0)
+		c._lantern.position = Vector2(16, -58)
 	return c
 
 
@@ -92,7 +96,11 @@ func _market_chat(dt: float) -> void:
 			var p := Player.I
 			if p != null and (p.global_position - global_position).length() < 7.0 * T:
 				var lines := ["Quanto custa essa maçã?", "Fresquinha, colhida hoje!", "Levo duas, então.", "Fechado! Aqui está o ouro.", "Que dia bonito para a feira!", "Ouvi que o herói limpou o bosque."]
-				Fx.toast(lines[randi() % lines.size()], Color(1, 0.94, 0.78), global_position + Vector2.UP * 2.0 * T)
+				var li := randi() % lines.size()
+				Fx.toast(lines[li], Color(1, 0.94, 0.78), global_position + Vector2.UP * 2.0 * T)
+				if li == 3:       # the deal closes: coins change hands over the neighbour's head
+					Fx.toast("🪙 −%d" % (2 + randi() % 6), Color(1, 0.85, 0.3), o.global_position + Vector2.UP * 2.6 * T)
+					Fx.toast("🛒 " + ["maçãs", "pão", "frutas", "queijo", "legumes"][randi() % 5], Color(0.8, 1, 0.8), global_position + Vector2.UP * 2.6 * T)
 			return
 
 
@@ -122,6 +130,9 @@ func _find(what: String) -> Vector2:
 
 func _physics_process(dt: float) -> void:
 	# townsfolk go home at night; the guards keep patrolling
+	if _lantern != null:
+		var nn: float = Game.world.night_amount() if Game.world != null else 0.0
+		_lantern.modulate.a = 0.5 * nn * (0.9 + 0.1 * sin(Game._time * 9.0 + _mine * 20.0))
 	var want := _pick_mode()
 	if want != mode:
 		_farewell(want)

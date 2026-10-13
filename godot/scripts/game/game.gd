@@ -59,6 +59,7 @@ var in_menu := false
 var _time := 0.0
 var _int_npc := {}                # npc id -> interior map (data/interiors.json)
 var show_fps := false
+var wet := 0.0                     # 0 dry .. 1 soaked: rain wets the hero, rooms and time dry them
 var weather := 0.0                 # 0 clear .. 1 heavy rain (eased toward weather_target)
 var weather_target := 0.0
 var weather_auto := true
@@ -339,6 +340,18 @@ func _update_weather(dt: float) -> void:
 				weather_target = randf_range(0.6, 1.0)
 				_wx_timer = randf_range(70.0, 150.0)
 	weather = move_toward(weather, weather_target, dt * 0.12)
+	var was_wet := wet
+	if world != null and is_instance_valid(world) and player != null:
+		var indoors: bool = bool(world.data.get("interior", false))
+		if not indoors and weather > 0.3 and str(world.data.get("name", "")) in World.RAIN_MAPS:
+			wet = minf(1.0, wet + dt / 22.0)
+		else:
+			wet = maxf(0.0, wet - dt / (5.0 if indoors else 16.0))
+		player.anim.self_modulate = Color.WHITE.lerp(Color(0.68, 0.78, 0.95), wet * 0.85)
+	if was_wet < 0.8 and wet >= 0.8:
+		Fx.toast("Você está ensopado… procure um abrigo com lareira", Color(0.75, 0.88, 1.0))
+	elif was_wet > 0.0 and wet <= 0.0 and was_wet > 0.02:
+		Fx.toast("Você secou", Color(1, 0.9, 0.7))
 
 
 ## Fraction of the day (0 = noon, 0.5 = midnight).
@@ -2184,6 +2197,16 @@ func _ci_fx() -> void:
 	await shot("98_chuva")
 	await _wait(2.0)
 	await shot("98_chuva_poças")
+	world._strike_tree()
+	world._flash = 1.0
+	await _wait(0.12)
+	await shot("98_raio")
+	await _wait(1.0)
+	print("[ci] wet ", wet, " player tint ", player.anim.self_modulate)
+	flags["rank_d"] = true
+	flags["sq_res_nina_done"] = true
+	var q2 := Story.talk("res_nina")
+	print("[ci] quest2 offer ", q2.size(), " ", q2[0][1].substr(0, 30))
 	weather = 0.0
 	weather_target = 0.0
 	# house quests

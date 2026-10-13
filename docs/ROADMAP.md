@@ -120,6 +120,9 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ **Poças** na chuva (com respingos), **som de chuva** e **trovões com relâmpago** (`Sfx.set_rain`, clipes sintetizados)
 - ✅ **Missões dos moradores de Aurora** (Dona Lúcia, Seu Tomás, Nina, Bento: entregar materiais por ouro e poções) — `Story.RES_QUESTS`
 - ✅ **Feira viva:** vizinhos conversam e pechincham; despedidas ao anoitecer/chuva; **guardas de Valemont em dois turnos** (dia/noite)
+- ✅ **Raios** caem em árvores perto do herói na tempestade (aviso na tela, tronco queimado e marca no chão); **chuva apaga tochas e braseiros** externos
+- ✅ **Herói se molha** na chuva (tom azulado, aviso) e seca dentro de casas/taverna ou com o tempo
+- ✅ **Guardas noturnos com lanterna**; **missões encadeadas** dos moradores de Aurora (2ª entrega no Rank D, com recompensas melhores); compras visíveis na feira (moedas e produto sobre a cabeça)
 - ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
 - ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
 - ✅ Falas em sussurro: cada letra revelada dispara uma sílaba soprada (ruído filtrado por formantes de vogal), com timbre por personagem e voz mais baixa na narração (`Sfx.whisper`)

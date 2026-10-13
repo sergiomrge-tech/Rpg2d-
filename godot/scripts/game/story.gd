@@ -52,6 +52,19 @@ const RES_QUESTS := {
 }
 
 
+# Second request from each resident (unlocked at Rank D): id -> [item, amount, gold, reward item, reward amount, title, offer, thanks]
+const RES_QUESTS2 := {
+	"res_lucia": ["spirit_dust", 3, 160, "ember_charm", 1, "Costura Encantada",
+		["Seu casaco ficou ótimo, mas agora quero encantá-lo contra o frio de Velmoor.", "Traga 3 Pós Espirituais e te dou um Amuleto de Brasa que guardei do meu falecido marido."], "Perfeito! Leve o amuleto: ele esquenta até a alma."],
+	"res_tomas": ["demon_hide", 4, 200, "spark_tome", 1, "Segredo do Boticário",
+		["Meu unguento funcionou! Agora quero a receita completa: preciso de peles curtidas.", "Traga 4 Peles de Demônio e te entrego um Tomo da Centelha, de minha biblioteca antiga."], "Excelente! O tomo é seu — use-o no Grimório."],
+	"res_nina": ["hell_ember", 1, 120, "ether", 3, "Lanterna da Nina",
+		["O colar ficou lindo! Agora quero uma lanterninha: dizem que brasas infernais brilham sozinhas!", "Uma Brasa Infernal, só uma! Dou tudo que juntei."], "A lanterna brilha! Obrigada, herói! Toma o ouro e os éteres."],
+	"res_bento": ["imp_horn", 5, 140, "potion", 4, "Isca de Chifre",
+		["O fogão voltou a funcionar! Agora preciso de iscas melhores para pescar o grande bagre do rio.", "Cinco chifres de diabrete fazem uma isca irresistível. Traga e pago 140 de ouro e 4 poções."], "Isca perfeita! O bagre não terá chance. Aqui o pagamento."],
+}
+
+
 func _res_quest(npc: String) -> Array:
 	var q: Array = RES_QUESTS[npc]
 	var g := Game
@@ -59,7 +72,13 @@ func _res_quest(npc: String) -> Array:
 	var on := "sq_%s_on" % npc
 	var done := "sq_%s_done" % npc
 	if g.flags.has(done):
-		return [_l(npc, "Obrigado de novo! Passe aqui sempre que quiser.")]
+		if not g.flags.has("rank_d"):
+			return [_l(npc, "Obrigado de novo! Quando você ficar mais experiente, volte: talvez eu precise de outra ajuda.")]
+		q = RES_QUESTS2[npc]
+		on = "sq2_%s_on" % npc
+		done = "sq2_%s_done" % npc
+		if g.flags.has(done):
+			return [_l(npc, "Obrigado por tudo, herói! Esta casa é sua sempre que quiser.")]
 	if not g.flags.has(on):
 		g.flags[on] = true
 		return [_l(npc, q[6][0]), _l(npc, q[6][1])]
