@@ -1245,6 +1245,31 @@ func _ci_shots() -> void:
 		print("[ci] done")
 		get_tree().quit()
 		return
+	if "-ciEquip" in OS.get_cmdline_user_args():
+		flags["prologue"] = true
+		_tour_to("village")
+		for c in HeroClasses.CLASSES:
+			state.class_id = c
+			for id in Data.items:
+				var it: Dictionary = Data.items[id]
+				if int(it["slot"]) in [2, 3]:
+					state.add(id, 1)
+					var blk := state.req_block(id)
+					var ok := state.equip(id)
+					print("[ci] equip ", c, " ", id, " slot ", it["slot"], " req '", blk, "' -> ", ok, " eq ", state.eq_armor, "/", state.eq_charm)
+					state.unequip(int(it["slot"]))
+		state.class_id = "mage"
+		state.add("ar_3", 1)
+		state.add("ch_3", 1)
+		state.add("ar_0", 1)
+		grimoire.toggle()
+		grimoire.sel = state.inv_ids.find("ar_3")
+		grimoire._refresh()
+		await _wait(0.4)
+		await shot("78_req_armadura")
+		print("[ci] done")
+		get_tree().quit()
+		return
 	if "-ciSkillsUI" in OS.get_cmdline_user_args():
 		flags["prologue"] = true
 		_tour_to("village")

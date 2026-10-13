@@ -475,7 +475,15 @@ func _refresh() -> void:
 		var desc := hud.txt(page, str(d["desc"]), sans, 19, ink, C, Vector2(335, -243), Vector2(540, 56), M, false, VERTICAL_ALIGNMENT_TOP)
 		hud.wrap(desc, 540.0)
 		var act := "Equipar" if int(d["slot"]) > 0 else "Usar"
-		_btn(page, act, Vector2(190, -300), Vector2(230, 56), _act_use, Color(0.32, 0.2, 0.1, 0.95))
+		if int(d["slot"]) > 0 and req_bad:
+			# say exactly what is missing instead of failing silently
+			var miss := PackedStringArray()
+			for ra in d["req"]:
+				if gs.attr(ra) < int(d["req"][ra]):
+					miss.append("%s %d/%d" % [SkillTree.ATTR_ABBR[ra], gs.attr(ra), int(d["req"][ra])])
+			_btn(page, "Falta " + ", ".join(miss), Vector2(172, -300), Vector2(264, 56), _act_use, Color(0.45, 0.12, 0.1, 0.95), 21)
+		else:
+			_btn(page, act, Vector2(190, -300), Vector2(230, 56), _act_use, Color(0.32, 0.2, 0.1, 0.95))
 		var price := sell_price(gs.inv_ids[sel])
 		if price > 0:
 			_btn(page, "Vender %d (Q)" % price, Vector2(450, -300), Vector2(290, 56), _act_sell, Color(0.4, 0.14, 0.1, 0.95))
