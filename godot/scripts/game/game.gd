@@ -59,7 +59,6 @@ var in_menu := false
 var _time := 0.0
 var _int_npc := {}                # npc id -> interior map (data/interiors.json)
 var show_fps := false
-var pixel_heroes := false          # hero sprites in the pixel-art style (tools/pixelize.py)
 var wet := 0.0                     # 0 dry .. 1 soaked: rain wets the hero, rooms and time dry them
 var weather := 0.0                 # 0 clear .. 1 heavy rain (eased toward weather_target)
 var weather_target := 0.0
@@ -89,7 +88,6 @@ func _ready() -> void:
 		if qd is Dictionary:
 			quality = clampi(int(qd.get("quality", 2)), 0, 2)
 			quality_auto = bool(qd.get("auto", false))
-			pixel_heroes = bool(qd.get("pixel", false))
 	var f_int := FileAccess.open("res://data/interiors.json", FileAccess.READ)
 	if f_int:
 		_int_npc = JSON.parse_string(f_int.get_as_text())
@@ -439,20 +437,13 @@ func wall_stage() -> int:
 	return 1 if flags.has("val_started") else 0
 
 
-func set_pixel_heroes(on: bool) -> void:
-	pixel_heroes = on
-	set_quality(quality, false)          # saves the file
-	if player != null and state != null:
-		player.anim.setup(HeroClasses.sheet_for(state.class_id))
-
-
 func set_quality(q: int, user_choice := true) -> void:
 	quality = clampi(q, 0, 2)
 	if user_choice:
 		quality_auto = false
 	var f := FileAccess.open("user://graphics.json", FileAccess.WRITE)
 	if f:
-		f.store_string(JSON.stringify({"quality": quality, "auto": quality_auto, "pixel": pixel_heroes}))
+		f.store_string(JSON.stringify({"quality": quality, "auto": quality_auto}))
 	if world != null and is_instance_valid(world):
 		world.apply_quality()
 
@@ -1292,14 +1283,10 @@ func _ci_shots() -> void:
 		player._try_skill("v")
 		await _wait(0.25)
 		await shot("77_efeito_buff")
-		set_pixel_heroes(true)
-		await _wait(0.3)
-		await shot("77_heroi_pixel")
 		options.toggle()
 		await _wait(0.4)
 		await shot("77_opcoes")
 		options.toggle()
-		set_pixel_heroes(false)
 		print("[ci] done")
 		get_tree().quit()
 		return

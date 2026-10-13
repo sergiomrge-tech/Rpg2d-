@@ -2,8 +2,8 @@ class_name OptionsMenu
 extends Node
 ## Pause / options (Esc): music, effects and voice volumes, save, resume. Pauses the game.
 
-const ROWS := ["Music", "Sfx", "Voice", "Gfx", "Px", "Fps", "save", "resume"]
-const LABELS := {"Music": "Música", "Sfx": "Efeitos", "Voice": "Vozes", "Gfx": "Gráficos", "Fps": "FPS na tela", "Px": "Estilo do herói", "save": "Salvar jogo", "resume": "Continuar"}
+const ROWS := ["Music", "Sfx", "Voice", "Gfx", "Fps", "save", "resume"]
+const LABELS := {"Music": "Música", "Sfx": "Efeitos", "Voice": "Vozes", "Gfx": "Gráficos", "Fps": "FPS na tela", "save": "Salvar jogo", "resume": "Continuar"}
 
 var open := false
 var hud: Hud
@@ -14,7 +14,6 @@ var _marks := []
 var _vals := {}
 var _gfx: Label
 var _fps_opt: Label
-var _px_opt: Label
 var _fps_lbl: Label
 const GFX_NAMES := ["Baixa", "Média", "Alta"]
 
@@ -32,13 +31,11 @@ func setup(h: Hud) -> void:
 	for i in ROWS.size():
 		var r: String = ROWS[i]
 		var y := 190.0 - i * 72.0
-		if i >= 6:
+		if i >= 5:
 			y -= 20.0
 		_marks.append(hud.txt(root, "◆", Util.font_serif, 30, Color(1, 0.8, 0.3), C, Vector2(-330, y), Vector2(40, 40)))
-		hud.txt(root, LABELS[r], Util.font_bold, 36, Color(1, 0.96, 0.86), C, Vector2(-170 if i < 6 else 0, y), Vector2(240, 44),
-			HORIZONTAL_ALIGNMENT_LEFT if i < 6 else HORIZONTAL_ALIGNMENT_CENTER)
-		if r == "Px":
-			_px_opt = hud.txt(root, "", Util.font_bold, 34, Color(1, 0.9, 0.7), C, Vector2(150, y), Vector2(360, 44))
+		hud.txt(root, LABELS[r], Util.font_bold, 36, Color(1, 0.96, 0.86), C, Vector2(-170 if i < 5 else 0, y), Vector2(240, 44),
+			HORIZONTAL_ALIGNMENT_LEFT if i < 5 else HORIZONTAL_ALIGNMENT_CENTER)
 		if r == "Fps":
 			_fps_opt = hud.txt(root, "", Util.font_bold, 34, Color(1, 0.9, 0.7), C, Vector2(150, y), Vector2(360, 44))
 		if r == "Gfx":
@@ -79,7 +76,6 @@ func _refresh() -> void:
 	for r in _fills:
 		_fills[r].value = Sfx.levels[r]
 		_vals[r].text = "%d%%" % roundi(Sfx.levels[r] * 100.0)
-	_px_opt.text = "◀  %s  ▶" % ("Pixel art" if Game.pixel_heroes else "HD pintado")
 	_fps_opt.text = "◀  %s  ▶" % ("Sim" if Game.show_fps else "Não")
 	_gfx.text = "◀  %s  ▶" % GFX_NAMES[Game.quality]
 	for i in _marks.size():
@@ -116,11 +112,6 @@ func _process(_dt: float) -> void:
 		elif r == "Sfx":
 			Sfx.play("hit", 0.4, 1.0)
 		_refresh()
-	if r == "Px" and (step != 0.0 or Game.consume(KEY_ENTER) or Game.consume(KEY_KP_ENTER)):
-		Game.set_pixel_heroes(not Game.pixel_heroes)
-		Sfx.play("ui", 0.3, 1.1)
-		_refresh()
-		return
 	if r == "Fps" and (step != 0.0 or Game.consume(KEY_ENTER) or Game.consume(KEY_KP_ENTER)):
 		Game.show_fps = not Game.show_fps
 		Sfx.play("ui", 0.3, 1.1)

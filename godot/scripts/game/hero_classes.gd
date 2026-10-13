@@ -65,7 +65,7 @@ const CLASSES := {
 
 static func sheet_for(id: String) -> String:
 	# Six distinct production sprite atlases, not one recolored texture.
-	return "Sprites/Chars/hero_" + (id if valid(id) else "warrior") + ("_px" if Game.pixel_heroes else "")
+	return "Sprites/Chars/hero_" + (id if valid(id) else "warrior")
 
 
 static func valid(id: String) -> bool:
