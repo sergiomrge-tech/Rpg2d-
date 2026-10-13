@@ -2,8 +2,8 @@ class_name OptionsMenu
 extends Node
 ## Pause / options (Esc): music, effects and voice volumes, save, resume. Pauses the game.
 
-const ROWS := ["Music", "Sfx", "Voice", "Gfx", "save", "resume"]
-const LABELS := {"Music": "Música", "Sfx": "Efeitos", "Voice": "Vozes", "Gfx": "Gráficos", "save": "Salvar jogo", "resume": "Continuar"}
+const ROWS := ["Music", "Sfx", "Voice", "Gfx", "Fps", "save", "resume"]
+const LABELS := {"Music": "Música", "Sfx": "Efeitos", "Voice": "Vozes", "Gfx": "Gráficos", "Fps": "FPS na tela", "save": "Salvar jogo", "resume": "Continuar"}
 
 var open := false
 var hud: Hud
@@ -13,6 +13,8 @@ var _fills := {}
 var _marks := []
 var _vals := {}
 var _gfx: Label
+var _fps_opt: Label
+var _fps_lbl: Label
 const GFX_NAMES := ["Baixa", "Média", "Alta"]
 
 
@@ -29,11 +31,13 @@ func setup(h: Hud) -> void:
 	for i in ROWS.size():
 		var r: String = ROWS[i]
 		var y := 160.0 - i * 90.0
-		if i >= 4:
+		if i >= 5:
 			y -= 20.0
 		_marks.append(hud.txt(root, "◆", Util.font_serif, 30, Color(1, 0.8, 0.3), C, Vector2(-330, y), Vector2(40, 40)))
-		hud.txt(root, LABELS[r], Util.font_bold, 36, Color(1, 0.96, 0.86), C, Vector2(-170 if i < 4 else 0, y), Vector2(240, 44),
-			HORIZONTAL_ALIGNMENT_LEFT if i < 4 else HORIZONTAL_ALIGNMENT_CENTER)
+		hud.txt(root, LABELS[r], Util.font_bold, 36, Color(1, 0.96, 0.86), C, Vector2(-170 if i < 5 else 0, y), Vector2(240, 44),
+			HORIZONTAL_ALIGNMENT_LEFT if i < 5 else HORIZONTAL_ALIGNMENT_CENTER)
+		if r == "Fps":
+			_fps_opt = hud.txt(root, "", Util.font_bold, 34, Color(1, 0.9, 0.7), C, Vector2(150, y), Vector2(360, 44))
 		if r == "Gfx":
 			_gfx = hud.txt(root, "", Util.font_bold, 34, Color(1, 0.9, 0.7), C, Vector2(150, y), Vector2(360, 44))
 		if i < 3:
@@ -49,6 +53,8 @@ func setup(h: Hud) -> void:
 			_fills[r] = f
 			_vals[r] = hud.txt(root, "", Util.font_serif, 24, Color(1, 0.9, 0.7), C, Vector2(380, y), Vector2(90, 30))
 	hud.txt(root, "W/S escolher  ·  A/D ajustar  ·  Enter confirmar  ·  Esc voltar", Util.font_sans, 24, Color(1, 1, 1, 0.7), C, Vector2(0, -300), Vector2(1000, 34))
+	_fps_lbl = hud.txt(hud.root, "", Util.font_bold, 22, Color(0.8, 1, 0.8, 0.9), Vector2(1, 1), Vector2(-90, 150), Vector2(160, 30))
+	_fps_lbl.visible = false
 	root.visible = false
 
 
@@ -70,12 +76,16 @@ func _refresh() -> void:
 	for r in _fills:
 		_fills[r].value = Sfx.levels[r]
 		_vals[r].text = "%d%%" % roundi(Sfx.levels[r] * 100.0)
+	_fps_opt.text = "◀  %s  ▶" % ("Sim" if Game.show_fps else "Não")
 	_gfx.text = "◀  %s  ▶" % GFX_NAMES[Game.quality]
 	for i in _marks.size():
 		_marks[i].modulate.a = 1.0 if i == sel else 0.0
 
 
 func _process(_dt: float) -> void:
+	_fps_lbl.visible = Game.show_fps
+	if Game.show_fps:
+		_fps_lbl.text = "%d FPS" % Engine.get_frames_per_second()
 	if not open:
 		return
 	if Game.consume(KEY_ESCAPE):
@@ -102,6 +112,11 @@ func _process(_dt: float) -> void:
 		elif r == "Sfx":
 			Sfx.play("hit", 0.4, 1.0)
 		_refresh()
+	if r == "Fps" and (step != 0.0 or Game.consume(KEY_ENTER) or Game.consume(KEY_KP_ENTER)):
+		Game.show_fps = not Game.show_fps
+		Sfx.play("ui", 0.3, 1.1)
+		_refresh()
+		return
 	if r == "Gfx" and (step != 0.0 or Game.consume(KEY_ENTER) or Game.consume(KEY_KP_ENTER)):
 		Game.set_quality((Game.quality + (1 if step <= 0.0 and step == 0.0 else int(signf(step))) + 3) % 3)
 		Sfx.play("ui", 0.3, 1.1)

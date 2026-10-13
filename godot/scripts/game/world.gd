@@ -18,6 +18,11 @@ var _mod: CanvasModulate
 var _base_tint := Color.WHITE
 var _outdoor := false
 var _flat: Node2D
+var _has_water := false
+var _rain: CPUParticles2D
+const RAIN_MAPS := ["village", "valemont", "velmoor", "kharis", "mirewail", "wastelands"]
+var _water_atlas: Image
+var _reflect_mat: ShaderMaterial
 var _last_prop: Node2D
 var _stage_pending: Array = []     # wall-damage props not yet visible: spawned live when the story reaches their stage
 var _wall_seen := 0
@@ -28,6 +33,7 @@ var _splash_cd := 0.0
 var _room_lights: Array = []   # [{l: PointLight2D, e: base energy, ph: phase}] interior lamps (flicker)
 
 const NIGHT_WINDOWS := ["house_a", "house_b", "house_c", "house_e", "house_f", "tavern", "bakery", "apothecary", "guild", "smithy", "armory", "library", "stable", "barracks", "cathedral"]
+const REFLECTED := ["tavern", "guild", "smithy", "bakery", "apothecary", "lamp", "stall", "well", "swamp_tree", "snow_pine", "palm", "city_tower", "bridge_lamp"]
 const LEAF_MAPS := {
 	"village": [Color(0.45, 0.78, 0.30), Color(1.0, 0.72, 0.82)], "valemont": [Color(0.55, 0.80, 0.32), Color(1.0, 0.82, 0.88)],
 	"velmoor": [Color(0.40, 0.72, 0.38), Color(0.75, 0.95, 0.65)], "kharis": [Color(0.62, 0.74, 0.30), Color(0.95, 0.85, 0.50)],
@@ -255,6 +261,8 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 	if float(info.get("h", 0)) >= 200.0 and not (kind.begins_with("tree") or kind.begins_with("snow_pine") or kind == "swamp_tree"):
 		_tall.append({"n": s, "w": float(info.get("w", 200)), "h": float(info.get("h", 200)), "px": float(info.get("pivotX", 100))})
 	_ambient_for(kind, pos, info)
+	if kind in REFLECTED or kind.begins_with("tree") or kind.begins_with("house"):
+		_add_reflection(s, kind, pos)
 	if Game.quality >= 1 and kind in NIGHT_WINDOWS:
 		var h2 := float(info.get("h", 160))
 		var w2 := float(info.get("w", 200))
@@ -275,6 +283,7 @@ func _spawn_prop(p: Dictionary, flat_layer: Node2D) -> void:
 ## Animated water on top of the baked ground, from the 1/4-res masks (w_i_j.png) made by tools/art_hd/maps.py.
 func _build_water_fx(d: Dictionary) -> void:
 	var mat: ShaderMaterial = null
+	var atlas := Image.create(maxi(1, int(d["chunksX"]) * 256), maxi(1, int(d["chunksY"]) * 256), false, Image.FORMAT_RGB8)
 	for j in int(d["chunksY"]):
 		for i in int(d["chunksX"]):
 			if not ResourceLoader.exists("res://assets/Maps/%s/w_%d_%d.png" % [d["name"], i, j]):
@@ -283,6 +292,13 @@ func _build_water_fx(d: Dictionary) -> void:
 			if mat == null:
 				mat = ShaderMaterial.new()
 				mat.shader = load("res://shaders/water_fx.gdshader")
+			var mimg := tx.get_image()
+			if mimg != null:
+				if mimg.is_compressed():
+					mimg.decompress()
+				mimg.convert(Image.FORMAT_RGB8)
+				atlas.blit_rect(mimg, Rect2i(Vector2i.ZERO, mimg.get_size()), Vector2i(i * 256, j * 256))
+				_has_water = true
 			var s := Sprite2D.new()
 			s.texture = tx
 			s.centered = false
@@ -293,6 +309,37 @@ func _build_water_fx(d: Dictionary) -> void:
 			s.visible = Game.quality >= 2
 			s.add_to_group("water_fx")
 			ground.add_child(s)
+	if _has_water:
+		_water_atlas = atlas
+		_reflect_mat = ShaderMaterial.new()
+		_reflect_mat.shader = load("res://shaders/reflect.gdshader")
+		_reflect_mat.set_shader_parameter("mask", ImageTexture.create_from_image(atlas))
+		_reflect_mat.set_shader_parameter("world_px", Vector2(atlas.get_width() * 4.0, atlas.get_height() * 4.0))
+
+
+func _water_south_of(pos: Vector2) -> bool:
+	if _water_atlas == null:
+		return false
+	for k in [24.0, 56.0, 96.0, 140.0]:
+		var px := Vector2i(int(pos.x / 4.0), int((pos.y + k) / 4.0))
+		if px.x >= 0 and px.y >= 0 and px.x < _water_atlas.get_width() and px.y < _water_atlas.get_height():
+			if _water_atlas.get_pixelv(px).r > 0.6:
+				return true
+	return false
+
+
+func _add_reflection(s: Sprite2D, kind: String, pos: Vector2) -> void:
+	if Game.quality < 2 or _reflect_mat == null or not _water_south_of(pos):
+		return
+	var r := Sprite2D.new()
+	r.texture = s.texture
+	r.centered = false
+	r.offset = s.offset
+	r.scale = Vector2(1.0, -0.72)
+	r.z_index = -1
+	r.material = _reflect_mat
+	r.add_to_group("water_fx")
+	s.add_child(r)
 
 
 ## Valemont wall: when the story advances while the hero is in the city the wall breaks live (rumble, dust, new cracks).
@@ -320,8 +367,44 @@ func _refresh_wall() -> void:
 				Fx.dust((at as Vector2) + Vector2(randf_range(-60, 60), randf_range(-40, 20)), 2.0)
 
 
+## Rain streaks around the hero + stronger wind; only on outdoor maps that can rain.
+func _update_rain(rain: float) -> void:
+	for kind in ["tree", "shrub", "grass"]:
+		Util.wind_material(kind).set_shader_parameter("boost", 1.0 + 1.3 * rain)
+	if _rain == null and rain > 0.01 and Game.quality >= 1 and Player.I != null and str(data.get("name", "")) in RAIN_MAPS:
+		_rain = CPUParticles2D.new()
+		var img := Image.create(3, 30, false, Image.FORMAT_RGBA8)
+		for y in 30:
+			for x in 3:
+				img.set_pixel(x, y, Color(1, 1, 1, float(y) / 30.0 * (1.0 if x == 1 else 0.6)))
+		_rain.texture = ImageTexture.create_from_image(img)
+		_rain.amount = 520
+		_rain.lifetime = 0.55
+		_rain.local_coords = false
+		_rain.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+		_rain.emission_rect_extents = Vector2(1100, 40)
+		_rain.position = Vector2(0, -620)
+		_rain.direction = Vector2(0.22, 1)
+		_rain.spread = 3.0
+		_rain.initial_velocity_min = 1100.0
+		_rain.initial_velocity_max = 1300.0
+		_rain.gravity = Vector2.ZERO
+		_rain.angle_min = -12.0
+		_rain.angle_max = -12.0
+		_rain.color = Color(0.82, 0.92, 1.0, 0.85)
+		_rain.z_index = 95
+		_rain.add_to_group("rain_fx")
+		Player.I.add_child(_rain)
+	if _rain != null and is_instance_valid(_rain):
+		_rain.emitting = rain > 0.05
+		_rain.modulate.a = clampf(rain * 1.2, 0.0, 1.0)
+		_rain.visible = Game.quality >= 1
+
+
 ## Drifting leaves / petals / snow carried by the wind (follows the hero; quality >= Medium).
 func _setup_leaves() -> void:
+	for old in Game.get_tree().get_nodes_in_group("rain_fx"):
+		old.queue_free()
 	for old in Game.get_tree().get_nodes_in_group("leaves_fx"):
 		old.queue_free()
 	if Game.quality < 1 or not LEAF_MAPS.has(str(data.get("name", ""))) or Player.I == null:
@@ -358,6 +441,7 @@ func _update_leaves() -> void:
 		return
 	_leaves.visible = Game.quality >= 1
 	var gust := 0.6 + 0.4 * sin(_t * 0.33)
+	gust += Game.weather * 0.8
 	_leaves.initial_velocity_min = 40.0 + 70.0 * gust
 	_leaves.initial_velocity_max = 90.0 + 120.0 * gust
 	_leaves.direction = Vector2(1, 0.25 + 0.2 * sin(_t * 0.5))
@@ -415,8 +499,12 @@ func _process(dt: float) -> void:
 	_update_sun()
 	var n := night_amount()
 	_mod.color = _base_tint.lerp(_base_tint * NIGHT_TINT, n * 0.85)
+	var rain := Game.weather if _outdoor else 0.0
+	if rain > 0.01:
+		_mod.color *= Color(1.0 - 0.30 * rain, 1.0 - 0.22 * rain, 1.0 - 0.08 * rain)
+	_update_rain(rain)
 	for ng in _night_glows:
-		(ng["g"] as Sprite2D).modulate.a = float(ng["a"]) * n * (0.92 + 0.08 * sin(_t * 3.1 + float(ng["g"].get_instance_id() % 17)))
+		(ng["g"] as Sprite2D).modulate.a = float(ng["a"]) * maxf(n, (Game.weather if _outdoor else 0.0) * 0.65) * (0.92 + 0.08 * sin(_t * 3.1 + float(ng["g"].get_instance_id() % 17)))
 	_wall_cd -= dt
 	if _wall_cd <= 0.0:
 		_wall_cd = 0.5

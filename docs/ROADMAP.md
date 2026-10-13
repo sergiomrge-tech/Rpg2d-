@@ -112,6 +112,11 @@ Legenda: ✅ feito · 🔄 em andamento · ⬜ a fazer
 - ✅ **Gráficos automáticos:** celulares começam em Média; sem escolha salva, o jogo baixa um nível sozinho se o FPS ficar < 38 por 8 s
 - ✅ **Muralha cai ao vivo** (estrondo, tremor de câmera, poeira, toast) quando a história avança dentro de Valemont
 - ✅ **Janelas acesas à noite** nas casas e prédios, com luz no chão; **folhas/pétalas/neve ao vento** que seguem o herói; **ondulações** ao andar na margem do rio; Aurora com 12 moradores andando
+- ✅ **Casas de Aurora com interior** (12 cottages: lareira, cama, mesa; alguns com moradora) — `tools/interiors.py`
+- ✅ **Chuva** (vem e vai sozinha nos mapas ao ar livre): céu escuro, riscos de chuva, vento mais forte, folhas mais rápidas, janelas acesas; moradores correm para abrigo
+- ✅ **Rotina dos moradores:** feira de manhã, taverna ao entardecer, dormem à noite, abrigam-se da chuva (`citizen.gd`)
+- ✅ **Reflexo na água** de árvores e prédios na beira (Alta): espelho ondulado recortado pela máscara de água
+- ✅ Opção **FPS na tela** (Opções) para comparar Baixa/Média/Alta no celular
 - ✅ Menu de opções (Esc): volumes de Música/Efeitos/Vozes em barramentos separados (salvos em `user://settings.json`), salvar e continuar
 - ✅ Rugido/chiado sintetizado na entrada dos chefes; fala da Lumia mais lenta, com peso
 - ✅ Falas em sussurro: cada letra revelada dispara uma sílaba soprada (ruído filtrado por formantes de vogal), com timbre por personagem e voz mais baixa na narração (`Sfx.whisper`)

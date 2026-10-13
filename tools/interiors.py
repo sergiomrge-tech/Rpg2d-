@@ -204,6 +204,38 @@ def bakery(name, outdoor, id_, look, title):
     return room(name, title, 'bakery', W, H, outdoor, f, dc, npcs, 'bakery')
 
 
+def house(name, outdoor, variant, resident, title):
+    """Small cottage: hearth, bed, table and a few belongings; variant 0..3 changes the layout and the rug colours."""
+    W, H = 14, 11
+    flip = variant % 2 == 1
+    mx = (lambda x: W - x) if flip else (lambda x: x)
+    f = [
+        F('fireplace', mx(3.4), 3.95, 2.4), F('bed', mx(11.2), 4.9), F('bookshelf', mx(8.0), 3.85, 1.6, seed_v=variant + 1),
+        F('table', mx(3.9), 7.6, 2.0, deco='plates' if variant < 2 else 'mugs'), F('chair', mx(2.9), 8.7), F('chair', mx(4.9), 8.7),
+        F('barrel', mx(1.9), 6.0), F('crate', mx(12.0), 9.9), F('plant', mx(12.0), 8.0),
+    ]
+    if variant >= 2:
+        f.append(F('sack', mx(10.8), 9.8))
+    cols = ['#8a3a32', '#3a5a8a', '#4a7a4a', '#7a5a2a'][variant % 4]
+    dc = windows([mx(5.6), mx(10.0)]) + [D('torch', mx(1.7), 0.8), D('painting', mx(11.9), 0.7),
+        D('round_rug', mx(4.1), 8.0, w=4.0, d=2.6, c=cols)]
+    npcs = [N('villager', 'villager', mx(5.5) if not flip else mx(5.5), 5.6, 'down')] if resident else []
+    return room(name, title, 'house', W, H, outdoor, f, dc, npcs, 'house')
+
+
+HOUSE_DOOR_X = {'house_a': 0, 'house_b': -30}
+
+
+def village_houses(data):
+    hs = [p for p in data['props'] if p['kind'] in HOUSE_DOOR_X and 'stage' not in p]
+    hs.sort(key=lambda p: (round(p['y']), p['x']))
+    return hs
+
+
+def house_name(i):
+    return 'int_house_aurora_%d' % i
+
+
 # interior name -> (building prop kind in the outdoor map, which one if several: index by x order)
 INTERIORS = [
     ('village', 'guild', guild('int_guild_aurora', 'village', 'receptionist', 'guild_clerk', 'Guilda de Aurora')),
@@ -265,6 +297,10 @@ def patch_map(data):
         for n in r['npcs']:
             inside.add(n['id'])
     data['npcs'] = [n for n in data['npcs'] if n['id'] not in inside]
+    if m == 'village':
+        for i, hp in enumerate(village_houses(data)):
+            dx = HOUSE_DOOR_X[hp['kind']]
+            data['exits'].append(dict(to=house_name(i), x=hp['x'] + dx, y=hp['y'] + 54, w=64, h=56, ax=hp['x'] + dx, ay=hp['y'] + 118, kind='house'))
     return data
 
 
@@ -326,6 +362,11 @@ def main():
             json.dump(d, fp)
         for n in r['npcs']:
             index[n['id']] = r['name']
+    vil = json.load(open(os.path.join(MAPS, 'village.json')))
+    for i, hp in enumerate(village_houses(vil)):
+        d = build_interior(house(house_name(i), 'village', i % 4, i % 3 == 0, 'Casa de Aurora'))
+        with open(os.path.join(MAPS, house_name(i) + '.json'), 'w') as fp:
+            json.dump(d, fp)
     for m in sorted({m for m, _, _ in INTERIORS}):
         p = os.path.join(MAPS, m + '.json')
         data = json.load(open(p))

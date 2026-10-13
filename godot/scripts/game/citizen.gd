@@ -15,6 +15,10 @@ var look := ""
 var bark_cd := 0.0
 var stuck_t := 0.0
 var _last := Vector2.ZERO
+var mode := "patrol"          # patrol | market | tavern | shelter | asleep
+var _goal := Vector2.ZERO
+var _inside := false
+var _mine := 0.0              # per-citizen dice so not everybody follows the same routine
 
 
 static func spawn(w: Dictionary, map: String) -> Citizen:
@@ -23,6 +27,7 @@ static func spawn(w: Dictionary, map: String) -> Citizen:
 	c.collision_layer = 8
 	c.collision_mask = 1
 	c.map_key = map
+	c.add_to_group("citizens")
 	c.look = str(w["look"])
 	for p in w["route"]:
 		c.route.append(Vector2(float(p[0]), float(p[1])))
@@ -35,17 +40,87 @@ static func spawn(w: Dictionary, map: String) -> Citizen:
 	c.idx = 1 % c.route.size()
 	c.wait = randf_range(0.0, 3.0)
 	c.bark_cd = randf_range(2.0, 8.0)
+	c._mine = randf()
 	return c
+
+
+## Daily routine: market stalls in the morning, the tavern in the evening, sleep at night, shelter from the rain.
+func _pick_mode() -> String:
+	if look == "v_guard":
+		return "patrol"
+	if Game.is_night():
+		return "asleep"
+	if Game.weather > 0.45 and _mine < 0.85:
+		return "shelter"
+	var ph := Game.day_phase()
+	if ph > 0.2 and ph < 0.32 and _mine < 0.6 and _find("tavern") != Vector2.ZERO:
+		return "tavern"
+	if ph > 0.68 and ph < 0.9 and _mine > 0.35 and _find("stall") != Vector2.ZERO:
+		return "market"
+	return "patrol"
+
+
+func _find(what: String) -> Vector2:
+	var best := Vector2.ZERO
+	var bd := 1e9
+	var w := Game.world
+	if what == "stall":
+		for p in w.data["props"]:
+			if str(p["kind"]).begins_with("stall"):
+				var at := Vector2(float(p["x"]) + (_mine - 0.5) * 120.0, float(p["y"]) + 70.0)
+				var d := at.distance_to(global_position)
+				if d < bd and (_mine * 7.0 < 3.5 or d > 400.0):
+					bd = d
+					best = at
+		return best
+	for e in w.data["exits"]:
+		var k := str(e.get("kind", ""))
+		if (what == "tavern" and k == "tavern") or (what == "shelter" and str(e["to"]).begins_with("int_")):
+			var at := Vector2(float(e["x"]), float(e["y"]) + 40.0)
+			var d := at.distance_to(global_position)
+			if d < bd:
+				bd = d
+				best = at
+	return best
 
 
 func _physics_process(dt: float) -> void:
 	# townsfolk go home at night; the guards keep patrolling
-	var asleep: bool = Game.is_night() and look != "v_guard"
-	if asleep == visible:
-		visible = not asleep
-		collision_layer = 0 if asleep else 8
-	if asleep:
+	var want := _pick_mode()
+	if want != mode:
+		mode = want
+		_goal = Vector2.ZERO
+		if mode in ["market", "tavern", "shelter"]:
+			_goal = _find("stall" if mode == "market" else mode)
+		if _inside and mode in ["patrol", "market"]:
+			_inside = false          # comes back out of the door
+		if mode == "patrol" and _inside:
+			_inside = false
+	var hidden := mode == "asleep" or _inside
+	if hidden == visible:
+		visible = not hidden
+		collision_layer = 0 if hidden else 8
+	if hidden:
 		velocity = Vector2.ZERO
+		return
+	if _goal != Vector2.ZERO and mode != "patrol":
+		var gd := _goal - global_position
+		if gd.length() < 0.6 * T or stuck_t > 3.0:
+			velocity = Vector2.ZERO
+			anim.play("idle")
+			if mode in ["tavern", "shelter"]:
+				_inside = true
+			stuck_t = 0.0
+			return
+		face(Util.facing_from(gd, facing))
+		anim.play("walk")
+		velocity = gd.normalized() * 1.8 * T
+		move_and_slide()
+		if (global_position - _last).length() < 4.0 * dt * T * 0.2:
+			stuck_t += dt
+		else:
+			stuck_t = 0.0
+		_last = global_position
 		return
 	var p := Player.I
 	bark_cd -= dt

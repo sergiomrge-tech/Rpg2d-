@@ -58,6 +58,11 @@ var in_menu := false
 
 var _time := 0.0
 var _int_npc := {}                # npc id -> interior map (data/interiors.json)
+var show_fps := false
+var weather := 0.0                 # 0 clear .. 1 heavy rain (eased toward weather_target)
+var weather_target := 0.0
+var weather_auto := true
+var _wx_timer := 240.0
 var quality_auto := true           # no explicit choice saved yet: the game lowers the tier by itself if the frame rate stays low
 var _fps_acc := 0.0
 var _fps_n := 0
@@ -322,6 +327,25 @@ func phase_name() -> String:
 	return "Entardecer" if f < 0.5 else "Amanhecer"
 
 
+## Rain comes and goes on its own (outdoor maps only); tests pin it by turning weather_auto off.
+func _update_weather(dt: float) -> void:
+	if weather_auto and ci_dir == "" and not get_tree().paused:
+		_wx_timer -= dt
+		if _wx_timer <= 0.0:
+			if weather_target > 0.0:
+				weather_target = 0.0
+				_wx_timer = randf_range(220.0, 480.0)
+			else:
+				weather_target = randf_range(0.6, 1.0)
+				_wx_timer = randf_range(70.0, 150.0)
+	weather = move_toward(weather, weather_target, dt * 0.12)
+
+
+## Fraction of the day (0 = noon, 0.5 = midnight).
+func day_phase() -> float:
+	return fposmod(clock / World.DAY_LENGTH, 1.0)
+
+
 func _auto_quality(dt: float) -> void:
 	if not quality_auto or ci_dir != "" or quality == 0 or get_tree().paused or world == null:
 		return
@@ -339,6 +363,7 @@ func _auto_quality(dt: float) -> void:
 
 func _process(dt: float) -> void:
 	_auto_quality(dt)
+	_update_weather(dt)
 	_time += dt
 	if not get_tree().paused:
 		clock += dt
@@ -2071,9 +2096,14 @@ func _ci_doors(outdoor: String) -> void:
 	_tour_to(outdoor)
 	_travel_cd = 0.0
 	player.input_locked = false
+	var seen_house := false
 	for e in world.data["exits"]:
 		if str(e["to"]).begins_with("int_"):
 			var want: String = e["to"]
+			if str(e.get("kind", "")) == "house":
+				if seen_house and want != "int_house_aurora_3":
+					continue
+				seen_house = true
 			var ax := float(e["ax"])
 			var ay := float(e["ay"])
 			player.global_position = Vector2(float(e["x"]), float(e["y"]))
@@ -2121,6 +2151,45 @@ func _ci_fx() -> void:
 		print("[ci] wall stage ", wall_stage())
 		await _wait(4.0)
 		await shot("98_muralha_%d" % st)
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	player.global_position = Vector2(1350, 3330)
+	for e in Enemy.all.duplicate():
+		if is_instance_valid(e):
+			e.queue_free()
+	camera.snap()
+	await _wait(0.8)
+	await shot("98_reflexo_lago")
+	# rain: dark sky, streaks, windows lit, townsfolk run for shelter
+	weather_auto = false
+	weather_target = 1.0
+	weather = 1.0
+	clock = 0.0
+	_tour_to("village")
+	_travel_cd = 999.0
+	player.input_locked = false
+	player.invuln = 99.0
+	player.global_position = Vector2(2496, 2250)
+	for e in Enemy.all.duplicate():
+		if is_instance_valid(e):
+			e.queue_free()
+	camera.snap()
+	await _wait(1.5)
+	var modes := {}
+	for c in get_tree().get_nodes_in_group("citizens"):
+		modes[c.mode] = int(modes.get(c.mode, 0)) + 1
+	print("[ci] rain citizen modes ", modes, " weather ", weather, " outdoor ", world._outdoor, " mod ", world._mod.color, " rain node ", world._rain)
+	await shot("98_chuva")
+	weather = 0.0
+	weather_target = 0.0
+	# inside a house
+	_tour_to("int_house_aurora_0")
+	_travel_cd = 999.0
+	player.input_locked = false
+	await _wait(0.7)
+	await shot("98_casa_interior")
 	# night windows + leaves in Aurora
 	_tour_to("village")
 	_travel_cd = 999.0
